@@ -44,7 +44,7 @@ const TABS = {
         ],
         6: [
             { id: "Axions" },
-            { id: "Chroma", unl() { return player.chal.comps[13].gte(12) } }
+            { id: "Chroma", unl() { return false } }
         ],
     },
 }

@@ -44,7 +44,7 @@ let EXOTIC = {
 		player.supernova.stars = E(0)
 		if (!future) player.supernova.tree = list_keep
 
-		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(hasTreeUpg("qol_ext4") && c <= 8 ? 50 : hasTreeUpg("qol_ext6") ? 10 : 0)
+		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(hasTreeUpg("qol_ext4") && c <= 8 ? 50 : hasTreeUpg("qol_ext6") && c <= 11 ? 10 : 0)
 
 		player.supernova.bosons = {
 			pos_w: E(0),
@@ -356,7 +356,7 @@ let AXIONS = {
 		1: {
 			title: "Cosmic Burst",
 			desc: "Cosmic Ray softcap starts later.",
-			req: E(00),
+			req: E(0),
 			eff(x) {
 				return x.sqrt().div(10).min(4).add(1.2).pow(x)
 			},
@@ -392,10 +392,10 @@ let AXIONS = {
 			desc: "Raise the base Atomic Power gains.",
 			req: E(1),
 			eff(x) {
-				return x.div(3).add(1).pow(5/9).softcap(5,5,3).min(7.5)
+				return x.div(3).add(1).pow(2/3)
 			},
 			effDesc(x) {
-				return "^" + format(x) + getSoftcapHTML(x, 5)
+				return "^" + format(x)
 			}
 		},
 		5: {
@@ -437,7 +437,7 @@ let AXIONS = {
 			desc: "Hawking Radiation softcap starts later.",
 			req: E(1/0),
 			eff(x) {
-				return E(1)
+				return x.div(5).add(1).log10().add(1)
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -459,7 +459,7 @@ let AXIONS = {
 			desc: "Neutron Condensers are more powerful.",
 			req: E(1/0),
 			eff(x) {
-				return E(1)
+				return x.add(1).log10().sqrt().add(1)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -467,10 +467,10 @@ let AXIONS = {
 		},
 		11: {
 			title: "Lepton Anomaly",
-			desc: "Neut-Muon softcap is weaker.",
+			desc: "Neutrion and Neut-Muon softcaps are weaker.",
 			req: E(5),
 			eff(x) {
-				return x.div(2).add(27).cbrt().add(2).min(6).div(5)
+				return x.div(2).add(27).cbrt().add(2).min(10).div(5)
 			},
 			effDesc(x) {
 				return "^" + format(x,3)
@@ -479,18 +479,18 @@ let AXIONS = {
 
 		12: {
 			title: "Supernova [Coming soon!]",
-			desc: "???",
+			desc: "Supernova is cheaper.",
 			req: E(1/0),
 			eff(x) {
-				return E(1)
+				return E(1.01).pow(x)
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return "^1/"+format(x)
 			}
 		},
 		13: {
 			title: "Challenge",
-			desc: "Increase the cap of Challenges 7 and 10.",
+			desc: "Increase the cap of Challenges 7, 10 - 12.",
 			req: E(0),
 			eff(x) {
 				return x.times(25)
@@ -521,43 +521,19 @@ let AXIONS = {
 				return format(E(1).sub(x).mul(100)) + "%"
 			}
 		},
-
-		16: {
-			title: "Placeholder [Unlock]",
-			desc: "Placeholder.",
-			req: E(1/0)
-		},
-		17: {
-			title: "Placeholder [Unlock]",
-			desc: "Placeholder.",
-			req: E(1/0)
-		},
-		18: {
-			title: "Placeholder [Unlock]",
-			desc: "Placeholder.",
-			req: E(1/0)
-		},
-		19: {
-			title: "Placeholder [Unlock]",
-			desc: "Placeholder.",
-			req: E(1/0)
-		},
 	}
 }
 
 function setupAxionHTML() {
 	var html = ""
-	for (var y = -1; y < 5; y++) {
+	for (var y = -1; y < 4; y++) {
 		html += "</tr><tr>"
-		for (var x = -1; x < 5; x++) {
-			var x_empty = x == -1 || x == 4
+		for (var x = -1; x < 4; x++) {
+			var x_empty = x == -1
 			var y_empty = y == -1
 			if (x_empty && y_empty) html += "<td class='ax'></td>"
 			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXIONS.buy(`+x+`)">X`+(x+1)+`</button></td>`
-			if (x_empty && !y_empty && y < 4) {
-				var type = x == 4 ? 2 : 1
-				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXIONS.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
-			}
+			if (x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4)+`' onmouseover='hoverAxion("u`+(y+4)+`")' onmouseleave='hoverAxion()' onclick="AXIONS.buy(`+(y+4)+`)">Y`+(y+1)+`</button></td>`
 			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
 		}
 	}
@@ -567,16 +543,14 @@ function setupAxionHTML() {
 function updateAxionHTML() {
 	tmp.el.st_res0.setHTML(format(player.ext.ax.res[0]))
 	tmp.el.st_res1.setHTML(format(player.ext.ax.res[1]))
-	tmp.el.st_res2.setHTML(format(player.ext.ax.res[2]))
 	tmp.el.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXIONS.prod(0)))
 	tmp.el.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXIONS.prod(1)))
-	tmp.el.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXIONS.prod(2)))
 
-	for (var i = 0; i < 12; i++) {
+	for (var i = 0; i < 8; i++) {
 		tmp.el["ax_upg"+i].setClasses({btn_ax: true, locked: !AXIONS.canBuy(i)})
 		tmp.el["ax_upg"+i].setOpacity(tmp.ax.hover.hide.includes("u"+i) ? 0.25 : 1)
 	}
-	for (var i = 0; i < 20; i++) {
+	for (var i = 0; i < 16; i++) {
 		tmp.el["ax_boost"+i].setClasses({btn_ax: true, locked: tmp.ax.lvl[i].eq(0), bonus: tmp.ax.hover.bonus.includes("b"+i)})
 		tmp.el["ax_boost"+i].setOpacity(tmp.ax.hover.bonus.includes("b"+i) ? 1 : tmp.ax.hover.hide.includes("b"+i) || tmp.ax.lvl[i].eq(0) ? 0.25 : 1)
 	}
@@ -606,8 +580,8 @@ function updateAxionHTML() {
 function updateAxionLevelTemp() {
 	tmp.ax.upg = {}
 	tmp.ax.lvl = {}
-	for (var i = 0; i < 12; i++) tmp.ax.upg[i] = AXIONS.getUpgLvl(i)
-	for (var i = 0; i < 20; i++) tmp.ax.lvl[i] = AXIONS.getLvl(i)
+	for (var i = 0; i < 8; i++) tmp.ax.upg[i] = AXIONS.getUpgLvl(i)
+	for (var i = 0; i < 16; i++) tmp.ax.lvl[i] = AXIONS.getLvl(i)
 }
 
 function updateAxionTemp() {
@@ -626,7 +600,7 @@ function updateAxionTemp() {
 	tmp.ax.cost = {}
 	tmp.ax.bulk = {}
 	tmp.ax.eff = {}
-	for (var i = 0; i < 12; i++) {
+	for (var i = 0; i < 8; i++) {
 		tmp.ax.cost[i] = AXIONS.cost(i)
 		tmp.ax.bulk[i] = AXIONS.bulk(i)
 	}
@@ -640,8 +614,8 @@ function hoverAxion(x) {
 	if (!x) return
 	if (tmp.ax.hover.id[0] == "u") {
 		let id = Number(tmp.ax.hover.id.split("u")[1])
-		for (var i = 0; i < 12; i++) if (i != id) tmp.ax.hover.hide.push("u"+i)
-		for (var i = 0; i < 20; i++) {
+		for (var i = 0; i < 8; i++) if (i != id) tmp.ax.hover.hide.push("u"+i)
+		for (var i = 0; i < 16; i++) {
 			let [px,py] = [i%4, Math.floor(i/4)]
 
 			let hide = true
@@ -658,8 +632,8 @@ function hoverAxion(x) {
 	if (tmp.ax.hover.id[0] == "b") {
 		let id = Number(tmp.ax.hover.id.split("b")[1])
 		let [px, py] = [id%4, Math.floor(id/4)]
-		for (var i = 0; i < 20; i++) if (i != id) tmp.ax.hover.hide.push("b"+i)
-		for (var i = 0; i < 12; i++) {
+		for (var i = 0; i < 16; i++) if (i != id) tmp.ax.hover.hide.push("b"+i)
+		for (var i = 0; i < 8; i++) {
 			let hide = true
 			if (py < 4) {
 				if (i < 4 && px == i && tmp.ax.upg[i].gt(py * 4)) hide = false

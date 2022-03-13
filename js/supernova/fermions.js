@@ -302,14 +302,15 @@ const FERMIONS = {
                     let x = res.div('e1600').max(1).log('e400').max(0).root(1.5).add(1).floor()
                     return FERMIONS.getTierScaling(x, true)
                 },
-                eff(i, t) {
-					if (FERMIONS.onActive(14)) return E(1)
-                    let x = i.max(1).log10().add(1).mul(t).div(200).add(1).softcap(1.5,0.5,0).softcap(20,0.25,0)
-                    return x
-                },
-                desc(x) {
-                    return `Tier requirement is ${format(x)}x cheaper`+getSoftcapHTML(x,1.5,250)
-                },
+				eff(i, t) {
+					let sc = E(0.25)
+					if (AXIONS.unl()) sc = tmp.ax.eff[11].mul(sc)
+					let x = i.max(1).log10().add(1).mul(t).div(200).add(1).softcap(1.5,0.5,0).softcap(20,sc,0)
+					return x
+				},
+				desc(x) {
+					return `Tier requirement is ${format(x)}x cheaper`+getSoftcapHTML(x,1.5,20)
+				},
                 inc: "Collapsed Star",
                 cons: "Star generators are decreased to ^0.5",
             },{

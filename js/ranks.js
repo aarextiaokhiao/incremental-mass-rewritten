@@ -242,7 +242,7 @@ const RANKS = {
             4(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
             5(x) { return format(E(1).div(x))+"x weaker" },
             10(x) { return "^"+format(x) },
-            13(x) { return "^"+format(x) },
+            13(x) { return "^"+format(x,3) },
         },
     },
     fp: {

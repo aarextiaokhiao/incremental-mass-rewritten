@@ -55,7 +55,8 @@ function calc(dt, dt_offline) {
 		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
 			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
 			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
-			var logProd = tmp.bh.mass_gain.max(10).softcap(FORMS.bh.radSoftStart(), 0.95, 2).log10()
+			var softcap = FORMS.bh.radSoftStart()
+			var logProd = tmp.bh.mass_gain.max(10).softcap(softcap, 0.9, 2).log10()
 
 			var newMass = player.bh.mass.log10().div(logProd).root(log)
 			newMass = newMass.add(pow.mul(dt))
