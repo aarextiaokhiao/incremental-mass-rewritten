@@ -43,7 +43,7 @@ const ATOM = {
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         player.mainUpg.bh = keep
-        if (chal_reset && !player.mainUpg.atom.includes(4) && !hasTreeUpg("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = E(0)
+        if (chal_reset && !player.mainUpg.atom.includes(4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = E(0)
         FORMS.bh.doReset()
     },
     atomic: {
@@ -58,7 +58,7 @@ const ATOM = {
         },
 		softcap() {
 			let r = E(5e4)
-			if (AXIONS.unl()) r = r.mul(tmp.ax.eff[1])
+			if (AXION.unl()) r = r.mul(tmp.ax.eff[1])
 			return r
 		},
 		effect() {
@@ -89,9 +89,9 @@ const ATOM = {
             let pow = E(2)
             if (player.mainUpg.atom.includes(4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
             if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
-            if (hasTreeUpg("gr1")) pow = pow.mul(tmp.supernova.tree_eff.gr1)
+            if (hasTree("gr1")) pow = pow.mul(tmp.supernova.tree_eff.gr1)
             pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
-            if (hasTreeUpg("gr2")) pow = pow.pow(1.25)
+            if (hasTree("gr2")) pow = pow.pow(1.25)
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             return {pow: pow, eff: eff}
         },
@@ -123,7 +123,7 @@ const ATOM = {
             let p = player.atom.particles[i]
             let x = p.pow(2)
             if (hasElement(12)) x = p.pow(p.add(1).log10().add(1).pow(tmp.chal.eff[9].exp.div(4)).mul(tmp.chal.eff[9].mul)) //Maximum of ^1.325
-			if (AXIONS.unl()) x = x.pow(tmp.ax.eff[4])
+			if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
             x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.931,2)
             return x
         },

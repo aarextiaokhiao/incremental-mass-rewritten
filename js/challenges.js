@@ -20,7 +20,7 @@ function updateChalHTML() {
     }
     tmp.el.chal_enter.setVisible(player.chal.choosed && player.chal.active != player.chal.choosed)
     tmp.el.chal_exit.setVisible(player.chal.active != 0)
-    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTreeUpg("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
+    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
     if (player.chal.choosed != 0) {
         let x = player.chal.choosed
@@ -69,7 +69,7 @@ const CHALS = {
         if (x < 5) FORMS.bh.doReset()
         else if (x < 9) ATOM.doReset(chal_reset)
         else if (x < 13) SUPERNOVA.reset(true, true)
-        else EXOTIC.reset(true, true)
+        else EXT.reset(true, true)
     },
     exit(auto=false) {
         if (!player.chal.active == 0) {
@@ -120,9 +120,9 @@ const CHALS = {
         if (hasElement(33) && (i==8)) x = x.add(50)
         if (hasElement(56) && (i==8)) x = x.add(200)
         if (hasElement(65) && (i==7||i==8)) x = x.add(200)
-        if (hasTreeUpg("chal1") && (i==7||i==8)) x = x.add(100)
-        if (AXIONS.unl() && (i==7||i>=9&&i<=12)) x = x.add(tmp.ax.eff[13])
-		if (AXIONS.unl() && i==8) x = x.add(tmp.ax.eff[17])
+        if (hasTree("chal1") && (i==7||i==8)) x = x.add(100)
+        if (AXION.unl() && (i==7||i>=9&&i<=12)) x = x.add(tmp.ax.eff[13])
+		if (AXION.unl() && i==8) x = x.add(tmp.ax.eff[17])
         return x.floor()
     },
     getScaleName(i) {
@@ -136,7 +136,7 @@ const CHALS = {
         let x = E(1)
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
-        if (hasTreeUpg("feat7")) x = x.mul(0.95)
+        if (hasTree("feat7")) x = x.mul(0.95)
         if (future) x = x.div(player.mass.max(1).log10().max(1).log10().div(50).add(1))
         return x
     },
@@ -147,7 +147,7 @@ const CHALS = {
     },
     getPower3(i) {
         let x = E(1)
-        if (AXIONS.unl()) x = x.mul(tmp.ax.eff[14])
+        if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
         return x
     },
     getChalData(x, r=E(-1), a) {
@@ -291,7 +291,7 @@ const CHALS = {
 			if (hasElement(64)) x = x.mul(1.5)
 			let ret = x.root(1.5).mul(0.01).add(1)
 			let cap = E(2.4).add(tmp.radiation && tmp.radiation.bs.eff[19])
-			if (hasTreeUpg("feat5")) {
+			if (hasTree("feat5")) {
 				ret = ret.add(0.05)
 				cap = cap.add(0.05)
 			}
@@ -312,7 +312,7 @@ const CHALS = {
 			if (hasElement(64)) x = x.mul(1.5)
 			let ret = x.root(1.5).mul(0.01).add(1)
 			let cap = E(2.4).add(tmp.fermions && tmp.fermions.effs[1][5])
-			if (hasTreeUpg("feat5")) {
+			if (hasTree("feat5")) {
 				ret = ret.add(0.05)
 				cap = cap.add(0.05)
 			}
@@ -384,7 +384,7 @@ const CHALS = {
         effDesc(x) { return "^"+format(x,3)+getSoftcapHTML(x,1.98) },
     },
     9: {
-        unl() { return hasTreeUpg("chal4") },
+        unl() { return hasTree("chal4") },
         title: "No Particles",
         desc: "You cannot assign quarks. In addtional, mass gains exponent is raised to 0.9th power.",
         reward: `Improve Magnesium-12 better.`,
@@ -393,13 +393,13 @@ const CHALS = {
         pow: E(2),
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
-            let ret = x.root(hasTreeUpg("chal4a")?3.5:4).mul(0.1).add(1)
+            let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
             return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(1.5).add(1).pow(3.5) }
         },
         effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", x"+format(x.mul):"") },
     },
     10: {
-        unl() { return hasTreeUpg("chal5") },
+        unl() { return hasTree("chal5") },
         title: "The Reality I",
         desc: "All challenges 1-8 are applied at once. In addtional, you are trapped in Mass Dilation!",
         reward: `The exponent of the RP formula is multiplied by completions. (this effect doesn't work while in this challenge)<br><span class="yellow">On first completion, unlock Fermions!</span>`,
@@ -414,7 +414,7 @@ const CHALS = {
         effDesc(x) { return format(x)+"x" },
     },
     11: {
-        unl() { return hasTreeUpg("chal6") },
+        unl() { return hasTree("chal6") },
         title: "Absolutism",
         desc: "You cannot gain relativistic particles or dilated mass. However, you are stuck in Mass Dilation.",
         reward: `Star Booster is stonger by completions.`,
@@ -429,7 +429,7 @@ const CHALS = {
         effDesc(x) { return format(x)+"x stronger" },
     },
 	12: {
-		unl() { return hasTreeUpg("chal7") },
+		unl() { return hasTree("chal7") },
 		title: "Wormhole Devourer",
 		desc: "You are stuck in Mass Dilation, but has a static ^0.428 penalty and doesn't affect Dark Matter and Black Hole.",
 		reward: `Radiation Boosters scale slower.<br><span class="yellow">On first completion, unlock a new prestige layer!</span>`,
@@ -443,7 +443,7 @@ const CHALS = {
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
 	13: {
-		unl() { return hasTreeUpg("chal8") },
+		unl() { return hasTree("chal8") },
 		title: "Decay of Atom",
 		desc: "You can't gain atoms and quarks.",
 		reward: `Axion Upgrades scale slower.<br><span class="rainbow">On 15th completion, unlock Chroma!</span>`,
@@ -457,7 +457,7 @@ const CHALS = {
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
 	14: {
-		unl() { return AXIONS.unl() && tmp.ax.lvl[22].gt(0) },
+		unl() { return AXION.unl() && tmp.ax.lvl[22].gt(0) },
 		title: "Monochromatic Mass",
 		desc: "You can't gain Mass Upgrades.",
 		reward: `Stronger effect is extraordinary stronger!`,

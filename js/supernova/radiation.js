@@ -4,7 +4,7 @@ const RADIATION = {
     hz_gain() {
         let x = E(1)
         x = x.mul(tmp.radiation.ds_eff[0])
-        if (hasTreeUpg('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
+        if (hasTree('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
         if (hasElement(76)) x = x.mul(tmp.elements && tmp.elements.effect[76])
         x = x.mul(tmp.supernova.timeMult)
         return x
@@ -17,11 +17,11 @@ const RADIATION = {
     ds_gain(i) {
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return E(0)
         let x = E(RADIATION.ds_gains[i])
-        if (hasTreeUpg('rad2')) x = x.mul(tmp.supernova.tree_eff.rad2||1)
-        if (hasTreeUpg('feat1')) x = x.mul(3)
+        if (hasTree('rad2')) x = x.mul(tmp.supernova.tree_eff.rad2||1)
+        if (hasTree('feat1')) x = x.mul(3)
         if (i == 3 && hasElement(70)) x = x.mul(10)
         if (i<RAD_LEN-1) {
-            if (hasTreeUpg('rad1') && player.supernova.radiation.hz.gte(RADIATION.unls[i+1])) x = x.mul(tmp.supernova.tree_eff.rad1||1)
+            if (hasTree('rad1') && player.supernova.radiation.hz.gte(RADIATION.unls[i+1])) x = x.mul(tmp.supernova.tree_eff.rad1||1)
             x = x.mul(tmp.radiation.ds_eff[i+1])
         }
         x = x.mul(tmp.radiation.bs.eff[3*i])
@@ -52,7 +52,7 @@ const RADIATION = {
     getBoostScalingExp(i) {
 		let f2 = 1.3+i*0.05
 		if (tmp.radiation.bs.eff[17] && i % 2 == 1) f2 -= tmp.radiation.bs.eff[17][1]
-		if (AXIONS.unl()) f2 -= tmp.ax.eff[3].toNumber()
+		if (AXION.unl()) f2 -= tmp.ax.eff[3].toNumber()
 		return Math.max(f2,1.2)
     },
     getLevelEffect(i) {
@@ -76,13 +76,13 @@ const RADIATION = {
 		return x.add(1).pow(e).sub(1).mul(m)
     },
     bonusMul(a,b) {
-		if (!hasTreeUpg("rad3")) return 1
+		if (!hasTree("rad3")) return 1
 		a = Math.floor(a / 3)
 		b = Math.floor(b / 3)
-        return AXIONS.unl() ? tmp.ax.eff[7].pow(a - b) : E(1)
+        return AXION.unl() ? tmp.ax.eff[7].pow(a - b) : E(1)
     },
     bonusExp(a,b) {
-		if (!hasTreeUpg("rad3")) return 1
+		if (!hasTree("rad3")) return 1
 		a = Math.floor(a / 3) * 2
 		b = Math.floor(b / 3) * 2
         return RADIATION.getBoostScalingExp(a) / RADIATION.getBoostScalingExp(b)
@@ -113,7 +113,7 @@ const RADIATION = {
             title: `Tickspeed Boost`,
 			eff(b) {
 				let x = b.add(1).root(2)
-				let d = chalOutside() && AXIONS.unl() ? tmp.ax.eff[2].sqrt() : E(1)
+				let d = chalOutside() && AXION.unl() ? tmp.ax.eff[2].sqrt() : E(1)
 				if (d.gt(1)) x = x.sub(1).div(d).add(1)
 				return x
 			},
@@ -163,8 +163,8 @@ const RADIATION = {
         },{
             title: `Meta-Boost I`,
             eff(b) {
-                let x = b.root(2.5).div(1.75).mul(hasTreeUpg("rad4")?1.5:1)
-                if (hasTreeUpg("rad5")) x = x.mul(player.ranks.pent.div(5).add(1).log10().div(2)).add(1).pow(1.5).mul(x)
+                let x = b.root(2.5).div(1.75).mul(hasTree("rad4")?1.5:1)
+                if (hasTree("rad5")) x = x.mul(player.ranks.pent.div(5).add(1).log10().div(2)).add(1).pow(1.5).mul(x)
                 return x
             },
             desc(x) { return `Add ${format(x)} levels to all above boosts` },
@@ -229,7 +229,7 @@ const RADIATION = {
             title: `Meta Boost II / Synergy Boost`,
             eff(b) {
 				let r = b.mul(player.supernova.radiation.ds[5].add(1).log10().pow(5/6)).pow(2/5)
-                return [r.div(10).mul(hasTreeUpg("rad4")?1.5:1), r.div(100).min(0.05).toNumber()]
+                return [r.div(10).mul(hasTree("rad4")?1.5:1), r.div(100).min(0.05).toNumber()]
             },
             desc(x) { return `Add ${format(x[0])} levels to all above boosts, reduce Velocity cost scalings by ^${format(x[1])}` },
         },
@@ -273,7 +273,7 @@ const RADIATION = {
 const RAD_LEN = 7
 
 function updateRadiationTemp() {
-    tmp.radiation.unl = hasTreeUpg("unl1")
+    tmp.radiation.unl = hasTree("unl1")
     tmp.radiation.hz_gain = RADIATION.hz_gain()
     tmp.radiation.hz_effect = RADIATION.hz_effect()
     for (let x = 0; x < RAD_LEN; x++) {

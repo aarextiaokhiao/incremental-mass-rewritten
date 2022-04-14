@@ -1,11 +1,18 @@
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Incremental Mass REWRITTEN made by MrRedShark77">
+    <meta name="description" content="IM: Alternative Path. IM:R made by MrRedShark77" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://aarextiaokhiao.github.io/incremental-mass-rewritten/" />
+    <meta property="og:title" content="IM: Alternative Path" />
+    <meta property="og:description" content="IM: Alternative Path. IM:R made by MrRedShark77" />
+
     <link rel="icon" href="images/mass.png">
     <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tooltip.css">
 
     <script src="js/break_eternity.js"></script>
     <script src="js/Element.js"></script>
@@ -88,12 +95,9 @@
     
                 </div>
             </div>
-            <div id="tree" class="table_center">
-                <div class="table_center" id="tree_table_fix">
-					<canvas id="tree_canvas"></canvas>
-					<div id="tree_table"></div>
-				</div>
-            </div>
+            <canvas id="tree_canvas"></canvas>
+            <div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
+            <div id="tree_table"></div>
         </div><div id="stab_frame5_1">
             <div class="bosons">
                 <div class="table_center">
@@ -222,37 +226,45 @@
             <div class="table_center" style="margin: 5px 0px;">
                 <div>
                     <div class="resources sml">
-                        <img class="res_img" src="images/mass.png">
+                        <div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="mass">X</span>
                     </div><div class="resources sml red" id="rp_div">
-                        <img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <div tooltip="Rage Power" t-size="small"><img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="rpAmt">X</span>
-                    </div><div class="resources sml yellow" id="dm_div">
-                        <img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                    </div><div class="resources yellow" id="dm_div">
+                        <div tooltip="Dark Matter" t-size="small"><img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="dmAmt">X</span>
                     </div>
                 </div><div>
                     <div class="resources sml yellow" id="bh_div">
-                        <img class="res_img" src="images/bh.png">
+                        <div tooltip="Black Hole" t-size="small"><img class="res_img" src="images/bh.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="bhMass">X</span>
                     </div><div class="resources sml" id="atom_div">
-                        <img class="res_img" src="images/atom.png" onclick="ATOM.reset()" onmousemove="FORMS.reset_msg.set('atom')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <div tooltip="Atom" t-size="small"><img class="res_img" src="images/atom.png" onclick="ATOM.reset()" onmousemove="FORMS.reset_msg.set('atom')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="atomAmt">X</span>
                     </div><div class="resources quark_color" id="quark_div">
-                        <img class="res_img" src="images/quark.png">
+                        <div tooltip="Quark" t-size="small"><img class="res_img" src="images/quark.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="quarkAmt">X</span>
                     </div>
                 </div><div>
                     <div class="resources sml green" id="md_div">
-                        <img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <div tooltip="Mass Dilation" t-size="small"><img class="res_img" class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="md_massAmt">X</span>
                     </div>
+                    <div class="resources sml" id="scut_div">
+                        <img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <img class="res_img" src="images/chal.png" style="cursor: pointer;">
+                        <img class="res_img" src="images/ferm.png" style="cursor: pointer;">
+                        <img class="res_img" src="images/ferm.png" style="cursor: pointer;">
+                        <img class="res_img" src="images/test.png" style="cursor: pointer;">
+                        <img class="res_img" src="images/remove.png" style="cursor: pointer;">
+                    </div>
                     <div class="resources sml magenta" id="sn_div">
-                        <img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <div tooltip="Supernova" t-size="small"><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="supernovaAmt">X</span>
                     </div>
                     <div class="resources sml scarlet" id="ext_div">
-                        <img class="res_img" src="images/ext.png" onclick="EXOTIC.reset()" onmousemove="FORMS.reset_msg.set('ext')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <div tooltip="Exotic Matter" t-size="small"><img class="res_img" src="images/ext.png" tooltip="Exotic Matter" onclick="EXOTIC.reset()" onmousemove="FORMS.reset_msg.set('ext')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="extAmt">X</span>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ const STARS = {
     },
     effect() {
         let p = STARS.rankStr()
-        let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTreeUpg("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
+        let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
         let x =
         s.max(1).log10().add(1).pow(r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)))
         return x
@@ -28,8 +28,8 @@ const STARS = {
     generators: {
         req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
         unl(auto=false) {
-            if (player.atom.quarks.gte(!hasTreeUpg("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)) {
-                if(hasTreeUpg("s4")&&player.stars.unls > 4) player.stars.boost = auto?player.stars.boost.max(tmp.stars.generator_boost_bulk):player.stars.boost.add(1)
+            if (player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)) {
+                if(hasTree("s4")&&player.stars.unls > 4) player.stars.boost = auto?player.stars.boost.max(tmp.stars.generator_boost_bulk):player.stars.boost.add(1)
                 else player.stars.unls++
             }
         },
@@ -38,13 +38,13 @@ const STARS = {
             if (FERMIONS.onActive("13")) pow = E(0.5)
             else {
                 if (hasElement(50)) pow = pow.mul(1.05)
-                if (hasTreeUpg("s3")) pow = pow.mul(tmp.supernova.tree_eff.s3)
+                if (hasTree("s3")) pow = pow.mul(tmp.supernova.tree_eff.s3)
             }
 
             let x = E(player.stars.unls > i ? 1 : 0).add(player.stars.generators[i+1]||0).pow(pow)
 
             if (hasElement(49) && i==4) x = x.mul(tmp.elements.effect[49])
-            if (hasTreeUpg("s1") && i==4) x = x.mul(tmp.supernova.tree_eff.s1)
+            if (hasTree("s1") && i==4) x = x.mul(tmp.supernova.tree_eff.s1)
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
             if (hasElement(54)) x = x.mul(tmp.elements.effect[54])
             x = x.mul(tmp.bosons.upgs.photon[3].effect)
@@ -127,12 +127,12 @@ function updateStarsHTML() {
     tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
     tmp.el.stars_Eff.setTxt(format(tmp.stars.effect))
 
-    tmp.el.star_btn.setDisplay(hasTreeUpg("s4") || player.stars.unls < 5)
-    tmp.el.star_btn.setHTML((player.stars.unls < 5 || !hasTreeUpg("s4"))
+    tmp.el.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
+    tmp.el.star_btn.setHTML((player.stars.unls < 5 || !hasTree("s4"))
     ? `Unlock new type of Stars, require ${format(tmp.stars.generator_req)} Quark`
     : `Boost all-Star resources gain, require ${format(tmp.stars.generator_boost_req)} Quark<br>Currently: ${format(tmp.stars.generator_boost_eff)}x`)
 
-    tmp.el.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTreeUpg("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
+    tmp.el.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
 
     for (let x = 0; x < 5; x++) {
         let unl = player.stars.unls > x

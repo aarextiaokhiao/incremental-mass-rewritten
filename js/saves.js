@@ -42,14 +42,14 @@ function calc(dt, dt_offline) {
     }
     if (player.mainUpg.bh.includes(6) || player.mainUpg.atom.includes(6)) player.rp.points = player.rp.points.add(tmp.rp.gain.mul(dt))
     if (player.mainUpg.atom.includes(6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
-    if (hasTreeUpg("qol_ext8")) {
-		let max = hasTreeUpg("qol_ext9") ? 8 : 4
+    if (hasTree("qol_ext8")) {
+		let max = hasTree("qol_ext9") ? 8 : 4
 		for (var c = 1; c <= max; c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
 	}
     if (hasElement(14)) player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain.mul(dt*tmp.atom.quarkGainSec))
     if (hasElement(24)) player.atom.points = player.atom.points.add(tmp.atom.gain.mul(dt))
     if (hasElement(30) && !(CHALS.inChal(9) || FERMIONS.onActive("12"))) for (let x = 0; x < 3; x++) player.atom.particles[x] = player.atom.particles[x].add(player.atom.quarks.mul(dt/10))
-    if (hasElement(43)) for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTreeUpg("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
+    if (hasElement(43)) for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
 	if (player.bh.unl && tmp.pass) {
 		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
 		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
@@ -68,11 +68,11 @@ function calc(dt, dt_offline) {
 		player.atom.atomic = player.atom.atomic.add(tmp.atom.atomicGain.mul(dt))
 		for (let x = 0; x < 3; x++) player.atom.powers[x] = player.atom.powers[x].add(tmp.atom.particles[x].powerGain.mul(dt))
 	}
-    if (hasTreeUpg("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
+    if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
     player.md.mass = player.md.mass.add(tmp.md.mass_gain.mul(dt))
-    if (hasTreeUpg("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(dt) : tmp.md.passive_rp_gain.mul(dt))
-    if (hasTreeUpg("qol4")) STARS.generators.unl(true)
-    if (hasTreeUpg("qol7")) {
+    if (hasTree("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(dt) : tmp.md.passive_rp_gain.mul(dt))
+    if (hasTree("qol4")) STARS.generators.unl(true)
+    if (hasTree("qol7")) {
         for (let x = 0; x < BOSONS.upgs.ids.length; x++) {
             let id = BOSONS.upgs.ids[x]
             for (let y = 0; y < BOSONS.upgs[id].length; y++) BOSONS.upgs.buy(id,y)
@@ -80,9 +80,9 @@ function calc(dt, dt_offline) {
     }
     calcStars(dt)
     calcSupernova(dt, dt_offline)
-    EXOTIC.calc(dt)
+    EXT.calc(dt)
 
-    if (hasTreeUpg("qol6")) CHALS.exit(true)
+    if (hasTree("qol6")) CHALS.exit(true)
 
     tmp.pass = true
 
@@ -98,7 +98,7 @@ function calc(dt, dt_offline) {
     }
 
 	//player.supernova.times = tmp.supernova.bulk.max(player.supernova.times)
-	if (hasTreeUpg("qol_ext10") && tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
+	if (hasTree("qol_ext10") && tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
 	if (player.supernova.auto.on > -2) {
 		var list = player.supernova.auto.list
 		player.supernova.auto.t += dt
@@ -229,7 +229,7 @@ function getPlayerData() {
 				toggle: true,
 			}
         },
-        ext: EXOTIC.setup(),
+        ext: EXT.setup(),
         reset_msg: "",
         main_upg_msg: [0,0],
         tickspeed: E(0),
@@ -342,7 +342,8 @@ function decode(x) {
 }
 
 function save(){
-    if (cannotSave()) return
+    let str = encode(player)
+    if (cannotSave() || findNaN(str, true)) return
     if (localStorage.getItem(saveId) == '') wipe()
     localStorage.setItem(saveId,encode(player))
     if (tmp.saving < 1) {addNotify("Game Saved", 3); tmp.saving++}
@@ -361,6 +362,12 @@ function load(x){
 }
 
 function exporty() {
+    let str = encode(player)
+    if (findNaN(str, true)) {
+        addNotify("Error Exporting, because it got NaNed")
+        return
+    }
+
     save();
     let file = new Blob([btoa(JSON.stringify(player))], {type: "text/plain"})
     window.URL = window.URL || window.webkitURL;
@@ -371,6 +378,12 @@ function exporty() {
 }
 
 function export_copy() {
+    let str = encode(player)
+    if (findNaN(str, true)) {
+        addNotify("Error Exporting, because it got NaNed")
+        return
+    }
+
     let copyText = document.getElementById('copy')
     copyText.value = btoa(JSON.stringify(player))
     copyText.style.visibility = "visible"
@@ -399,6 +412,10 @@ function importy() {
 			let safe = decode(loadgame)
 			if (safe) {
 				setTimeout(_=>{
+					if (findNaN(loadgame, true)) {
+						addNotify("Error Importing, because it got NaNed")
+						return
+					}
 					load(loadgame)
 					save()
 					resetTemp()
@@ -435,7 +452,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "3/19/22 BETA BUILD"
+			document.getElementById("update").textContent = "4/13/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}
@@ -443,5 +460,30 @@ function loadGame(start=true, save) {
         setInterval(updateScreensHTML, 50)
         treeCanvas()
         setInterval(drawTreeHTML, 10)
+        setInterval(checkNaN,1000)
     }
+}
+
+function checkNaN() {
+    if (findNaN(player)) {
+        addNotify("Game Data got NaNed")
+
+        resetTemp()
+        loadGame(false)
+    }
+}
+
+function findNaN(obj, str=false, data=getPlayerData()) {
+    if (str ? typeof obj == "string" : false) obj = JSON.parse(atob(obj))
+    for (let x = 0; x < Object.keys(obj).length; x++) {
+        let k = Object.keys(obj)[x]
+        if (typeof obj[k] == "number") if (isNaN(obj[k])) return true
+        if (str) {
+            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+        } else {
+            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+        }
+        if (typeof obj[k] == "object") return findNaN(obj[k], str, data[k])
+    }
+    return false
 }

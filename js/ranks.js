@@ -8,7 +8,7 @@ const RANKS = {
             let reset = true
             if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
             if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
-            if (type == "tetr" && hasTreeUpg("qol5")) reset = false
+            if (type == "tetr" && hasTree("qol5")) reset = false
             if (type == "pent") reset = false
             if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
             if (reset) this.doReset[type]()
@@ -21,7 +21,7 @@ const RANKS = {
             let reset = true
             if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
             if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
-            if (type == "tetr" && hasTreeUpg("qol5")) reset = false
+            if (type == "tetr" && hasTree("qol5")) reset = false
             if (type == "pent") reset = false
             if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
             if (reset) this.doReset[type]()
@@ -31,7 +31,7 @@ const RANKS = {
     unl: {
         tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || player.mainUpg.atom.includes(3) },
         tetr() { return player.mainUpg.atom.includes(3) },
-        pent() { return hasTreeUpg("sn5") || this.hex() },
+        pent() { return hasTree("sn5") || this.hex() },
         hex() { return false /*CHROMA.unl() || player.ranks.hex.gte(1)*/ },
     },
     doReset: {
@@ -67,7 +67,7 @@ const RANKS = {
 				player.supernova.tree = list_keep
 			}
 
-            EXOTIC.doReset(true)
+            EXT.doReset(true)
         },
     },
     autoSwitch(rn) { player.auto_ranks[rn] = !player.auto_ranks[rn] },
@@ -237,7 +237,7 @@ const RANKS = {
 			'13'() {
 				let ret = player.ranks.pent.add(6).div(18).sqrt().softcap(1.5,0.2,0)
 				let cap = E(1.5)
-				if (AXIONS.unl()) cap = cap.add(tmp.ax.eff[16])
+				if (AXION.unl()) cap = cap.add(tmp.ax.eff[16])
 				return ret.min(cap)
 			}
 		},
@@ -302,7 +302,7 @@ const RANKS = {
         },
         pent() {
             let f = E(5/6)
-            if (AXIONS.unl()) f = f.mul(tmp.ax.eff[15])
+            if (AXION.unl()) f = f.mul(tmp.ax.eff[15])
             if (hasElement(81)) f = f.mul(0.88)
             if (future) f = f.div(player.mass.max(1).log10().add(1).pow(0.01))
             return f

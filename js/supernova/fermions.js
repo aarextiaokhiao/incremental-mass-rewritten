@@ -5,7 +5,7 @@ const FERMIONS = {
         let x = E(1)
         if (tmp.radiation.unl) x = x.mul(tmp.radiation.hz_effect)
         for (let j = 0; j < FERMIONS.types[i].length; j++) x = x.mul(E(1.25).pow(player.supernova.fermions.tiers[i][j]))
-        if (hasTreeUpg("fn1") && tmp.supernova) x = x.mul(tmp.supernova.tree_eff.fn1)
+        if (hasTree("fn1") && tmp.supernova) x = x.mul(tmp.supernova.tree_eff.fn1)
         x = x.mul(tmp.supernova.timeMult)
         return x
     },
@@ -19,7 +19,7 @@ const FERMIONS = {
     choose(i,x,a) {
 		if (!a && player.confirms.sn) if (!confirm("Are you sure to switch any type of any Fermion?")) return
 
-		let dual = hasTreeUpg("qol9") && player.supernova.fermions.dual
+		let dual = hasTree("qol9") && player.supernova.fermions.dual
 		if (!dual) player.supernova.fermions.choosed2 = ""
 
 		tmp.tickspeedEffect.eff = E(1)
@@ -81,14 +81,14 @@ const FERMIONS = {
 	},
     getUnlLength(x) {
         let u = 2
-        if (hasTreeUpg("fn2")) u++
-        if (hasTreeUpg("fn6")) u++
-        if (hasTreeUpg("fn7")) u++
-        if (hasTreeUpg("fn8")) u++
+        if (hasTree("fn2")) u++
+        if (hasTree("fn6")) u++
+        if (hasTree("fn7")) u++
+        if (hasTree("fn8")) u++
         return u
     },
     names: ['quark', 'lepton'],
-    sub_names: [["Up","Down","Charm","Strange","Top","Bottom"],["Electron","Muon","Tau","Neutrion","Neut-Muon","Neut-Tau"]],
+    sub_names: [["Up","Down","Charm","Strange","Top","Bottom"],["Electron","Muon","Tau","Neutrino","Neut-Muon","Neut-Tau"]],
     types: [
         [
             {
@@ -223,7 +223,7 @@ const FERMIONS = {
             {
                 maxTier() {
                     let x = 15
-                    if (hasTreeUpg("fn5")) x += 35
+                    if (hasTree("fn5")) x += 35
                     return x
                 },
                 nextTierAt(x) {
@@ -238,7 +238,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(1)
-                    let x = i.add(1).log10().mul(t).div(100).add(1).softcap(1.5,hasTreeUpg("fn5")?0.75:0.25,0)
+                    let x = i.add(1).log10().mul(t).div(100).add(1).softcap(1.5,hasTree("fn5")?0.75:0.25,0)
                     return x
                 },
                 desc(x) {
@@ -305,7 +305,7 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(1)
 					let sc = E(0.25)
-					if (AXIONS.unl()) sc = tmp.ax.eff[11].mul(sc)
+					if (AXION.unl()) sc = tmp.ax.eff[11].mul(sc)
                     let x = i.max(1).log10().add(1).mul(t).div(200).add(1).softcap(1.5,0.5,0).softcap(20,sc,0)
                     return x
                 },
@@ -329,7 +329,7 @@ const FERMIONS = {
 					if (FERMIONS.onActive(14)) return E(1)
 					if (t.eq(0)) return E(1)
 					let sc = E(0.25)
-					if (AXIONS.unl()) sc = tmp.ax.eff[11].mul(sc)
+					if (AXION.unl()) sc = tmp.ax.eff[11].mul(sc)
                     return t.add(1).times(i.div(1e30).add(1).log10()).div(400).add(1).softcap(2.5, sc, 0)
                 },
                 desc(x) {
@@ -353,7 +353,7 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(0)
                     let x = i.add(1).log10().times(t.add(1).log10()).add(1).log10().div(20)
-			        if (AXIONS.unl()) x = x.mul(tmp.ax.eff[5])
+			        if (AXION.unl()) x = x.mul(tmp.ax.eff[5])
                     return x
                 },
                 desc(x) {
@@ -428,7 +428,7 @@ function updateFermionsTemp() {
 
 function updateFermionsHTML() {
 	tmp.el.f_normal.setDisplay(player.supernova.fermions.choosed ? 1 : 0)
-	tmp.el.f_dual.setDisplay(hasTreeUpg("qol9"))
+	tmp.el.f_dual.setDisplay(hasTree("qol9"))
 	tmp.el.f_dual.setTxt("Dual: " + (player.supernova.fermions.dual ? "ON" : "OFF"))
     for (i = 0; i < 2; i++) {
         tmp.el["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i]))

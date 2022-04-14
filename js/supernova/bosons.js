@@ -13,21 +13,21 @@ const BOSONS = {
         },
         z_boson() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
-            if (hasTreeUpg("sn4")) x = x.pow(1.5)
+            if (hasTree("sn4")) x = x.pow(1.5)
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         photon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1)
-            if (hasTreeUpg("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
+            if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         gluon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1)
-            if (hasTreeUpg("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
+            if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
@@ -38,7 +38,7 @@ const BOSONS = {
         },
         hb() {
             let x = E(0.01).mul(tmp.fermions.effs[1][1])
-            if (hasTreeUpg("bs1")) x = x.mul(tmp.supernova?tmp.supernova.tree_eff.bs1:1)
+            if (hasTree("bs1")) x = x.mul(tmp.supernova?tmp.supernova.tree_eff.bs1:1)
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
@@ -73,7 +73,7 @@ const BOSONS = {
         buy(id,x) {
             if (tmp.bosons.upgs[id][x].can) {
                 player.supernova.b_upgs[id][x] = player.supernova.b_upgs[id][x].max(tmp.bosons.upgs[id][x].bulk)
-                if (!hasTreeUpg("qol7")) player.supernova.bosons[id] = player.supernova.bosons[id].sub(BOSONS.upgs[id][x].cost(tmp.bosons.upgs[id][x].bulk.sub(1))).max(0)
+                if (!hasTree("qol7")) player.supernova.bosons[id] = player.supernova.bosons[id].sub(BOSONS.upgs[id][x].cost(tmp.bosons.upgs[id][x].bulk.sub(1))).max(0)
             }
         },
         photon: [
@@ -93,7 +93,7 @@ const BOSONS = {
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
 					let a = x.add(1).pow(0.75)
-					if (hasTreeUpg("fn4")) a = a.pow(2)
+					if (hasTree("fn4")) a = a.pow(2)
 					return a
 				},
                 effDesc(x) { return format(x)+"x" },
@@ -134,7 +134,7 @@ const BOSONS = {
                 effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
                     let a = x.add(1).pow(0.75)
-                    if (hasTreeUpg("fn4")) a = a.pow(2)
+                    if (hasTree("fn4")) a = a.pow(2)
                     return a
                 },
                 effDesc(x) { return format(x)+"x" },

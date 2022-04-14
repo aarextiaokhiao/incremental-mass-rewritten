@@ -166,7 +166,7 @@ function updateTabsHTML() {
 function updateUpperHTML() {
 	tmp.el.reset_desc.setHTML(player.reset_msg)
 	tmp.el.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
-    let hideSome = EXOTIC.unl()
+    let hideSome = EXT.unl()
 	tmp.el.rp_div.setVisible(!hideSome)
 	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)))
 	let unl = FORMS.bh.see() && !hideSome
@@ -197,17 +197,23 @@ function updateUpperHTML() {
 	tmp.el.quark_div.setVisible(unl)
 	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec):0,hasElement(14)))
 
-	unl = MASS_DILATION.unlocked()
-	tmp.el.md_div.setVisible(unl)
-	if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTreeUpg("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+	let scut = AXION.unl() && tmp.ax.lvl[23].gt(0)
+	tmp.el.scut_div.setDisplay(scut)
+	tmp.el.md_div.setDisplay(!scut)
+	if (scut) {
+	} else {
+		unl = MASS_DILATION.unlocked()
+		tmp.el.md_div.setVisible(unl)
+		if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+	}
 
 	unl = player.supernova.post_10
 	tmp.el.sn_div.setVisible(unl)
 	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
 
-	unl = EXOTIC.unl(true)
+	unl = EXT.unl(true)
 	tmp.el.ext_div.setVisible(unl)
-	if (unl) tmp.el.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXOTIC.gain()))
+	if (unl) tmp.el.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 }
 
 function updateRanksHTML() {
@@ -348,7 +354,7 @@ function updateBlackHoleHTML() {
 
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS[x]=="hex"?RANKS.unl.hex():CONFIRMS[x]=="ext"?EXOTIC.unl():CONFIRMS[x] == "sn"?player.supernova.unl:player[CONFIRMS[x]].unl)
+		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS[x]=="hex"?RANKS.unl.hex():CONFIRMS[x]=="ext"?EXT.unl():CONFIRMS[x] == "sn"?player.supernova.unl:player[CONFIRMS[x]].unl)
 		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	tmp.el.offline_active.setTxt(player.offline.active?"ON":"OFF")
@@ -375,7 +381,7 @@ function updateHTML() {
 	updateSupernovaEndingHTML()
 	updateExoticHTML()
 	updateTabsHTML()
-	if ((!tmp.supernova.reached || player.supernova.post_10 || EXOTIC.unl(true)) && tmp.tab != 5) {
+	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 5) {
 		updateUpperHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {

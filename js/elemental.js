@@ -481,7 +481,7 @@ const ELEMENTS = {
             cost: E('e5e7'),
             effect() {
 				let r = player.supernova.stars.max(1).log10().div(75).max(1)
-				if (hasTreeUpg("feat2")) r = r.add(0.015)
+				if (hasTree("feat2")) r = r.add(0.015)
 				return r.softcap(1.75,40,3).min(2.25)
             },
             effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,175) },
@@ -549,7 +549,7 @@ const ELEMENTS = {
     */
 	getUnlLength() {
 		let u = 4
-		if (EXOTIC.unl()) {
+		if (EXT.unl()) {
 			u = 81
 		} else if (player.supernova.unl) {
 			u = 49+5

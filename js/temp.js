@@ -24,10 +24,13 @@ function resetTemp() {
             time: 0,
             tree_choosed: "",
             tree_had: [],
+            tree_had2: [],
             tree_eff: {},
             tree_unlocked: {},
             tree_afford: {},
+            tree_afford2: [],
         },
+		tree_tab: 0,
     
         radiation: {
             unl: false,
@@ -43,11 +46,20 @@ function resetTemp() {
             },
         },
     }
+    for (let j = 0; j < TREE_TAB.length; j++) {
+        tmp.supernova.tree_had2[j] = []
+        tmp.supernova.tree_afford2[j] = []
+    }
     for (let x = 0; x < TABS[1].length; x++) tmp.stab.push(0)
-    for (let i = 0; i < 19; i++) {
-        for (let j = 0; j < 19; j++) {
-            let id = TREE_IDS[i][j]
-            if (TREE_UPGS.ids[id]) tmp.supernova.tree_had.push(id)
+    for (let i = 0; i < TREE_IDS.length; i++) {
+        for (let j = 0; j < TREE_TAB.length; j++) {
+            for (let k = 0; k < TREE_IDS[i][j].length; k++) {
+                let id = TREE_IDS[i][j][k]
+                if (id != "") {
+                    tmp.supernova.tree_had2[j].push(id)
+                    tmp.supernova.tree_had.push(id)
+                }
+            }
         }
     }
 }

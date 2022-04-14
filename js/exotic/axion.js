@@ -1,5 +1,5 @@
 //AXIONS
-let AXIONS = {
+let AXION = {
 	unl() {
 		return tmp.ax && tmp.ax.eff !== undefined
 	},
@@ -25,25 +25,25 @@ let AXIONS = {
 		var normal = E(0)
 		var other = E(0)
 		var type = Math.floor(i / 4)
-		var inc = hasTreeUpg("ext_l5") && tmp.supernova.tree_eff ? tmp.supernova.tree_eff.ext_l5 : E(1)
+		var inc = hasTree("ext_l5") && tmp.supernova.tree_eff ? tmp.supernova.tree_eff.ext_l5 : E(1)
 		for (var x = 4 * type; x < 4 * type + 4; x++) {
 			var lvl = player.ext.ax.upgs[x]
 			if (i == x) normal = lvl
 			else other = other.add(lvl)
 		}
 		if (type < 2) {
-			if (hasTreeUpg("ext_l3")) {
+			if (hasTree("ext_l3")) {
 				if (i % 4 < 3) other = other.sub(player.ext.ax.upgs[i + 1].div(2))
 				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(2))
 			}
-			if (hasTreeUpg("ext_l4")) {
+			if (hasTree("ext_l4")) {
 				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(3))
 				if (i % 4 > 1) other = other.sub(player.ext.ax.upgs[i - 2].div(3))
 				if (i % 4 > 2) other = other.sub(player.ext.ax.upgs[i - 3].div(3))
 			}
 		}
 
-		var sum = normal.add(other.max(0).mul(inc)).mul(AXIONS.costScale())
+		var sum = normal.add(other.max(0).mul(inc)).mul(AXION.costScale())
 
 		var r = E([2,3,5][type])
 			.pow(sum.add(i - 4))
@@ -52,16 +52,16 @@ let AXIONS = {
 	},
 	costScale() {
 		var r = E(1)
-		if (hasTreeUpg("ext_l1")) r = E(0.8)
+		if (hasTree("ext_l1")) r = E(0.8)
 		if (tmp.chal) r = r.mul(tmp.chal.eff[13])
 		return r
 	},
 	bulk(p) {
 		var type = Math.floor(p / 4)
-		var bulk = player.ext.ax.res[type].max(1).div(tmp.ax.cost[p]).log([2,3,5][type]).div(AXIONS.costScale()).add(1).floor()
+		var bulk = player.ext.ax.res[type].max(1).div(tmp.ax.cost[p]).log([2,3,5][type]).div(AXION.costScale()).add(1).floor()
 
 		var lvl = player.ext.ax.upgs[p]
-		var max = AXIONS.maxLvl(type)
+		var max = AXION.maxLvl(type)
 		return bulk.min(max.sub(lvl)).max(0)
 	},
 	canBuy(i) {
@@ -79,14 +79,14 @@ let AXIONS = {
 	},
 
 	prod(x) {
-		if (!AXIONS.unl()) return E(0)
+		if (!AXION.unl()) return E(0)
 
 		let r = E(0)
 		if (x == 0) r = player.mass.max(1).log10().pow(0.6)
-			.mul(EXOTIC.eff().add(1).log(100).add(1).pow(3))
-		if (x == 1 && hasTreeUpg("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
-			.mul(EXOTIC.eff().add(1).log10().add(1).sqrt())
-		if (x == 2 && hasTreeUpg("ext_e1")) r = player.supernova.radiation.hz.max(1).log10().div(1e3).pow(3).div(1e3)
+			.mul(EXT.eff().add(1).log(100).add(1).pow(3))
+		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
+			.mul(EXT.eff().add(1).log10().add(1).sqrt())
+		if (x == 2 && hasTree("ext_e1")) r = player.supernova.radiation.hz.max(1).log10().div(1e3).pow(3).div(1e3)
 
 		if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
 		return r
@@ -95,12 +95,12 @@ let AXIONS = {
 	getUpgLvl(i) {
 		var r = player.ext.ax.upgs[i]
 		var type = Math.floor(i / 4)
-		if (hasTreeUpg("ext_l2") && type < 2) r = r.add(player.ext.ax.upgs[[i+4,i-4][type]].div([1.5,i*1.5][type]))
+		if (hasTree("ext_l2") && type < 2) r = r.add(player.ext.ax.upgs[[i+4,i-4][type]].div([1.5,i*1.5][type]))
 		return r.max(0)
 	},
 	getLvl(p, base) {
-		var req = AXIONS.ids[p].req
-		var r = AXIONS.getBaseLvl(p).add(AXIONS.getBonusLvl(p))
+		var req = AXION.ids[p].req
+		var r = AXION.getBaseLvl(p).add(AXION.getBonusLvl(p))
 		if (!base) r = r.sub(req)
 		return r.max(0)
 	},
@@ -115,11 +115,11 @@ let AXIONS = {
 		var y = Math.floor(p / 4)
 		var r = E(0)
 		if (y > 0) r = tmp.ax.upg[y + 3].sub((x + 4) * (y + 1)).div(y + 2).max(0)
-		if (hasTreeUpg("ext_b1") && y == 0) r = AXIONS.getBaseLvl(p + 12).mul(2).add(r)
+		if (hasTree("ext_b1") && y == 0) r = AXION.getBaseLvl(p + 12).mul(2).add(r)
 		return r
 	},
 	getEff(p, l) {
-		return AXIONS.ids[p].eff(l)
+		return AXION.ids[p].eff(l)
 	},
 
 	maxRows: 6,
@@ -251,7 +251,7 @@ let AXIONS = {
 		},
 		11: {
 			title: "Lepton Anomaly",
-			desc: "Neutrion and Neut-Muon softcaps are weaker.",
+			desc: "Neutrino and Neut-Muon softcaps are weaker.",
 			req: E(5),
 			eff(x) {
 				return x.div(2).add(27).cbrt().add(2).min(10).div(5)
@@ -358,13 +358,13 @@ let AXIONS = {
 
 		20: {
 			title: "X-Automation",
-			desc: "Automate X Axions.",
+			desc: "Automate X AXION.",
 			unl: () => CHROMA.unl(),
 			req: E(1/0)
 		},
 		21: {
 			title: "Y-Automation",
-			desc: "Automate Y Axions.",
+			desc: "Automate Y AXION.",
 			unl: () => CHROMA.unl(),
 			req: E(1/0)
 		},
@@ -385,16 +385,16 @@ let AXIONS = {
 
 function setupAxionHTML() {
 	var html = ""
-	for (var y = -1; y < AXIONS.maxRows; y++) {
+	for (var y = -1; y < AXION.maxRows; y++) {
 		html += "</tr><tr>"
 		for (var x = -1; x < 5; x++) {
 			var x_empty = x == -1 || x == 4
 			var y_empty = y == -1
 			if (x_empty && y_empty) html += "<td class='ax'></td>"
-			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXIONS.buy(`+x+`)">X`+(x+1)+`</button></td>`
+			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
 			if (x_empty && !y_empty && y < 4) {
 				var type = x == 4 ? 2 : 1
-				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXIONS.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
+				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
 			}
 			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
 		}
@@ -406,19 +406,19 @@ function updateAxionHTML() {
 	tmp.el.st_res0.setHTML(format(player.ext.ax.res[0]))
 	tmp.el.st_res1.setHTML(format(player.ext.ax.res[1]))
 	tmp.el.st_res2.setHTML(format(player.ext.ax.res[2]))
-	tmp.el.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXIONS.prod(0)))
-	tmp.el.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXIONS.prod(1)))
-	tmp.el.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXIONS.prod(2)))
+	tmp.el.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXION.prod(0)))
+	tmp.el.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXION.prod(1)))
+	tmp.el.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXION.prod(2)))
 	tmp.el.st_res2_disp.setDisplay(CHROMA.unl())
 
 	for (var i = 0; i < 12; i++) {
-		tmp.el["ax_upg"+i].setClasses({btn_ax: true, locked: !AXIONS.canBuy(i)})
+		tmp.el["ax_upg"+i].setClasses({btn_ax: true, locked: !AXION.canBuy(i)})
 		tmp.el["ax_upg"+i].setOpacity(tmp.ax.hover.hide.includes("u"+i) ? 0.25 : 1)
 		tmp.el["ax_upg"+i].setDisplay(i < 8 || CHROMA.unl())
 	}
-	for (var i = 0; i < AXIONS.maxRows * 4; i++) {
+	for (var i = 0; i < AXION.maxRows * 4; i++) {
 		tmp.el["ax_boost"+i].setClasses({btn_ax: true, locked: tmp.ax.lvl[i].eq(0), bonus: tmp.ax.hover.bonus.includes("b"+i)})
-		tmp.el["ax_boost"+i].setDisplay(AXIONS.ids[i].unl === undefined || AXIONS.ids[i].unl())
+		tmp.el["ax_boost"+i].setDisplay(AXION.ids[i].unl === undefined || AXION.ids[i].unl())
 		tmp.el["ax_boost"+i].setOpacity(tmp.ax.hover.bonus.includes("b"+i) ? 1 : tmp.ax.hover.hide.includes("b"+i) || tmp.ax.lvl[i].eq(0) ? 0.25 : 1)
 	}
 
@@ -430,16 +430,16 @@ function updateAxionHTML() {
 			var name = ["X","Y","Z"][type]
 			tmp.el.ax_title.setTxt(name + "-Axion Upgrade " + ((id % 4) + 1))
 			tmp.el.ax_req.setHTML("Cost: " + format(tmp.ax.cost[id]) + " " + name + "-Axions")
-			tmp.el.ax_req.setClasses({"red": !AXIONS.canBuy(id)})
-			tmp.el.ax_eff.setHTML("Level: " + format(player.ext.ax.upgs[id], 0) + " / " + format(AXIONS.maxLvl(type), 0) + " (" + format(tmp.ax.upg[id]) + ")")
+			tmp.el.ax_req.setClasses({"red": !AXION.canBuy(id)})
+			tmp.el.ax_eff.setHTML("Level: " + format(player.ext.ax.upgs[id], 0) + " / " + format(AXION.maxLvl(type), 0) + " (" + format(tmp.ax.upg[id]) + ")")
 		}
 		if (tmp.ax.hover.id[0] == "b") {
 			var id = Number(tmp.ax.hover.id.split("b")[1])
 			var locked = tmp.ax.lvl[id].eq(0)
-			tmp.el.ax_title.setTxt(AXIONS.ids[id].title + " (b" + id + ")")
-			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXIONS.getLvl(id, true)) + " / " + format(AXIONS.ids[id].req, 0) + ")" : AXIONS.ids[id].desc)
+			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (b" + id + ")")
+			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
 			tmp.el.ax_req.setClasses({"red": locked})
-			tmp.el.ax_eff.setHTML(locked ? "" : "Level: " + format(AXIONS.getBaseLvl(id).sub(AXIONS.ids[id].req.sub(1)), 0) + (AXIONS.getBonusLvl(id).gt(0) ? "+" + format(AXIONS.getBonusLvl(id)) : "") + (id < 20 ? ", Currently: " + AXIONS.ids[id].effDesc(tmp.ax.eff[id]) : ""))
+			tmp.el.ax_eff.setHTML(locked ? "" : "Level: " + format(AXION.getBaseLvl(id).sub(AXION.ids[id].req.sub(1)), 0) + (AXION.getBonusLvl(id).gt(0) ? "+" + format(AXION.getBonusLvl(id)) : "") + (id < 20 ? ", Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) : ""))
 		}
 	}
 }
@@ -447,12 +447,12 @@ function updateAxionHTML() {
 function updateAxionLevelTemp() {
 	tmp.ax.upg = {}
 	tmp.ax.lvl = {}
-	for (var i = 0; i < 12; i++) tmp.ax.upg[i] = AXIONS.getUpgLvl(i)
-	for (var i = 0; i < AXIONS.maxRows * 4; i++) tmp.ax.lvl[i] = AXIONS.getLvl(i)
+	for (var i = 0; i < 12; i++) tmp.ax.upg[i] = AXION.getUpgLvl(i)
+	for (var i = 0; i < AXION.maxRows * 4; i++) tmp.ax.lvl[i] = AXION.getLvl(i)
 }
 
 function updateAxionTemp() {
-	if (!EXOTIC.unl(true)) {
+	if (!EXT.unl(true)) {
 		tmp.ax = {}
 		return
 	}
@@ -468,11 +468,11 @@ function updateAxionTemp() {
 	tmp.ax.bulk = {}
 	tmp.ax.eff = {}
 	for (var i = 0; i < 12; i++) {
-		tmp.ax.cost[i] = AXIONS.cost(i)
-		tmp.ax.bulk[i] = AXIONS.bulk(i)
+		tmp.ax.cost[i] = AXION.cost(i)
+		tmp.ax.bulk[i] = AXION.bulk(i)
 	}
 	for (var i = 0; i < 20; i++) {
-		tmp.ax.eff[i] = AXIONS.getEff(i, tmp.ax.lvl[i])
+		tmp.ax.eff[i] = AXION.getEff(i, tmp.ax.lvl[i])
 	}
 }
 

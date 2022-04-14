@@ -3,7 +3,7 @@ let EXOTIC = {
 		return {
 			amt: E(0),
 			chal: { f7: true },
-			ax: AXIONS.setup()
+			ax: AXION.setup()
 		}
 	},
 
@@ -19,8 +19,8 @@ let EXOTIC = {
 	},
 	extLvl() {
 		let l = 0
-		if (hasTreeUpg("feat9")) l++
-		if (hasTreeUpg("feat10")) l++
+		if (hasTree("feat9")) l++
+		if (hasTree("feat10")) l++
 		return l
 	},
 	amt(r) {
@@ -44,9 +44,9 @@ let EXOTIC = {
 	reset(force, auto) {
 		if (!force) {
 			if (player.chal.comps[12].eq(0)) return false
-			player.ext.amt = player.ext.amt.add(EXOTIC.gain())
+			player.ext.amt = player.ext.amt.add(EXT.gain())
 		} else if (!auto && player.confirms.ext && !confirm("Are you sure?")) return false
-		EXOTIC.doReset()
+		EXT.doReset()
 		return true
 	},
 	doReset(hex) {
@@ -55,10 +55,10 @@ let EXOTIC = {
 		tmp.pass = true
 
 		let list = []
-		if (hasTreeUpg("qol_ext4")) list = list.concat("chal1","chal2","chal3","chal4","chal4a","chal5","chal6","chal7")
-		if (hasTreeUpg("qol_ext5")) list = list.concat("c","s1","s2","s3","s4","sn1","sn2","sn3","sn4","sn5","m1","m2","m3","rp1","bh1","bh2","t1","gr1","gr2","d1")
-		if (hasTreeUpg("qol_ext6")) list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6","fn7","fn8")
-		if (hasTreeUpg("qol_ext7")) list = list.concat("unl1","rad1","rad2","rad3","rad4","rad5")
+		if (hasTree("qol_ext4")) list = list.concat("chal1","chal2","chal3","chal4","chal4a","chal5","chal6","chal7")
+		if (hasTree("qol_ext5")) list = list.concat("c","s1","s2","s3","s4","sn1","sn2","sn3","sn4","sn5","m1","m2","m3","rp1","bh1","bh2","t1","gr1","gr2","d1")
+		if (hasTree("qol_ext6")) list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6","fn7","fn8")
+		if (hasTree("qol_ext7")) list = list.concat("unl1","rad1","rad2","rad3","rad4","rad5")
 
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
@@ -72,7 +72,7 @@ let EXOTIC = {
 		player.supernova.times = E(0)
 		player.supernova.stars = E(0)
 
-		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(hasTreeUpg("qol_ext4") && c <= 8 ? 50 : hasTreeUpg("qol_ext6") && c <= 11 ? 10 : 0)
+		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(hasTree("qol_ext4") && c <= 8 ? 50 : hasTree("qol_ext6") && c <= 11 ? 10 : 0)
 
 		player.supernova.bosons = {
 			pos_w: E(0),
@@ -95,7 +95,7 @@ let EXOTIC = {
 			choosed2: "",
 			dual: player.supernova.fermions.dual
 		}
-		if (hasTreeUpg("qol_ext4")) {
+		if (hasTree("qol_ext4")) {
 			for (var i = 0; i < 2; i++) {
 				for (var t = 0; t < 6; t++) player.supernova.fermions.tiers[i][t] = E(10)
 			}
@@ -119,16 +119,17 @@ let EXOTIC = {
 
 	calc(dt) {
 		if (tmp.chal.outside) player.ext.chal.f7 = false
-		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXIONS.prod(0).mul(dt))
-		player.ext.ax.res[1] = player.ext.ax.res[1].add(AXIONS.prod(1).mul(dt))
-		player.ext.ax.res[2] = player.ext.ax.res[2].add(AXIONS.prod(2).mul(dt))
+		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
+		player.ext.ax.res[1] = player.ext.ax.res[1].add(AXION.prod(1).mul(dt))
+		player.ext.ax.res[2] = player.ext.ax.res[2].add(AXION.prod(2).mul(dt))
 	}
 }
+let EXT = EXOTIC
 
 function updateExoticHTML() {
 	tmp.el.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
-		tmp.el.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXOTIC.gain()))
+		tmp.el.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 		updateAxionHTML()
 
 		tmp.el.hexDisp.setDisplay(RANKS.unl.hex())
@@ -140,8 +141,8 @@ function updateExoticHTML() {
 //Extra Buildings
 let EXTRA_BUILDINGS = {
 	unls: {
-		2: () => hasTreeUpg("eb1"),
-		3: () => hasTreeUpg("eb2")
+		2: () => hasTree("eb1"),
+		3: () => hasTree("eb2")
 	},
 	max: 3,
 	kind: ["bh", "ag"],
@@ -163,7 +164,7 @@ let EXTRA_BUILDINGS = {
 		pow: E(2),
 		eff(x) {
 			let r = x.times(5).add(1).log(2).div(500)
-			if (AXIONS.unl()) r = r.mul(tmp.ax.eff[9])
+			if (AXION.unl()) r = r.mul(tmp.ax.eff[9])
 			return r
 		}
 	},
@@ -173,7 +174,7 @@ let EXTRA_BUILDINGS = {
 		pow: E(3),
 		eff(x) {
 			let r = x.add(1).log10().div(3).add(1).div(10)
-			if (AXIONS.unl()) r = r.mul(tmp.ax.eff[10])
+			if (AXION.unl()) r = r.mul(tmp.ax.eff[10])
 			return r.min(0.7)
 		}
 	},
@@ -192,7 +193,7 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			if (x.eq(0)) return E(0)
 			let exp = x.add(1).log(3).div(100)
-			return E(tmp.atom ? tmp.atom.atomicEff : E(0)).add(1).pow(exp.min(1/10)).sub(1).mul(hasTreeUpg("rad4")?1:2/3).mul(exp.mul(10).max(1))
+			return E(tmp.atom ? tmp.atom.atomicEff : E(0)).add(1).pow(exp.min(1/10)).sub(1).mul(hasTree("rad4")?1:2/3).mul(exp.mul(10).max(1))
 		}
 	}
 }

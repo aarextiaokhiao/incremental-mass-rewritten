@@ -51,7 +51,7 @@ const SCALING_RES = {
 }
 
 const SCALING_FLOORS = {
-	supernova() { return !hasTreeUpg("sn5") },
+	supernova() { return !hasTree("sn5") },
 }
 
 const NAME_FROM_RES = {
@@ -153,8 +153,8 @@ function getScalingStart(type, name) {
 		}
 		if (name=='supernova') {
 			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
-			if (hasTreeUpg("feat6")) start = start.add(1)
-			if (hasTreeUpg("feat8")) start = start.add(3)
+			if (hasTree("feat6")) start = start.add(1)
+			if (hasTree("feat8")) start = start.add(3)
 		}
 	}
 	if (type=="hyper") {
@@ -168,8 +168,8 @@ function getScalingStart(type, name) {
 		}
 		if (name=='supernova') {
 			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
-			if (hasTreeUpg("feat6")) start = start.add(1)
-			if (hasTreeUpg("feat8")) start = start.add(3)
+			if (hasTree("feat6")) start = start.add(1)
+			if (hasTree("feat8")) start = start.add(3)
 		}
 	}
 	if (type=="ultra") {
@@ -182,7 +182,7 @@ function getScalingStart(type, name) {
 		}
 		if (name=='supernova') {
 			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
-			if (hasTreeUpg("feat8")) start = start.add(3)
+			if (hasTree("feat8")) start = start.add(3)
 		}
 	}
 	if (type=="meta") {
@@ -225,8 +225,8 @@ function getScalingPower(type, name) {
 		}
 		if (name=='tickspeed') {
 			power = power.mul(tmp.chal?tmp.chal.eff[1].tick:1)
-			if (hasTreeUpg("feat3")) power = power.mul(0.65)
-			if (chalOutside() && AXIONS.unl()) power = power.div(tmp.ax.eff[2])
+			if (hasTree("feat3")) power = power.mul(0.65)
+			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(15)) power = power.mul(0.8)
@@ -235,7 +235,7 @@ function getScalingPower(type, name) {
 			if (hasElement(15)) power = power.mul(0.8)
 		}
 		if (name=="fTier") {
-			if (hasTreeUpg("fn3")) power = power.mul(0.925)
+			if (hasTree("fn3")) power = power.mul(0.925)
 		}
 	}
 	if (type=="hyper") {
@@ -254,8 +254,8 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			if (player.mainUpg.bh.includes(12)) power = power.mul(0.85)
 			if (hasElement(27)) power = power.mul(0.75)
-			if (hasTreeUpg("feat3")) power = power.mul(0.65)
-			if (chalOutside() && AXIONS.unl()) power = power.div(tmp.ax.eff[2])
+			if (hasTree("feat3")) power = power.mul(0.65)
+			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -273,8 +273,8 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
-			if (hasTreeUpg("feat3")) power = power.mul(0.65)
-			if (chalOutside() && AXIONS.unl()) power = power.div(tmp.ax.eff[2])
+			if (hasTree("feat3")) power = power.mul(0.65)
+			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -289,13 +289,13 @@ function getScalingPower(type, name) {
 	if (type=="meta") {
 		if (name=="rank") {
 			if (player.ranks.pent.gte(4)) power = power.mul(RANKS.effect.pent[4]())
-			if (AXIONS.unl()) power = power.mul(tmp.ax.eff[6])
+			if (AXION.unl()) power = power.mul(tmp.ax.eff[6])
 			if (future) power = power.div(player.mass.max(1).log10().add(1).pow(0.01))
 		}
 		if (name=='tickspeed') {
 			if (player.ranks.pent.gte(5)) power = power.mul(RANKS.effect.pent[5]())
-			if (hasTreeUpg("feat3")) power = power.mul(0.65)
-			if (chalOutside() && AXIONS.unl()) power = power.div(tmp.ax.eff[2])
+			if (hasTree("feat3")) power = power.mul(0.65)
+			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}
 	return power
