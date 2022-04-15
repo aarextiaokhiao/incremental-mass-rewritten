@@ -25,7 +25,7 @@ let AXION = {
 		var normal = E(0)
 		var other = E(0)
 		var type = Math.floor(i / 4)
-		var inc = hasTree("ext_l5") && tmp.supernova.tree_eff ? tmp.supernova.tree_eff.ext_l5 : E(1)
+		var inc = hasTree("ext_l5") ? treeEff("ext_l5",1) : E(1)
 		for (var x = 4 * type; x < 4 * type + 4; x++) {
 			var lvl = player.ext.ax.upgs[x]
 			if (i == x) normal = lvl

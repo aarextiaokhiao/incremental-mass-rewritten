@@ -11,17 +11,6 @@ Decimal.prototype.modular=Decimal.prototype.mod=function (other){
     return this.sub(this.div(other).floor().mul(other));
 };
 
-Decimal.prototype.softcap = function (start, power, mode) {
-    var x = this.clone()
-    if (x.gte(start)) {
-        if ([0, "pow"].includes(mode)) x = x.div(start).pow(power).mul(start)
-        if ([1, "mul"].includes(mode)) x = x.sub(start).div(power).add(start)
-        if ([2, "exp"].includes(mode)) x = expMult(x.div(start), power).mul(start)
-        if ([3, "log"].includes(mode)) x = x.div(start).log(power).add(1).times(start)
-    }
-    return x
-}
-
 function calc(dt, dt_offline) {
     player.mass = player.mass.add(tmp.massGain.mul(dt))
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
@@ -341,14 +330,14 @@ function decode(x) {
 	return JSON.parse(atob(x))
 }
 
-function save(){
+function save(auto){
     let str = encode(player)
     if (cannotSave() || findNaN(str, true)) return
     if (localStorage.getItem(saveId) == '') wipe()
     localStorage.setItem(saveId,encode(player))
-    if (tmp.saving < 1) {addNotify("Game Saved", 3); tmp.saving++}
+    if (tmp.saving < 1 && !auto) {addNotify("Game Saved", 3); tmp.saving++}
 }
-setInterval(save, 30000)
+setInterval(function() { save(true) }, 30000)
 
 function load(x){
 	try {
@@ -452,7 +441,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "4/13/22 BETA BUILD"
+			document.getElementById("update").textContent = "4/14/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

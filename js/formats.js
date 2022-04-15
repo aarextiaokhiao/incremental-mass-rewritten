@@ -298,3 +298,125 @@ function toSuperscript(value) {
       .map((x) => x === "-" ? "₋" : SUPERSCRIPT_NUMBERS[parseInt(x, 10)])
       .join("");
 }
+
+//FUNCTIONS
+function format(ex, acc=2, type=player.options.notation, color) {
+	ex = E(ex)
+	neg = ex.lt(0)?"-":""
+	if (ex.mag == 1/0) return neg + '∞'
+	if (Number.isNaN(ex.mag)) return neg + 'NaN'
+	if (ex.lt(0)) ex = ex.mul(-1)
+	if (ex.eq(0)) return ex.toFixed(acc)
+	let e = ex.log10().floor()
+	switch (type) {
+		case "sc":
+			if (e.lt(3)) {
+				return neg+ex.toFixed(Math.max(Math.min(acc-e.toNumber(), acc), 0))
+			} else if (e.lt(6)) {
+				return neg+ex.floor().toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+			} else {
+				if (ex.gte("eeee10")) {
+					let slog = ex.slog()
+					return (slog.gte(1e9)?'':E(10).pow(slog.sub(slog.floor())).toFixed(3)) + "F" + format(slog.floor(), 0)
+				}
+				let m = ex.div(E(10).pow(e))
+				return neg + (e.gte(1e4) ? 'e' + format(e, Math.max(acc, 3)) : m.toFixed(Math.max(acc, 2)) + 'e' + format(e, 0))
+			}
+		case "st":
+			let e3 = ex.log(1e3).floor()
+			if (e3.lt(1)) {
+				return neg+ex.toFixed(Math.max(Math.min(acc - e.toNumber(), acc), 0))
+			} else {
+				let e3_mul = e3.mul(3)
+				let ee = e3.log10().floor()
+				if (ee.gte(3000)) return "e"+format(e, acc, "st")
+
+				let final = ""
+				if (e3.lt(4)) final = ["", "K", "M", "B"][Math.round(e3.toNumber())]
+				else {
+					let ee3 = Math.floor(e3.log(1e3).toNumber())
+					if (ee3 < 100) ee3 = Math.max(ee3 - 1, 0)
+					e3 = e3.sub(1).div(E(10).pow(ee3*3))
+					while (e3.gt(0)) {
+						let div1000 = e3.div(1e3).floor()
+						let mod1000 = e3.sub(div1000.mul(1e3)).floor().toNumber()
+						if (mod1000 > 0) {
+							if (mod1000 == 1 && !ee3) final = "U"
+							if (ee3) final = colorize(FORMATS.standard.tier2(ee3), color) + (final ? "-" + final : "")
+							if (mod1000 > 1) final = FORMATS.standard.tier1(mod1000) + final
+						}
+						e3 = div1000
+						ee3++
+					}
+				}
+
+				let m = ex.div(E(10).pow(e3_mul))
+				return neg + (ee.gte(4) ? '' : (m.toFixed(E(2).max(acc).sub(e.sub(e3_mul)).toNumber())) + ' ') + final
+			}
+		default:
+			return FORMATS[type] ? neg+FORMATS[type].format(ex, acc) : neg+format(ex, acc, "sc")
+	}
+}
+
+function formatColored(x, p, mass) {
+	return mass ? formatMass(x, true) : format(x, p, player.options.notation, true)
+}
+
+function colorize(x, color) {
+	if (color) x = "<span class='red'>" + x + "</span>"
+	return x
+}
+
+function formatMass(ex, color) {
+	let f = color ? formatColored : format
+    ex = E(ex)
+    if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
+    if (ex.gte(uni(1))) return f(ex.div(1.5e56)) + ' uni'
+    if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'
+    if (ex.gte(1.989e33)) return f(ex.div(1.989e33)) + ' M☉'
+    if (ex.gte(5.972e27)) return f(ex.div(5.972e27)) + ' M⊕'
+    if (ex.gte(1.619e20)) return f(ex.div(1.619e20)) + ' MME'
+    if (ex.gte(1e6)) return f(ex.div(1e6)) + ' tonne'
+    if (ex.gte(1e3)) return f(ex.div(1e3)) + ' kg'
+    return f(ex) + ' g'
+}
+
+function formatMultiply(a) {
+	if (a.gte(2)) return "x"+format(a)
+	return "+"+format(a.sub(1).mul(100))+"%"
+}
+	
+function formatGain(amt, gain, isMass=false, main=false) {
+	let [al, gl] = [amt.max(1).log10(), gain.max(1).log10()]
+	let [al2, gl2] = [al.max(1).log10(), gl.max(1).log10()]
+
+	let f = isMass?formatMass:format
+	if (!main && gain.max(amt).gte("ee4")) return ""
+	if (al.gt(0) && gl.sub(al).gte(E(1e3).div(al))) {
+		if (al2.gt(0) && gl2.sub(al2).gte(E(1e3).div(al2))) return "(x"+format(E(10).pow(gl2.sub(al2).mul(20)))+"s)"
+		if (amt.gte(mlt(1))) return "(+"+format(gl.sub(al).mul(2e-8),3)+" mlt/s)"
+		return "("+formatMultiply(E(10).pow(gl.sub(al).mul(20)))+"/s)"
+	}
+	if (gain.div(amt).gte(1e-6)) return "(+"+f(gain)+"/s)"
+	return ""
+}
+
+function formatGet(a, g, static) {
+	g = g.max(0)
+	if (g.lt(static ? 0 : a)) return ""
+	return "(+" + format(g,0) + (a.gte(100) && g.gte(a.div(5)) ? "/" + formatMultiply(g.div(a).add(1),2) : "") + ")"
+}
+
+function formatGainOrGet(a, g, p) {
+	return (p ? formatGain : formatGet)(a, g)
+}
+
+function formatTime(ex,type="s") {
+    ex = E(ex)
+    if (ex.gte(86400*365)) return format(ex.div(86400*365).floor(),0)+"y, "+formatTime(ex.mod(86400*365))
+    if (ex.gte(86400*7)) return format(ex.div(86400*7).floor(),0)+"w, "+formatTime(ex.mod(86400*7),'w')
+    if (ex.gte(86400)||type=="w") return format(ex.div(86400).floor(),0)+"d, "+formatTime(ex.mod(86400),'d')
+    if (ex.gte(3600)||type=="d") return (ex.div(3600).gte(10)||type!="d"?"":"0")+format(ex.div(3600).floor(),0)+":"+formatTime(ex.mod(3600),'h')
+    if (ex.gte(60)||type=="h") return (ex.div(60).gte(10)||type!="h"?"":"0")+format(ex.div(60).floor(),0)+":"+formatTime(ex.mod(60),'m')
+    return (ex.gte(10)||type!="m"?"":"0")+format(ex,2)
+}

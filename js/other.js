@@ -96,6 +96,17 @@ const POPUP_GROUPS = {
             'font-size': "14px",
         },
     },
+	chroma: {
+        html: `
+            Congratulations!<br><br><b class='rainbow'>You have unravelled the prism, and unleashed the colors!</b><br><br>
+            <b style='color:#3f00bf'>Chroma has been unlocked in Exotic tab!</b>
+        `,
+        width: 400,
+        height: 150,
+        otherStyle: {
+            'font-size': "14px",
+        },
+	},
 
 	ap_chroma: {
 		html: `

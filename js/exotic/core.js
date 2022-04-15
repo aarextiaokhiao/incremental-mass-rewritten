@@ -2,7 +2,7 @@ let EXOTIC = {
 	setup() {
 		return {
 			amt: E(0),
-			chal: { f7: true },
+			chal: { },
 			ax: AXION.setup()
 		}
 	},
@@ -52,6 +52,8 @@ let EXOTIC = {
 	doReset(hex) {
 		player.ext.time = 0
 		player.ext.chal.f7 = true
+		player.ext.chal.f8 = true
+		player.ext.chal.f9 = true
 		tmp.pass = true
 
 		let list = []
@@ -118,7 +120,10 @@ let EXOTIC = {
 	},
 
 	calc(dt) {
+		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
+		if (!player.supernova.fermions.choosed && !player.supernova.fermions.choosed2) player.ext.chal.f9 = false
+
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
 		player.ext.ax.res[1] = player.ext.ax.res[1].add(AXION.prod(1).mul(dt))
 		player.ext.ax.res[2] = player.ext.ax.res[2].add(AXION.prod(2).mul(dt))

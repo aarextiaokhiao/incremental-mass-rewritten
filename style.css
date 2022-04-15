@@ -80,15 +80,6 @@ button {
 	height: calc(100% - 320px);
 }
 
-#tree_table_fix {
-	width: 95%;
-	height: 100%;
-	max-width: 1406px;
-	max-height: 834px;
-	border: solid 2px white;
-	overflow: auto;
-}
-
 #tree_table {
 	width: 100%;
 	height: 100%;
@@ -292,6 +283,10 @@ button {
 
 .btn_tree:not(.bought).locked {
 	border-color: #171717;
+}
+
+.btn_tree:not(.bought).failed {
+	border-color: red;
 }
 
 .btn_tree:not(.perm).bought {

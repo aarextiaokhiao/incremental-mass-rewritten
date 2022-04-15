@@ -38,7 +38,7 @@ const BOSONS = {
         },
         hb() {
             let x = E(0.01).mul(tmp.fermions.effs[1][1])
-            if (hasTree("bs1")) x = x.mul(tmp.supernova?tmp.supernova.tree_eff.bs1:1)
+            if (hasTree("bs1")) x = x.mul(treeEff("bs1",1))
             x = x.mul(tmp.supernova.timeMult)
             return x
         },

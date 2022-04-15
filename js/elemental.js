@@ -507,7 +507,7 @@ const ELEMENTS = {
             desc: `Gain more Frequency based on Tau and Neut-Muon.`,
             cost: E('e3.5e8'),
             effect() {
-				return player.supernova.fermions.tiers[1][2].mul(.02).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
+				return player.supernova.fermions.tiers[1][2].div(40).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
             },
             effDesc(x) { return format(x)+"x" },
         },

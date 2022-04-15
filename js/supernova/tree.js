@@ -77,7 +77,7 @@ const TREE_UPGS = {
             desc: `Supernova boosts Neutron Star gain.`,
             cost: E(350),
             effect() {
-                let x = E(2).add(hasTree("sn4")?tmp.supernova.tree_eff.sn4:0).pow(player.supernova.times.softcap(15,0.8,0).softcap(25,0.5,0))
+                let x = E(2).add(hasTree("sn4")?treeEff("sn4"):0).pow(player.supernova.times.softcap(15,0.8,0).softcap(25,0.5,0))
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -445,7 +445,7 @@ const TREE_UPGS = {
 				let sn = player.supernova.times
 				let b = sn.div(300).add(1)
 				if (future && sn.gt(300)) b = E(2).pow(sn.div(300).sqrt()) //For a future upgrade
-                let x = b.pow(sn.sub(40)).max(1)
+                let x = b.pow(sn.sub(40).max(0)).sub(1).div(10).add(1)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -536,6 +536,12 @@ const TREE_UPGS = {
 			branch: ["rad3"],
 			desc: `Meta-Boost I is stronger based on Pents.`,
 			cost: E("1e370"),
+			effect() {
+				return player.ranks.pent.div(5).add(1).log10().div(2)
+			},
+			effDesc(x) {
+				return "n -> " + format(x) + "n^2.5"
+			},
 		},
 		ext_c: {
 			branch: ["eb2"],
@@ -804,9 +810,9 @@ const TREE_UPGS = {
 		feat3: {
 			req() { return player.mass.gte(uni("e2.5e10")) && player.mainUpg.rp.length + player.mainUpg.bh.length + player.mainUpg.atom.length < 30 },
 			reqDesc() { return "Get " + formatMass(uni("ee25")) + " with at most 30 Main Upgrades. [Turn off automation in Upgrades and restart a Supernova run first!]" },
-			desc: `All Tickspeed scalings scale 35% weaker.`,
+			desc: `Pre-Ultra Tickspeed scalings scale 15% weaker.`,
 			perm: 2,
-			cost: E(1e155),
+			cost: E(1e155)
 		},
 		feat4: {
 			unl() { return EXT.unl() },
@@ -825,39 +831,43 @@ const TREE_UPGS = {
 		feat5: {
 			unl() { return EXT.unl() },
 			req() { return player.mass.gte(mlt(1)) && player.ext.time <= 3600 },
-			reqDesc() { return `Reach ${formatMass(mlt(1))} mass in 1 hour of Exotic Run.` },
+			failed() { return player.ext.time > 3600 },
+			reqDesc() { return `Reach ${formatMass(mlt(1))} mass in 1 hour of Exotic Run. ` + failedHTML(player.ext.time <= 3600, false, "(" + formatTime(player.ext.time) + " / 1:00:00)") },
 			desc: `+^0.05 to Mass and Rage gain exponents and their caps.`,
 			perm: 2,
 			cost: E(1e40),
 		},
 		feat6: {
 			unl() { return EXT.unl() },
-			req() { return player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15) },
-			reqDesc() { return `Get +15 Supernova gains in under ${formatMass(uni("ee10"))} mass` },
+			req() { return player.ext.chal.f6 },
+			reqDesc() { return `Get +15 Supernova gains in under ${formatMass(uni("ee10"))} mass.` + failedHTML(player.ext.chal.f6, true) },
 			desc: `Pre-Ultra Supernova scalings start 1 later.`,
 			perm: 2,
 			cost: E(0),
 		},
 		feat7: {
 			unl() { return EXT.unl() },
-			req() { return player.mass.gte(uni("ee11")) & player.ext.chal.f7 },
-			reqDesc() { return `Reach ${formatMass(uni("ee11"))} mass while being stuck in any challenge throughout a Exotic run.` },
+			req() { return player.mass.gte(uni("ee11")) && player.ext.chal.f7 },
+			failed() { return !player.ext.chal.f7 },
+			reqDesc() { return `Reach ${formatMass(uni("ee11"))} mass while being stuck in any challenge throughout a Exotic run.` + failedHTML(player.ext.chal.f7) },
 			desc: `Hardened Challenges scaling is 5% weaker.`,
 			perm: 2,
 			cost: E(0),
 		},
 		feat8: {
 			unl() { return CHROMA.unl() },
-			req() { return false },
-			reqDesc() { return `???` },
-			desc: `Supernova scalings start 3 later.`,
+			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f8 },
+			failed() { return !player.ext.chal.f8 },
+			reqDesc() { return `Reach ??? mlt with only gaining at least 5 Supernovas per run.` + failedHTML(player.ext.chal.f8) },
+			desc: `Supernova scalings start 2 later.`,
 			perm: 2,
 			cost: E(0),
 		},
 		feat9: {
 			unl() { return CHROMA.unl() },
-			req() { return false },
-			reqDesc() { return `???` },
+			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f9 },
+			failed() { return !player.ext.chal.f9 },
+			reqDesc() { return `Reach ??? mlt without being outside of Fermions.` + failedHTML(player.ext.chal.f9) },
 			desc: `Make Exotic Matter stranger than before!`,
 			perm: 2,
 			cost: E(0),
@@ -865,8 +875,8 @@ const TREE_UPGS = {
 		},
 		feat10: {
 			unl() { return CHROMA.unl() },
-			req() { return false },
-			reqDesc() { return `???` },
+			req() { return player.ext.chal.f10 },
+			reqDesc() { return `Supernova ??? times while in Bottom or Neut-Tau.` + failedHTML(player.ext.chal.f10, true) },
 			desc: `Make Exotic Matter stranger than before!`,
 			perm: 2,
 			cost: E(0),
@@ -900,6 +910,12 @@ function featCheck() {
 	if (player.chal.active) return
 	if (player.supernova.time < 5) return
 	return true
+}
+
+function failedHTML(x, pass, html) {
+	if (html) return "<b style='color:"+(x?"green":"red")+"'>"+html+"</b>"
+	if (pass) return x ? " <b style='color:green'>(passed)</b>" : ""
+	return x ? "" : " <b style='color:red'>(failed)</b>"
 }
 
 function setupTreeHTML() {
@@ -983,10 +999,10 @@ const SR = 7.0710678118654755
 function drawTreeBranch(num1, num2) {
     var start = document.getElementById("treeUpg_"+num1).getBoundingClientRect();
     var end = document.getElementById("treeUpg_"+num2).getBoundingClientRect();
-    var x1 = start.left + (start.width / 2) + (document.documentElement.scrollLeft || document.body.scrollLeft) - (window.innerWidth-tree_canvas.width)/2;
-    var y1 = start.top + (start.height / 2) + (document.documentElement.scrollTop || document.body.scrollTop) - (window.innerHeight-tree_canvas.height-7);
-    var x2 = end.left + (end.width / 2) + (document.documentElement.scrollLeft || document.body.scrollLeft) - (window.innerWidth-tree_canvas.width)/2;
-    var y2 = end.top + (end.height / 2) + (document.documentElement.scrollTop || document.body.scrollTop) - (window.innerHeight-tree_canvas.height-7);
+    var x1 = start.left + (start.width / 2) - (document.body.scrollWidth-tree_canvas.width)/2;
+    var y1 = start.top + (start.height / 2) - (window.innerHeight-tree_canvas.height);
+    var x2 = end.left + (end.width / 2) - (document.body.scrollWidth-tree_canvas.width)/2;
+    var y2 = end.top + (end.height / 2) - (window.innerHeight-tree_canvas.height);
     tree_ctx.lineWidth=10;
     tree_ctx.beginPath();
     tree_ctx.strokeStyle = hasTree(num2)?"#00520b":tmp.supernova.tree_afford[num2]?"#fff":"#333";
@@ -1042,7 +1058,7 @@ function updateTreeHTML() {
 			let id = tmp.supernova.tree_had2[i][x]
 			let unl = tmp.supernova.tree_unlocked[id]
 			tmp.el["treeUpg_"+id].setVisible(unl)
-			if (unl) tmp.el["treeUpg_"+id].setClasses({btn_tree: true, locked: !tmp.supernova.tree_afford[id], bought: hasTree(id), choosed: id == tmp.supernova.tree_choosed})
+			if (unl) tmp.el["treeUpg_"+id].setClasses({btn_tree: true, locked: !tmp.supernova.tree_afford[id], failed: TREE_UPGS.ids[id].failed && TREE_UPGS.ids[id].failed(id), bought: hasTree(id), choosed: id == tmp.supernova.tree_choosed})
 		}
 	}
 }

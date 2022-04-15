@@ -164,12 +164,15 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
+    let hideSome = EXT.unl()
 	tmp.el.reset_desc.setHTML(player.reset_msg)
 	tmp.el.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
-    let hideSome = EXT.unl()
-	tmp.el.rp_div.setVisible(!hideSome)
+
+	let unl = player.stats.maxMass.gte(1e9) && !hideSome
+	tmp.el.rp_div.setVisible(unl)
 	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)))
-	let unl = FORMS.bh.see() && !hideSome
+
+	unl = FORMS.bh.see() && !hideSome
 	tmp.el.dm_div.setVisible(unl)
 	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, player.mainUpg.atom.includes(6)))
 	unl = player.bh.unl && !hideSome

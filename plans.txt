@@ -39,3 +39,5 @@ B2 (powerful upgrades):
 5. Dilated mass raises tickspeed.
 6. 3rd Dilation Upgrade scales faster. (will be softcapped at ^0.96 exponent)
 7. Axion Upgrades increase costs slower.
+B3: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
+	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)

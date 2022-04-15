@@ -17,7 +17,7 @@ const FORMS = {
         x = x.mul(tmp.atom.particles[1].powerEffect.eff2)
         if (player.ranks.rank.gte(380)) x = x.mul(RANKS.effect.rank[380]())
         x = x.mul(tmp.stars.effect)
-        if (hasTree("m1")) x = x.mul(tmp.supernova.tree_eff.m1)
+        if (hasTree("m1")) x = x.mul(treeEff("m1"))
 
         x = x.mul(tmp.bosons.effect.pos_w[0])
 
@@ -51,7 +51,7 @@ const FORMS = {
     massSoftGain2() {
         let s = E('1.5e1000056')
         if (hasTree("m2")) s = s.pow(1.5)
-        if (hasTree("m2")) s = s.pow(tmp.supernova.tree_eff.m3)
+        if (hasTree("m2")) s = s.pow(treeEff("m3"))
         if (player.ranks.tetr.gte(8)) s = s.pow(1.5)
 
         s = s.pow(tmp.bosons.effect.neg_w[0])
@@ -65,7 +65,7 @@ const FORMS = {
     },
     massSoftGain3() {
         let s = uni("ee8")
-        if (hasTree("m3")) s = s.pow(tmp.supernova.tree_eff.m3)
+        if (hasTree("m3")) s = s.pow(treeEff("m3"))
         s = s.pow(tmp.radiation.bs.eff[2])
         return s
     },
@@ -125,7 +125,7 @@ const FORMS = {
             if (player.ranks.tier.gte(6)) gain = gain.mul(RANKS.effect.tier[6]())
             if (player.mainUpg.bh.includes(6)) gain = gain.mul(tmp.upgs.main?tmp.upgs.main[2][6].effect:E(1))
             gain = gain.mul(tmp.atom.particles[1].powerEffect.eff1)
-            if (hasTree("rp1")) gain = gain.mul(tmp.supernova.tree_eff.rp1)
+            if (hasTree("rp1")) gain = gain.mul(treeEff("rp1"))
             if (player.mainUpg.bh.includes(8)) gain = gain.pow(1.15)
             gain = gain.pow(tmp.chal.eff[4])
             if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) gain = gain.root(10)
@@ -153,7 +153,7 @@ const FORMS = {
             if (gain.lt(1)) return E(0)
             gain = gain.root(4)
 
-            if (hasTree("bh1")) gain = gain.mul(tmp.supernova.tree_eff.bh1)
+            if (hasTree("bh1")) gain = gain.mul(treeEff("bh1"))
             gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
 
             if (CHALS.inChal(7) || CHALS.inChal(10)) gain = gain.root(6)
@@ -326,49 +326,10 @@ const UPGS = {
             if (i == 3 && player.ranks.rank.gte(4)) inc = inc.pow(0.8)
             if (player.ranks.tier.gte(3)) inc = inc.pow(0.8)
             let lvl = player.massUpg[i]||E(0)
-            let cost = inc.pow(lvl).mul(upg.start)
-            let bulk = player.mass.div(upg.start).max(1).log(inc).add(1).floor()
+            let cost = inc.pow(lvl.scaleEvery("massUpg")).mul(upg.start)
+            let bulk = player.mass.div(upg.start).max(1).log(inc).scaleEvery("massUpg", 1).add(1).floor()
             if (player.mass.lt(upg.start)) bulk = E(0)
 
-            if (scalingActive("massUpg", lvl.max(bulk), "super")) {
-                let start = getScalingStart("super", "massUpg");
-                let power = getScalingPower("super", "massUpg");
-                let exp = E(2.5).pow(power);
-                cost =
-                    inc.pow(
-                        lvl.pow(exp).div(start.pow(exp.sub(1)))
-                    ).mul(upg.start)
-                bulk = player.mass
-                    .div(upg.start)
-                    .max(1)
-                    .log(inc)
-                    .times(start.pow(exp.sub(1)))
-                    .root(exp)
-                    .add(1)
-                    .floor();
-            }
-            if (scalingActive("massUpg", lvl.max(bulk), "hyper")) {
-                let start = getScalingStart("super", "massUpg");
-                let power = getScalingPower("super", "massUpg");
-                let start2 = getScalingStart("hyper", "massUpg");
-                let power2 = getScalingPower("hyper", "massUpg");
-                let exp = E(2.5).pow(power);
-                let exp2 = E(5).pow(power);
-                cost =
-                    inc.pow(
-                        lvl.pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1)))
-                    ).mul(upg.start)
-                bulk = player.mass
-                    .div(upg.start)
-                    .max(1)
-                    .log(inc)
-                    .times(start.pow(exp.sub(1)))
-                    .root(exp)
-                    .times(start2.pow(exp2.sub(1)))
-                    .root(exp2)
-                    .add(1)
-                    .floor();
-            }
             return {cost: cost, bulk: bulk}
         },
         1: {
@@ -537,7 +498,7 @@ const UPGS = {
                 },
             },
             8: {
-                desc: "Super Mass Upgrades scaling is weaker by Rage Points.",
+                desc: "Mass Upgrade scalings are weaker by Rage Points.",
                 cost: E(1e15),
                 effect() {
                     let ret = E(0.9).pow(player.rp.points.max(1).log10().max(1).log10().pow(1.25).softcap(2.5,0.5,0))
@@ -717,7 +678,7 @@ const UPGS = {
             },
             12: {
                 unl() { return player.atom.unl },
-                desc: "Hyper Mass Upgrade & Tickspeed scales 15% weaker.",
+                desc: "Hyper Tickspeed scales 15% weaker.",
                 cost: E(1e120),
             },
             13: {
@@ -884,127 +845,6 @@ function loop() {
     calc(diff/1000*tmp.offlineMult,diff/1000);
     date = Date.now();
     player.offline.current = date
-}
-
-function format(ex, acc=2, type=player.options.notation, color) {
-	ex = E(ex)
-	neg = ex.lt(0)?"-":""
-	if (ex.mag == Infinity) return neg + 'Infinity'
-	if (Number.isNaN(ex.mag)) return neg + 'NaN'
-	if (ex.lt(0)) ex = ex.mul(-1)
-	if (ex.eq(0)) return ex.toFixed(acc)
-	let e = ex.log10().floor()
-	switch (type) {
-		case "sc":
-			if (e.lt(3)) {
-				return neg+ex.toFixed(Math.max(Math.min(acc-e.toNumber(), acc), 0))
-			} else if (e.lt(6)) {
-				return neg+ex.floor().toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-			} else {
-				if (ex.gte("eeee10")) {
-					let slog = ex.slog()
-					return (slog.gte(1e9)?'':E(10).pow(slog.sub(slog.floor())).toFixed(3)) + "F" + format(slog.floor(), 0)
-				}
-				let m = ex.div(E(10).pow(e))
-				return neg + (e.gte(1e4) ? 'e' + format(e, Math.max(acc, 3)) : m.toFixed(Math.max(acc, 2)) + 'e' + format(e, 0))
-			}
-		case "st":
-			let e3 = ex.log(1e3).floor()
-			if (e3.lt(1)) {
-				return neg+ex.toFixed(Math.max(Math.min(acc - e.toNumber(), acc), 0))
-			} else {
-				let e3_mul = e3.mul(3)
-				let ee = e3.log10().floor()
-				if (ee.gte(3000)) return "e"+format(e, acc, "st")
-
-				let final = ""
-				if (e3.lt(4)) final = ["", "K", "M", "B"][Math.round(e3.toNumber())]
-				else {
-					let ee3 = Math.floor(e3.log(1e3).toNumber())
-					if (ee3 < 100) ee3 = Math.max(ee3 - 1, 0)
-					e3 = e3.sub(1).div(E(10).pow(ee3*3))
-					while (e3.gt(0)) {
-						let div1000 = e3.div(1e3).floor()
-						let mod1000 = e3.sub(div1000.mul(1e3)).floor().toNumber()
-						if (mod1000 > 0) {
-							if (mod1000 == 1 && !ee3) final = "U"
-							if (ee3) final = colorize(FORMATS.standard.tier2(ee3), color) + (final ? "-" + final : "")
-							if (mod1000 > 1) final = FORMATS.standard.tier1(mod1000) + final
-						}
-						e3 = div1000
-						ee3++
-					}
-				}
-
-				let m = ex.div(E(10).pow(e3_mul))
-				return neg + (ee.gte(4) ? '' : (m.toFixed(E(2).max(acc).sub(e.sub(e3_mul)).toNumber())) + ' ') + final
-			}
-		default:
-			return FORMATS[type] ? neg+FORMATS[type].format(ex, acc) : neg+format(ex, acc, "sc")
-	}
-}
-
-function formatColored(x, p, mass) {
-	return mass ? formatMass(x, true) : format(x, p, player.options.notation, true)
-}
-
-function colorize(x, color) {
-	if (color) x = "<span class='rainbow'>" + x + "</span>"
-	return x
-}
-
-function formatMass(ex, color) {
-	let f = color ? formatColored : format
-    ex = E(ex)
-    if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
-    if (ex.gte(uni(1))) return f(ex.div(1.5e56)) + ' uni'
-    if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'
-    if (ex.gte(1.989e33)) return f(ex.div(1.989e33)) + ' M☉'
-    if (ex.gte(5.972e27)) return f(ex.div(5.972e27)) + ' M⊕'
-    if (ex.gte(1.619e20)) return f(ex.div(1.619e20)) + ' MME'
-    if (ex.gte(1e6)) return f(ex.div(1e6)) + ' tonne'
-    if (ex.gte(1e3)) return f(ex.div(1e3)) + ' kg'
-    return f(ex) + ' g'
-}
-
-function formatMultiply(a) {
-	if (a.gte(2)) return "x"+format(a)
-	return "+"+format(a.sub(1).mul(100))+"%"
-}
-	
-function formatGain(amt, gain, isMass=false, main=false) {
-	let [al, gl] = [amt.max(1).log10(), gain.max(1).log10()]
-	let [al2, gl2] = [al.max(1).log10(), gl.max(1).log10()]
-
-	let f = isMass?formatMass:format
-	if (!main && gain.max(amt).gte("ee4")) return ""
-	if (al.gt(0) && gl.sub(al).gte(E(1e3).div(al))) {
-		if (al2.gt(0) && gl2.sub(al2).gte(E(1e3).div(al2))) return "(x"+format(E(10).pow(gl2.sub(al2).mul(20)))+"s)"
-		if (amt.gte(mlt(1))) return "(+"+format(gl.sub(al).mul(2e-8),3)+" mlt/s)"
-		return "("+formatMultiply(E(10).pow(gl.sub(al).mul(20)))+"/s)"
-	}
-	if (gain.div(amt).gte(1e-6)) return "(+"+f(gain)+"/s)"
-	return ""
-}
-
-function formatGet(a, g, static) {
-	g = g.max(0)
-	if (g.lt(static ? 0 : a)) return ""
-	return "(+" + format(g,0) + (a.gte(100) && g.gte(a.div(5)) ? "/" + formatMultiply(g.div(a).add(1),2) : "") + ")"
-}
-
-function formatGainOrGet(a, g, p) {
-	return (p ? formatGain : formatGet)(a, g)
-}
-
-function formatTime(ex,type="s") {
-    ex = E(ex)
-    if (ex.gte(86400*365)) return format(ex.div(86400*365).floor(),0)+"y, "+formatTime(ex.mod(86400*365))
-    if (ex.gte(86400*7)) return format(ex.div(86400*7).floor(),0)+"w, "+formatTime(ex.mod(86400*7),'w')
-    if (ex.gte(86400)||type=="w") return format(ex.div(86400).floor(),0)+"d, "+formatTime(ex.mod(86400),'d')
-    if (ex.gte(3600)||type=="d") return (ex.div(3600).gte(10)||type!="d"?"":"0")+format(ex.div(3600).floor(),0)+":"+formatTime(ex.mod(3600),'h')
-    if (ex.gte(60)||type=="h") return (ex.div(60).gte(10)||type!="h"?"":"0")+format(ex.div(60).floor(),0)+":"+formatTime(ex.mod(60),'m')
-    return (ex.gte(10)||type!="m" ?"":"0")+format(ex,type=="m"?0:2)
 }
 
 function turnOffline() { player.offline.active = !player.offline.active }

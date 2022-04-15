@@ -4,7 +4,7 @@ const RADIATION = {
     hz_gain() {
         let x = E(1)
         x = x.mul(tmp.radiation.ds_eff[0])
-        if (hasTree('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
+        if (hasTree('rad1')) x = x.mul(treeEff("rad1",1))
         if (hasElement(76)) x = x.mul(tmp.elements && tmp.elements.effect[76])
         x = x.mul(tmp.supernova.timeMult)
         return x
@@ -17,11 +17,11 @@ const RADIATION = {
     ds_gain(i) {
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return E(0)
         let x = E(RADIATION.ds_gains[i])
-        if (hasTree('rad2')) x = x.mul(tmp.supernova.tree_eff.rad2||1)
+        if (hasTree('rad2')) x = x.mul(treeEff("rad2",1))
         if (hasTree('feat1')) x = x.mul(3)
         if (i == 3 && hasElement(70)) x = x.mul(10)
         if (i<RAD_LEN-1) {
-            if (hasTree('rad1') && player.supernova.radiation.hz.gte(RADIATION.unls[i+1])) x = x.mul(tmp.supernova.tree_eff.rad1||1)
+            if (hasTree('rad1') && player.supernova.radiation.hz.gte(RADIATION.unls[i+1])) x = x.mul(treeEff("rad1",1))
             x = x.mul(tmp.radiation.ds_eff[i+1])
         }
         x = x.mul(tmp.radiation.bs.eff[3*i])
@@ -164,7 +164,7 @@ const RADIATION = {
             title: `Meta-Boost I`,
             eff(b) {
                 let x = b.root(2.5).div(1.75).mul(hasTree("rad4")?1.5:1)
-                if (hasTree("rad5")) x = x.mul(player.ranks.pent.div(5).add(1).log10().div(2)).add(1).pow(1.5).mul(x)
+                if (hasTree("rad5")) x = x.mul(treeEff("rad5",0)).add(1).pow(1.5).mul(x)
                 return x
             },
             desc(x) { return `Add ${format(x)} levels to all above boosts` },
