@@ -1,0 +1,18 @@
+[+] MERGE WITH RECENT VERSIONS
+[+] BALANCING
+  [+] star boost
+  [+] c12 scaling
+  [+] rad2 nerf, Os-76 buff
+  [+] ax-b14 buff
+  [+] feat3 + 7 nerf
+[-] NEW CONTENT
+  [-] CHALLENGES 14 - 15
+  [X] Z-AXIONS
+  [X] CHROMA
+  [-] SHORTCUTS
+  [-] QOL, FEATS, AND BOOSTS
+[-] PROMISES
+  [+] REBRANDING TO IM:AP
+  [?] NO MORE AXION UPGRADE SCALINGS
+  [+] LESS PENALTY TO AXION UPGRADES
+  [X] GOAL IS AROUND E20 - E30 MLT

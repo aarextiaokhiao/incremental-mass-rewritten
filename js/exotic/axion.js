@@ -289,7 +289,7 @@ let AXION = {
 			desc: "Impossible Challenge scaling is weaker.",
 			req: E(5),
 			eff(x) {
-				return E(1).div(x.add(1).log10().div(100).add(1))
+				return E(1).div(x.add(1).div(100).add(1))
 			},
 			effDesc(x) {
 				return format(E(1).sub(x).mul(100)) + "%"
@@ -436,7 +436,7 @@ function updateAxionHTML() {
 		if (tmp.ax.hover.id[0] == "b") {
 			var id = Number(tmp.ax.hover.id.split("b")[1])
 			var locked = tmp.ax.lvl[id].eq(0)
-			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (b" + id + ")")
+			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + id + ")")
 			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
 			tmp.el.ax_req.setClasses({"red": locked})
 			tmp.el.ax_eff.setHTML(locked ? "" : "Level: " + format(AXION.getBaseLvl(id).sub(AXION.ids[id].req.sub(1)), 0) + (AXION.getBonusLvl(id).gt(0) ? "+" + format(AXION.getBonusLvl(id)) : "") + (id < 20 ? ", Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) : ""))

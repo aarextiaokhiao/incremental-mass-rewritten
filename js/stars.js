@@ -19,12 +19,12 @@ const STARS = {
         return p
     },
     effect() {
-        let p = STARS.rankStr()
-        let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
-        let x =
-        s.max(1).log10().add(1).pow(r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)))
-        return x
-    },
+		let p = STARS.rankStr()
+		let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
+		let b = s.max(1).log10().add(1).max(s.pow(1e-9))
+		let e = r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)).softcap(5e12,10,3)
+		return b.pow(e)
+	},
     generators: {
         req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
         unl(auto=false) {

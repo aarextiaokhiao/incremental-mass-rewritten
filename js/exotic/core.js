@@ -3,7 +3,8 @@ let EXOTIC = {
 		return {
 			amt: E(0),
 			chal: { },
-			ax: AXION.setup()
+			ax: AXION.setup(),
+			ch: CHROMA.setup()
 		}
 	},
 
@@ -124,9 +125,16 @@ let EXOTIC = {
 		if (tmp.chal.outside) player.ext.chal.f7 = false
 		if (!player.supernova.fermions.choosed && !player.supernova.fermions.choosed2) player.ext.chal.f9 = false
 
+		//AXIONS
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
 		player.ext.ax.res[1] = player.ext.ax.res[1].add(AXION.prod(1).mul(dt))
 		player.ext.ax.res[2] = player.ext.ax.res[2].add(AXION.prod(2).mul(dt))
+
+		//CHROMA
+		if (!player.ext.ch.unl && CHROMA.unl()) {
+			addPopup(POPUP_GROUPS.chroma)
+			player.ext.ch.unl = true
+		}
 	}
 }
 let EXT = EXOTIC

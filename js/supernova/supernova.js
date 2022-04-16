@@ -211,7 +211,7 @@ function updateSupernovaAutoTemp() {
 
 	let thres = 15
 	if (hasTree("qol_ext2")) thres = 10
-	if (hasTree("feat4")) thres -= 2
+	if (hasTree("feat4")) thres = 7
 	if (!player.chal.active || player.chal.active <= 12) {
 		for (var x = (hasTree("qol_ext9") ? 9 : hasTree("qol_ext8") ? 5 : 1); x <= 12; x++) {
 			let tier = player.chal.comps[x]

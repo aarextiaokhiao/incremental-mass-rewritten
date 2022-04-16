@@ -169,15 +169,15 @@ function updateUpperHTML() {
 	tmp.el.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
 
 	let unl = player.stats.maxMass.gte(1e9) && !hideSome
-	tmp.el.rp_div.setVisible(unl)
+	tmp.el.rp_div.setDisplay(unl)
 	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)))
 
 	unl = FORMS.bh.see() && !hideSome
-	tmp.el.dm_div.setVisible(unl)
+	tmp.el.dm_div.setDisplay(unl)
 	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, player.mainUpg.atom.includes(6)))
 	unl = player.bh.unl && !hideSome
-	tmp.el.bh_div.setVisible(unl)
-	tmp.el.atom_div.setVisible(unl)
+	tmp.el.bh_div.setDisplay(unl)
+	tmp.el.atom_div.setDisplay(unl)
 	if (unl) {
 		tmp.el.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
 		tmp.el.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
@@ -197,7 +197,7 @@ function updateUpperHTML() {
 	}
 
 	unl = player.atom.unl && !hideSome
-	tmp.el.quark_div.setVisible(unl)
+	tmp.el.quark_div.setDisplay(unl)
 	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec):0,hasElement(14)))
 
 	let scut = AXION.unl() && tmp.ax.lvl[23].gt(0)
@@ -206,16 +206,16 @@ function updateUpperHTML() {
 	if (scut) {
 	} else {
 		unl = MASS_DILATION.unlocked()
-		tmp.el.md_div.setVisible(unl)
+		tmp.el.md_div.setDisplay(unl)
 		if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
 	}
 
 	unl = player.supernova.post_10
-	tmp.el.sn_div.setVisible(unl)
+	tmp.el.sn_div.setDisplay(unl)
 	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
 
 	unl = EXT.unl(true)
-	tmp.el.ext_div.setVisible(unl)
+	tmp.el.ext_div.setDisplay(unl)
 	if (unl) tmp.el.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 }
 

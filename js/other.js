@@ -45,7 +45,6 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: 'Andy Bold';" onclick="changeFont('Andy Bold')">Andy Bold</button>
             <button class="btn" style="font-family: Arial, Helvetica, sans-ser;" onclick="changeFont('Arial, Helvetica, sans-ser')">Arial</button>
             <button class="btn" style="font-family: Bahnschrift;" onclick="changeFont('Bahnschrift')">Bahnschrift</button>
-            <button class="btn" style="font-family: Comic Sans MS;" onclick="changeFont('Comic Sans MS')">Comic Sans MS</button>
             <button class="btn" style="font-family: Courier;" onclick="changeFont('Courier')">Courier</button>
             <button class="btn" style="font-family: Cousine;" onclick="changeFont('Cousine')">Cousine</button>
             <button class="btn" style="font-family: 'Flexi IBM VGA False';" onclick="changeFont('Flexi IBM VGA False')">Flexi IBM VGA False</button>
@@ -53,6 +52,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="changeFont('Lucida Handwriting')">Lucida Handwriting</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="changeFont('Monospace-Typewritter')">Monospace Typewritter</button>
             <button class="btn" style="font-family: 'Nova Mono';" onclick="changeFont('Nova Mono')">Nova Mono</button>
+            <button class="btn" style="font-family: 'Nunito';" onclick="changeFont('Nunito')">Nunito</button>
             <button class="btn" style="font-family: 'Retron2000';" onclick="changeFont('Retron2000')">Retron 2000</button>
             <button class="btn" style="font-family: 'Roboto Mono';" onclick="changeFont('Roboto Mono')">Roboto Mono</button>
             <button class="btn" style="font-family: Verdana, Geneva, Tahoma, sans-serif;" onclick="changeFont('Verdana, Geneva, Tahoma, sans-serif')">Verdana</button>

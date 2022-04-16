@@ -1,5 +1,11 @@
 let CHROMA = {
-	unl: () => player.chal.comps[13].gte(15)
+	unl: () => player.chal.comps[13].gte(15),
+
+	setup() {
+		return {
+			unl: false
+		}
+	},
 }
 
 function toggleChromaBG() {

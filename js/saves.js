@@ -74,6 +74,7 @@ function calc(dt, dt_offline) {
     if (hasTree("qol6")) CHALS.exit(true)
 
     tmp.pass = true
+	tmp.el.title.setTxt(formatMass(player.mass) + " | IM: Altrascendum")
 
     player.offline.time = Math.max(player.offline.time-tmp.offlineMult*dt_offline,0)
     player.supernova.time += dt
@@ -362,7 +363,7 @@ function exporty() {
     window.URL = window.URL || window.webkitURL;
     let a = document.createElement("a")
     a.href = window.URL.createObjectURL(file)
-    a.download = "Incremental Mass Rewritten Save - "+new Date().toGMTString()+".txt"
+    a.download = "IM Altrascendum - "+new Date().toGMTString()+".txt"
     a.click()
 }
 
@@ -394,6 +395,14 @@ function importy() {
     }
     if (loadgame == 'SUPERNOVA.get()') {
         addNotify('<img src="https://steamuserimages-a.akamaihd.net/ugc/83721257582613769/22687C6536A50ADB3489A721A264E0EF506A89B3/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false">',6)
+        return
+    }
+    if (loadgame == 'aarex') {
+        addNotify('Oh. Check out my other stuff, if you are interested on me. https://aarextiaokhiao.github.io/',6)
+        return
+    }
+    if (loadgame == 'altrascendum') {
+        addNotify('Altrascendum: The Destiny of Alternative Path. Hope you enjoy!',6)
         return
     }
     if (loadgame != null) {
@@ -441,7 +450,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "4/14/22 BETA BUILD"
+			document.getElementById("update").textContent = "4/15/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

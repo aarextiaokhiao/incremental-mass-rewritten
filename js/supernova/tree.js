@@ -654,12 +654,7 @@ const TREE_UPGS = {
 			desc: `You don't need to do requirements before buying several Supernova upgrades.`,
 			perm: 2,
 			cost: E(2000),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext2: {
 			branch: ["qol_ext1"],
@@ -668,24 +663,14 @@ const TREE_UPGS = {
 			desc: `Reduce the auto-sweeper threshold to 10, and auto-sweep Challenge 12.`,
 			perm: 2,
 			cost: E(1e100),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext3: {
 			branch: ["qol_ext1"],
 			desc: `Radiation Boosters are fully automated for at least 100,000 radiation.`,
 			perm: 2,
 			cost: E(1e185),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext4: {
 			branch: ["qol_ext1"],
@@ -698,84 +683,49 @@ const TREE_UPGS = {
 			desc: `Keep the 'chal' upgrades except you start with 50 completions and 10 tiers for each Fermion.`,
 			perm: 2,
 			cost: E(1e200),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext5: {
 			branch: ["qol_ext1"],
 			desc: `Keep the core Supernova upgrades.`,
 			perm: 2,
 			cost: E(1e170),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext6: {
 			branch: ["qol_ext1"],
 			desc: `Keep the Boson - Fermion upgrades, and start with 10 completions for C9 - 11.`,
 			perm: 2,
 			cost: E(1e250),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext7: {
 			branch: ["qol_ext1"],
 			desc: `Keep the Radiation upgrades.`,
 			perm: 2,
 			cost: E("1e400"),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext8: {
 			branch: ["qol_ext1"],
 			desc: `Automatically gain C1 - 4 completions without entering.`,
 			perm: 2,
 			cost: E("1e800"),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			icon: "exotic"
 		},
 		qol_ext9: {
 			branch: ["qol_ext8"],
 			desc: `Automatically gain C5 - 8 completions without entering.`,
 			perm: 2,
-			cost: E("1e2000"),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			cost: E("1e1500"),
+			icon: "exotic"
 		},
 		qol_ext10: {
 			branch: ["qol_ext9"],
 			desc: `Automatically go Supernova when you gain 30% more.`,
 			perm: 2,
-			cost: E("1e3000"),
-			icon: "exotic",
-			effect() {
-				let x = E(1)
-				return x
-			},
-			effDesc(x) { return format(x)+"x" },
+			cost: E("1e2000"),
+			icon: "exotic"
 		},
 
 		/* FEATS */
@@ -824,7 +774,7 @@ const TREE_UPGS = {
 				return false
 			},
 			reqDesc() { return `Get ${formatMass(mlt(1))} mass with one black hole challenge have at most 5% of total completions.` },
-			desc: `Reduce the auto-sweeper threshold by 2 completions / tiers.`,
+			desc: `Reduce the auto-sweeper threshold to 7.`,
 			perm: 2,
 			cost: E(1e100),
 		},
@@ -850,7 +800,7 @@ const TREE_UPGS = {
 			req() { return player.mass.gte(uni("ee11")) && player.ext.chal.f7 },
 			failed() { return !player.ext.chal.f7 },
 			reqDesc() { return `Reach ${formatMass(uni("ee11"))} mass while being stuck in any challenge throughout a Exotic run.` + failedHTML(player.ext.chal.f7) },
-			desc: `Hardened Challenges scaling is 5% weaker.`,
+			desc: `Hardened Challenges scaling is 4% weaker.`,
 			perm: 2,
 			cost: E(0),
 		},

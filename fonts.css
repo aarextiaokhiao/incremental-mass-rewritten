@@ -1,12 +1,13 @@
 :root {
     --font: 'Verdana, Geneva, Tahoma, sans-serif';
-	color-scheme: dark;
+	--cx: 0;
+    --cy: 0;
 }
 
 @font-face {
 	font-family: 'Andy Bold';
 	src: url('fonts/design.graffiti.ANDYB.ttf');
-	size-adjust: 120%;
+	size-adjust: 110%;
 }
 
 @font-face {
@@ -22,16 +23,19 @@
 @font-face {
 	font-family: 'Inconsolata';
 	src: url('fonts/Inconsolata-VariableFont_wdth\,wght.ttf');
+	size-adjust: 110%;
 }
 
 @font-face {
 	font-family: 'Lucida Handwriting';
 	src: url('fonts/qkmarisa.ttf');
+	size-adjust: 85%;
 }
 
 @font-face {
 	font-family: 'Monospace-Typewritter';
 	src: url('fonts/MonospaceTypewriter.ttf');
+	size-adjust: 85%;
 }
 
 @font-face {
@@ -43,14 +47,23 @@
 @font-face {
 	font-family: 'Nova Mono';
 	src: url('fonts/NovaMono-Regular.ttf');
+	size-adjust: 85%;
 }
 
 @font-face {
 	font-family: 'Retron2000';
 	src: url('fonts/Retron2000.ttf');
+	size-adjust: 85%;
+}
+
+@font-face {
+	font-family: 'Nunito';
+	src: url('fonts/Nunito-VariableFont_wght.ttf');
+	size-adjust: 95%;
 }
 
 @font-face {
 	font-family: 'Roboto Mono';
 	src: url('fonts/RobotoMono-VariableFont_wght.ttf');
+	size-adjust: 90%;
 }

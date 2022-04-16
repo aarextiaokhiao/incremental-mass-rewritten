@@ -126,7 +126,7 @@ const CHALS = {
         return x.floor()
     },
     getScaleName(i) {
-        if (i > 12) return ""
+        if (i >= 12) return ""
         if (player.chal.comps[i].gte(1000)) return " Impossible"
         if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " Insane"
         if (player.chal.comps[i].gte(i>8?10:75)) return " Hardened"
@@ -136,7 +136,7 @@ const CHALS = {
         let x = E(1)
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
-        if (hasTree("feat7")) x = x.mul(0.95)
+        if (hasTree("feat7")) x = x.mul(0.96)
         if (future) x = x.div(player.mass.max(1).log10().max(1).log10().div(50).add(1))
         return x
     },
@@ -157,7 +157,7 @@ const CHALS = {
 		let lvl = r.lt(0)?player.chal.comps[x]:r
 		let pow = chal.pow
 		if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
-		if (x == 13) {
+		if (x >= 12) {
 			//Instant Exponential Scale.
 			let goal = chal.start.pow(chal.inc.pow(lvl.pow(pow)))
 			let bulk = res.log(chal.start).log(chal.inc).root(pow).add(1).floor()
@@ -170,9 +170,7 @@ const CHALS = {
         if (res.lt(chal.start)) bulk = E(0)
 
         let s1 = x > 8 ? 10 : 75
-        let s2 = 300
-        if (x == 8) s2 = 200
-        if (x > 8) s2 = 50
+        let s2 = x > 8 ? 50 : x == 8 ? 200 : 300
         let s3 = 1000
 
         if (lvl.max(bulk).gte(s1)) {
@@ -434,11 +432,11 @@ const CHALS = {
 		desc: "You are stuck in Mass Dilation, but has a static ^0.428 penalty and doesn't affect Dark Matter and Black Hole.",
 		reward: `Radiation Boosters scale slower.<br><span class="yellow">On first completion, unlock a new prestige layer!</span>`,
 		max: E(100),
-		inc: E("e3000"),
-		pow: E(1.4),
+		inc: E(1.15),
+		pow: E(1),
 		start: uni("e47250"),
 		effect(x) {
-            return E(1).div(x.div(25).add(1).pow(0.35))
+            return E(0.985).pow(x)
 		},
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
@@ -472,7 +470,7 @@ const CHALS = {
 	},
 	15: {
 		unl() { return false },
-		title: "Placeholder",
+		title: "Primordial ???",
 		desc: "Placeholder.",
 		reward: `Placeholder.<br><span class="yellow">On 1st completion, unlock Primordiums! [Coming soon!]</span>`,
 		max: E(100),
