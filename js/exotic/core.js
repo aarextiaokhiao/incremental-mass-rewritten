@@ -94,8 +94,8 @@ let EXOTIC = {
 			unl: false,
 			points: [E(0),E(0)],
 			tiers: [[E(0),E(0),E(0),E(0),E(0),E(0)],[E(0),E(0),E(0),E(0),E(0),E(0)]],
-			choosed: "",
-			choosed2: "",
+			choosed: player.supernova.fermions.choosed,
+			choosed2: player.supernova.fermions.choosed2,
 			dual: player.supernova.fermions.dual
 		}
 		if (hasTree("qol_ext4")) {
