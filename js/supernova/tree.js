@@ -43,6 +43,13 @@ const TREE_IDS = [
 		[],
 		["ext_l4","ext_l5"],
 		[],
+	],[
+		[],
+		['qol_shrt'],
+		[],
+		[],
+		[],
+		[],
 	],
 ]
 
@@ -648,7 +655,7 @@ const TREE_UPGS = {
 		},
 		qol_ext1: {
 			branch: ["qol1"],
-			unl() { return hasTree("qol_ext4") },
+			unl() { return EXOTIC.unl() },
 			req() { return player.supernova.times.gte(4) },
 			reqDesc() { return `${format(4,0)} Supernovae` },
 			desc: `You don't need to do requirements before buying several Supernova upgrades.`,
@@ -722,9 +729,16 @@ const TREE_UPGS = {
 		},
 		qol_ext10: {
 			branch: ["qol_ext9"],
-			desc: `Automatically go Supernova when you gain 30% more.`,
+			desc: `Gain Supernovae at least 30% more, passively during a sweep.`,
 			perm: 2,
 			cost: E("1e2000"),
+			icon: "exotic"
+		},
+		qol_shrt: {
+			branch: ["qol_ext1"],
+			desc: `Unlock Shortcuts.`,
+			perm: 2,
+			cost: E("1e1200"),
 			icon: "exotic"
 		},
 
@@ -808,7 +822,7 @@ const TREE_UPGS = {
 			unl() { return CHROMA.unl() },
 			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f8 },
 			failed() { return !player.ext.chal.f8 },
-			reqDesc() { return `Reach ??? mlt with only gaining at least 5 Supernovas per run.` + failedHTML(player.ext.chal.f8) },
+			reqDesc() { return `Reach ??? mlt with only gaining at least 5 Supernovae per run.` + failedHTML(player.ext.chal.f8) },
 			desc: `Supernova scalings start 2 later.`,
 			perm: 2,
 			cost: E(0),

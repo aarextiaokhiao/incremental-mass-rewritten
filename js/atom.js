@@ -1,6 +1,6 @@
 const ATOM = {
     gain() {
-        if (player.chal.active == 13) return E(0)
+        if (CHALS.inChal(13)) return E(0)
         let x = player.bh.mass.div(1.5e156)
         if (x.lt(1)) return E(0)
         x = x.root(5)
@@ -11,7 +11,7 @@ const ATOM = {
         return x.floor()
     },
     quarkGain() {
-        if (player.chal.active == 13) return E(0)
+        if (CHALS.inChal(13)) return E(0)
         if (tmp.atom.gain.lt(1)) return E(0)
         x = tmp.atom.gain.max(1).log10().pow(1.1).add(1)
         if (hasElement(1)) x = E(1.25).pow(tmp.atom.gain.max(1).log10())
@@ -102,8 +102,11 @@ const ATOM = {
     },
     particles: {
         names: ['Proton', 'Neutron', 'Electron'],
+        disabled(x) {
+            return CHALS.inChal(9) || FERMIONS.onActive("12")
+        },
         assign(x) {
-            if (player.atom.quarks.lt(1) || CHALS.inChal(9) || FERMIONS.onActive("12")) return
+            if (player.atom.quarks.lt(1) || this.disabled()) return
             let m = player.atom.ratio
             let spent = m > 0 ? player.atom.quarks.mul(RATIO_MODE[m]).ceil() : E(1)
             player.atom.quarks = player.atom.quarks.sub(spent).max(0)
@@ -111,7 +114,7 @@ const ATOM = {
         },
         assignAll() {
             let sum = player.atom.dRatio[0]+player.atom.dRatio[1]+player.atom.dRatio[2]
-            if (player.atom.quarks.lt(sum) || CHALS.inChal(9) || FERMIONS.onActive("12")) return
+            if (player.atom.quarks.lt(sum) || this.disabled()) return
             let spent = player.atom.quarks.div(sum).floor()
             for (let x = 0; x < 3; x++) {
                 let add = spent.mul(player.atom.dRatio[x])

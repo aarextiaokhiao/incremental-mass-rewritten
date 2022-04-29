@@ -255,12 +255,12 @@
                         <span style="margin-left: 5px; text-align: left;" id="md_massAmt">X</span>
                     </div>
                     <div class="resources sml" id="scut_div">
-                        <img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
-                        <img class="res_img" src="images/chal.png" style="cursor: pointer;">
-                        <img class="res_img" src="images/ferm.png" style="cursor: pointer;">
-                        <img class="res_img" src="images/ferm.png" style="cursor: pointer;">
-                        <img class="res_img" src="images/test.png" style="cursor: pointer;">
-                        <img class="res_img" src="images/remove.png" style="cursor: pointer;">
+                        <img class="res_img" id="shrt_0" src="images/md.png" onclick="clickShortcut(0)" style="cursor: pointer;">
+                        <img class="res_img" id="shrt_1" src="images/chal.png" onclick="clickShortcut(1)" style="cursor: pointer;">
+                        <img class="res_img" id="shrt_2" src="images/ferm.png" onclick="clickShortcut(2)" style="cursor: pointer;">
+                        <img class="res_img" id="shrt_3" src="images/ferm.png" onclick="clickShortcut(3)" style="cursor: pointer;">
+                        <img class="res_img" id="shrt_4" src="images/empty.png" onclick="clickShortcut(4)" style="cursor: pointer;">
+                        <img class="res_img" id="shrt_m" src="images/remove.png" onclick="switchShortcut()" style="cursor: pointer;">
                     </div>
                     <div class="resources sml magenta" id="sn_div">
                         <div tooltip="Supernova" t-size="small"><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>

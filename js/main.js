@@ -23,7 +23,7 @@ const FORMS = {
 
         if (player.ranks.tier.gte(2)) x = x.pow(1.15)
         if (player.ranks.rank.gte(180)) x = x.pow(1.025)
-        if (!CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) x = x.pow(tmp.chal.eff[3])
+        if (!CHALS.inChal(3)) x = x.pow(tmp.chal.eff[3])
         if (tmp.md.active) {
             x = MASS_DILATION.applyDil(x)
             if (hasElement(28)) x = x.pow(1.5)
@@ -703,7 +703,7 @@ const UPGS = {
                 desc: "Atomic Powers adds Black Hole Condensers at a reduced rate.",
                 cost: E('e420'),
                 effect() {
-                    let ret = player.atom.atomic.add(1).log(5).min(1e20)
+                    let ret = player.atom.atomic.add(1).log(5)
                     return ret.floor()
                 },
                 effDesc(x=this.effect()) {

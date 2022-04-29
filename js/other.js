@@ -196,5 +196,47 @@ let betaLink = "2-chroma"
 let saveId = "testSave"
 if (beta) saveId = "testBeta"
 
+// SHORTCUTS
+function updateShortcuts() {
+	for (var i = 0; i < 5; i++) {
+		let unl = i < 3 || (AXION.unl() && tmp.ax.lvl[23].gt(0))
+		tmp.el["shrt_"+i].setVisible(unl)
+		document.getElementById("shrt_"+i).setAttribute("src", "images/" + ["empty", "md", "chal", "ferm"][player.shrt.order[i][0] + 1] + ".png")
+	}
+	document.getElementById("shrt_m").setAttribute("src", "images/" + ["click", "edit", "remove"][player.shrt.mode] + ".png")
+}
+
+function doShortcut(a, b) {
+	if (a == 0) MASS_DILATION.onactive()
+	if (a == 1) {
+		if (b == -1) CHALS.exit()
+		else {
+			player.chal.choosed = b
+			CHALS.enter()
+		}
+	}
+	if (a == 2) FERMIONS.choose(Math.floor(b / 10), b % 10)
+}
+
+function editShortcut(x) {
+	addNotify("Soon.", 5)
+}
+
+function switchShortcut() {
+	player.shrt.mode = (player.shrt.mode + 1) % 3
+	updateShortcuts()
+}
+
+function clickShortcut(x) {
+	let d = player.shrt.order[x]
+	let m = player.shrt.mode
+	if (d[0] < 0 || m == 1) editShortcut(x)
+	else if (m == 2) {
+		if (!confirm("Are you sure do you want to delete this shortcut?")) return
+		player.shrt.order[x] = [-1, -1]
+		updateShortcuts()
+	} else doShortcut(d[0], d[1])
+}
+
 //TECHNICAL
 future = false

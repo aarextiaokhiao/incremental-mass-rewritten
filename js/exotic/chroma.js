@@ -6,6 +6,9 @@ let CHROMA = {
 			unl: false
 		}
 	},
+	power() {
+		return player.mass.add(1).log10().add(1).log10().sqrt().div(4)
+	}
 }
 
 function toggleChromaBG() {

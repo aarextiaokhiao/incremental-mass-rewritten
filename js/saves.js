@@ -37,11 +37,11 @@ function calc(dt, dt_offline) {
 	}
     if (hasElement(14)) player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain.mul(dt*tmp.atom.quarkGainSec))
     if (hasElement(24)) player.atom.points = player.atom.points.add(tmp.atom.gain.mul(dt))
-    if (hasElement(30) && !(CHALS.inChal(9) || FERMIONS.onActive("12"))) for (let x = 0; x < 3; x++) player.atom.particles[x] = player.atom.particles[x].add(player.atom.quarks.mul(dt/10))
+    if (hasElement(30) && !ATOM.particles.disabled()) for (let x = 0; x < 3; x++) player.atom.particles[x] = player.atom.particles[x].add(player.atom.quarks.mul(dt/10))
     if (hasElement(43)) for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
 	if (player.bh.unl && tmp.pass) {
 		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
-		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
+		if (player.bh.eb2 && player.bh.eb2.gt(0) && !CHALS.inChal(14)) {
 			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
 			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
 			var softcap = FORMS.bh.radSoftStart()
@@ -87,8 +87,10 @@ function calc(dt, dt_offline) {
         if (player.ext.amt.lt(1e10) && !CHROMA.unl()) addPopup(POPUP_GROUPS.fermions)
     }
 
-	//player.supernova.times = tmp.supernova.bulk.max(player.supernova.times)
-	if (hasTree("qol_ext10") && tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
+	if (hasTree("qol_ext10") && tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) {
+		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
+		else SUPERNOVA.reset(false, false, false, false, true)
+	}
 	if (player.supernova.auto.on > -2) {
 		var list = player.supernova.auto.list
 		player.supernova.auto.t += dt
@@ -220,6 +222,15 @@ function getPlayerData() {
 			}
         },
         ext: EXT.setup(),
+		shrt: {
+			//[a, b]:
+			//a = 0: empty
+			//a = 1: mass dilation
+			//a = 2: challenge
+			//a = 3: fermion
+			order: [[1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
+			mode: 0 //click, edit, remove
+		},
         reset_msg: "",
         main_upg_msg: [0,0],
         tickspeed: E(0),
@@ -450,7 +461,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "4/15/22 BETA BUILD"
+			document.getElementById("update").textContent = "4/28/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

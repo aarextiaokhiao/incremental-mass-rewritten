@@ -183,15 +183,15 @@ function updateUpperHTML() {
 		tmp.el.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
 	}
 
-	let chal = !CHALS.inChal(0)
+	let chal = CHALS.lastActive()
 	tmp.el.chal_upper.setVisible(chal)
 	if (chal) {
-		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
+		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
 			tmp.el.chal_upper.setHTML(
-			`You are now in [${CHALS[player.chal.active].title}] Challenge!` +
-			(player.chal.comps[player.chal.active].gte(tmp.chal.max[player.chal.active]) ? `` :
-				` Go over ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} to complete.` +
-				`<br>+${tmp.chal.gain} Completions (+1 at ${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)})`
+			`You are now in [${CHALS[chal].title}] Challenge!` +
+			(player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
+				` Go over ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.` +
+				`<br>+${tmp.chal.gain} Completions (+1 at ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})`
 			)
 		)
 	}
@@ -200,10 +200,11 @@ function updateUpperHTML() {
 	tmp.el.quark_div.setDisplay(unl)
 	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec):0,hasElement(14)))
 
-	let scut = AXION.unl() && tmp.ax.lvl[23].gt(0)
+	let scut = hasTree("qol_shrt")
 	tmp.el.scut_div.setDisplay(scut)
 	tmp.el.md_div.setDisplay(!scut)
 	if (scut) {
+		updateShortcuts()
 	} else {
 		unl = MASS_DILATION.unlocked()
 		tmp.el.md_div.setDisplay(unl)

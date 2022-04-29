@@ -349,7 +349,7 @@ let AXION = {
 			req: E(100),
 			unl: () => CHROMA.unl(),
 			eff(x) {
-				return E(tmp.stars ? tmp.stars.effect : 1).pow(x.div(1e3).min(.02))
+				return E(tmp.stars ? tmp.stars.effect : 1).pow(x.div(1e3).min(.03))
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -375,8 +375,8 @@ let AXION = {
 			req: E(1/0)
 		},
 		23: {
-			title: "Shortcuts",
-			desc: "Unlock Shortcuts.",
+			title: "Shortcut Mastery",
+			desc: "Unlock 2 more slots for Shortcuts.",
 			unl: () => CHROMA.unl(),
 			req: E(1/0)
 		},

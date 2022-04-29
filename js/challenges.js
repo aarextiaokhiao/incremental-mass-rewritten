@@ -1,8 +1,8 @@
 function setupChalHTML() {
-    let chals_table = new Element("chals_table")
+	let chals_table = new Element("chals_table")
 	let table = ""
 	for (let x = 1; x <= CHALS.cols; x++) {
-        table += `<div id="chal_div_${x}" style="width: 120px; margin: 5px;"><img id="chal_btn_${x}" onclick="CHALS.choose(${x})" class="img_chal" src="images/chal_${x}.png"><br><span id="chal_comp_${x}">X</span></div>`
+		table += `<div id="chal_div_${x}" style="width: 120px; margin: 5px;"><img id="chal_btn_${x}" onclick="CHALS.choose(${x})" class="img_chal" src="images/chal_${x}.png"><br><span id="chal_comp_${x}">X</span></div>`
 	}
 	chals_table.setHTML(table)
 }
@@ -18,10 +18,10 @@ function updateChalHTML() {
             tmp.el["chal_comp_"+x].setTxt(max?"Completed":format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
         }
     }
-    tmp.el.chal_enter.setVisible(player.chal.choosed && player.chal.active != player.chal.choosed)
-    tmp.el.chal_exit.setVisible(player.chal.active != 0)
+    tmp.el.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
+    tmp.el.chal_exit.setVisible(CHALS.lastActive())
     tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
-    tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
+    tmp.el.chal_desc_div.setDisplay(player.chal.choosed)
     if (player.chal.choosed != 0) {
         let x = player.chal.choosed
         let chal = CHALS[x]
@@ -51,10 +51,12 @@ function updateChalTemp() {
         tmp.chal.bulk[x] = data.bulk
         tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive(04) ? E(0) : player.chal.comps[x])
     }
-    tmp.chal.format = player.chal.active != 0 ? CHALS.getFormat() : format
-    tmp.chal.gain = player.chal.active != 0 ? tmp.chal.bulk[player.chal.active].min(tmp.chal.max[player.chal.active]).sub(player.chal.comps[player.chal.active]).max(0).floor() : E(0)
-    tmp.chal.canFinish = player.chal.active != 0 ? tmp.chal.bulk[player.chal.active].gt(player.chal.comps[player.chal.active]) : false
-	tmp.chal.outside = player.chal.active == 0 && !player.md.active && player.supernova.fermions.choosed == ""
+
+	let active = CHALS.lastActive()
+    tmp.chal.format = active != 0 ? CHALS.getFormat() : format
+    tmp.chal.gain = active != 0 ? tmp.chal.bulk[active].min(tmp.chal.max[active]).sub(player.chal.comps[active]).max(0).floor() : E(0)
+    tmp.chal.canFinish = active != 0 ? tmp.chal.bulk[active].gt(player.chal.comps[active]) : false
+	tmp.chal.outside = active == 0 && !player.md.active && player.supernova.fermions.choosed == ""
 }
 
 const CHALS = {
@@ -64,33 +66,44 @@ const CHALS = {
         }
         player.chal.choosed = x
     },
-    inChal(x) { return player.chal.active == x },
+    choosed(x) {
+        if (x > 12) player.ext.ec = x
+		else player.chal.active = x
+    },
+    lastActive(x) {
+		return player.chal.active || player.ext.ec || 0
+    },
+    getActive(x) {
+		let r = player.chal.active
+        if (x > 12) r = player.ext.ec
+		return r || 0
+    },
+    inChal(x) { return this.getActive(x) == x },
     reset(x, chal_reset=true) {
         if (x < 5) FORMS.bh.doReset()
         else if (x < 9) ATOM.doReset(chal_reset)
         else if (x < 13) SUPERNOVA.reset(true, true)
         else EXT.reset(true, true)
     },
-    exit(auto=false) {
-        if (!player.chal.active == 0) {
-            if (tmp.chal.canFinish) {
-                player.chal.comps[player.chal.active] = player.chal.comps[player.chal.active].add(tmp.chal.gain)
-            }
-            if (!auto) {
-                this.reset(player.chal.active)
-                player.chal.active = 0
-            }
-        }
-    },
+	exit(auto=false, ext) {
+		let active = this.lastActive()
+		if (active > 0) {
+			if (tmp.chal.canFinish) player.chal.comps[active] = player.chal.comps[active].add(tmp.chal.gain)
+			if (!auto) {
+				this.reset(active)
+				if (player.chal.active) player.chal.active = 0
+				else player.ext.ec = 0
+			}
+		}
+	},
     enter() {
-        if (player.chal.active == 0) {
-            player.chal.active = player.chal.choosed
-            this.reset(player.chal.choosed, false)
-        } else if (player.chal.choosed != player.chal.active) {
-            this.exit(true)
-            player.chal.active = player.chal.choosed
-            this.reset(player.chal.choosed, false)
-        }
+		let x = player.chal.choosed
+		let act = this.getActive(x)
+
+		if (act == x) return
+		if (act > 0) this.exit(true)
+		this.choosed(x)
+		this.reset(player.chal.choosed, false)
     },
     getResource(x) {
         if (x < 5 || x > 8) return player.mass
@@ -151,7 +164,7 @@ const CHALS = {
         return x
     },
     getChalData(x, r=E(-1), a) {
-		let res = !CHALS.inChal(0)||a?this.getResource(x):E(0)
+		let res = CHALS.inChal(x)||a?this.getResource(x):E(0)
 		let chal = this[x]
 
 		let lvl = r.lt(0)?player.chal.comps[x]:r
@@ -429,7 +442,7 @@ const CHALS = {
 	12: {
 		unl() { return hasTree("chal7") },
 		title: "Wormhole Devourer",
-		desc: "You are stuck in Mass Dilation, but has a static ^0.428 penalty and doesn't affect Dark Matter and Black Hole.",
+		desc: "You are stuck in Mass Dilation, with ^0.428 penalty. Black Hole stays normal.",
 		reward: `Radiation Boosters scale slower.<br><span class="yellow">On first completion, unlock a new prestige layer!</span>`,
 		max: E(100),
 		inc: E(1.15),
@@ -443,7 +456,7 @@ const CHALS = {
 	13: {
 		unl() { return hasTree("chal8") },
 		title: "Decay of Atom",
-		desc: "You can't gain atoms and quarks.",
+		desc: "You can't gain Atoms and Quarks.",
 		reward: `Axion Upgrades scale slower.<br><span class="rainbow">On 15th completion, unlock Chroma!</span>`,
 		max: E(100),
 		inc: E(11/9),
@@ -457,7 +470,7 @@ const CHALS = {
 	14: {
 		unl() { return AXION.unl() && tmp.ax.lvl[22].gt(0) },
 		title: "Monochromatic Mass",
-		desc: "You can't gain Mass Upgrades.",
+		desc: "You can't gain Mass Upgrades and ???.",
 		reward: `Stronger effect is extraordinary stronger!<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
 		max: E(100),
 		inc: E(10),
@@ -470,8 +483,8 @@ const CHALS = {
 	},
 	15: {
 		unl() { return false },
-		title: "Primordial ???",
-		desc: "Placeholder.",
+		title: "Chernobyl Exclusion",
+		desc: "You can't gain Radiation.",
 		reward: `Placeholder.<br><span class="yellow">On 1st completion, unlock Primordiums! [Coming soon!]</span>`,
 		max: E(100),
 		inc: E(10),

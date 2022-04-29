@@ -3,6 +3,7 @@ let EXOTIC = {
 		return {
 			amt: E(0),
 			chal: { },
+			ec: 0,
 			ax: AXION.setup(),
 			ch: CHROMA.setup()
 		}

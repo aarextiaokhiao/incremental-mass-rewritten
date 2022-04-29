@@ -2,6 +2,8 @@ const RADIATION = {
     names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma"],
     unls: ["0","1e6","1e13","1e20","5e26","5e29","1e35"],
     hz_gain() {
+		if (CHALS.inChal(15)) return E(0)
+
         let x = E(1)
         x = x.mul(tmp.radiation.ds_eff[0])
         if (hasTree('rad1')) x = x.mul(treeEff("rad1",1))
@@ -15,7 +17,9 @@ const RADIATION = {
     },
 	ds_gains: ["1", "1", "1", "1", "0.005", "0.00002", "1e-7"],
     ds_gain(i) {
+		if (CHALS.inChal(15)) return E(0)
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return E(0)
+
         let x = E(RADIATION.ds_gains[i])
         if (hasTree('rad2')) x = x.mul(treeEff("rad2",1))
         if (hasTree('feat1')) x = x.mul(3)
@@ -60,12 +64,14 @@ const RADIATION = {
         return x
     },
     getbonusLevel(i) {
+		if (CHALS.inChal(14)) return E(0)
+
         let x = E(0)
         if (i < 8) x = x.add(RADIATION.applyBonus(tmp.radiation.bs.eff[8]&&tmp.radiation.bs.eff[8],8,i))
         if (i < 12 && hasElement(69)) x = x.add(1)
         if (i < 17) x = x.add(RADIATION.applyBonus(tmp.radiation.bs.eff[17]&&tmp.radiation.bs.eff[17][0],17,i))
-
 		if (tmp.eb.ag3) x = x.add(RADIATION.applyBonus(tmp.eb.ag3.eff,20,i))
+
         return x
     },
     applyBonus(x,a,b) {
