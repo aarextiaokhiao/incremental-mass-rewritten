@@ -85,7 +85,7 @@ const ATOM = {
         },
         effect() {
             let t = player.atom.gamma_ray
-            t = t.mul(tmp.radiation.bs.eff[10])
+            if (!scalingToned("gamma_ray")) t = t.mul(tmp.radiation.bs.eff[10])
             let pow = E(2)
             if (player.mainUpg.atom.includes(4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
             if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
@@ -186,8 +186,10 @@ function updateAtomTemp() {
     tmp.atom.atomicGain = ATOM.atomic.gain()
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
-    tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray")).floor()
-    tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).scaleEvery("gamma_ray", 1).add(1).floor()
+	let scale = scalingInitPower("gamma_ray")
+	let fp = scalingToned("gamma_ray") ? 10 : 1
+    tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
+    tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).root(scale).div(fp).scaleEvery("gamma_ray", 1).add(1).floor()
     if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = E(0)
 
     tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)

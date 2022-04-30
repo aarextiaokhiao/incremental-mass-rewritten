@@ -1,11 +1,7 @@
 const SUPERNOVA = {
     reset(force=false, chal=false, post=false, fermion=false, auto=false) {
         if (!chal && !post && !fermion && !auto) if ((force && player.confirms.sn)?!confirm("Are you sure to reset without being Supernova?"):false) return
-		if (tmp.supernova.reached && !force && !fermion && hasTree("qol8") && player.supernova.auto.toggle) {
-			updateSupernovaAutoTemp()
-			player.supernova.auto.on = -1
-			player.supernova.auto.list = tmp.supernova.auto
-		}
+		if (tmp.supernova.reached && !force && !fermion && hasTree("qol8") && player.supernova.auto.toggle) startSupernovaSweep()
         if (tmp.supernova.reached || force || fermion) {
             tmp.el.supernova_scene.setDisplay(false)
             if (!force && !fermion) {
@@ -198,36 +194,43 @@ function updateSupernovaEndingHTML() {
         if (tmp.stab[5] == 1) updateBosonsHTML()
         if (tmp.stab[5] == 2) updateFermionsHTML()
         if (tmp.stab[5] == 3) updateRadiationHTML()
-		if (player.supernova.auto.on > -2) {
+		if (player.supernova.auto.on > -2 && player.supernova.auto.t < 1/0) {
 			tmp.el.supernova_next.setTxt("You are currently sweeping through challenges and fermions! Next in " + (1.5 - player.supernova.auto.t).toFixed(2) + " seconds, ending in " + (1.5 * player.supernova.auto.list.length - 1.5 * player.supernova.auto.on - player.supernova.auto.t).toFixed(2) + " seconds")
 		}
     }
 }
 
 //CHALLENGE AUTOMATION: Go through all unlocked challenges that have at least 15 completions / tiers.
-function updateSupernovaAutoTemp() {
-	tmp.supernova.auto = []
-	if (!hasTree("qol8")) return
-
+function getSupernovaAutoTemp(mode = "all") {
+	let ret = []
 	let thres = 15
 	if (hasTree("qol_ext2")) thres = 10
 	if (hasTree("feat4")) thres = 7
-	if (!player.chal.active) {
+	if (mode == "all" || mode == "chal") {
 		for (var x = (hasTree("qol_ext9") ? 9 : hasTree("qol_ext8") ? 5 : 1); x <= 12; x++) {
 			let tier = player.chal.comps[x]
-			if (tier.gte(thres) && tier.lt(CHALS.getMax(x))) tmp.supernova.auto.push(x)
-			else if (x == 12 && hasTree("qol_ext2")) tmp.supernova.auto.push(x)
+			if (tier.gte(thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
+			else if (x == 12 && hasTree("qol_ext2")) ret.push(x)
 		}
 	}
-	for (var y = 0; y < 2; y++) {
-		for (var x = 0; x < 6; x++) {
-			let tier = player.supernova.fermions.tiers[y][x]
-			if (tier.gte(thres) && tier.lt(FERMIONS.maxTier(y, x))) tmp.supernova.auto.push(-(y*10+x+1))
+	if (mode == "all" || mode == "ferm") {
+		for (var y = 0; y < 2; y++) {
+			for (var x = 0; x < 6; x++) {
+				let tier = player.supernova.fermions.tiers[y][x]
+				if (tier.gte(thres) && tier.lt(FERMIONS.maxTier(y, x))) ret.push(-(y*10+x+1))
+			}
 		}
 	}
+	return ret
 }
 
 function updateSupernovaSweep() {
 	player.supernova.auto.toggle = !player.supernova.auto.toggle
 	if (!player.supernova.auto.toggle) player.supernova.auto.on = -2
+}
+
+function startSupernovaSweep(mode) {
+	player.supernova.auto.on = -1
+	player.supernova.auto.list = getSupernovaAutoTemp(mode)
+	if (mode) player.supernova.auto.t = 1/0
 }

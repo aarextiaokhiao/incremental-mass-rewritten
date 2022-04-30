@@ -18,10 +18,13 @@ function updateChalHTML() {
             tmp.el["chal_comp_"+x].setTxt(max?"Completed":format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
         }
     }
+	let sweep = !CHALS.lastActive() && hasTree("qol10")
     tmp.el.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
     tmp.el.chal_exit.setVisible(CHALS.lastActive())
+    tmp.el.chal_exit.setDisplay(!sweep)
     tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed)
+    tmp.el.chal_sweep.setDisplay(sweep)
     if (player.chal.choosed != 0) {
         let x = player.chal.choosed
         let chal = CHALS[x]
@@ -93,6 +96,7 @@ const CHALS = {
 				this.reset(active)
 				if (player.chal.active) player.chal.active = 0
 				else player.ext.ec = 0
+				player.supernova.auto.t = 1/0
 			}
 		}
 	},
@@ -386,13 +390,18 @@ const CHALS = {
         inc: E(80),
         pow: E(1.3),
         start: E(1.989e38),
-        effect(x) {
-            if (hasElement(64)) x = x.mul(1.5)
-            let ret = x.root(1.75).mul(0.02).add(1)
-			if (ret.gte(1.98)) ret = E(2).sub(E(0.02).div(ret.sub(0.98)))
-            return ret
-        },
-        effDesc(x) { return "^"+format(x,3)+getSoftcapHTML(x,1.98) },
+		effect(x) {
+			let dm = x
+			if (hasElement(64)) dm = dm.mul(1.5)
+			dm = dm.root(1.75).mul(0.02).add(1)
+
+			let bh = x.min(50)
+			if (hasElement(64)) bh = bh.mul(1.5)
+			bh = bh.root(1.75).mul(0.02).add(1)
+
+			return { dm: dm, bh: bh }
+		},
+        effDesc(x) { return "^"+format(x.dm,3) },
     },
     9: {
         unl() { return hasTree("chal4") },
@@ -457,13 +466,13 @@ const CHALS = {
 		unl() { return hasTree("chal8") },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks.",
-		reward: `Axion Upgrades scale slower.<br><span class="rainbow">On 15th completion, unlock Chroma!</span>`,
+		reward: `Weaken the Axion Upgrade penalties.<br><span class="rainbow">On 13th completion, unlock Chroma!</span>`,
 		max: E(100),
 		inc: E(11/9),
 		pow: E(1.2),
 		start: uni("e4.5e5"),
 		effect(x) {
-            return E(0.5).add(E(0.5).div(x.div(3).add(1).sqrt()))
+            return E(1).div(x.div(8).add(1))
 		},
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},

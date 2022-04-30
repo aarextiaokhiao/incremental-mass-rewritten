@@ -1,5 +1,6 @@
 const FERMIONS = {
     onActive(id) { return player.supernova.fermions.choosed == id || player.supernova.fermions.choosed2 == id },
+	outside() { return !player.supernova.fermions.choosed && !player.supernova.fermions.choosed2 },
     gain(i) {
         if (!player.supernova.fermions.unl) return E(0)
         let x = E(1)
@@ -14,6 +15,7 @@ const FERMIONS = {
             player.supernova.fermions.choosed = ""
             player.supernova.fermions.choosed2 = ""
             SUPERNOVA.reset(false,false,false,true)
+			player.supernova.auto.t = 1/0
         }
     },
     choose(i,x,a) {
@@ -393,7 +395,8 @@ function updateFermionsTemp() {
 
 function updateFermionsHTML() {
 	tmp.el.f_normal.setDisplay(player.supernova.fermions.choosed ? 1 : 0)
-	tmp.el.f_dual.setDisplay(hasTree("qol9"))
+    tmp.el.f_sweep.setDisplay(!player.supernova.fermions.choosed && hasTree("qol10"))
+	tmp.el.f_dual.setDisplay(!player.supernova.fermions.choosed && hasTree("qol9"))
 	tmp.el.f_dual.setTxt("Dual: " + (player.supernova.fermions.dual ? "ON" : "OFF"))
     for (i = 0; i < 2; i++) {
         tmp.el["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i]))

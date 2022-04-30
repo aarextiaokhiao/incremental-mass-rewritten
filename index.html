@@ -97,6 +97,7 @@
             </div>
             <canvas id="tree_canvas"></canvas>
             <div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
+			<span id="feat_warn" class="red">Feats provide a challenge which rewards you with boosts. They are optional.</span>
             <div id="tree_table"></div>
         </div><div id="stab_frame5_1">
             <div class="bosons">
@@ -130,6 +131,7 @@
         </div><div id="stab_frame5_2">
             Note: Choosing any fermion will reset without being Supernova!<br><br>
             <button class="btn" onclick="FERMIONS.backNormal()" id="f_normal">Back to Normal</button>
+            <button class="btn" id="f_sweep" onclick="startSupernovaSweep('ferm')">Sweep</button>
             <button class="btn" onclick="player.supernova.fermions.dual=!player.supernova.fermions.dual" id="f_dual">Dual: ON</button><br><br>
             <div class="fermions">
                 <div class="f_quark sub_f">
@@ -169,46 +171,23 @@
 				<span id="st_res2_disp"><span id="st_res2"></span> Z Axions <span id="st_gain2"></span><br></span>
 				<br>
 				<div id="ax_desc" style="min-height: 70px;">
-                    <span id="ax_title" class='sky'>Cosmic Burst</span><br>
-                    <span id="ax_req">Requirement: 0 / 1</span><br>
-                    <span id="ax_eff" class='green'>Cosmic Ray softcap starts later.</span>
+                    <span id="ax_title" class='sky'></span><br>
+                    <span id="ax_req"></span><br>
+                    <span id="ax_eff" class='green'></span>
                 </div><table id="ax_table"></table>
 			</div>
 			<div id="stab_frame6_1">
-				<span class="rainbow">You have 0 Chromafluxes.</span>
+				<span>Toning the reality will result in changes of scalings.</span>
 				<br>
-				<table>
-					<tr>
-						<td style="width: 120px">Red</td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td style="width: 120px">Yellow</td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-					</tr>
-					<tr>
-						<td style="width: 120px">Green</td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td style="width: 120px">Cyan</td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-					</tr>
-					<tr>
-						<td style="width: 120px">Blue</td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td style="width: 120px">Pink</td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-						<td><button class='btn_ax normal'></button></td>
-					</tr>
-				</table>
+				<div class="table_center">
+					<button class="btn btn_ch"><b class='red'>Red: ON</b><br>Mass Upgrades</button>
+					<button class="btn btn_ch"><b class='green'>Green: ON</b><br>Black Hole Condensers</button>
+					<button class="btn btn_ch"><b class='sky'>Blue</b><br>Cosmic Rays</button>
+					<button class="btn btn_ch"><b class='magenta'>Ultraviolet: ON</b><br>Rank</button>
+				</div>
+				(Your next tone requires <span id="ch_req">0.00</span> Exotic Matter!)
+				<br><br>
+				<span class="rainbow">You have 0 Beauty Pigments.</span>
 			</div>
 			<div id="stab_frame6_2">
 				<span class="red">Soon.</span>
@@ -400,6 +379,7 @@
             <div id="main_upgs_table" class="table_center"></div>
         </div><div id="tab_frame3">
             Hint: Click any image to show challenge description. Click again to enter any challenge<br><br>
+			<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
             <button class="btn" id="chal_exit" onclick="CHALS.exit()">Exit Challenge</button><br><br>
             <div style="min-height: 120px;" id="chals_table" class="table_center"></div><br><br>
             <div id="chal_desc_div">

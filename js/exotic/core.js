@@ -197,6 +197,7 @@ let EXTRA_BUILDINGS = {
 		mul: E("e5e5"),
 		pow: E(2.5),
 		eff(x) {
+			//1.4 * 0.75 = 1.05
 			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3)
 		}
 	},

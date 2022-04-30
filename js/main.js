@@ -90,10 +90,13 @@ const FORMS = {
         },
         effect() {
             let t = player.tickspeed
-            if (hasElement(63)) t = t.mul(25)
-            t = t.mul(tmp.radiation.bs.eff[1])
+			if (!scalingToned("tickspeed")) {
+				if (hasElement(63)) t = t.mul(25)
+				t = t.mul(tmp.radiation.bs.eff[1])
+			}
             let bonus = E(0)
             if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
+            if (AXION.unl()) bonus = bonus.add(tmp.ax.eff[18])
             let step = E(1.5)
                 step = step.add(tmp.chal.eff[6])
                 step = step.add(tmp.chal.eff[2])
@@ -159,7 +162,7 @@ const FORMS = {
             if (CHALS.inChal(7) || CHALS.inChal(10)) gain = gain.root(6)
             gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
             if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) gain = gain.root(8)
-            gain = gain.pow(tmp.chal.eff[8])
+            gain = gain.pow(tmp.chal.eff[8].dm)
             if (tmp.md.active && !CHALS.inChal(12)) gain = MASS_DILATION.applyDil(gain)
             return gain.floor()
         },
@@ -178,7 +181,7 @@ const FORMS = {
             if (AXION.unl()) x = x.mul(tmp.ax.eff[19])
             x = x.mul(tmp.bosons.upgs.photon[0].effect)
             if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) x = x.root(8)
-            x = x.pow(tmp.chal.eff[8])
+            x = x.pow(tmp.chal.eff[8].bh)
             if (tmp.md.active && !CHALS.inChal(12)) x = MASS_DILATION.applyDil(x)
             return x.softcap(tmp.bh.massSoftGain, tmp.bh.massSoftPower, 0)
         },
@@ -232,7 +235,7 @@ const FORMS = {
             },
             effect() {
                 let t = player.bh.condenser
-                t = t.mul(tmp.radiation.bs.eff[5])
+                if (!scalingToned("bh_condenser")) t = t.mul(tmp.radiation.bs.eff[5])
                 let pow = E(2)
                     pow = pow.add(tmp.chal.eff[6])
                     if (player.mainUpg.bh.includes(2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:E(1))
@@ -247,6 +250,7 @@ const FORMS = {
             bonus() {
                 let x = E(0)
                 if (player.mainUpg.bh.includes(15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:E(0))
+                if (AXION.unl()) x = x.add(tmp.ax.eff[16])
                 return x
             }
         },
@@ -326,8 +330,9 @@ const UPGS = {
             if (i == 3 && player.ranks.rank.gte(4)) inc = inc.pow(0.8)
             if (player.ranks.tier.gte(3)) inc = inc.pow(0.8)
             let lvl = player.massUpg[i]||E(0)
-            let cost = inc.pow(lvl.scaleEvery("massUpg")).mul(upg.start)
-            let bulk = player.mass.div(upg.start).max(1).log(inc).scaleEvery("massUpg", 1).add(1).floor()
+			let scale = scalingInitPower("massUpg")
+            let cost = inc.pow(lvl.scaleEvery("massUpg").pow(scale)).mul(upg.start)
+            let bulk = player.mass.div(upg.start).max(1).log(inc).root(scale).scaleEvery("massUpg", 1).add(1).floor()
             if (player.mass.lt(upg.start)) bulk = E(0)
 
             return {cost: cost, bulk: bulk}
@@ -407,7 +412,6 @@ const UPGS = {
                 if (player.ranks.tier.gte(30)) sp *= 1.1
 
                 let ret = step.mul(x.add(tmp.upgs.mass[3].bonus)).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
-                if (AXION.unl()) ret = ret.add(tmp.ax.eff[18])
                 return {step: step, eff: ret, ss: ss}
             },
             effDesc(eff) {
@@ -449,7 +453,7 @@ const UPGS = {
             auto_unl() { return player.mainUpg.bh.includes(5) },
             lens: 15,
             1: {
-                desc: "Boosters adds Musclers.",
+                desc: "Boosters add Musclers.",
                 cost: E(1),
                 effect() {
                     let ret = E(player.massUpg[2]||0)
@@ -460,7 +464,7 @@ const UPGS = {
                 },
             },
             2: {
-                desc: "Strongers adds Boosters.",
+                desc: "Strongers add Boosters.",
                 cost: E(10),
                 effect() {
                     let ret = E(player.massUpg[3]||0)

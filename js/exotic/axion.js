@@ -25,7 +25,6 @@ let AXION = {
 		var normal = E(0)
 		var other = E(0)
 		var type = Math.floor(i / 4)
-		var inc = hasTree("ext_l5") ? treeEff("ext_l5",1) : E(1)
 		for (var x = 4 * type; x < 4 * type + 4; x++) {
 			var lvl = player.ext.ax.upgs[x]
 			if (i == x) normal = lvl
@@ -43,6 +42,10 @@ let AXION = {
 			}
 		}
 
+		var inc = E(1)
+		if (tmp.chal) inc = inc.mul(tmp.chal.eff[13])
+		if (future) inc = E(0)
+
 		var sum = normal.add(other.max(0).mul(inc)).mul(AXION.costScale())
 
 		var r = E([2,3,5][type])
@@ -53,7 +56,7 @@ let AXION = {
 	costScale() {
 		var r = E(1)
 		if (hasTree("ext_l1")) r = E(0.8)
-		if (tmp.chal) r = r.mul(tmp.chal.eff[13])
+		if (hasTree("ext_l5")) r = treeEff("ext_l5", 1)
 		return r
 	},
 	bulk(p) {
@@ -96,6 +99,7 @@ let AXION = {
 		var r = player.ext.ax.upgs[i]
 		var type = Math.floor(i / 4)
 		if (hasTree("ext_l2") && type < 2) r = r.add(player.ext.ax.upgs[[i+4,i-4][type]].div([1.5,i*1.5][type]))
+		if (future) r = r.mul(3)
 		return r.max(0)
 	},
 	getLvl(p, base) {
@@ -148,7 +152,7 @@ let AXION = {
 		},
 		2: {
 			title: "Tickspeed Balancing",
-			desc: "Outside of challenges, Tickspeed scalings are weaker, but reduce the non-bonus.",
+			desc: "Weaken Tickspeed scaling out of Challenge, but also reduce the non-bonus.",
 			req: E(0),
 			eff(x) {
 				return x.add(1).log10().div(3).add(1)
@@ -309,14 +313,16 @@ let AXION = {
 
 		16: {
 			title: "Dyson Sphere",
-			desc: "Increase the cap of Pent 13 effect.",
+			desc: "Atomic Power adds BH Condensers.",
 			unl: () => CHROMA.unl(),
 			req: E(10),
 			eff(x) {
-				return E(1.01).pow(x).sub(1).min(1)
+				if (!tmp.atom) return E(0)
+				let k = x.pow(.75).div(20).min(1)
+				return tmp.atom.atomicEff.mul(k)
 			},
 			effDesc(x) {
-				return "+^"+format(x,3)
+				return "+"+format(x,3)
 			}
 		},
 		17: {
@@ -333,14 +339,15 @@ let AXION = {
 		},
 		18: {
 			title: "Super Stronger",
-			desc: "Tickspeed increases Stronger effect.",
+			desc: "Tickspeed adds itself.",
 			unl: () => CHROMA.unl(),
 			req: E(60),
 			eff(x) {
-				return E(tmp.tickspeedEffect ? tmp.tickspeedEffect.eff : 1).log10().div(1e6).mul(x.sqrt())
+				let k = x.pow(.75).div(50).min(2)
+				return player.tickspeed.mul(k)
 			},
 			effDesc(x) {
-				return "+^"+format(x)
+				return "+"+format(x)
 			}
 		},
 		19: {

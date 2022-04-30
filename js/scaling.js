@@ -19,6 +19,8 @@ Decimal.prototype.scaleName = function (type, id, rev=false) {
 }
 
 Decimal.prototype.scaleEvery = function (id, rev=false) {
+	if (scalingToned(id)) return this.clone()
+
     var x = this.clone()
 	var fp = SCALE_FP[id] ? SCALE_FP[id]() : [1,1,1,1]
     for (let i = 0; i < 4; i++) {
@@ -31,6 +33,29 @@ Decimal.prototype.scaleEvery = function (id, rev=false) {
 }
 
 //Technical
+const SCALE_INIT_POWERS = {
+	massUpg: {
+		normal: 1,
+		toned: 1.5
+	},
+	tickspeed: {
+		normal: 1,
+		toned: 1.5
+	},
+	bh_condenser: {
+		normal: 1,
+		toned: 1.5
+	},
+	gamma_ray: {
+		normal: 1,
+		toned: 1.5
+	},
+	rank: {
+		normal: 1.15,
+		toned: 3
+	}
+}
+
 const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta'] // super, hyper, ultra, meta
 const FULL_SCALE_NAME = ['Super', 'Hyper', 'Ultra', 'Meta']
 
@@ -140,6 +165,14 @@ const SCALE_FLOORS = {
 	supernova() { return !hasTree("sn5") },
 }
 
+const SCALE_TONE = {
+	massUpg() { return future },
+	tickspeed() { return future },
+	rank() { return future },
+	bh_condenser() { return future },
+	gamma_ray() { return future },
+}
+
 const SCALE_RES = {
     rank(x=0) { return player.ranks.rank },
 	tier(x=0) { return player.ranks.tier },
@@ -215,8 +248,17 @@ function updateScalingTemp() {
 	}
 }
 
+function scalingToned(name) {
+	return SCALE_TONE[name] && SCALE_TONE[name]()
+}
+
+function scalingInitPower(name) {
+	return SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]
+}
+
 function scalingActive(name, amt, type) {
 	if (SCALE_START[type][name] === undefined) return false
+	if (scalingToned(name)) return false
 	amt = E(amt);
 	return amt.gte(getScalingStart(type, name));
 }

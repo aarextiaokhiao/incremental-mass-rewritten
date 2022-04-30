@@ -592,6 +592,20 @@ td.ax {
 	background: linear-gradient(transparent, white, transparent), linear-gradient(transparent, transparent, black, transparent, transparent);
 }
 
+.btn_ch {
+	height: 120px;
+	width: 120px;
+	background: black;
+	border-color: #3f005f;
+	box-shadow: 0 0 12px #3f005f;
+	margin: 6px;
+	padding: 3px
+}
+
+.btn_ch b {
+	font-size: 125%
+}
+
 @keyframes rainbow {
 	0% {
 		background: #ff0000

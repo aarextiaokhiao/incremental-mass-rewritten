@@ -79,9 +79,10 @@ function updateMassTemp() {
 function updateTickspeedTemp() {
     tmp.tickspeedEffect = FORMS.tickspeed.effect()
 
+	let scale = scalingInitPower("tickspeed")
     tmp.tickspeedFP = tmp.fermions.effs[1][2]
-    tmp.tickspeedCost = E(2).pow(player.tickspeed.scaleEvery("tickspeed")).floor()
-    tmp.tickspeedBulk = player.rp.points.max(1).log(2).scaleEvery("tickspeed", 1).add(1).floor()
+    tmp.tickspeedCost = E(2).pow(player.tickspeed.scaleEvery("tickspeed").pow(scale)).floor()
+    tmp.tickspeedBulk = player.rp.points.max(1).log(2).root(scale).scaleEvery("tickspeed", 1).add(1).floor()
     if (player.rp.points.lt(1)) tmp.tickspeedBulk = E(0)
 
 }
@@ -108,9 +109,10 @@ function updateBlackHoleTemp() {
     tmp.bh.dm_can = tmp.bh.dm_gain.gte(1)
     tmp.bh.effect = FORMS.bh.effect()
 
+	let scale = scalingInitPower("bh_condenser")
     tmp.bh.condenser_bonus = FORMS.bh.condenser.bonus()
-    tmp.bh.condenser_cost = E(1.75).pow(player.bh.condenser.scaleEvery("bh_condenser")).floor()
-    tmp.bh.condenser_bulk = player.bh.dm.max(1).log(1.75).scaleEvery("bh_condenser", 1).add(1).floor()
+    tmp.bh.condenser_cost = E(1.75).pow(player.bh.condenser.scaleEvery("bh_condenser").pow(scale)).floor()
+    tmp.bh.condenser_bulk = player.bh.dm.max(1).log(1.75).root(scale).scaleEvery("bh_condenser", 1).add(1).floor()
     if (player.bh.dm.lt(1)) tmp.bh.condenser_bulk = E(0)
     tmp.bh.condenser_eff = FORMS.bh.condenser.effect()
 }
