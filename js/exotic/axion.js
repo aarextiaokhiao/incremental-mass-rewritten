@@ -313,16 +313,14 @@ let AXION = {
 
 		16: {
 			title: "Dyson Sphere",
-			desc: "Atomic Power adds BH Condensers.",
+			desc: "Multiply BH Upgrade 15.",
 			unl: () => CHROMA.unl(),
 			req: E(10),
 			eff(x) {
-				if (!tmp.atom) return E(0)
-				let k = x.pow(.75).div(20).min(1)
-				return tmp.atom.atomicEff.mul(k)
+				return x.pow(.75).div(20).min(1).add(1)
 			},
 			effDesc(x) {
-				return "+"+format(x,3)
+				return "x"+format(x,3)
 			}
 		},
 		17: {

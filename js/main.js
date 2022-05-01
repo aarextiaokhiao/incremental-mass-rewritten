@@ -250,7 +250,6 @@ const FORMS = {
             bonus() {
                 let x = E(0)
                 if (player.mainUpg.bh.includes(15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:E(0))
-                if (AXION.unl()) x = x.add(tmp.ax.eff[16])
                 return x
             }
         },
@@ -708,6 +707,7 @@ const UPGS = {
                 cost: E('e420'),
                 effect() {
                     let ret = player.atom.atomic.add(1).log(5)
+                    if (AXION.unl()) ret = ret.mul(tmp.ax.eff[16])
                     return ret.floor()
                 },
                 effDesc(x=this.effect()) {

@@ -395,7 +395,7 @@ const CHALS = {
 			if (hasElement(64)) dm = dm.mul(1.5)
 			dm = dm.root(1.75).mul(0.02).add(1)
 
-			let bh = x.min(50)
+			let bh = x.min(600)
 			if (hasElement(64)) bh = bh.mul(1.5)
 			bh = bh.root(1.75).mul(0.02).add(1)
 

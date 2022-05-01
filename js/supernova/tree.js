@@ -834,7 +834,7 @@ const TREE_UPGS = {
 			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f9 },
 			failed() { return !player.ext.chal.f9 },
 			reqDesc() { return `Reach ??? mlt, but always in a Fermion.` + failedHTML(player.ext.chal.f9) },
-			desc: `Make Exotic Matter stranger than before!`,
+			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),
 			onBuy: () => player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
@@ -843,7 +843,7 @@ const TREE_UPGS = {
 			unl() { return CHROMA.unl() },
 			req() { return player.ext.chal.f10 },
 			reqDesc() { return `Supernova ??? times while in Bottom or Neut-Tau.` + failedHTML(player.ext.chal.f10, true) },
-			desc: `Make Exotic Matter stranger than before!`,
+			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),
 			onBuy: () => player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
