@@ -1,6 +1,7 @@
 const MASS_DILATION = {
     unlocked() { return hasElement(21) },
     onactive() {
+		if (CHALS.inChal(14)) return
         if (player.md.active) player.md.particles = player.md.particles.add(tmp.md.rp_gain)
         player.md.active = !player.md.active
         ATOM.doReset()
@@ -16,7 +17,7 @@ const MASS_DILATION = {
 		return x
 	},
 	applyDil(x) {
-		return expMult(x, tmp.md.penalty)
+		return expMult(x, tmp.md.penalty).min(x)
 	},
     RPexpgain() {
         let x = E(2).add(tmp.md.upgs[5].eff).mul((tmp.chal && !CHALS.inChal(10))?tmp.chal.eff[10]:1)

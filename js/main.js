@@ -30,7 +30,7 @@ const FORMS = {
         }
         if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
 
-        return x.softcap(tmp.massSoftGain,tmp.massSoftPower,0).softcap(tmp.massSoftGain2,tmp.massSoftPower2,0).softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
+        return x.softcap(tmp.massSoftGain,tmp.massSoftPower,0).softcap(tmp.massSoftGain2,tmp.massSoftPower2,0).softcap(tmp.massSoftGain3,tmp.massSoftPower3,0).softcap(tmp.massSoftGain4,tmp.massSoftPower4,0)
     },
     massSoftGain() {
         let s = E(1.5e156)
@@ -67,10 +67,18 @@ const FORMS = {
         let s = uni("ee8")
         if (hasTree("m3")) s = s.pow(treeEff("m3"))
         s = s.pow(tmp.radiation.bs.eff[2])
-        return s
+        return s.min(tmp.massSoftGain4||1/0)
     },
     massSoftPower3() {
         let p = E(0.2)
+        return p
+    },
+    massSoftGain4() {
+        let s = mlt(1e8)
+        return s
+    },
+    massSoftPower4() {
+        let p = E(2/3)
         return p
     },
     tickspeed: {
@@ -219,12 +227,14 @@ const FORMS = {
             autoUnl() { return player.mainUpg.atom.includes(2) },
             can() { return player.bh.dm.gte(tmp.bh.condenser_cost) && !CHALS.inChal(6) && !CHALS.inChal(10) },
             buy() {
+				if (CHALS.inChal(14)) return
                 if (this.can()) {
                     player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
                     player.bh.condenser = player.bh.condenser.add(1)
                 }
             },
             buyMax() {
+				if (CHALS.inChal(14)) return
                 if (this.can()) {
                     player.bh.condenser = tmp.bh.condenser_bulk
                     player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
@@ -247,6 +257,7 @@ const FORMS = {
                 return {pow: pow, eff: eff}
             },
             bonus() {
+				if (CHALS.inChal(14)) return E(0)
                 let x = E(0)
                 if (player.mainUpg.bh.includes(15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:E(0))
                 return x

@@ -362,14 +362,15 @@ function formatColored(x, p, mass) {
 	return mass ? formatMass(x, true) : format(x, p, player.options.notation, true)
 }
 
-function colorize(x, color) {
-	if (color) x = "<span class='red'>" + x + "</span>"
+function colorize(x, color, id = 'red') {
+	if (color) x = "<span class='" + id + "'>" + x + "</span>"
 	return x
 }
 
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
     ex = E(ex)
+    if (ex.gte(meg(1))) return f(ex.div(1.5e56).log10().div(1e9).log10().div(1e9), 3) + ' ' + colorize('meg', color, "rainbow")
     if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
     if (ex.gte(uni(1))) return f(ex.div(1.5e56)) + ' uni'
     if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'

@@ -124,7 +124,7 @@ let EXOTIC = {
 	calc(dt) {
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
-		if (!player.supernova.fermions.choosed && !player.supernova.fermions.choosed2) player.ext.chal.f9 = false
+		if (!FERMIONS.onActive(10) && !FERMIONS.onActive(12) && !FERMIONS.onActive(13) && !FERMIONS.onActive(14)) player.ext.chal.f9 = false
 
 		//AXIONS
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
@@ -266,6 +266,7 @@ function resetExtraBuildings(type) {
 	for (let b = EXTRA_BUILDINGS.start[type]; b <= EXTRA_BUILDINGS.max; b++) delete EXTRA_BUILDINGS.saves[type]()["eb"+b]
 }
 function buyExtraBuildings(type, x) {
+	if (CHALS.inChal(14)) return
 	if (!EXTRA_BUILDINGS.unls[x]()) return
 	if (tmp.eb[type+x].gain.lt(getExtraBuildings(type,x))) return
 	EXTRA_BUILDINGS.saves[type]()["eb"+x] = tmp.eb[type+x].gain

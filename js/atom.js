@@ -70,12 +70,14 @@ const ATOM = {
     },
     gamma_ray: {
         buy() {
+			if (CHALS.inChal(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
                 player.atom.gamma_ray = player.atom.gamma_ray.add(1)
             }
         },
         buyMax() {
+			if (CHALS.inChal(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
                 player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
@@ -96,6 +98,7 @@ const ATOM = {
             return {pow: pow, eff: eff}
         },
         bonus() {
+			if (CHALS.inChal(14)) return E(0)
             let x = tmp.fermions.effs[0][0]||E(0)
             return x
         },

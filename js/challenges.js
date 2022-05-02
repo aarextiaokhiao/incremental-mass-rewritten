@@ -262,7 +262,7 @@ const CHALS = {
     },
     1: {
         title: "Instant Scale",
-        desc: "Super Ranks, Mass Upgrades starts at 25. In addtional, Super Tickspeed start at 50.",
+        desc: "Super Ranks, Mass Upgrades starts at 25. In additional, Super Tickspeed start at 50.",
         reward: `Super Ranks starts later, Super Tickspeed scaling weaker by completions.`,
         max: E(100),
         inc: E(5),
@@ -368,7 +368,7 @@ const CHALS = {
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
         title: "No Rage Powers",
-        desc: "You cannot gain Rage Powers, but Dark Matters are gained by mass instead of Rage Powers at a reduced rate.<br>In addtional, mass gain softcap is stronger.",
+        desc: "You cannot gain Rage Powers, but Dark Matters are gained by mass instead of Rage Powers at a reduced rate.<br>In additional, mass gain softcap is stronger.",
         reward: `Completions adds 2 maximum completions of 1-4 Challenge.<br><span class="yellow">On 16th completion, unlock Elements</span>`,
         max: E(50),
         inc: E(64),
@@ -466,7 +466,7 @@ const CHALS = {
 		unl() { return hasTree("chal8") },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks.",
-		reward: `Weaken the Axion Upgrade penalties.<br><span class="rainbow">On 13th completion, unlock Chroma!</span>`,
+		reward: `Weaken the Axion Upgrade penalties.<br><span class="rainbow">On 15th completion, unlock Chroma!</span>`,
 		max: E(100),
 		inc: E(11/9),
 		pow: E(1.2),
@@ -479,7 +479,7 @@ const CHALS = {
 	14: {
 		unl() { return AXION.unl() && tmp.ax.lvl[22].gt(0) },
 		title: "Monochromatic Mass",
-		desc: "You can't gain Mass Upgrades and ???.",
+		desc: "You can't gain Main Buildings, and also can't dilate mass.",
 		reward: `Stronger effect is extraordinary stronger!<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
 		max: E(100),
 		inc: E(10),

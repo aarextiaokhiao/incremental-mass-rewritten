@@ -602,6 +602,20 @@ td.ax {
 	padding: 3px
 }
 
+.btn_ch.choosed {
+	background: #3f005f;
+	border-color: #7f00bf;
+	color: #7f00bf;
+	box-shadow: 0 0 24px #7f00bf;
+}
+
+.btn_ch.unavailable {
+	background: #3f0000 !important;
+	border-color: #7f0000;
+	color: #5f3f3f;
+	box-shadow: 0 0 6px red;
+}
+
 .btn_ch b {
 	font-size: 125%
 }

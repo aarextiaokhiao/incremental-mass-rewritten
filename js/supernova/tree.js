@@ -45,7 +45,7 @@ const TREE_IDS = [
 		[],
 	],[
 		[],
-		['qol_shrt'],
+		['', '', 'qol_shrt', '', 'qol_ext11'],
 		[],
 		[],
 		[],
@@ -105,7 +105,7 @@ const TREE_UPGS = {
             branch: ["sn3"],
             desc: `Tree “sn2”'s effect base is increased by Supernova.`,
             unl() { return player.supernova.post_10 },
-            req() { return player.supernova.times.gte(13) },
+            req() { return player.supernova.times.gte(15) },
             reqDesc: `13 Supernovae.`,
             cost: E(1e8),
             effect() {
@@ -734,6 +734,13 @@ const TREE_UPGS = {
 			cost: E("1e2000"),
 			icon: "exotic"
 		},
+		qol_ext11: {
+			branch: ["qol_ext9"],
+			desc: `You can stay in Mass Dilation on reset.`,
+			perm: 2,
+			cost: E("1e1e4"),
+			icon: "exotic"
+		},
 		qol_shrt: {
 			branch: ["qol_ext1"],
 			desc: `Unlock Shortcuts.`,
@@ -824,7 +831,7 @@ const TREE_UPGS = {
 			unl() { return CHROMA.unl() },
 			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f8 },
 			failed() { return !player.ext.chal.f8 },
-			reqDesc() { return `Reach ??? mlt, but can only gain at least 5 Supernovae.` + failedHTML(player.ext.chal.f8) },
+			reqDesc() { return `Get ??? mass, but can only gain at least 5 Supernovae.` + failedHTML(player.ext.chal.f8) },
 			desc: `Supernova scalings start 2 later.`,
 			perm: 2,
 			cost: E(0),
@@ -833,7 +840,7 @@ const TREE_UPGS = {
 			unl() { return CHROMA.unl() },
 			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f9 },
 			failed() { return !player.ext.chal.f9 },
-			reqDesc() { return `Reach ??? mlt, but always in a Fermion.` + failedHTML(player.ext.chal.f9) },
+			reqDesc() { return `Get ??? mass, but in any U-Lepton except Muon and Neut-Tau.` + failedHTML(player.ext.chal.f9) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),
@@ -842,7 +849,7 @@ const TREE_UPGS = {
 		feat10: {
 			unl() { return CHROMA.unl() },
 			req() { return player.ext.chal.f10 },
-			reqDesc() { return `Supernova ??? times while in Bottom or Neut-Tau.` + failedHTML(player.ext.chal.f10, true) },
+			reqDesc() { return `Above 300 Supernovae, get ??% more while in Bottom or Neut-Tau.` + failedHTML(player.ext.chal.f10, true) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),

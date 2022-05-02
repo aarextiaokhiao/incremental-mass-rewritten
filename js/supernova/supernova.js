@@ -6,7 +6,7 @@ const SUPERNOVA = {
             tmp.el.supernova_scene.setDisplay(false)
             if (!force && !fermion) {
 				if (player.supernova.times.sub(tmp.supernova.bulk).lt(5)) player.ext.chal.f8 = false
-				if (player.supernova.times.sub(tmp.supernova.bulk).gte(1/0) && (FERMIONS.onActive(05) || FERMIONS.onActive(15))) player.ext.chal.f10 = true
+				//if (player.supernova.times.gte(500) && player.supernova.times.div(tmp.supernova.bulk).gte(1/0) && (FERMIONS.onActive(05) || FERMIONS.onActive(15))) player.ext.chal.f10 = true
                 player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
             }
             tmp.pass = true
@@ -41,7 +41,7 @@ const SUPERNOVA = {
         for (let x = 0; x < player.atom.elements.length; x++) if (list_keep.includes(player.atom.elements[x])) keep.push(player.atom.elements[x])
         player.atom.elements = keep
 
-        player.md.active = false
+        player.md.active = hasTree("qol_ext11") && player.md.active
         player.md.particles = E(0)
         player.md.mass = E(0)
         for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = E(0)

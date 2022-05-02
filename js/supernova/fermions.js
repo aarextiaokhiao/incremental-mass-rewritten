@@ -160,7 +160,7 @@ const FERMIONS = {
                     return t.div(100).times(i.max(1).log(1e20)).add(1)
                 },
                 desc(x) {
-                    return `Weaken the penalty exponent for Mass Dilation by ${format(Decimal.sub(100, Decimal.div(100, x)))}%.`
+                    return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`
                 },
                 inc: "Atoms",
                 cons: "All challenges are disabled.",

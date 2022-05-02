@@ -166,11 +166,11 @@ const SCALE_FLOORS = {
 }
 
 const SCALE_TONE = {
-	massUpg() { return future },
-	tickspeed() { return future },
-	rank() { return future },
-	bh_condenser() { return future },
-	gamma_ray() { return future },
+	massUpg() { return player.ext.ch.tones[0] },
+	tickspeed() { return player.ext.ch.tones[0] },
+	rank() { return player.ext.ch.tones[3] },
+	bh_condenser() { return player.ext.ch.tones[1] },
+	gamma_ray() { return player.ext.ch.tones[2] },
 }
 
 const SCALE_RES = {
