@@ -106,7 +106,7 @@ const FORMS = {
                 step = step.mul(tmp.md.mass_eff)
             step = step.mul(tmp.bosons.effect.z_boson[0])
             if (hasTree("t1")) step = step.pow(1.15)
-            if (future) step = step.pow(tmp.md.mass_eff.pow(0.01))
+            if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
 
             let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
             step = step.softcap(ss,0.1,0)
@@ -178,7 +178,6 @@ const FORMS = {
             if (player.mainUpg.rp.includes(11)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][11].effect:E(1))
             if (player.mainUpg.bh.includes(14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:E(1))
             if (hasElement(46)) x = x.mul(tmp.elements.effect[46])
-            if (AXION.unl()) x = x.mul(tmp.ax.eff[19])
             x = x.mul(tmp.bosons.upgs.photon[0].effect)
             if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) x = x.root(8)
             x = x.pow(tmp.chal.eff[8].bh)

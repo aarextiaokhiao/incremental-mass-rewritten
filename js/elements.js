@@ -352,8 +352,8 @@ function updateBlackHoleHTML() {
 	updateExtraBuildingHTML("bh", 2)
 	updateExtraBuildingHTML("bh", 3)
 
-	tmp.el.massRadSoft.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(FORMS.bh.radSoftStart()))
-	tmp.el.massRadSoftStart.setTxt(formatMass(FORMS.bh.radSoftStart()))
+	tmp.el.massRadSoft.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(tmp.bh.rad_ss))
+	tmp.el.massRadSoftStart.setTxt(formatMass(tmp.bh.rad_ss))
 }
 
 function updateOptionsHTML() {
@@ -362,7 +362,7 @@ function updateOptionsHTML() {
 		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	tmp.el.offline_active.setTxt(player.offline.active?"ON":"OFF")
-	tmp.el.tree_anim.setDisplay(player.supernova.unl)
+	tmp.el.tree_ani_btn.setDisplay(player.supernova.unl)
 	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
 	tmp.el.chroma_bg_btn.setDisplay(CHROMA.unl())
 	tmp.el.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))

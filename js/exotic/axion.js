@@ -144,10 +144,11 @@ let AXION = {
 			desc: "Cosmic Ray softcap starts later.",
 			req: E(0),
 			eff(x) {
-				return x.sqrt().div(10).min(4).add(1.2).pow(x)
+				if (x.gte(100)) return E(1/0)
+				return x.sqrt().div(10).add(1.2).pow(x)
 			},
 			effDesc(x) {
-				return format(x) + "x later"
+				return x.eq(1/0) ? "<span class='rainbow'>Removed!</span>" : format(x) + "x later"
 			}
 		},
 		2: {
@@ -222,9 +223,9 @@ let AXION = {
 			title: "Supermassive",
 			desc: "Hawking Radiation softcap starts later.",
 			unl: () => CHROMA.unl(),
-			req: E(100),
+			req: E(40),
 			eff(x) {
-				return x.div(5).add(1).log10().add(1)
+				return x.add(1).cbrt()
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -235,22 +236,22 @@ let AXION = {
 			desc: "Hawking Radiation is more powerful.",
 			req: E(4),
 			eff(x) {
-				return x.add(1).sqrt()
+				return x.add(1).sqrt().softcap(4,0.5,0)
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return format(x) + "x" + getSoftcapHTML(x,4)
 			}
 		},
 		10: {
 			title: "Quark Condenser",
-			desc: "Neutron Condensers are more powerful.",
+			desc: "Raise Neutron Condensers until HR softcap.",
 			unl: () => CHROMA.unl(),
-			req: E(200),
+			req: E(40),
 			eff(x) {
-				return x.add(1).log10().sqrt().add(1)
+				return x.add(1).sqrt().softcap(4,4,3)
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return "^" + format(x) + getSoftcapHTML(x,4)
 			}
 		},
 		11: {
@@ -317,7 +318,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(10),
 			eff(x) {
-				return x.pow(.75).div(20).min(1).add(1)
+				return x.pow(.75).div(20).add(1).min(1.5)
 			},
 			effDesc(x) {
 				return "x"+format(x,3)
@@ -349,12 +350,13 @@ let AXION = {
 			}
 		},
 		19: {
-			title: "Supergiant",
-			desc: "Collapsed star effect boosts Black Hole mass.",
+			title: "General Relativity",
+			desc: "Dilated Mass raises Tickspeed power.",
 			req: E(100),
 			unl: () => CHROMA.unl(),
 			eff(x) {
-				return E(tmp.stars ? tmp.stars.effect : 1).pow(x.div(1e3).min(.03))
+				if (x.lte(0)) return E(1)
+				return player.md.mass.add(1).log10().add(1).log10().div(E(5).sub(x.log10()).max(1)).div(10).add(1).min(3)
 			},
 			effDesc(x) {
 				return format(x) + "x"

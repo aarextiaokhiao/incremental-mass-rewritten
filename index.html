@@ -180,14 +180,14 @@
 				<span>Toning the reality will result in changes of scalings.</span>
 				<br>
 				<div class="table_center">
-					<button class="btn btn_ch"><b class='red'>Red: ON</b><br>Mass Upgrades</button>
-					<button class="btn btn_ch"><b class='green'>Green: ON</b><br>Black Hole Condensers</button>
-					<button class="btn btn_ch"><b class='sky'>Blue</b><br>Cosmic Rays</button>
-					<button class="btn btn_ch"><b class='magenta'>Ultraviolet: ON</b><br>Rank</button>
+					<button class="btn btn_ch" onclick="CHROMA.tones.toggle(0)"><b class='red' id="ch_tone_0">Red</b><br>Mass Upgrades</button>
+					<button class="btn btn_ch" onclick="CHROMA.tones.toggle(1)"><b class='green' id="ch_tone_1">Green</b><br>Black Hole Condensers</button>
+					<button class="btn btn_ch" onclick="CHROMA.tones.toggle(2)"><b class='sky' id="ch_tone_2">Blue</b><br>Cosmic Rays</button>
+					<button class="btn btn_ch" onclick="CHROMA.tones.toggle(3)"><b class='magenta' id="ch_tone_3">Ultraviolet</b><br>Rank</button>
 				</div>
 				(Your next tone requires <span id="ch_req">0.00</span> Exotic Matter!)
 				<br><br>
-				<span class="rainbow">You have 0 Beauty Pigments.</span>
+				<span class="rainbow" id="ch_bp">You have 0 Beauty Pigments.</span> (next at <span id="ch_nxt"></span> mass)
 			</div>
 			<div id="stab_frame6_2">
 				<span class="red">Soon.</span>

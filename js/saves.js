@@ -44,8 +44,8 @@ function calc(dt, dt_offline) {
 		if (player.bh.eb2 && player.bh.eb2.gt(0) && !CHALS.inChal(14)) {
 			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
 			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
-			var softcap = FORMS.bh.radSoftStart()
-			var logProd = tmp.bh.mass_gain.max(10).softcap(softcap, 0.9, 2).log10()
+			var ss = tmp.bh.rad_ss
+			var logProd = tmp.bh.mass_gain.max(10).softcap(ss, 0.9, 2).log10()
 
 			var newMass = player.bh.mass.log10().div(logProd).root(log)
 			newMass = newMass.add(pow.mul(dt))
@@ -461,7 +461,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "4/30/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/1/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

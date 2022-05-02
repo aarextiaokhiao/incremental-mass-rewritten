@@ -115,13 +115,16 @@ function updateBlackHoleTemp() {
     tmp.bh.condenser_bulk = player.bh.dm.max(1).log(1.75).root(scale).scaleEvery("bh_condenser", 1).add(1).floor()
     if (player.bh.dm.lt(1)) tmp.bh.condenser_bulk = E(0)
     tmp.bh.condenser_eff = FORMS.bh.condenser.effect()
+
+	tmp.bh.rad_ss = FORMS.bh.radSoftStart()
 }
 
 function updateTemp() {
     tmp.offlineActive = player.offline.time > 1
     tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
-	updateExtraBuildingTemp()
+	updateChromaTemp()
     updateAxionTemp()
+	updateExtraBuildingTemp()
     updateRadiationTemp()
     updateFermionsTemp()
     updateBosonsTemp()

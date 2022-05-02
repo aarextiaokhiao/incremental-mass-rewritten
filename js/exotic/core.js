@@ -136,6 +136,7 @@ let EXOTIC = {
 			addPopup(POPUP_GROUPS.chroma)
 			player.ext.ch.unl = true
 		}
+		if (player.ext.ch.unl) CHROMA.calc(dt)
 	}
 }
 let EXT = EXOTIC
@@ -144,7 +145,8 @@ function updateExoticHTML() {
 	tmp.el.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
 		tmp.el.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
-		updateAxionHTML()
+		if (tmp.stab[6] == 0) updateAxionHTML()
+		if (tmp.stab[6] == 1) updateChromaHTML()
 
 		tmp.el.hexDisp.setDisplay(RANKS.unl.hex())
 		tmp.el.hexAmt.setHTML(format(player.ranks.hex,0))
@@ -187,9 +189,11 @@ let EXTRA_BUILDINGS = {
 		mul: E("ee9"),
 		pow: E(3),
 		eff(x) {
-			let r = x.add(1).log10().div(3).add(1).div(10)
-			if (AXION.unl()) r = r.mul(tmp.ax.eff[10])
-			return r.min(0.7)
+			if (x.eq(0)) return E(0)
+			if (AXION.unl() && tmp.bh && player.bh.mass.lt(tmp.bh.rad_ss)) x = x.pow(tmp.ax.eff[10])
+
+			let r = x.add(1).log10().add(5).div(25)
+			return r
 		}
 	},
 	ag2: {
@@ -198,7 +202,10 @@ let EXTRA_BUILDINGS = {
 		pow: E(2.5),
 		eff(x) {
 			//1.4 * 0.75 = 1.05
-			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3)
+			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3).softcap(1e15, 1/1.05, 0)
+		},
+		softcapHTML(x) {
+			return getSoftcapHTML(x, 1e15)
 		}
 	},
 	ag3: {
@@ -216,13 +223,15 @@ let EXTRA_BUILDINGS = {
 function updateExtraBuildingHTML(type, x) {
 	let unl = EXTRA_BUILDINGS.unls[x]()
 	let id = type+"_b"+x+"_"
+	let data = tmp.eb[type+x]
+	let data2 = EXTRA_BUILDINGS[type+x]
 	tmp.el[id+"div"].setDisplay(unl)
 	if (!unl) return
 
-	tmp.el[id+"cost"].setHTML(format(tmp.eb[type+x].cost,0))
-	tmp.el[id+"btn"].setClasses({btn: true, locked: tmp.eb[type+x].gain.lte(getExtraBuildings(type,x))})
+	tmp.el[id+"cost"].setHTML(format(data.cost,0))
+	tmp.el[id+"btn"].setClasses({btn: true, locked: data.gain.lte(getExtraBuildings(type,x))})
 	tmp.el[id+"lvl"].setHTML(format(getExtraBuildings(type,x),0))
-	tmp.el[id+"pow"].setHTML(format(tmp.eb[type+x].eff))
+	tmp.el[id+"pow"].setHTML(format(data.eff) + (data2.softcapHTML ? data2.softcapHTML(data.eff) : ""))
 }
 
 function updateExtraBuildingsHTML(type) {
