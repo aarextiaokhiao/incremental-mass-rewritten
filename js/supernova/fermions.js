@@ -38,10 +38,9 @@ const FERMIONS = {
 			SUPERNOVA.reset(false,false,false,true)
 		}
     },
-    getTierScaling(t, bulk=false) {
-        let x = t
+	getTierScaling(t, bulk=false) {
 		return t.scaleEvery("fTier", bulk)
-    },
+	},
 	maxTier(i, x) {
 		let f = FERMIONS.types[i][x]
 		return typeof f.maxTier == "function" ? f.maxTier() : f.maxTier || 1/0

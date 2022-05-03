@@ -161,6 +161,16 @@ function removePopup() {
     updatePopup()
 }
 
+function removeDuplicates(x) {
+	let r = []
+	for (var i = 0; i < x.length; i++) {
+		let it = x[i]
+		if (!r.includes(it)) r.push(it)
+	}
+	return r
+}
+
+//ALTRASCENDUM
 function updateAarex(toggle) {
 	document.querySelectorAll("link").forEach( function(e) {
 		if (e.href.includes("aarex.css")) e.remove();
@@ -182,7 +192,6 @@ function updateAarex(toggle) {
 	document.getElementById("aarex_active").textContent = player.aarex ? "ON" : "OFF"
 }
 
-//ALTERNATE PATH
 function checkAPVers() {
 	if (player.ap_ver == 0) addPopup(POPUP_GROUPS.ap_chroma)
 	else {
