@@ -56,7 +56,7 @@ let AXION = {
 	costScale() {
 		var r = E(1)
 		if (hasTree("ext_l1")) r = E(0.8)
-		if (hasTree("ext_l5")) r = treeEff("ext_l5", 1)
+		if (hasTree("ext_l5")) r = r.div(treeEff("ext_l5", 1))
 		return r
 	},
 	bulk(p) {
@@ -152,11 +152,11 @@ let AXION = {
 			}
 		},
 		2: {
-			title: "Tickspeed Balancing",
-			desc: "Weaken Tickspeed scaling out of Challenge, but also reduce the non-bonus.",
+			title: "Tickspeed Bravery",
+			desc: "Weaken Tickspeed scalings inside Challenges.",
 			req: E(0),
 			eff(x) {
-				return x.add(1).log10().div(3).add(1)
+				return x.add(1).log10().div(4).add(1)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -212,7 +212,7 @@ let AXION = {
 			desc: "Multiply Meta Boosts based on radiation types.",
 			req: E(7),
 			eff(x) {
-				return x.add(1).log(3).div(10).add(1)
+				return x.add(1).cbrt().div(10).add(1)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -318,7 +318,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(10),
 			eff(x) {
-				return x.pow(.75).div(20).add(1).min(1.5)
+				return x.pow(.75).div(15).add(1).min(3)
 			},
 			effDesc(x) {
 				return "x"+format(x,3)

@@ -603,9 +603,9 @@ const TREE_UPGS = {
 			reqDesc() { return "Get " + format(EXT.amt(1e200)) + " Exotic Matter." },
 			desc: `Exotic Matter weakens Axion Upgrades.`,
             effect() {
-                return EXT.eff().add(1).log10().add(1).log10().div(10).add(1).pow(-0.5)
+                return EXT.eff().add(1).log10().div(100).add(1).log10().div(5).add(1).min(2)
             },
-            effDesc(x) { return format(E(1).sub(x).mul(100))+"%" },
+            effDesc(x) { return format(x)+"x" },
 			cost: E("1e4500"),
 			perm: 1,
 			icon: "axion",

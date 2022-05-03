@@ -8,6 +8,8 @@ Decimal.prototype.scale = function (s, b, p, mode, rev=false) {
 }
 
 Decimal.prototype.scaleName = function (type, id, rev=false) {
+	if (scalingToned(id)) return this.clone()
+
     var x = this.clone()
     if (SCALE_START[type][id] && SCALE_POWER[type][id]) {
         let s = getScalingStart(type,id)
@@ -19,8 +21,6 @@ Decimal.prototype.scaleName = function (type, id, rev=false) {
 }
 
 Decimal.prototype.scaleEvery = function (id, rev=false) {
-	if (scalingToned(id)) return this.clone()
-
     var x = this.clone()
 	var fp = SCALE_FP[id] ? SCALE_FP[id]() : [1,1,1,1]
     for (let i = 0; i < 4; i++) {
@@ -366,7 +366,7 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			power = power.mul(tmp.chal?tmp.chal.eff[1].tick:1)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(15)) power = power.mul(0.8)
@@ -394,7 +394,7 @@ function getScalingPower(type, name) {
 			if (player.mainUpg.bh.includes(12)) power = power.mul(0.85)
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -411,7 +411,7 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
-			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -430,7 +430,7 @@ function getScalingPower(type, name) {
 		}
 		if (name=='tickspeed') {
 			if (player.ranks.pent.gte(5)) power = power.mul(RANKS.effect.pent[5]())
-			if (chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}
 	return power

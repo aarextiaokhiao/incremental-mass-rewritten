@@ -53,9 +53,9 @@ const ELEMENTS = {
             cost: E(1e15),
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
-                return x.softcap('e1e4',0.9,2).softcap('e1e8',0.9,2)
+                return x.softcap('e1e4',0.9,2).softcap('e1e8',0.9,2).softcap('e1e12',200/243,2)
             },
-            effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,'e1e4','e1e8') },
+            effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,'e1e4','e1e8','e1e12') },
         },
         {
             desc: `Stronger's power is stronger based on Proton Powers.`,

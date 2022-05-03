@@ -157,10 +157,10 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    return t.div(100).times(i.max(1).log(1e20)).add(1)
+                    return t.div(100).times(i.max(1).log(1e20)).add(1).softcap(10,1e3,3)
                 },
                 desc(x) {
-                    return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`
+                    return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`+getSoftcapHTML(x,10)
                 },
                 inc: "Atoms",
                 cons: "All challenges are disabled.",
@@ -250,10 +250,11 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(1)
                     let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
+					if (player.ext.ch.tones[0]) x = x.add(1).log10().add(1).log10().add(1)
                     return x.min(1e6)
                 },
                 desc(x) {
-                    return `Tickspeed is ${format(x)}x cheaper (before Meta scaling)`
+                    return `Tickspeed is ${format(x)}x cheaper` + (player.ext.ch.tones[0] ? "" : " (before Meta scaling)")
                 },
                 inc: "Dark Matter",
                 cons: "You are trapped in Challenges 8-9",

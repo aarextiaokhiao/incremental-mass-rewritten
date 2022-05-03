@@ -119,9 +119,7 @@ const RADIATION = {
             title: `Tickspeed Boost`,
 			eff(b) {
 				let x = b.add(1).root(2)
-				let d = chalOutside() && AXION.unl() ? tmp.ax.eff[2].sqrt() : E(1)
-				if (d.gt(1)) x = x.sub(1).div(d).add(1)
-				return x
+				return x.min(50)
 			},
             desc(x) { return `Non-bonus tickspeed is ${format(x)}x stronger` },
         },{
