@@ -6,7 +6,7 @@ const SUPERNOVA = {
             tmp.el.supernova_scene.setDisplay(false)
             if (!force && !fermion) {
 				if (player.supernova.times.sub(tmp.supernova.bulk).lt(5)) player.ext.chal.f8 = false
-				//if (player.supernova.times.gte(500) && player.supernova.times.div(tmp.supernova.bulk).gte(1/0) && (FERMIONS.onActive(05) || FERMIONS.onActive(15))) player.ext.chal.f10 = true
+				//if (player.supernova.times.gte(300) && player.supernova.times.div(tmp.supernova.bulk).gte(2) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
                 player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
             }
             tmp.pass = true

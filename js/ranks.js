@@ -312,38 +312,43 @@ const RANKS = {
 }
 
 function updateRanksTemp() {
-    if (!tmp.ranks) tmp.ranks = {}
-    for (let x = 0; x < RANKS.names.length; x++) if (!tmp.ranks[RANKS.names[x]]) tmp.ranks[RANKS.names[x]] = {}
-    let fp = RANKS.fp.rank()
+	let d = tmp.ranks || {}
+	let s = player.ranks
+	let u = RANKS
+    tmp.ranks = d
+
+    for (let x = 0; x < u.names.length; x++) if (!tmp.ranks[u.names[x]]) tmp.ranks[u.names[x]] = {}
+
+    let fp = u.fp.rank()
 	let scale = scalingInitPower("rank")
-    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.scaleEvery("rank").div(fp).pow(scale)).mul(10)
-    tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(scale).mul(fp).scaleEvery("rank", 1).add(1).floor();
-    if (FERMIONS.onActive(14)) tmp.ranks.rank.bulk = E(2e4).min(tmp.ranks.rank.bulk)
-    if (player.mass.lt(10)) tmp.ranks.rank.bulk = 0
-    tmp.ranks.rank.can = player.mass.gte(tmp.ranks.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || player.ranks.rank.lt(2e4))
+    d.rank.req = E(10).pow(s.rank.scaleEvery("rank").div(fp).pow(scale)).mul(10)
+    d.rank.bulk = player.mass.div(10).max(1).log10().root(scale).mul(fp).scaleEvery("rank", 1).add(1).floor();
+    if (FERMIONS.onActive(14)) d.rank.bulk = E(2e4).min(d.rank.bulk)
+    if (player.mass.lt(10)) d.rank.bulk = 0
+    d.rank.can = player.mass.gte(d.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
 
-    fp = RANKS.fp.tier()
-    tmp.ranks.tier.req = player.ranks.tier.scaleEvery("tier").div(fp).add(2).pow(2).floor()
-    tmp.ranks.tier.bulk = player.ranks.rank.max(0).root(2).sub(2).mul(fp).scaleEvery("tier", 1).add(1).floor();
+    fp = u.fp.tier()
+    d.tier.req = s.tier.scaleEvery("tier").div(fp).add(2).pow(2).floor()
+    d.tier.bulk = s.rank.max(0).root(2).sub(2).mul(fp).scaleEvery("tier", 1).add(1).floor();
 
-    fp = RANKS.fp.tetr()
+    fp = u.fp.tetr()
     let pow = 2
     if (hasElement(44)) pow = 1.75
-    tmp.ranks.tetr.req = player.ranks.tetr.scaleEvery("tetr").div(fp).pow(pow).mul(3).add(10).floor()
-    tmp.ranks.tetr.bulk = player.ranks.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery("tetr", 1).add(1).floor();
+    d.tetr.req = s.tetr.scaleEvery("tetr").div(fp).pow(pow).mul(3).add(10).floor()
+    d.tetr.bulk = s.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery("tetr", 1).add(1).floor();
 
-	fp = RANKS.fp.pent()
-	tmp.ranks.pent.req = player.ranks.pent.mul(fp).pow(1.25).add(15).floor()
-	tmp.ranks.pent.bulk = player.ranks.tetr.sub(15).max(0).root(1.25).div(fp).add(1).floor();
+	fp = u.fp.pent()
+	d.pent.req = s.pent.mul(fp).pow(1.25).add(15).floor()
+	d.pent.bulk = s.tetr.sub(15).max(0).root(1.25).div(fp).add(1).floor();
 
-	fp = RANKS.fp.hex()
-	tmp.ranks.hex.req = E(1.1).pow(player.ranks.hex.div(fp)).mul(50).floor()
-	tmp.ranks.hex.bulk = player.ranks.pent.div(50).log(1.1).mul(fp).add(1).floor()
+	fp = u.fp.hex()
+	d.hex.req = E(1.1).pow(s.hex.div(fp)).mul(50).floor()
+	d.hex.bulk = s.pent.div(50).log(1.1).mul(fp).add(1).floor()
 
-    for (let x = 0; x < RANKS.names.length; x++) {
-        let rn = RANKS.names[x]
+    for (let x = 0; x < u.names.length; x++) {
+        let rn = u.names[x]
         if (x > 0) {
-            tmp.ranks[rn].can = player.ranks[RANKS.names[x-1]].gte(tmp.ranks[rn].req)
+            d[rn].can = s[u.names[x-1]].gte(d[rn].req)
         }
     }
 }

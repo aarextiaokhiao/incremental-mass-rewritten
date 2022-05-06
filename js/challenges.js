@@ -466,7 +466,7 @@ const CHALS = {
 		unl() { return hasTree("chal8") },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks.",
-		reward: `Weaken the Axion Upgrade penalties.<br><span class="rainbow">On 15th completion, unlock Chroma!</span>`,
+		reward: `Weaken the Axion Upgrade penalties.<br><span class="rainbow">On 13th completion, unlock Chroma!</span>`,
 		max: E(100),
 		inc: E(11/9),
 		pow: E(1.2),

@@ -286,19 +286,19 @@ const UPGS = {
     mass: {
         cols: 3,
         autoOnly: [0,1,2],
-        temp() {
-            if (!tmp.upgs.mass) tmp.upgs.mass = {}
-            for (let x = this.cols; x >= 1; x--) {
-                if (!tmp.upgs.mass[x]) tmp.upgs.mass[x] = {}
-                let data = this.getData(x)
-                tmp.upgs.mass[x].cost = data.cost
-                tmp.upgs.mass[x].bulk = data.bulk
-                
-                tmp.upgs.mass[x].bonus = this[x].bonus&&!CHALS.inChal(14)?this[x].bonus():E(0)
-                tmp.upgs.mass[x].eff = this[x].effect(player.massUpg[x]||E(0))
-                tmp.upgs.mass[x].effDesc = this[x].effDesc(tmp.upgs.mass[x].eff)
-            }
-        },
+		temp() {
+			let d = tmp.upgs.mass || {}
+			tmp.upgs.mass = d
+			for (let x = this.cols; x >= 1; x--) {
+				if (!d[x]) d[x] = {}
+				let data = this.getData(x)
+				d[x].cost = data.cost
+				d[x].bulk = data.bulk
+				
+				d[x].bonus = this[x].bonus&&!CHALS.inChal(14)?this[x].bonus():E(0)
+				d[x].eff = this[x].effect(player.massUpg[x]||E(0))
+			}
+		},
         autoSwitch(x) {
             player.autoMassUpg[x] = !player.autoMassUpg[x]
         },
@@ -429,13 +429,18 @@ const UPGS = {
         },
     },
     main: {
-        temp() {
-            if (!tmp.upgs.main) tmp.upgs.main = {}
-            for (let x = 1; x <= UPGS.main.cols; x++) {
-                if (!tmp.upgs.main[x]) tmp.upgs.main[x] = {}
-                for (let y = 1; y <= UPGS.main[x].lens; y++) if (UPGS.main[x][y].effDesc) tmp.upgs.main[x][y] = { effect: UPGS.main[x][y].effect(), effDesc: UPGS.main[x][y].effDesc() }
-            }
-        },
+		temp() {
+			let d = tmp.upgs.main || {}
+			let u = UPGS.main
+			tmp.upgs.main = d
+			for (let x = 1; x <= u.cols; x++) {
+				if (!d[x]) d[x] = {}
+				for (let y = 1; y <= u[x].lens; y++) {
+					let it = u[x][y]
+					if (it.effDesc) d[x][y] = { effect: it.effect() }
+				}
+			}
+		},
         ids: [null, 'rp', 'bh', 'atom'],
         cols: 3,
         over(x,y) { player.main_upg_msg = [x,y] },

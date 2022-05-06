@@ -1,5 +1,5 @@
 let CHROMA = {
-	unl: () => player.chal.comps[13].gte(15),
+	unl: () => player.chal.comps[13].gte(13) || player.ext.ch.unl,
 
 	setup() {
 		return {
@@ -27,9 +27,9 @@ let CHROMA = {
 	},
 	colors: {
 		power() {
-			let start = mlt(tmp.md.active ? 2e8 : 2e4)
+			let start = mlt(2e4)
 			if (player.mass.lt(start)) return E(0)
-			return player.mass.log(start).log10().div(2).pow(0.75)
+			return player.mass.log(start).log10().add(1).pow(0.5).sub(1)
 		},
 	}
 }
@@ -47,6 +47,8 @@ function updateChromaTemp() {
 	data.bp_next = E(10).pow(E(1.1).pow(save.bp).mul(6e13))
 	data.bp_bulk = player.mass.div(uni(1)).log10().div(6e13).log(1.1).floor().add(1)
 	if (player.mass.lte("e6e13")) data.bp_bulk = E(0)
+
+	data.pwr = CHROMA.colors.power()
 }
 
 function updateChromaHTML() {
@@ -62,6 +64,8 @@ function updateChromaHTML() {
 		tmp.el["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, unavailable: unavailable, choosed: choosed})
 		tmp.el["ch_tone_" + i].setTxt(unl ? CHROMA.tones.colors[i] + (save.tones[i] ? ": ON" : ": OFF") : "Locked (" + format(CHROMA.tones.reqs[i]) + ")")
 	}
+
+	tmp.el.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")
 }
 
 function toggleChromaBG() {

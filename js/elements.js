@@ -251,12 +251,13 @@ function updateMassUpgradesHTML() {
 		let upg = UPGS.mass[x]
 		tmp.el["massUpg_div_"+x].setDisplay(upg.unl())
 		if (upg.unl()) {
+			let desc = UPGS.mass[x].effDesc(tmp.upgs.mass[x].eff)
 			tmp.el["massUpg_scale_"+x].setTxt(getScalingName("massUpg", x))
 			tmp.el["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bonus.gt(0)?" + "+format(tmp.upgs.mass[x].bonus,0):""))
 			tmp.el["massUpg_btn_"+x].setClasses({btn: true, locked: player.mass.lt(tmp.upgs.mass[x].cost)})
 			tmp.el["massUpg_cost_"+x].setTxt(formatMass(tmp.upgs.mass[x].cost))
-			tmp.el["massUpg_step_"+x].setTxt(tmp.upgs.mass[x].effDesc.step)
-			tmp.el["massUpg_eff_"+x].setHTML(tmp.upgs.mass[x].effDesc.eff)
+			tmp.el["massUpg_step_"+x].setTxt(desc.step)
+			tmp.el["massUpg_eff_"+x].setHTML(desc.eff)
 			tmp.el["massUpg_auto_"+x].setDisplay(player.mainUpg.rp.includes(3))
 			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"ON":"OFF")
 		}
@@ -310,12 +311,13 @@ function updateRanksRewardHTML() {
 }
 
 function updateMainUpgradesHTML() {
-	if (player.main_upg_msg[0] != 0) {
-		let upg1 = UPGS.main[player.main_upg_msg[0]]
-		let upg2 = UPGS.main[player.main_upg_msg[0]][player.main_upg_msg[1]]
-		let msg = "<span class='sky'>"+upg2.desc+"</span><br><span>Cost: "+format(upg2.cost,0)+" "+upg1.res+"</span>"
-		if (upg2.effDesc !== undefined) msg += "<br><span class='green'>Currently: "+tmp.upgs.main[player.main_upg_msg[0]][player.main_upg_msg[1]].effDesc+"</span>"
-		tmp.el.main_upg_msg.setHTML(msg)
+	let msg = player.main_upg_msg
+	if (msg[0] != 0) {
+		let upg1 = UPGS.main[msg[0]]
+		let upg2 = upg1[msg[1]]
+		let html = "<span class='sky'>"+upg2.desc+"</span><br><span>Cost: "+format(upg2.cost,0)+" "+upg1.res+"</span>"
+		if (upg2.effDesc !== undefined) html += "<br><span class='green'>Currently: "+upg2.effDesc()+"</span>"
+		tmp.el.main_upg_msg.setHTML(html)
 	} else tmp.el.main_upg_msg.setTxt("")
 	for (let x = 1; x <= UPGS.main.cols; x++) {
 		let id = UPGS.main.ids[x]
@@ -381,6 +383,7 @@ function updateHTML() {
 
 	tmp.el.loading.setDisplay(tmp.offlineActive)
     tmp.el.app.setDisplay(!tmp.offlineActive && tmp.tab != 5 && (!tmp.supernova.reached || player.supernova.unl))
+	if (tmp.offlineActive) return
 
 	updateSupernovaEndingHTML()
 	updateExoticHTML()

@@ -840,7 +840,7 @@ const TREE_UPGS = {
 			unl() { return CHROMA.unl() },
 			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f9 },
 			failed() { return !player.ext.chal.f9 },
-			reqDesc() { return `Get ??? mass, but in any U-Lepton except Muon and Neut-Tau.` + failedHTML(player.ext.chal.f9) },
+			reqDesc() { return `Get ??? mass, but in any U-Lepton.` + failedHTML(player.ext.chal.f9) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),
@@ -849,7 +849,7 @@ const TREE_UPGS = {
 		feat10: {
 			unl() { return CHROMA.unl() },
 			req() { return player.ext.chal.f10 },
-			reqDesc() { return `Above 300 Supernovae, get ??% more while in Bottom or Neut-Tau.` + failedHTML(player.ext.chal.f10, true) },
+			reqDesc() { return `At 300 Supernovae, get 2x Supernovae while in Dual Fermions.` + failedHTML(player.ext.chal.f10, true) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),

@@ -229,7 +229,7 @@ function getPlayerData() {
 			//a = 1: mass dilation
 			//a = 2: challenge
 			//a = 3: fermion
-			order: [[1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
+			order: [[0, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
 			mode: 0 //click, edit, remove
 		},
         reset_msg: "",
@@ -238,7 +238,8 @@ function getPlayerData() {
         options: {
             font: 'Verdana',
             notation: 'mixed_sc',
-            tree_animation: 0
+            tree_animation: 0,
+			noChroma: true
         },
         confirms: {},
 		stats: {
@@ -259,7 +260,6 @@ function getPlayerData() {
     for (let x = 1; x <= CHALS.cols; x++) s.chal.comps[x] = E(0)
     for (let x = 0; x < CONFIRMS.length; x++) s.confirms[CONFIRMS[x]] = true
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) s.md.upgs[x] = E(0)
-	s.supernova.tree = removeDuplicates(s.supernova.tree)
     for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) s.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = E(0)
     for (let x = 0; x < 7; x++) {
         s.supernova.radiation.ds.push(E(0))
@@ -292,6 +292,7 @@ function loadPlayer(load) {
 	if (player.atom.eb2) player.atom.eb2 = E(player.atom.eb2)
 	if (player.atom.eb3) player.atom.eb3 = E(player.atom.eb3)
 	if (player.supernova.times.gte(1)) player.supernova.unl = true
+	player.supernova.tree = removeDuplicates(player.supernova.tree)
     for (i = 0; i < 2; i++) for (let x = 0; x < FERMIONS.types[i].length; x++) {
         let f = FERMIONS.types[i][x]
         player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
@@ -463,7 +464,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/2/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/5/22a BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}
