@@ -119,6 +119,7 @@ const RADIATION = {
             title: `Tickspeed Boost`,
 			eff(b) {
 				let x = b.add(1).root(2)
+				if (scalingToned("tickspeed")) x = x.log10().div(50).add(1)
 				return x.min(50)
 			},
             desc(x) { return `Non-bonus tickspeed is ${format(x)}x stronger` },
@@ -210,7 +211,7 @@ const RADIATION = {
         },{
             title: `Meta-Tickspeed Boost`,
             eff(b) {
-                let x = E(1.1).pow(b).softcap(15,3,3)
+                let x = E(1.1).pow(b).softcap(15,3,3).min(40)
                 return x
             },
             desc(x) { return `Meta-Tickspeed starts ${format(x)}x later`+getSoftcapHTML(x,15) },

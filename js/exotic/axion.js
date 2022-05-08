@@ -65,9 +65,8 @@ let AXION = {
 			.div(tmp.ax.cost[p])
 			.log([2,3,10][type])
 			.div(tmp.ax.fp)
-			.add(1)
-			.floor()
-		bulk = bulk.min(tmp.ax.max[type]).sub(player.ext.ax.upgs[p])
+			.add(1).floor()
+		bulk = bulk.min(tmp.ax.max[type].sub(player.ext.ax.upgs[p]))
 		if (bulk.lt(0)) return E(0)
 		return bulk
 	},
@@ -82,12 +81,11 @@ let AXION = {
 		if (bulk.eq(0)) return
 		player.ext.ax.res[type] = player.ext.ax.res[type].sub(
 			E([2,3,10][type]).pow(
-				bulk
-				.sub(1)
+				bulk.sub(1)
 				.mul(tmp.ax.fp)
 			).mul(cost)
 		).max(0)
-		player.ext.ax.upgs[i] = bulk
+		player.ext.ax.upgs[i] = player.ext.ax.upgs[i].add(bulk)
 		updateAxionLevelTemp()
 	},
 
@@ -111,11 +109,10 @@ let AXION = {
 		var r = player.ext.ax.upgs[i]
 		var type = Math.floor(i / 4)
 		if (hasTree("ext_l2") && type < 2) r = r.add(player.ext.ax.upgs[[i+4,i-4][type]].div([1.5,i*1.5][type]))
-		if (future) r = r.mul(3)
 		return r.max(0)
 	},
 	getLvl(p, base) {
-		var req = AXION.ids[p].req
+		var req = future ? E(0) : AXION.ids[p].req
 		var r = AXION.getBaseLvl(p).add(AXION.getBonusLvl(p))
 		if (!base) r = r.sub(req)
 		return r.max(0)
@@ -137,6 +134,7 @@ let AXION = {
 		if (hasTree("ext_e1")) {
 			r = r.add(tmp.ax.upg[y + 8])
 			if (y > 0) r = r.add(tmp.ax.upg[y + 7])
+			if (y == 5) r = r.add(tmp.ax.upg[y + 6])
 		}
 		return r
 	},
@@ -366,16 +364,15 @@ let AXION = {
 			}
 		},
 		18: {
-			title: "Super Stronger",
-			desc: "Tickspeed adds itself.",
+			title: "Temporal Dimensionality",
+			desc: "Tickspeed Power raises BH Condenser Power.",
 			unl: () => CHROMA.unl(),
 			req: E(60),
 			eff(x) {
-				let k = x.pow(.75).div(50).min(2)
-				return player.tickspeed.mul(k)
+				return tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().mul(x.div(1e4).min(.01)).add(1):E(1)
 			},
 			effDesc(x) {
-				return "+"+format(x)
+				return "^"+format(x)
 			}
 		},
 		19: {
@@ -385,10 +382,12 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
-				return player.md.mass.add(1).log10().add(1).log10().div(E(5).sub(x.log10()).max(1)).div(10).add(1).min(3)
+				let r = player.md.mass.add(1).log10().add(1).log10().add(1) // log^2(Dilated mass)
+				r = r.pow(x.add(1).log10().div(10)) // log(Levels)
+				return r
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return "^"+format(x)
 			}
 		},
 

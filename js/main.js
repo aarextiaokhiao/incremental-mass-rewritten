@@ -96,7 +96,6 @@ const FORMS = {
 			}
             let bonus = E(0)
             if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
-            if (AXION.unl()) bonus = bonus.add(tmp.ax.eff[18])
             let step = E(1.5)
                 step = step.add(tmp.chal.eff[6])
                 step = step.add(tmp.chal.eff[2])
@@ -244,7 +243,7 @@ const FORMS = {
                     if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
                     pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
                     if (hasTree("bh2")) pow = pow.pow(1.15)
-                pow = pow
+                    if (AXION.unl()) pow = pow.pow(tmp.ax.eff[18])
                 let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
                 return {pow: pow, eff: eff}
             },
@@ -397,24 +396,29 @@ const UPGS = {
             title: "Stronger",
             start: E(1000),
             inc: E(9),
-            effect(x) {
-                let step = E(1).add(RANKS.effect.tetr[2]())
-                if (player.mainUpg.rp.includes(9)) step = step.add(0.25)
-                if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
-                if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
-                if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-		        step = step.pow(tmp.chal?tmp.chal.eff[14]:1)
+			effect(x) {
+				let step = E(1).add(RANKS.effect.tetr[2]())
+				if (player.mainUpg.rp.includes(9)) step = step.add(0.25)
+				if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
+				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
+				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
+				if (future && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step.log10().div(1e4).add(1).pow(27/20))
 
-                let ss = E(10)
-                let sp = 0.5
-                if (player.ranks.rank.gte(34)) ss = ss.add(2)
-                if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
-                if (player.mainUpg.atom.includes(9)) sp *= 1.15
-                if (player.ranks.tier.gte(30)) sp *= 1.1
+				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
+				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
+				//Not included: 2/3 [Tetr 2], beaten by MU12
 
-                let ret = step.mul(x.add(tmp.upgs.mass[3].bonus)).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
-                return {step: step, eff: ret, ss: ss}
-            },
+				let ss = E(10)
+				let sp = 0.5
+				if (player.ranks.rank.gte(34)) ss = ss.add(2)
+				if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
+				if (player.mainUpg.atom.includes(9)) sp *= future ? 40/33 : 1.15 //Sum: 2/3
+				if (player.ranks.tier.gte(30)) sp *= 1.1
+
+				let total = x.add(tmp.upgs.mass[3].bonus)
+				let ret = step.mul(total).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+				return {step: step, eff: ret, ss: ss}
+			},
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
@@ -542,7 +546,7 @@ const UPGS = {
             },
             12: {
                 unl() { return player.chal.unl },
-                desc: "For every OoM of Rage Powers adds Stronger Power at a reduced rate.",
+                desc: "Rage Power adds Stronger power.",
                 cost: E(1e120),
                 effect() {
                     let ret = player.rp.points.max(1).log10().softcap(200,0.75,0).div(1000)
@@ -600,7 +604,7 @@ const UPGS = {
                 cost: E(1),
             },
             2: {
-                desc: "Tickspeeds boosts BH Condenser Power.",
+                desc: "Tickspeed boosts BH Condenser Power.",
                 cost: E(10),
                 effect() {
                     let ret = player.tickspeed.add(1).root(8)
@@ -622,7 +626,7 @@ const UPGS = {
                 },
             },
             4: {
-                desc: "Tiers no longer resets anything.",
+                desc: "Tiers no longer reset anything.",
                 cost: E(1e4),
             },
             5: {
@@ -662,7 +666,7 @@ const UPGS = {
                 desc: "Stronger Effect's softcap start later based on unspent Dark Matters.",
                 cost: E(1e27),
                 effect() {
-                    let ret = player.bh.dm.max(1).log10().pow(0.5)
+                    let ret = player.bh.dm.max(1).log10().sqrt().min(1e9)
                     return ret
                 },
                 effDesc(x=this.effect()) {

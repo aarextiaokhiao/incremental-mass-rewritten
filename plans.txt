@@ -1,17 +1,5 @@
 TO-DO LIST:
-1: A new layer: Exotic
-	1a. Axions: (WIP)
-		Starting off with a grid of boosts, coming with upgrades on each side.
-		Each upgrade gives levels to boosts, but increase the costs and have level limits.
-		1a-i. Upgrades:
-			Row Buildup: One upgrade gives levels to more boosts in a row, and wrap to next row.
-			Link Upgrades: One gives levels to other Axion boosts.
-			Cheapen Upgrades: A upgrade in a row cheapens other upgrades in a row.
-			Turnback Upgrades: Levels cheapen upgrades.
-	1b. Chroma Tree:
-		A grid system which lines grow from things by iterating.
-		There are 3 kinds of lines and 3 anti-kinds which iterate off from normal ones.
-		These lines require iterations and cost things, and activate things on touch.
+1: Remaining mechanics:
 	1c. Quantum Foam:
 		Connectable products?
 	1d. Spectra Generators:
@@ -30,14 +18,14 @@ TO-DO LIST:
 	(or Strange, the Strangely Matter?)
 	(or Lightning / Cloudy)
 
-B: Add a upgrade: No scalings to Tickspeed, except scales faster.
-B2 (powerful upgrades):
-1. All Tickspeed scalings start later based on mass.
-2. All Rank scalings are weaker based on mass.
-3. Hardened - Insane Challenge scalings are weaker based on mass.
-4. Rank - Pent scale slower.
-5. Dilated mass raises tickspeed.
-6. 3rd Dilation Upgrade scales faster. (will be softcapped at ^0.96 exponent)
-7. Axion Upgrades increase costs slower.
-B3: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
+B1 (upgrades):
+1. [???]         Reduce MD Upgrade 6 softcap.
+2. [C14 Reward]  Raise C10 reward exponent. (from ^1/1.75 to ^1)
+3. [Chromaspice] Dilated mass raises tickspeed.
+4. [???]         Add Atom Upgrade 9 effect. (+6.21% max)
+5. [Scrapped]    Stronger directly adds itself. (x^1.5 / 100)
+6. [Chromaspice] Tickspeed Power multiplies Stronger.
+7. [Axion]       Tickspeed Power raises BH Condenser Power.
+
+B2: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)

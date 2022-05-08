@@ -451,7 +451,7 @@ const TREE_UPGS = {
             effect() {
 				let sn = player.supernova.times
 				let b = sn.div(300).add(1)
-				if (future && sn.gt(300)) b = E(2).pow(sn.div(300).sqrt()) //For a future upgrade
+				if (sn.gt(300)) b = E(2).pow(b.sub(1).sqrt())
                 let x = b.pow(sn.sub(40).max(0)).sub(1).div(10).add(1)
                 return x
             },

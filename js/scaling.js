@@ -338,9 +338,6 @@ function getScalingStart(type, name) {
 			if (player.ranks.tetr.gte(18)) start = start.mul(RANKS.effect.tetr[18]())
 			if (tmp.radiation) start = start.mul(tmp.radiation.bs.eff[14])
 		}
-		if (name=='supernova') {
-			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
-		}
 	}
 	if (SCALE_FLOORS[name] && !SCALE_FLOORS[name]()) return start
 	return start.floor()

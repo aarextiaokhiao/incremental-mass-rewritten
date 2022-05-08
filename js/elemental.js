@@ -58,7 +58,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,'e1e4','e1e8','e1e12') },
         },
         {
-            desc: `Stronger's power is stronger based on Proton Powers.`,
+            desc: `Proton Power multiplies Stronger Power.`,
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
@@ -471,9 +471,9 @@ const ELEMENTS = {
             effect() {
                 let x = player.ranks.rank
                 x = x.div(2e4).add(1)
-				return x.min(2).pow(x.div(1.5).max(1)).softcap(300,4,3)
+				return x.min(2).pow(x.div(1.5).max(1)).min(20)
             },
-            effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,300) },
+            effDesc(x) { return format(x)+"x" },
         },
         {
             desc: `Raise Lutetium-71 effect based on Neutron Stars.`,

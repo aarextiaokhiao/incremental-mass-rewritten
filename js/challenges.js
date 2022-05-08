@@ -154,12 +154,10 @@ const CHALS = {
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
         if (hasTree("feat7")) x = x.mul(0.96)
-        if (future) x = x.div(player.mass.max(1).log10().max(1).log10().div(50).add(1))
         return x
     },
     getPower2(i) {
         let x = E(1)
-        if (future) x = x.div(player.mass.max(1).log10().max(1).log10().div(50).add(1))
         return x
     },
     getPower3(i) {
@@ -427,10 +425,17 @@ const CHALS = {
         inc: E('e2000'),
         pow: E(2),
         start: E('e3e4').mul(1.5e56),
-        effect(x) {
-            let ret = x.root(1.75).mul(0.01).add(1)
-            return ret
-        },
+		effect(x) {
+			let exp = E(1/1.75)
+			let mul = E(0.01)
+			if (player.chal.comps[14].gte(0)) {
+				let c14 = CHALS[14].effect(player.chal.comps[14])
+				exp = exp.mul(c14.exp)
+				mul = mul.mul(c14.mul)
+			}
+			let ret = x.pow(exp).mul(mul).add(1)
+			return ret
+		},
         effDesc(x) { return format(x)+"x" },
     },
     11: {
@@ -480,15 +485,18 @@ const CHALS = {
 		unl() { return AXION.unl() && tmp.ax.lvl[22].gt(0) },
 		title: "Monochromatic Mass",
 		desc: "You can't gain Main Buildings, and also can't dilate mass.",
-		reward: `Stronger effect is extraordinary stronger!<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
+		reward: `Raise Challenge 10.<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
 		max: E(100),
 		inc: E(10),
 		pow: E(1.25),
 		start: E(1/0),
 		effect(x) {
-			return x.div(1e3).add(1)
+			return {
+				exp: E(1.75).sub(E(0.75).div(x.div(5).add(1))),
+				mul: x.div(25).add(1)
+			}
 		},
-        effDesc(x) { return "^"+format(x) },
+        effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul) },
 	},
 	15: {
 		unl() { return false },

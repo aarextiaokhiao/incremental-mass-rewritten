@@ -210,7 +210,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Collapse Stars gain softcap starts ^${format(x)} later`+getSoftcapHTML(x,1.5)
+                    return `Star gain softcap starts ^${format(x)} later`+getSoftcapHTML(x,1.5)
                 },
                 inc: "Quark",
                 cons: "^0.625 to the exponent of Atoms gain",
@@ -251,11 +251,11 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(1)
                     let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
-					if (player.ext.ch.tones[0]) x = x.add(1).log10().add(1).log10().add(1)
+					if (scalingToned("tickspeed")) x = x.add(1).log10().add(1).log10().div(5).add(1)
                     return x.min(1e6)
                 },
                 desc(x) {
-                    return `Tickspeed is ${format(x)}x cheaper` + (player.ext.ch.tones[0] ? "" : " (before Meta scaling)")
+                    return `Tickspeed is ${format(x)}x cheaper` + (scalingToned("tickspeed") ? "" : " (before Meta scaling)")
                 },
                 inc: "Dark Matter",
                 cons: "You are trapped in Challenges 8-9",
@@ -379,18 +379,19 @@ function setupFermionsHTML() {
 }
 
 function updateFermionsTemp() {
-    tmp.fermions.ch = player.supernova.fermions.choosed == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed[0]),Number(player.supernova.fermions.choosed[1])]
-    tmp.fermions.ch2 = player.supernova.fermions.choosed2 == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed2[0]),Number(player.supernova.fermions.choosed2[1])]
+	let tf = tmp.fermions
+    tf.ch = player.supernova.fermions.choosed == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed[0]),Number(player.supernova.fermions.choosed[1])]
+    tf.ch2 = player.supernova.fermions.choosed2 == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed2[0]),Number(player.supernova.fermions.choosed2[1])]
     for (i = 0; i < 2; i++) {
-        tmp.fermions.gains[i] = FERMIONS.gain(i)
+        tf.gains[i] = FERMIONS.gain(i)
         for (let x = 0; x < FERMIONS.types[i].length; x++) {
             let f = FERMIONS.types[i][x]
-            tmp.fermions.maxTier[i][x] = FERMIONS.maxTier(i, x)
-            tmp.fermions.tiers[i][x] = f.calcTier()
+            tf.maxTier[i][x] = FERMIONS.maxTier(i, x)
+            tf.tiers[i][x] = f.calcTier()
 
 			let t = player.supernova.fermions.tiers[i][x]
 			if (tmp.radiation && i == 1) t = t.mul(tmp.radiation.bs.eff[16])
-            tmp.fermions.effs[i][x] = f.eff(player.supernova.fermions.points[i], t)
+            tf.effs[i][x] = f.eff(player.supernova.fermions.points[i], t)
         }
     }
 }

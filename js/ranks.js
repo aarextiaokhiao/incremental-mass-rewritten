@@ -231,7 +231,7 @@ const RANKS = {
 			},
 			'10'() {
 				let ret = tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:E(1)
-				ret = ret.times(player.ranks.pent.softcap(25,0.5,0).div(100).min(5))
+				ret = ret.times(player.ranks.pent.softcap(25,3,3).div(100))
 				return ret
 			},
 			'13'() {
@@ -280,6 +280,7 @@ const RANKS = {
         rank() {
             let f = E(1)
             if (player.ranks.tier.gte(1)) f = f.mul(1/0.8)
+            if (scalingToned("rank")) f = E(0.5)
             f = f.mul(tmp.chal.eff[5].pow(-1))
             if (future) f = f.mul(player.mass.max(1).log10().add(1).pow(0.01))
             return f
