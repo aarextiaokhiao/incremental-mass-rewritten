@@ -256,8 +256,8 @@ const FORMS = {
         },
 
 		radSoftStart() {
-			let r = E(10).pow(player.supernova.times.add(1).pow(6).div(100))
-			if (hasElement(80)) r = r.pow(1.5)
+			let r = expMult(player.md.mass,0.95).pow(1e3)
+			if (hasElement(80)) r = r.pow(2)
 			if (AXION.unl()) r = r.pow(tmp.ax.eff[8])
 			return r
 		}
@@ -347,6 +347,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
+                if (player.ranks.pent.gte(600)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[600]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
@@ -374,6 +375,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
+                if (player.ranks.pent.gte(600)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[600]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
@@ -402,7 +404,7 @@ const UPGS = {
 				if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (future && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step.log10().div(1e4).add(1).pow(27/20))
+				if (player.ranks.pent.gte(10000)) step = step.mul(RANKS.effect.pent[10000]())
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
@@ -412,8 +414,9 @@ const UPGS = {
 				let sp = 0.5
 				if (player.ranks.rank.gte(34)) ss = ss.add(2)
 				if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
-				if (player.mainUpg.atom.includes(9)) sp *= future ? 40/33 : 1.15 //Sum: 2/3
+				if (player.mainUpg.atom.includes(9)) sp *= 1.15
 				if (player.ranks.tier.gte(30)) sp *= 1.1
+				if (player.ranks.pent.gte(80)) sp *= (2/3) / 0.55 / 1.15
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
@@ -666,7 +669,7 @@ const UPGS = {
                 desc: "Stronger Effect's softcap start later based on unspent Dark Matters.",
                 cost: E(1e27),
                 effect() {
-                    let ret = player.bh.dm.max(1).log10().sqrt().min(1e9)
+                    let ret = player.bh.dm.max(1).log10().sqrt().min(1e8)
                     return ret
                 },
                 effDesc(x=this.effect()) {

@@ -19,13 +19,9 @@ TO-DO LIST:
 	(or Lightning / Cloudy)
 
 B1 (upgrades):
-1. [???]         Reduce MD Upgrade 6 softcap.
-2. [C14 Reward]  Raise C10 reward exponent. (from ^1/1.75 to ^1)
-3. [Chromaspice] Dilated mass raises tickspeed.
-4. [???]         Add Atom Upgrade 9 effect. (+6.21% max)
-5. [Scrapped]    Stronger directly adds itself. (x^1.5 / 100)
-6. [Chromaspice] Tickspeed Power multiplies Stronger.
-7. [Axion]       Tickspeed Power raises BH Condenser Power.
+1. [C14 Reward]  Raise C10 reward exponent. (from ^1/1.75 to ^1)
+2. [Scrapped]    Stronger directly adds itself. (x^1.5 / 100)
+3. [Axion?]      RP base formula is better. [^b^11/60]
 
 B2: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)

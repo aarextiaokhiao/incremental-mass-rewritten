@@ -527,7 +527,7 @@ const ELEMENTS = {
             cost: E('e8e9'),
         },
         {
-            desc: `Hawking Radiation softcap starts ^1.5 later.`,
+            desc: `Hawking Radiation softcap starts ^2 later.`,
             cost: E('e1.6e10')
         },
         {

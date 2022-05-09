@@ -32,7 +32,7 @@ let EXOTIC = {
 		return r
 	},
 	reduce(t, x) {
-		if (t == 1) return x.mul(10).log10().pow(5).mul(10)
+		if (t == 1) return x.eq(0) ? E(0) : x.mul(10).log10().max(0).pow(5).mul(10)
 		if (t == 2) return x.div(10).sqrt().mul(10)
 		return x
 	},

@@ -620,6 +620,17 @@ td.ax {
 	font-size: 125%
 }
 
+.btn_cs {
+	height: 36px;
+	width: 96px;
+}
+
+.boost_cs {
+	height: 36px;
+	width: 240px;
+	border: 3px solid transparent
+}
+
 @keyframes rainbow {
 	0% {
 		background: #ff0000

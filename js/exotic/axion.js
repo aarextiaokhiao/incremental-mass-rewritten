@@ -61,13 +61,14 @@ let AXION = {
 	},
 	bulk(p) {
 		var type = Math.floor(p / 4)
+		var cost = tmp.ax.cost[p]
+		if (player.ext.ax.res[type].lt(cost)) return E(0)
 		var bulk = player.ext.ax.res[type]
-			.div(tmp.ax.cost[p])
+			.div(cost)
 			.log([2,3,10][type])
 			.div(tmp.ax.fp)
 			.add(1).floor()
 		bulk = bulk.min(tmp.ax.max[type].sub(player.ext.ax.upgs[p]))
-		if (bulk.lt(0)) return E(0)
 		return bulk
 	},
 	canBuy(i) {
@@ -112,7 +113,7 @@ let AXION = {
 		return r.max(0)
 	},
 	getLvl(p, base) {
-		var req = future ? E(0) : AXION.ids[p].req
+		var req = AXION.ids[p].req
 		var r = AXION.getBaseLvl(p).add(AXION.getBonusLvl(p))
 		if (!base) r = r.sub(req)
 		return r.max(0)
@@ -263,7 +264,7 @@ let AXION = {
 			desc: "Hawking Radiation is more powerful.",
 			req: E(4),
 			eff(x) {
-				return x.add(1).sqrt().softcap(4,0.5,0)
+				return x.add(1).sqrt().softcap(4,2/3,0)
 			},
 			effDesc(x) {
 				return format(x) + "x" + getSoftcapHTML(x,4)
@@ -367,9 +368,9 @@ let AXION = {
 			title: "Temporal Dimensionality",
 			desc: "Tickspeed Power raises BH Condenser Power.",
 			unl: () => CHROMA.unl(),
-			req: E(60),
+			req: E(1),
 			eff(x) {
-				return tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().mul(x.div(1e4).min(.01)).add(1):E(1)
+				return tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().mul(x.pow(0.75).div(1e4).min(.01)).add(1):E(1)
 			},
 			effDesc(x) {
 				return "^"+format(x)
@@ -505,12 +506,13 @@ function updateAxionTemp() {
 	d.cost = {}
 	d.bulk = {}
 	d.eff = {}
+	d.str = E(future ? 3 : 1)
 	d.fp = AXION.costScale(i)
 	for (var i = 0; i < 12; i++) {
 		d.cost[i] = AXION.cost(i)
 		d.bulk[i] = AXION.bulk(i)
 	}
-	for (var i = 0; i < 20; i++) d.eff[i] = AXION.getEff(i, d.lvl[i])
+	for (var i = 0; i < 20; i++) d.eff[i] = AXION.getEff(i, d.lvl[i].mul(d.str))
 }
 
 function hoverAxion(x) {

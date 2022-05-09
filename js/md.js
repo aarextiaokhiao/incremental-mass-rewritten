@@ -34,20 +34,23 @@ const MASS_DILATION = {
         x = x.mul(tmp.fermions.effs[0][1]||1)
         return x
     },
-	RPbasegain() {
+	RPbasegain(m=player.mass) {
+		return m.div(uni(1)).max(1).log10().div(40).sub(14)
+	},
+	RPbasemult(b=E(1)) {
 		if (CHALS.inChal(11)) return E(0)
+		b = b.max(1)
 		let x = E(1)
 		if (future) x = x.mul(player.rp.points.max(1).log10().div(1e3).add(1))
 		if (future) x = x.mul(player.bh.dm.max(1).log10().div(1e3).add(1))
 		if (future) x = x.mul(player.stars.points.max(1).log10().div(1e3).add(1))
+		if (future) x = x.mul(b).pow(b.div(1e9).add(1).pow(11/60)).div(b)
 		return x
 	},
-	RPgain(m=player.mass,bm=tmp.md.rp_base_gain) {
-		return tmp.md.rp_mult_gain
-
+	RPgain(m=player.mass,bm=tmp.md.rp_base_mult) {
 		if (CHALS.inChal(11)) return E(0)
-		let b = m.div(uni(1)).max(1).log10().div(40).sub(14)
-		let x = b.mul(bm).pow(tmp.md.rp_exp_gain).mul(tmp.md.rp_mult_gain)
+		let x = this.RPbasegain(m).mul(bm).pow(tmp.md.rp_exp_gain)
+		x = x.mul(tmp.md.rp_mult_gain)
 		return x.sub(player.md.particles).max(0).floor()
 	},
     massGain() {
@@ -62,7 +65,7 @@ const MASS_DILATION = {
         return x
     },
     mass_req() {
-        let x = E(10).pow(player.md.particles.add(1).div(tmp.md.rp_mult_gain).root(tmp.md.rp_exp_gain).div(tmp.md.rp_base_gain).add(14).mul(40)).mul(1.50005e56)
+        let x = E(10).pow(player.md.particles.add(1).div(tmp.md.rp_mult_gain).root(tmp.md.rp_exp_gain).div(tmp.md.rp_base_mult).add(14).mul(40)).mul(1.50005e56)
         return x
     },
     effect() {
@@ -123,7 +126,7 @@ const MASS_DILATION = {
                     let s = E(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
                     if (hasElement(53)) x = x.mul(1.75)
-                    return x.softcap(1e3,0.6,0)
+                    return x.softcap(1e3,player.ranks.pent.gte(80)?0.7:0.6,0)
                 },
                 effDesc(x) { return "+^"+format(x)+getSoftcapHTML(x,1e3) },
             },{
@@ -212,7 +215,7 @@ function updateMDTemp() {
         tmp.md.upgs[x].can = player.md.mass.gte(tmp.md.upgs[x].cost) && player.md.upgs[x].lt(upg.maxLvl||1/0)
         if (upg.effect) tmp.md.upgs[x].eff = upg.effect(player.md.upgs[x])
     }
-    tmp.md.rp_base_gain = MASS_DILATION.RPbasegain()
+    tmp.md.rp_base_mult = MASS_DILATION.RPbasemult(MASS_DILATION.RPbasegain())
     tmp.md.rp_exp_gain = MASS_DILATION.RPexpgain()
     tmp.md.rp_mult_gain = MASS_DILATION.RPmultgain()
     tmp.md.rp_gain = MASS_DILATION.RPgain()

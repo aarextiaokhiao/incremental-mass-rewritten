@@ -42,10 +42,10 @@ function updateChromaTemp() {
 
 	data.toned = 0
 	for (var i = 0; i < save.tones.length; i++) if (save.tones[i]) data.toned++
-	data.req = EXT.amt([E(0), E(1/0), E(1/0), E(1/0)][data.toned])
+	data.req = EXT.amt([E(0), E("ee100"), E("ee100"), E("ee100")][data.toned])
 
-	data.bp_next = E(10).pow(E(1.1).pow(save.bp).mul(6e13))
-	data.bp_bulk = player.mass.div(uni(1)).log10().div(6e13).log(1.1).floor().add(1)
+	data.bp_next = E(10).pow(E(1.6).pow(save.bp).mul(6e13))
+	data.bp_bulk = player.mass.div(uni(1)).log10().div(6e13).log(1.6).floor().add(1)
 	if (player.mass.lte("e6e13")) data.bp_bulk = E(0)
 
 	data.pwr = CHROMA.colors.power()
