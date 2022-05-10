@@ -366,11 +366,11 @@ let AXION = {
 		},
 		18: {
 			title: "Temporal Dimensionality",
-			desc: "Tickspeed Power raises BH Condenser Power.",
+			desc: "Raise Tickspeed Power softcap.",
 			unl: () => CHROMA.unl(),
 			req: E(1),
 			eff(x) {
-				return tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().mul(x.pow(0.75).div(1e4).min(.01)).add(1):E(1)
+				return x.div(10).add(1).log(1.5).add(1)
 			},
 			effDesc(x) {
 				return "^"+format(x)
@@ -385,7 +385,7 @@ let AXION = {
 				if (x.lte(0)) return E(1)
 				let r = player.md.mass.add(1).log10().add(1).log10().add(1) // log^2(Dilated mass)
 				r = r.pow(x.add(1).log10().div(10)) // log(Levels)
-				return r
+				return r.min(3)
 			},
 			effDesc(x) {
 				return "^"+format(x)

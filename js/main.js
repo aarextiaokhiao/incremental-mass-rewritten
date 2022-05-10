@@ -108,6 +108,7 @@ const FORMS = {
             if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
 
             let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
+            if (AXION.unl()) ss = ss.pow(tmp.ax.eff[18])
             step = step.softcap(ss,0.1,0)
             
             let eff = step.pow(t.add(bonus))
@@ -243,7 +244,7 @@ const FORMS = {
                     if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
                     pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
                     if (hasTree("bh2")) pow = pow.pow(1.15)
-                    if (AXION.unl()) pow = pow.pow(tmp.ax.eff[18])
+                    if (player.ranks.pent.gte(130)) pow = pow.pow(tmp.tickspeedEffect?tmp.tickspeedEffect.step.log10().div(1e3).add(1):E(1))
                 let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
                 return {pow: pow, eff: eff}
             },
@@ -347,7 +348,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
-                if (player.ranks.pent.gte(600)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[600]()))
+                if (player.ranks.pent.gte(300)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[300]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
@@ -375,7 +376,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
-                if (player.ranks.pent.gte(600)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[600]()))
+                if (player.ranks.pent.gte(300)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[300]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
@@ -404,7 +405,7 @@ const UPGS = {
 				if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (player.ranks.pent.gte(10000)) step = step.mul(RANKS.effect.pent[10000]())
+				if (player.ranks.pent.gte(1100)) step = step.mul(tmp.tickspeedEffect.step.log10().div(1e4).add(1).pow(27/20))
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]

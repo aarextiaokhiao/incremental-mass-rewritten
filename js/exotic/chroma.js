@@ -6,7 +6,7 @@ let CHROMA = {
 			unl: false,
 			tones: [false, false, false, false],
 			bp: E(0),
-			sp: [],
+			upg: [],
 		}
 	},
 	calc(dt) {

@@ -119,7 +119,7 @@ const RADIATION = {
             title: `Tickspeed Boost`,
 			eff(b) {
 				let x = b.add(1).root(2)
-				if (scalingToned("tickspeed")) x = x.log10().div(50).add(1)
+				if (scalingToned("tickspeed")) x = x.log10().add(1)
 				return x.min(50)
 			},
             desc(x) { return `Non-bonus tickspeed is ${format(x)}x stronger` },

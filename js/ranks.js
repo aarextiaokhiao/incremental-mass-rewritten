@@ -129,8 +129,9 @@ const RANKS = {
             '10': "Stronger and Pent raise levels from Musculer and Booster.",
             '13': "Pent 1 effect is raised by Pents.",
             '80': "reduce MD Upgrade 6 and Stronger softcaps.",
-            '600': "mass upgrade 1-2 self-boosts multiply themselves, based on Pent.",
-            '10000': "Tickspeed Power multiplies Stronger.",
+            '130': "Tickspeed Power boosts BH Condenser Power.",
+            '300': "mass upgrade 1-2 self-boosts multiply themselves, based on Pent.",
+            '1100': "Tickspeed Power multiplies Stronger.",
         },
         hex: {
             '1': "Unlock Chroma.",
@@ -234,20 +235,16 @@ const RANKS = {
 			},
 			'10'() {
 				let ret = tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:E(1)
-				ret = ret.times(player.ranks.pent.softcap(20,4,3).div(100))
+				ret = ret.times(player.ranks.pent.softcap(20,4,3).div(100).min(2))
 				return ret
 			},
 			'13'() {
 				let ret = player.ranks.pent.add(6).div(18).sqrt().softcap(1.5,0.2,0)
 				return ret.min(1.5)
 			},
-			'600'() {
-				return player.ranks.pent.div(400).log10().div(2)
+			'300'() {
+				return player.ranks.pent.div(400).log10().div(2).min(1)
 			},
-			'10000'() {
-				if (!tmp.tickspeedEffect) return E(1)
-				return tmp.tickspeedEffect.step.log10().div(5e3).add(1).pow(27/20)
-			}
 		},
 		hex: {
 		},
@@ -282,8 +279,7 @@ const RANKS = {
             5(x) { return format(E(1).div(x))+"x weaker" },
             10(x) { return "^"+format(x) },
             13(x) { return "^"+format(x,3) },
-            600(x) { return "^"+format(x,3) },
-            10000(x) { return format(x)+"x" },
+            300(x) { return "^"+format(x,3) },
         },
 		hex: {
 		},

@@ -158,7 +158,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    return t.div(100).times(i.max(1).log(1e20)).add(1).softcap(10,1e3,3)
+                    return t.div(100).times(i.max(1).log(1e20)).add(1).softcap(15,1e3,3)
                 },
                 desc(x) {
                     return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`+getSoftcapHTML(x,10)

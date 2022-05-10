@@ -44,7 +44,7 @@ const MASS_DILATION = {
 		if (future) x = x.mul(player.rp.points.max(1).log10().div(1e3).add(1))
 		if (future) x = x.mul(player.bh.dm.max(1).log10().div(1e3).add(1))
 		if (future) x = x.mul(player.stars.points.max(1).log10().div(1e3).add(1))
-		if (future) x = x.mul(b).pow(b.div(1e9).add(1).pow(11/60)).div(b)
+		//if (future) x = x.mul(b).pow(b.div(1e9).add(1).pow(11/60)).div(b)
 		return x
 	},
 	RPgain(m=player.mass,bm=tmp.md.rp_base_mult) {
