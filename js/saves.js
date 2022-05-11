@@ -229,8 +229,7 @@ function getPlayerData() {
 			//a = 1: mass dilation
 			//a = 2: challenge
 			//a = 3: fermion
-			order: [[0, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
-			mode: 0 //click, edit, remove
+			order: [[0, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
 		},
         reset_msg: "",
         main_upg_msg: [0,0],
@@ -297,6 +296,7 @@ function loadPlayer(load) {
         let f = FERMIONS.types[i][x]
         player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
     }
+	if (player.ext.ch.sp) player.ext.ch = CHROMA.setup()
     let off_time = (Date.now() - player.offline.current)/1000
     if (off_time >= 60 && player.offline.active) player.offline.time += off_time
 }
@@ -464,7 +464,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/9/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/10/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

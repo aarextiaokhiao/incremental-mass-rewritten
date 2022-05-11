@@ -557,7 +557,6 @@ const TREE_UPGS = {
 			desc: `Start producing Y-Axions based on Supernovae.`,
 			cost: E("3.333e333"),
 			perm: 1,
-			icon: "axion",
 		},
 		ext_l1: {
 			branch: ["ext_c"],
@@ -570,8 +569,8 @@ const TREE_UPGS = {
 		},
 		ext_l2: {
 			branch: ["ext_l1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_l3") ? 1e35 : 1e11)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l3") ? 1e35 : 1e11)) + " Exotic Matter. [increased with ext_l3]" },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_l3") ? 1e40 : 1e11)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l3") ? 1e40 : 1e11)) + " Exotic Matter. [increased with ext_l3]" },
 			desc: `Axion Levels synergize with ones from the other side.`,
 			cost: E(0),
 			perm: 1,
@@ -580,8 +579,8 @@ const TREE_UPGS = {
 		},
 		ext_l3: {
 			branch: ["ext_l1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_l2") ? 1e35 : 1e11)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l2") ? 1e35 : 1e11)) + " Exotic Matter. [increased with ext_l2]" },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_l2") ? 1e40 : 1e11)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l2") ? 1e40 : 1e11)) + " Exotic Matter. [increased with ext_l2]" },
 			desc: `Axion Levels cheapen the nearest ones.`,
 			cost: E(0),
 			perm: 1,
@@ -592,7 +591,7 @@ const TREE_UPGS = {
 			req() { return hasTree("ext_l2") && hasTree("ext_l3") },
 			reqDesc() { return "Get 'ext_l2' and 'ext_l3' upgrades." },
 			desc: `Axion Levels cheapen ones on the right / underneath.`,
-			cost: E("1e1700"),
+			cost: E("1e1800"),
 			perm: 1,
 			icon: "axion",
 		},
@@ -651,7 +650,6 @@ const TREE_UPGS = {
 			desc: `Start producing Z-Axions based on Frequency.`,
 			cost: E(0),
 			perm: 1,
-			icon: "axion",
 		},
 		qol_ext1: {
 			branch: ["qol1"],
@@ -746,7 +744,6 @@ const TREE_UPGS = {
 			desc: `Unlock Shortcuts.`,
 			perm: 2,
 			cost: E("1e300"),
-			icon: "exotic"
 		},
 
 		/* FEATS */

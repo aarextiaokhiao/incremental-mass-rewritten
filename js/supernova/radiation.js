@@ -202,11 +202,12 @@ const RADIATION = {
             },
             desc(x) { return `Ultraviolet is boosted by ${format(x)}x (based on Visible)`+getSoftcapHTML(x,1e30) },
         },{
-            title: `Tickspeed-Softcap Boost`,
-            eff(b) {
-                let x = E(1e3).pow(b.pow(0.9))
-                return x
-            },
+            title: `Tickspeed-Cap Boost`,
+			eff(b) {
+				if (AXION.unl()) b = b.pow(tmp.ax.eff[18])
+				let x = E(1e3).pow(b.pow(0.9))
+				return x
+			},
             desc(x) { return `Tickspeed power's softcap starts ${format(x)}x later` },
         },{
             title: `Meta-Tickspeed Boost`,
@@ -249,7 +250,7 @@ const RADIATION = {
         {
             title: `Mass Exponent Boost`,
             eff(b) {
-                let x = b.add(1).pow(1.15).sub(1).div(10)
+                let x = b.add(1).pow(1.15).sub(1).div(10).min(2.55)
                 return x
             },
             desc(x) { return `Increase Mass exponent cap by ^${format(x)}.` },

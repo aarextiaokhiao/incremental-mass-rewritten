@@ -19,7 +19,15 @@ const FERMIONS = {
         }
     },
     choose(i,x,a) {
-		if (!a && player.confirms.sn) if (!confirm("Are you sure to switch any type of any Fermion?")) return
+		if (!a) {
+			if (SHORTCUT_EDIT.mode) {
+				player.shrt.order[SHORTCUT_EDIT.pos] = [2,i*10+x]
+				tmp.tab = tmp.sn_tab
+				SHORTCUT_EDIT.mode = 0
+				return
+			}
+			if (player.confirms.sn && !confirm("Are you sure to switch any type of any Fermion?")) return
+		}
 
 		let dual = hasTree("qol9") && player.supernova.fermions.dual
 		if (!dual) player.supernova.fermions.choosed2 = ""
@@ -146,6 +154,7 @@ const FERMIONS = {
                 inc: "Rage Power",
                 cons: "You are trapped in Mass Dilation and Challenges 3-5",
             },{
+                maxTier: 40,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E("e1.75e7").pow(E(1.05).pow(t))
@@ -237,7 +246,6 @@ const FERMIONS = {
                 inc: "Mass of Black Hole",
                 cons: "The power from the mass of the BH formula is always -1",
             },{
-                maxTier: 40,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E('e5e3').pow(t.pow(1.5)).mul("e4.5e5")
@@ -274,16 +282,19 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(1)
 					let sc = E(0.25)
-					if (AXION.unl()) sc = tmp.ax.eff[11].mul(sc)
+					if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
                     let x = i.max(1).log10().add(1).mul(t).div(200).add(1).softcap(1.5,0.5,0).softcap(20,sc,0)
                     return x
                 },
                 desc(x) {
-                    return `Tier requirement is ${format(x)}x cheaper`+getSoftcapHTML(x,1.5,20)
+					let sc = E(0.25)
+					if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
+                    return `Tier requirement is ${format(x)}x cheaper`+getSoftcapHTML(x,1.5,sc)
                 },
                 inc: "Collapsed Star",
                 cons: "Star generators are decreased to ^0.5",
             },{
+                maxTier: 100,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E('e2e5').pow(t.pow(1.5)).mul("e1.5e6")
@@ -323,7 +334,7 @@ const FERMIONS = {
 					if (FERMIONS.onActive(14)) return E(0)
                     let x = i.add(1).log10().times(t.add(1).log10()).add(1).log10().div(20)
 			        if (AXION.unl()) x = x.mul(tmp.ax.eff[5])
-                    return x
+                    return x.softcap(2,4,3)
                 },
                 desc(x) {
                     return `Increase Rage Power exponent cap by ^${format(x)}.`
@@ -397,9 +408,12 @@ function updateFermionsTemp() {
 }
 
 function updateFermionsHTML() {
-	tmp.el.f_normal.setDisplay(player.supernova.fermions.choosed ? 1 : 0)
-    tmp.el.f_sweep.setDisplay(!player.supernova.fermions.choosed && hasTree("qol10"))
-	tmp.el.f_dual.setDisplay(!player.supernova.fermions.choosed && hasTree("qol9"))
+	let shrt = SHORTCUT_EDIT.mode == 1
+	tmp.el.f_hint.setDisplay(!shrt)
+	tmp.el.f_shrt.setDisplay(shrt)
+	tmp.el.f_normal.setDisplay(player.supernova.fermions.choosed && !shrt ? 1 : 0)
+    tmp.el.f_sweep.setDisplay(!player.supernova.fermions.choosed && !shrt && hasTree("qol10"))
+	tmp.el.f_dual.setDisplay(!player.supernova.fermions.choosed && !shrt && hasTree("qol9"))
 	tmp.el.f_dual.setTxt("Dual: " + (player.supernova.fermions.dual ? "ON" : "OFF"))
     for (i = 0; i < 2; i++) {
         tmp.el["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i]))

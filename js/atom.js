@@ -94,6 +94,7 @@ const ATOM = {
             if (hasTree("gr1")) pow = pow.mul(treeEff("gr1"))
             pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             if (hasTree("gr2")) pow = pow.pow(1.25)
+            pow = pow.softcap(1e20,10,3)
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             return {pow: pow, eff: eff}
         },
@@ -190,7 +191,7 @@ function updateAtomTemp() {
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
 	let scale = scalingInitPower("gamma_ray")
-	let fp = scalingToned("gamma_ray") ? 10 : 1
+	let fp = scalingToned("gamma_ray") ? 30 : 1
     tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
     tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).root(scale).div(fp).scaleEvery("gamma_ray", 1).add(1).floor()
     if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = E(0)
@@ -232,7 +233,7 @@ function updateAtomicHTML() {
 	tmp.el.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
 	tmp.el.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
 	tmp.el.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
-	tmp.el.gamma_ray_pow.setTxt(format(tmp.atom.gamma_ray_eff.pow))
+	tmp.el.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x"+getSoftcapHTML(tmp.atom.gamma_ray_eff.pow,1e20))
 	tmp.el.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
     tmp.el.gamma_ray_auto.setDisplay(hasElement(18))
 	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")

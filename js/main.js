@@ -88,34 +88,32 @@ const FORMS = {
                 player.tickspeed = tmp.tickspeedBulk
             }
         },
-        effect() {
-            let t = player.tickspeed
-			if (!scalingToned("tickspeed")) {
-				if (hasElement(63)) t = t.mul(25)
-				t = t.mul(tmp.radiation.bs.eff[1])
-			}
-            let bonus = E(0)
-            if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
-            let step = E(1.5)
-                step = step.add(tmp.chal.eff[6])
-                step = step.add(tmp.chal.eff[2])
-                step = step.add(tmp.atom.particles[0].powerEffect.eff2)
-                if (player.ranks.tier.gte(4)) step = step.add(RANKS.effect.tier[4]())
-                if (player.ranks.rank.gte(40)) step = step.add(RANKS.effect.rank[40]())
-                step = step.mul(tmp.md.mass_eff)
-            step = step.mul(tmp.bosons.effect.z_boson[0])
-            if (hasTree("t1")) step = step.pow(1.15)
-            if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
+		effect() {
+			let t = player.tickspeed
+			if (!scalingToned("tickspeed") && hasElement(63)) t = t.mul(25)
+			t = t.mul(tmp.radiation.bs.eff[1])
 
-            let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
-            if (AXION.unl()) ss = ss.pow(tmp.ax.eff[18])
-            step = step.softcap(ss,0.1,0)
-            
-            let eff = step.pow(t.add(bonus))
-            if (hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
-            if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
-            return {step: step, eff: eff, bonus: bonus}
-        },
+			let bonus = E(0)
+			if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
+			let step = E(1.5)
+				step = step.add(tmp.chal.eff[6])
+				step = step.add(tmp.chal.eff[2])
+				step = step.add(tmp.atom.particles[0].powerEffect.eff2)
+				if (player.ranks.tier.gte(4)) step = step.add(RANKS.effect.tier[4]())
+				if (player.ranks.rank.gte(40)) step = step.add(RANKS.effect.rank[40]())
+				step = step.mul(tmp.md.mass_eff)
+			step = step.mul(tmp.bosons.effect.z_boson[0])
+			if (hasTree("t1")) step = step.pow(1.15)
+			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
+
+			let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
+			step = step.softcap(ss,0.1,0)
+			
+			let eff = step.pow(t.add(bonus))
+			if (hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
+			return {step: step, eff: eff, bonus: bonus}
+		},
         autoUnl() { return player.mainUpg.bh.includes(5) },
         autoSwitch() { player.autoTickspeed = !player.autoTickspeed },
     },
@@ -405,7 +403,7 @@ const UPGS = {
 				if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (player.ranks.pent.gte(1100)) step = step.mul(tmp.tickspeedEffect.step.log10().div(1e4).add(1).pow(27/20))
+				if (player.ranks.pent.gte(1100) && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step.log10().div(1e4).add(1).pow(27/20))
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]

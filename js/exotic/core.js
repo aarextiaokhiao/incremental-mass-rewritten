@@ -201,10 +201,7 @@ let EXTRA_BUILDINGS = {
 		pow: E(2.5),
 		eff(x) {
 			//1.4 * 0.75 = 1.05
-			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3).softcap(1e15, 1/1.05, 0)
-		},
-		softcapHTML(x) {
-			return getSoftcapHTML(x, 1e15)
+			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3)
 		}
 	},
 	ag3: {

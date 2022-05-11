@@ -19,13 +19,16 @@ function updateChalHTML() {
         }
     }
 	let sweep = !CHALS.lastActive() && hasTree("qol10")
+	let shrt = SHORTCUT_EDIT.mode == 1
     tmp.el.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
     tmp.el.chal_exit.setVisible(CHALS.lastActive())
-    tmp.el.chal_exit.setDisplay(!sweep)
+    tmp.el.chal_exit.setDisplay(!sweep && !shrt)
     tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
-    tmp.el.chal_desc_div.setDisplay(player.chal.choosed)
-    tmp.el.chal_sweep.setDisplay(sweep)
-    if (player.chal.choosed != 0) {
+    tmp.el.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
+    tmp.el.chal_sweep.setDisplay(sweep && !shrt)
+    tmp.el.chal_hint.setDisplay(!shrt)
+    tmp.el.chal_shrt.setDisplay(shrt)
+    if (player.chal.choosed != 0 && !shrt) {
         let x = player.chal.choosed
         let chal = CHALS[x]
         let max = player.chal.comps[x].gte(tmp.chal.max[x])
@@ -64,6 +67,11 @@ function updateChalTemp() {
 
 const CHALS = {
     choose(x) {
+        if (SHORTCUT_EDIT.mode) {
+            player.shrt.order[SHORTCUT_EDIT.pos] = [1,x]
+            SHORTCUT_EDIT.mode = 0
+            return
+        }
         if (player.chal.choosed == x) {
             this.enter()
         }

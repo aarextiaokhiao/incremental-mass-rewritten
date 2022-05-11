@@ -62,6 +62,11 @@ function resetTemp() {
             }
         }
     }
+	SHORTCUT_EDIT = {
+		mode: 0,
+		pos: 0,
+		cur: 0
+	}
 }
 
 resetTemp()

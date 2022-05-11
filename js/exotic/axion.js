@@ -96,7 +96,7 @@ let AXION = {
 		let r = E(0)
 		let em = EXT.eff()
 		if (x == 0) r = player.mass.max(1).log10().pow(0.6)
-			.mul(em.add(1).log(100).add(1).pow(3))
+			.mul(em.add(1).log(100).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
 			.mul(em.add(1).log10().add(1).sqrt())
 		if (x == 2 && hasTree("ext_e1")) r = player.supernova.radiation.hz.max(1).log10()
@@ -262,9 +262,9 @@ let AXION = {
 		9: {
 			title: "Dark Radiation",
 			desc: "Hawking Radiation is more powerful.",
-			req: E(4),
+			req: E(10),
 			eff(x) {
-				return x.add(1).sqrt().softcap(4,2/3,0)
+				return x.div(3).add(1).sqrt().softcap(4,2/3,0)
 			},
 			effDesc(x) {
 				return format(x) + "x" + getSoftcapHTML(x,4)
@@ -284,10 +284,10 @@ let AXION = {
 		},
 		11: {
 			title: "Lepton Anomaly",
-			desc: "Neutrino and Neut-Muon softcaps are weaker.",
+			desc: "Weaken Neutrino and Neut-Muon softcaps.",
 			req: E(5),
 			eff(x) {
-				return x.div(2).add(27).cbrt().add(2).min(10).div(5)
+				return x.add(8).cbrt().add(3).min(10).div(5)
 			},
 			effDesc(x) {
 				return "^" + format(x,3)
@@ -295,8 +295,8 @@ let AXION = {
 		},
 
 		12: {
-			title: "Supernova",
-			desc: "Supernova is cheaper.",
+			title: "Supernovae",
+			desc: "Cheapen Supernovae.",
 			unl: () => CHROMA.unl(),
 			req: E(100),
 			eff(x) {
@@ -366,14 +366,14 @@ let AXION = {
 		},
 		18: {
 			title: "Temporal Dimensionality",
-			desc: "Raise Tickspeed Power softcap.",
+			desc: "Tickspeed-Cap Boost is more efficient.",
 			unl: () => CHROMA.unl(),
 			req: E(1),
 			eff(x) {
-				return x.div(10).add(1).log(1.5).add(1)
+				return x.div(10).add(1).log10().div(5).add(1)
 			},
 			effDesc(x) {
-				return "^"+format(x)
+				return "^"+format(x,3)
 			}
 		},
 		19: {

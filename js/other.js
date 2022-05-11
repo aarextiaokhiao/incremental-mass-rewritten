@@ -207,12 +207,23 @@ if (beta) saveId = "testBeta"
 
 // SHORTCUTS
 function updateShortcuts() {
-	for (var i = 0; i < 5; i++) {
-		let unl = i < 3 || (AXION.unl() && tmp.ax.lvl[23].gt(0))
+	let edit = SHORTCUT_EDIT.mode
+	let data = []
+	if (edit == 0) data = player.shrt.order
+	else data = [[0],[1],[2]]
+
+	for (var i = 0; i < 7; i++) {
+		let unl = edit == 0 ? i < 4 || (AXION.unl() && tmp.ax.lvl[23].gt(0)) : i < 3
 		tmp.el["shrt_"+i].setVisible(unl)
-		document.getElementById("shrt_"+i).setAttribute("src", "images/" + ["empty", "md", "chal", "ferm"][player.shrt.order[i][0] + 1] + ".png")
+		if (unl) {
+			let id = data[i]
+			let mode = id[0] + 1
+			let ix = id[1]
+			document.getElementById("shrt_"+i).setAttribute("src", "images/" + (ix > 0 && mode == 2 ? "chal_" + ["dm","atom","sn","ext"][Math.ceil(ix/4)-1] : ["empty", "md", "chal", "ferm"][mode]) + ".png")
+			document.getElementById("shrt_"+i+"_tooltip").setAttribute("tooltip", ix >= 0 && mode == 3 ? FERMIONS.sub_names[Math.floor(ix / 10)][ix % 10] : ix > 0 && mode == 2 ? CHALS[id[1]].title : ["Add Shortcut", "Mass Dilation", "Challenge", "Fermion"][mode])
+		}
 	}
-	document.getElementById("shrt_m").setAttribute("src", "images/" + ["click", "edit", "remove"][player.shrt.mode] + ".png")
+	document.getElementById("shrt_m").setAttribute("src", "images/" + (edit ? "cancel" : ["click", "edit", "remove"][SHORTCUT_EDIT.cur]) + ".png")
 }
 
 function doShortcut(a, b) {
@@ -228,23 +239,49 @@ function doShortcut(a, b) {
 }
 
 function editShortcut(x) {
-	addNotify("Soon.", 5)
+	SHORTCUT_EDIT.mode = 1
+	SHORTCUT_EDIT.pos = x
 }
 
 function switchShortcut() {
-	player.shrt.mode = (player.shrt.mode + 1) % 3
+	if (SHORTCUT_EDIT.mode) {
+		SHORTCUT_EDIT.mode = 0
+		return
+	}
+	SHORTCUT_EDIT.cur = (SHORTCUT_EDIT.cur + 1) % 3
 	updateShortcuts()
 }
 
 function clickShortcut(x) {
+	if (SHORTCUT_EDIT.mode) {
+		if (x == 0) {
+			player.shrt.order[SHORTCUT_EDIT.pos] = [0, -1]
+			SHORTCUT_EDIT.mode = 0
+		}
+		if (x == 1) {
+			tmp.tab = 3
+		}
+		if (x == 2) {
+			tmp.sn_tab = tmp.tab
+			tmp.tab = 5
+			tmp.stab[5] = 2
+		}
+		return
+	}
 	let d = player.shrt.order[x]
-	let m = player.shrt.mode
+	let m = SHORTCUT_EDIT.cur
 	if (d[0] < 0 || m == 1) editShortcut(x)
 	else if (m == 2) {
 		if (!confirm("Are you sure do you want to delete this shortcut?")) return
 		player.shrt.order[x] = [-1, -1]
 		updateShortcuts()
 	} else doShortcut(d[0], d[1])
+}
+
+let SHORTCUT_EDIT = {
+	mode: 0,
+	pos: 0,
+	cur: 0
 }
 
 /* TO DO: WHEN EDITING A SHORTCUT, YOU MEET A POPUP FOR CHOOSING A TYPE FIRST.
