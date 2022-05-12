@@ -121,6 +121,7 @@ let EXOTIC = {
 	},
 
 	calc(dt) {
+		if (!EXOTIC.unl()) return
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
 		if (true) player.ext.chal.f9 = false
