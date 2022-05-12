@@ -198,7 +198,7 @@ function updateUpperHTML() {
 
 	unl = player.atom.unl && !hideSome
 	tmp.el.quark_div.setDisplay(unl)
-	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec):0,hasElement(14)))
+	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
 	let scut = hasTree("qol_shrt")
 	tmp.el.scut_div.setDisplay(scut)

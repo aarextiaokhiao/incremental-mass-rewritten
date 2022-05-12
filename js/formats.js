@@ -402,9 +402,9 @@ function formatGain(amt, gain, isMass=false, main=false) {
 	return ""
 }
 
-function formatGet(a, g, static) {
+function formatGet(a, g, always) {
 	g = g.max(0)
-	if (g.lt(static ? 0 : a)) return ""
+	if (g.lt(always ? 0 : a.div(1e3))) return ""
 	return "(+" + format(g,0) + (a.gte(100) && g.gte(a.div(5)) ? "/" + formatMultiply(g.div(a).add(1),2) : "") + ")"
 }
 

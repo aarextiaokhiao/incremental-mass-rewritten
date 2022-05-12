@@ -75,19 +75,20 @@ let AXION = {
 		if (i % 4 > 0 && player.ext.ax.upgs[i-1].eq(0)) return
 		return tmp.ax.bulk[i].gt(0)
 	},
-	buy(i) {
+	buy(i,a) {
 		var bulk = tmp.ax.bulk[i]
 		var cost = tmp.ax.cost[i]
 		var type = Math.floor(i / 4)
 		if (bulk.eq(0)) return
-		player.ext.ax.res[type] = player.ext.ax.res[type].sub(
+		if (!a) player.ext.ax.res[type] = player.ext.ax.res[type].sub(
 			E([2,3,10][type]).pow(
 				bulk.sub(1)
 				.mul(tmp.ax.fp)
 			).mul(cost)
 		).max(0)
 		player.ext.ax.upgs[i] = player.ext.ax.upgs[i].add(bulk)
-		updateAxionLevelTemp()
+		if (!a) updateAxionLevelTemp()
+		return true
 	},
 
 	prod(x) {
@@ -261,7 +262,7 @@ let AXION = {
 		},
 		9: {
 			title: "Dark Radiation",
-			desc: "Hawking Radiation is more powerful.",
+			desc: "Multiply Hawking Radiation effect.",
 			req: E(10),
 			eff(x) {
 				return x.div(3).add(1).sqrt().softcap(4,2/3,0)
@@ -319,7 +320,7 @@ let AXION = {
 		},
 		14: {
 			title: "Impossible",
-			desc: "Impossible Challenge scaling is weaker.",
+			desc: "Weaken Impossible Challenge scaling.",
 			req: E(5),
 			eff(x) {
 				return E(1).div(x.add(1).div(100).add(1))
@@ -366,7 +367,7 @@ let AXION = {
 		},
 		18: {
 			title: "Temporal Dimensionality",
-			desc: "Tickspeed-Cap Boost is more efficient.",
+			desc: "Strengthen Tickspeed-Cap Boost.",
 			unl: () => CHROMA.unl(),
 			req: E(1),
 			eff(x) {
@@ -396,13 +397,13 @@ let AXION = {
 			title: "X-Automation",
 			desc: "Automate X AXION.",
 			unl: () => CHROMA.unl(),
-			req: E(1/0)
+			req: E(50)
 		},
 		21: {
 			title: "Y-Automation",
 			desc: "Automate Y AXION.",
 			unl: () => CHROMA.unl(),
-			req: E(1/0)
+			req: E(100)
 		},
 		22: {
 			title: "Monochromacy Challenge",
@@ -412,9 +413,9 @@ let AXION = {
 		},
 		23: {
 			title: "Shortcut Mastery",
-			desc: "Unlock 2 more slots for Shortcuts.",
+			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
 			unl: () => CHROMA.unl(),
-			req: E(1/0)
+			req: E(20)
 		},
 	}
 }

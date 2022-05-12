@@ -729,7 +729,7 @@ const TREE_UPGS = {
 			branch: ["qol_ext9"],
 			desc: `Gain Supernovae at least 30% more, passively during a sweep.`,
 			perm: 2,
-			cost: E("1e2000"),
+			cost: E("1e2500"),
 			icon: "exotic"
 		},
 		qol_ext11: {

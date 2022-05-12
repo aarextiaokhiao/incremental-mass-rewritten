@@ -130,7 +130,7 @@
             </div>
         </div><div id="stab_frame5_2">
             <div id="f_hint">Note: Choosing any fermion will reset without being Supernova!</div>
-            <div id="f_shrt">Note: Choosing any fermion will add a Shortcut!</div><br><br>
+            <div id="f_shrt">Note: Choosing a specific fermion will add a Shortcut!</div><br><br>
             <button class="btn" onclick="FERMIONS.backNormal()" id="f_normal">Back to Normal</button>
             <button class="btn" id="f_sweep" onclick="startSupernovaSweep('ferm')">Sweep</button>
             <button class="btn" onclick="player.supernova.fermions.dual=!player.supernova.fermions.dual" id="f_dual">Dual: ON</button><br><br>
@@ -316,7 +316,7 @@
                         <div id="shrt_4_tooltip" t-size="small"><img class="res_img" id="shrt_4" src="images/empty.png" onclick="clickShortcut(4)" style="cursor: pointer;"></div>
                         <div id="shrt_5_tooltip" t-size="small"><img class="res_img" id="shrt_5" src="images/empty.png" onclick="clickShortcut(5)" style="cursor: pointer;"></div>
                         <div id="shrt_6_tooltip" t-size="small"><img class="res_img" id="shrt_6" src="images/empty.png" onclick="clickShortcut(6)" style="cursor: pointer;"></div>
-                        <img class="res_img" id="shrt_m" src="images/remove.png" onclick="switchShortcut()" style="cursor: pointer;">
+                        <div id="shrt_m_tooltip" t-size="small"><img class="res_img" id="shrt_m" src="images/remove.png" onclick="switchShortcut()" style="cursor: pointer;"></div>
                     </div>
                     <div class="resources sml magenta" id="sn_div">
                         <div tooltip="Supernova" t-size="small"><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
@@ -456,7 +456,7 @@
             <div id="main_upgs_table" class="table_center"></div>
         </div><div id="tab_frame3">
             <div id="chal_hint">Hint: Click any image to show challenge description. Click again to enter any challenge.</div>
-            <div id="chal_shrt">Hint: Click any challenge to add a shortcut.</div><br><br>
+            <div id="chal_shrt">Hint: Click a specific challenge to add a shortcut.</div><br><br>
 			<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
             <button class="btn" id="chal_exit" onclick="CHALS.exit()">Exit Challenge</button><br><br>
             <div style="min-height: 120px;" id="chals_table" class="table_center"></div><br><br>

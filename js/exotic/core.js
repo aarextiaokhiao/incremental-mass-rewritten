@@ -130,6 +130,11 @@ let EXOTIC = {
 		player.ext.ax.res[1] = player.ext.ax.res[1].add(AXION.prod(1).mul(dt))
 		player.ext.ax.res[2] = player.ext.ax.res[2].add(AXION.prod(2).mul(dt))
 
+		let needUpdate = false
+		if (tmp.ax.lvl[20].gt(0)) for (var i = 0; i < 4; i++) if (AXION.buy(i,1)) needUpdate = true
+		if (tmp.ax.lvl[21].gt(0)) for (var i = 4; i < 8; i++) if (AXION.buy(i,1)) needUpdate = true
+		if (needUpdate) updateAxionLevelTemp()
+
 		//CHROMA
 		if (!player.ext.ch.unl && CHROMA.unl()) {
 			addPopup(POPUP_GROUPS.chroma)
