@@ -450,10 +450,11 @@ const TREE_UPGS = {
             cost: E(1e72),
             effect() {
 				let sn = player.supernova.times
+
 				let b = sn.div(300).add(1)
-				if (sn.gt(300)) b = E(2).pow(b.sub(1).sqrt())
-                let x = b.pow(sn.sub(40).max(0)).sub(1).div(10).add(1)
-                return x
+				let e = sn.sub(40).max(0)
+				if (CHROMA.got("s3_2")) e = e.mul(player.supernova.fermions.tiers[1][4].div(2).pow(CHROMA.eff("s3_2",0).mul(2)))
+                return b.pow(e).sub(1).div(10).add(1)
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -626,7 +627,7 @@ const TREE_UPGS = {
 			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "1e400" : "1e150")) },
 			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "1e400" : "1e150")) + " Exotic Matter." },
 			desc: `Levels synergize boosts diagonally on the right. [Coming soon!]`,
-			cost: E(1/0),
+			cost: EINF,
 			perm: 1,
 			onBuy: updateAxionLevelTemp,
 			icon: "axion",
@@ -637,7 +638,7 @@ const TREE_UPGS = {
 			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "1e400" : "1e150")) },
 			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "1e400" : "1e150")) + " Exotic Matter." },
 			desc: `Levels synergize boosts diagonally on the left. [Coming soon!]`,
-			cost: E(1/0),
+			cost: EINF,
 			perm: 1,
 			onBuy: updateAxionLevelTemp,
 			icon: "axion",
@@ -859,7 +860,7 @@ const TREE_UPGS = {
             req() { return true },
             reqDesc: ``,
             desc: `Placeholder.`,
-            cost: E(1/0),
+            cost: EINF,
             effect() {
                 let x = E(1)
                 return x

@@ -159,6 +159,8 @@ const SCALE_POWER= {
 
 const SCALE_FP = {
 	tickspeed() { return [1,1,1,tmp.tickspeedFP] },
+	massUpg() { return [1,1,1,tmp.upgs.fp] },
+	bh_condenser() { return [1,1,1,tmp.upgs.fp] },
 }
 
 const SCALE_FLOORS = {
@@ -253,7 +255,9 @@ function scalingToned(name) {
 }
 
 function scalingInitPower(name) {
-	return SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]
+	let r = SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]
+	if (name == "rank" && CHROMA.got("s1_1")) r = CHROMA.eff("s1_1").mul(r)
+	return r
 }
 
 function scalingActive(name, amt, type) {
@@ -328,7 +332,7 @@ function getScalingStart(type, name) {
 		}
 	}
 	if (type=="meta") {
-		if (FERMIONS.onActive(14)) return E(1/0)
+		if (FERMIONS.onActive(14)) return EINF
 		if (name=="rank") {
 			if (tmp.fermions) start = start.mul(tmp.fermions.effs[1][4])
 		}
@@ -418,6 +422,9 @@ function getScalingPower(type, name) {
 		}
 		if (name=='supernova') {
 			if (tmp.radiation) power = power.mul(tmp.radiation.bs.eff[20])
+		}
+		if (name=='fTier') {
+			if (CHROMA.got("s2_1")) power = power.div(CHROMA.eff("s2_1"))
 		}
 	}
 	if (type=="meta") {

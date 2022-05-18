@@ -66,7 +66,7 @@ function updateStarsTemp() {
 	}
 
 	let ts = tmp.stars
-	ts.generator_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:E(1/0)
+	ts.generator_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
 	ts.generator_boost_req = E("e100").pow(player.stars.boost.pow(1.25)).mul('e8000')
 	ts.generator_boost_bulk = player.atom.quarks.gte("e8000")?player.atom.quarks.div("e8000").max(1).log("e100").root(1.25).add(1).floor():E(0)
 
@@ -75,7 +75,7 @@ function updateStarsTemp() {
 	if (tmp.chal) ts.generator_boost_base.pow(tmp.chal.eff[11])
 
 	ts.generator_boost_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
-	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus))
+	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus).pow(CHROMA.got("t6_1")?CHROMA.eff("t6_1"):1))
 
 	for (let x = 0; x < 5; x++) ts.generators_gain[x] = STARS.generators.gain(x)
 	ts.softPower = STARS.softPower()

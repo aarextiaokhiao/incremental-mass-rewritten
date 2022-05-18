@@ -19,9 +19,8 @@ TO-DO LIST:
 	(or Lightning / Cloudy)
 
 B1 (upgrades):
-1. [C14 Reward]  Raise C10 reward exponent. (from ^1/1.75 to ^1)
-2. [Scrapped]    Stronger directly adds itself. (x^1.5 / 100)
-3. [Axion?]      RP base formula is better. [^b^11/60]
+1. [Axion?] RP base formula is better. [^b^11/60, decay]
+2. [???]    Multiply Particle Powers based on original formula.
 
 B2: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)

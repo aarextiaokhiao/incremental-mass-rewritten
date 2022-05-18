@@ -25,7 +25,7 @@ function updateChalHTML() {
     tmp.el.chal_exit.setDisplay(!sweep && !shrt)
     tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
-    tmp.el.chal_sweep.setDisplay(sweep && !shrt)
+    tmp.el.chal_sweep.setDisplay(player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
     tmp.el.chal_hint.setDisplay(!shrt)
     tmp.el.chal_shrt.setDisplay(shrt)
     if (player.chal.choosed != 0 && !shrt) {
@@ -91,19 +91,24 @@ const CHALS = {
     },
     inChal(x) { return this.getActive(x) == x },
     reset(x, chal_reset=true) {
-        if (x < 5) FORMS.bh.doReset()
-        else if (x < 9) ATOM.doReset(chal_reset)
-        else if (x < 13) SUPERNOVA.reset(true, true)
+        if (x <= 4) FORMS.bh.doReset()
+        else if (x <= 8) ATOM.doReset(chal_reset)
+        else if (x <= 12) SUPERNOVA.reset(true, true)
         else EXT.reset(true, true)
     },
-	exit(auto=false, ext) {
+	exit(auto=false, noExt) {
 		let active = this.lastActive()
 		if (active > 0) {
 			if (tmp.chal.canFinish) player.chal.comps[active] = player.chal.comps[active].add(tmp.chal.gain)
 			if (!auto) {
-				this.reset(active)
-				if (player.chal.active) player.chal.active = 0
-				else player.ext.ec = 0
+				if (active <= 12) {
+					player.chal.active = 0
+					this.reset(active)
+				}
+				if (!noExt && active > 12) {
+					player.ext.ec = 0
+					this.reset(active)
+				}
 				player.supernova.auto.t = 1/0
 			}
 		}
@@ -113,7 +118,7 @@ const CHALS = {
 		let act = this.getActive(x)
 
 		if (act == x) return
-		if (act > 0) this.exit(true)
+		if (act > 0) this.exit()
 		this.choosed(x)
 		this.reset(player.chal.choosed, false)
     },
@@ -152,7 +157,7 @@ const CHALS = {
     },
     getScaleName(i) {
         if (i >= 12) return ""
-        if (player.chal.comps[i].gte(1000)) return " Impossible"
+        if (player.chal.comps[i].gte(CHALS.getPower3Start())) return " Impossible"
         if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " Insane"
         if (player.chal.comps[i].gte(i>8?10:75)) return " Hardened"
         return ""
@@ -167,6 +172,9 @@ const CHALS = {
     getPower2(i) {
         let x = E(1)
         return x
+    },
+    getPower3Start() {
+        return CHROMA.got("t4_1") ? E(1000).add(CHROMA.eff("t4_1",0)) : 1000
     },
     getPower3(i) {
         let x = E(1)
@@ -194,7 +202,7 @@ const CHALS = {
 
         let s1 = x > 8 ? 10 : 75
         let s2 = x > 8 ? 50 : x == 8 ? 200 : 300
-        let s3 = 1000
+        let s3 = CHALS.getPower3Start()
 
         if (lvl.max(bulk).gte(s1)) {
             let start = E(s1);
@@ -497,7 +505,7 @@ const CHALS = {
 		max: E(100),
 		inc: E(10),
 		pow: E(1.25),
-		start: E(1/0),
+		start: EINF,
 		effect(x) {
 			return {
 				exp: E(1.75).sub(E(0.75).div(x.div(5).add(1))),
@@ -514,7 +522,7 @@ const CHALS = {
 		max: E(100),
 		inc: E(10),
 		pow: E(1.25),
-		start: E(1/0),
+		start: EINF,
 		effect(x) {
 			let ret = E(1)
 			return ret
@@ -529,7 +537,7 @@ const CHALS = {
 		max: E(100),
 		inc: E(10),
 		pow: E(1.25),
-		start: E(1/0),
+		start: EINF,
 		effect(x) {
 			let ret = E(1)
 			return ret
@@ -548,7 +556,7 @@ const CHALS = {
     max: E(50),
     inc: E(10),
     pow: E(1.25),
-    start: E(1/0),
+    start: EINF,
     effect(x) {
         let ret = E(1)
         return ret

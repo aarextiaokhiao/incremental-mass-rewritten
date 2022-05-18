@@ -61,10 +61,12 @@ const BOSONS = {
         },
         graviton(x) {
             let a = expMult(x.add(1),0.5).pow(tmp.bosons.effect.hb?tmp.bosons.effect.hb[0]:1)
+            if (bosonsMastered()) a = x.add(1).sqrt()
             return [a]
         },
         hb(x) {
             let a = x.add(1).log10().max(0).root(2)
+            if (bosonsMastered()) a = x.max(1).log10().max(1).log10().max(1).sqrt().min(1.7)
             return [a]
         },
     },
@@ -78,36 +80,39 @@ const BOSONS = {
         },
         photon: [
             {
-                desc: "Gain more Dark Matters & Mass from Black Hole based on Photon.",
+                desc: () => bosonsMastered() ? "???" : "Gain more Dark Matters & Mass from Black Hole based on Photon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
+					if (bosonsMastered()) return E(1)
 					return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Boost BH Condenser Power.",
+                desc: () => bosonsMastered() ? "???" : "Boost BH Condenser Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
+					if (bosonsMastered()) return E(1)
 					let a = x.add(1).pow(0.75)
 					if (hasTree("fn4")) a = a.pow(2)
 					return a
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Photons gain is boosted by Collapsed Star.",
+                desc: () => bosonsMastered() ? "Produce more Photons." : "Photons gain is boosted by Collapsed Star.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
+					if (bosonsMastered()) return E(1.5).pow(x.pow(1.25))
 					return player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0)
 				},
-                effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,1e15) },
+                effDesc(x) { return format(x)+"x"+(bosonsMastered()?"":getSoftcapHTML(x,1e15)) },
             },{
-                desc: "All-Star resources gain is boosted by Photon.",
+                desc: () => "All-Star resources gain is boosted by Photon.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(1e5) ? x.div(1e5).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
@@ -119,16 +124,17 @@ const BOSONS = {
         ],
         gluon: [
             {
-                desc: "Gain more Atoms & Atomic Powers based on Gluon.",
+                desc: () =>bosonsMastered() ? "???" :  "Gain more Atoms & Atomic Powers based on Gluon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
+					if (bosonsMastered()) return E(1)
 					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Boost Cosmic Ray Power.",
+                desc: () => "Boost Cosmic Ray Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
@@ -139,16 +145,17 @@ const BOSONS = {
                 },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Gluons gain is boosted by Quark.",
+                desc: () => bosonsMastered() ? "Produce more Gluons." : "Gluons gain is boosted by Quark.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
+					if (bosonsMastered()) return E(1.5).pow(x.pow(1.25))
 					return player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0)
 				},
-                effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,1e15) },
+                effDesc(x) { return format(x)+"x"+(bosonsMastered()?"":getSoftcapHTML(x,1e15)) },
             },{
-                desc: "Supernova requirement is decreased based on Gluon.",
+                desc: () => "Supernova requirement is decreased based on Gluon.",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
@@ -172,7 +179,7 @@ function setupBosonsHTML() {
             <button class="btn b_btn full" id="${id2}_div" onclick="BOSONS.upgs.buy('${id}',${y})">
                 <div style="min-height: 80px">
                     [Level <span id="${id2}_lvl">X</span>]<br>
-                    ${BOSONS.upgs[id][y].desc}<br>
+                    <span id="${id2}_desc"></span><br>
                     Currently: <span id="${id2}_eff">X</span><br>
                 </div>
                 Cost: <span id="${id2}_cost">X</span> ${capitalFirst(id)}
@@ -218,9 +225,14 @@ function updateBosonsHTML() {
         if (BOSONS.upgs.ids.includes(id)) for (let y in BOSONS.upgs[id]) {
             let id2 = id+"_upg"+y
             tmp.el[id2+"_div"].setClasses({btn: true, full: true, b_btn: true, locked: !tmp.bosons.upgs[id][y].can})
+            tmp.el[id2+"_desc"].setTxt(BOSONS.upgs[id][y].desc())
             tmp.el[id2+"_lvl"].setTxt(format(player.supernova.b_upgs[id][y],0,"sc"))
             tmp.el[id2+"_eff"].setHTML(BOSONS.upgs[id][y].effDesc(tmp.bosons.upgs[id][y].effect))
             tmp.el[id2+"_cost"].setTxt(format(tmp.bosons.upgs[id][y].cost))
         }
     }
+}
+
+function bosonsMastered() {
+	return CHROMA.got("t5_1")
 }

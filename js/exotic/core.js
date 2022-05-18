@@ -15,8 +15,12 @@ let EXOTIC = {
 	gain() {
 		if (player.chal.comps[12].eq(0)) return E(0)
 
-		let r = player.mass.add(1).log10().div(1e9).add(1)
-			.pow(player.supernova.times.mul(player.chal.comps[12].add(1)).div(500))
+		let s = player.supernova.times.div(500)
+		let c = player.chal.comps[12].add(1)
+		if (CHROMA.got("p1_3")) s = s.mul(CHROMA.eff("p1_3"))
+		if (CHROMA.got("p1_2")) c = c.mul(CHROMA.eff("p1_2"))
+
+		let r = player.mass.add(1).log10().div(1e9).add(1).pow(s.mul(c))
 		return this.amt(r)
 	},
 	extLvl() {
@@ -40,6 +44,7 @@ let EXOTIC = {
 		let r = player.ext.amt
 		if (this.extLvl() >= 2) r = r.div(10).pow(2).mul(10)
 		if (this.extLvl() >= 1) r = E(10).pow(r.div(10).root(5)).div(10)
+		if (CHROMA.got("p1_1")) r = r.pow(CHROMA.eff("p1_1"))
 		return r
 	},
 
@@ -265,7 +270,11 @@ function getExtraBuildings(type, x) {
 	return E(EXTRA_BUILDINGS.saves[type]()["eb"+x] || 0)
 }
 function resetExtraBuildings(type) {
-	for (let b = EXTRA_BUILDINGS.start[type]; b <= EXTRA_BUILDINGS.max; b++) delete EXTRA_BUILDINGS.saves[type]()["eb"+b]
+	let s = EXTRA_BUILDINGS.saves[type]()
+	for (let b = EXTRA_BUILDINGS.start[type]; b <= EXTRA_BUILDINGS.max; b++) {
+		if (type == "bh" && b == 2 && CHROMA.got("t2_1")) s["eb"+b] = s["eb"+b].pow(CHROMA.eff("t2_1",0))
+		else delete s["eb"+b]
+	}
 }
 function buyExtraBuildings(type, x) {
 	if (CHALS.inChal(14)) return

@@ -12,7 +12,7 @@ let AXION = {
 	},
 	maxLvl(x) {
 		var sum = E(0)
-		var min = E(1/0)
+		var min = EINF
 		for (var i = 4 * x; i < 4 * x + 4; i++) {
 			sum = tmp.ax.upg[i].add(sum)
 			min = tmp.ax.upg[i].min(min)
@@ -44,7 +44,7 @@ let AXION = {
 
 		var inc = E(1)
 		if (tmp.chal) inc = inc.mul(tmp.chal.eff[13])
-		if (future) inc = E(0)
+		if (future_ax) inc = E(0)
 
 		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
 
@@ -115,6 +115,7 @@ let AXION = {
 	},
 	getLvl(p, base) {
 		var req = AXION.ids[p].req
+		if (future_ax && p >= 20) req = E(-1)
 		var r = AXION.getBaseLvl(p).add(AXION.getBonusLvl(p))
 		if (!base) r = r.sub(req)
 		return r.max(0)
@@ -173,7 +174,7 @@ let AXION = {
 			desc: "Cosmic Ray softcap starts later.",
 			req: E(0),
 			eff(x) {
-				if (x.gte(100)) return E(1/0)
+				if (x.gte(100)) return EINF
 				return x.sqrt().div(10).add(1.2).pow(x)
 			},
 			effDesc(x) {
@@ -288,7 +289,7 @@ let AXION = {
 			desc: "Weaken Neutrino and Neut-Muon softcaps.",
 			req: E(5),
 			eff(x) {
-				return x.add(8).cbrt().add(3).min(10).div(5)
+				return x.add(4).sqrt().add(3).min(10).div(5)
 			},
 			effDesc(x) {
 				return "^" + format(x,3)
@@ -301,7 +302,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(100),
 			eff(x) {
-				return E(1.01).pow(x)
+				return E(1.1).pow(x.pow(0.5))
 			},
 			effDesc(x) {
 				return "^1/"+format(x)
@@ -409,7 +410,7 @@ let AXION = {
 			title: "Monochromacy Challenge",
 			desc: "Unlock Challenge 14.",
 			unl: () => CHROMA.unl(),
-			req: E(1/0)
+			req: EINF
 		},
 		23: {
 			title: "Shortcut Mastery",
@@ -507,7 +508,7 @@ function updateAxionTemp() {
 	d.cost = {}
 	d.bulk = {}
 	d.eff = {}
-	d.str = E(future ? 3 : 1)
+	d.str = E(future_ax ? 3 : 1)
 	d.fp = AXION.costScale(i)
 	for (var i = 0; i < 12; i++) {
 		d.cost[i] = AXION.cost(i)

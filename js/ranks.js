@@ -149,6 +149,7 @@ const RANKS = {
             },
             '6'() {
                 let ret = player.ranks.rank.add(1).pow(player.ranks.rank.gte(17)?player.ranks.rank.add(1).root(3):2)
+                if (CHROMA.got("s1_2")) ret = ret.max(CHROMA.eff("s1_2"))
                 return ret
             },
             '40'() {
@@ -235,7 +236,7 @@ const RANKS = {
 			},
 			'10'() {
 				let ret = tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:E(1)
-				ret = ret.times(player.ranks.pent.softcap(20,4,3).div(100).min(2))
+				ret = ret.times(player.ranks.pent.softcap(20,4,3).div(100))
 				return ret
 			},
 			'13'() {
@@ -243,7 +244,7 @@ const RANKS = {
 				return ret.min(1.5)
 			},
 			'300'() {
-				return player.ranks.pent.div(400).log10().div(2).min(1)
+				return player.ranks.pent.div(400).log10().div(2).min(2)
 			},
 		},
 		hex: {
@@ -290,7 +291,6 @@ const RANKS = {
             if (player.ranks.tier.gte(1)) f = f.mul(1/0.8)
             if (scalingToned("rank")) f = E(0.5)
             f = f.mul(tmp.chal.eff[5].pow(-1))
-            if (future) f = f.mul(player.mass.max(1).log10().add(1).pow(0.01))
             return f
         },
         tier() {
@@ -298,20 +298,17 @@ const RANKS = {
             f = f.mul(tmp.fermions.effs[1][3])
             if (player.ranks.tetr.gte(1)) f = f.mul(1/0.75)
             if (player.mainUpg.atom.includes(10)) f = f.mul(2)
-            if (future) f = f.mul(player.mass.max(1).log10().add(1).pow(0.01))
             return f
         },
         tetr() {
             let f = E(1)
 			if (hasElement(9)) f = f.mul(1/0.85)
-            if (future) f = f.mul(player.mass.max(1).log10().add(1).pow(0.01))
             return f
         },
         pent() {
             let f = E(5/6)
             if (AXION.unl()) f = f.mul(tmp.ax.eff[15])
             if (hasElement(81)) f = f.mul(0.88)
-            if (future) f = f.div(player.mass.max(1).log10().add(1).pow(0.01))
             return f
         },
 		hex() {

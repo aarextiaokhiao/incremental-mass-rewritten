@@ -110,6 +110,10 @@ const ELEMENTS = {
         {
             desc: `Power's gain from each particle formula is better.`,
             cost: E(1e29),
+            effect() {
+                return ATOM.particles.mg12()
+            },
+            effDesc(x) { return "^"+format(x) },
         },
         {
             desc: `For every c7 completion, add 2 c5 & 6 completion.`,
@@ -461,9 +465,9 @@ const ELEMENTS = {
 				let [m1, m2] = [player.mass.max(10).log10().log10().times(4), player.mass.max(1).log10().pow(1/5).div(3)]
 				let exp = E(0.5)
 				if (hasElement(73)) exp = exp.mul(tmp.elements.effect[73]||1)
-                return m1.max(m2).pow(exp).softcap(50, 0.5, 0).softcap(80, 0.5, 0)
+                return m1.max(m2).pow(exp).softcap(50, 0.5, 0)
             },
-            effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50,80) },
+            effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50) },
         },
         {
             desc: `Ranks make Meta Tickspeed starts later.`,
@@ -481,9 +485,9 @@ const ELEMENTS = {
             effect() {
 				let r = player.supernova.stars.max(1).log10().div(75).max(1)
 				if (hasTree("feat2")) r = r.add(0.015)
-				return r.softcap(1.75,40,3).min(2.25)
+				return r.min(1.75)
             },
-            effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,175) },
+            effDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Collapsed stars generate Neutron Stars faster.`,
@@ -505,9 +509,11 @@ const ELEMENTS = {
         {
             desc: `Gain more Frequency based on Tau and Neut-Muon.`,
             cost: E('e3.5e8'),
-            effect() {
-				return player.supernova.fermions.tiers[1][2].div(40).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
-            },
+			effect() {
+				let r = player.supernova.fermions.tiers[1][2].div(40).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
+				if (CHROMA.got("s3_2")) e = r.pow(player.supernova.times.pow(CHROMA.eff("s3_2",0)))
+				return r
+			},
             effDesc(x) { return format(x)+"x" },
         },
         {
@@ -538,7 +544,7 @@ const ELEMENTS = {
     /*
     {
         desc: `Placeholder.`,
-        cost: E(1/0),
+        cost: EINF,
         effect() {
             let x = E(1)
             return x
@@ -619,7 +625,7 @@ function updateElementsTemp() {
         choosed: 0,
     }
     if (!tmp.elements.effect) tmp.elements.effect = [null]
-    for (let x = 1; x <= tmp.elements.upg_length; x++) if (ELEMENTS.upgs[x].effect) {
+    for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
         tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
     }
     tmp.elements.unl_length = ELEMENTS.getUnlLength()

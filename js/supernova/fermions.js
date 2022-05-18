@@ -47,8 +47,11 @@ const FERMIONS = {
 		}
     },
 	getTierScaling(t, bulk=false) {
+		let d = CHROMA.got("s2_2") && tmp.fermions.dual ? CHROMA.eff("s2_2",1) : E(0)
+		if (!bulk) t = t.sub(d)
+
 		let r = t.scaleEvery("fTier", bulk)
-		if (bulk) r = r.add(1).floor()
+		if (bulk) r = r.add(d).add(1).floor()
 		return r
 	},
 	maxTier(i, x) {
@@ -120,14 +123,21 @@ const FERMIONS = {
                     let x = res.div(uni("e36000")).max(1).log('ee3').max(0).root(1.5)
                     return FERMIONS.getTierScaling(x, true)
                 },
-                eff(i, t) {
+				eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    let x = i.add(1).log10().pow(1.75).mul(t.pow(0.8)).div(100).add(1).softcap(5,0.75,0).softcap(100,4,3)
-                    return x
-                },
-                desc(x) {
-                    return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+getSoftcapHTML(x,5,100)
-                },
+					let s = this.softcapMult()
+					let x = i.add(1).log10().pow(1.75).mul(t.pow(0.8)).div(100).add(1).softcap(s.mul(5),0.75,0).softcap(s.mul(100),4,3)
+					return x
+				},
+				softcapMult() {
+					let x = E(1)
+					if (CHROMA.got("p3_1")) x = x.mul(CHROMA.eff("p3_1"))
+					return x
+				},
+				desc(x) {
+					let s = this.softcapMult()
+					return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+getSoftcapHTML(x,s.mul(5),s.mul(100))
+				},
                 inc: "Mass",
                 cons: "You are trapped in Mass Dilation, but they are twice effective",
                 isMass: true,
@@ -154,7 +164,6 @@ const FERMIONS = {
                 inc: "Rage Power",
                 cons: "You are trapped in Mass Dilation and Challenges 3-5",
             },{
-                maxTier: 40,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E("e1.75e7").pow(E(1.05).pow(t))
@@ -167,10 +176,10 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    return t.div(100).times(i.max(1).log(1e20)).add(1).softcap(15,1e3,3)
+                    return t.div(100).times(i.max(1).log(1e20).softcap(50,1e3,3)).add(1)
                 },
                 desc(x) {
-                    return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`+getSoftcapHTML(x,10)
+                    return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`
                 },
                 inc: "Atoms",
                 cons: "All challenges are disabled.",
@@ -259,7 +268,7 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return E(1)
                     let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
-					if (scalingToned("tickspeed")) x = x.add(1).log10().add(1).log10().div(5).add(1)
+					if (scalingToned("tickspeed")) x = x.add(1).log10().add(1).log10().add(1).root(3)
                     return x.min(1e6)
                 },
                 desc(x) {
@@ -346,7 +355,7 @@ const FERMIONS = {
             /*
             {
                 nextTierAt(x) {
-                    return E(1/0)
+                    return EINF
                 },
                 calcTier() {
                     let res = E(0)
@@ -393,6 +402,7 @@ function updateFermionsTemp() {
 	let tf = tmp.fermions
     tf.ch = player.supernova.fermions.choosed == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed[0]),Number(player.supernova.fermions.choosed[1])]
     tf.ch2 = player.supernova.fermions.choosed2 == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed2[0]),Number(player.supernova.fermions.choosed2[1])]
+    tf.dual = player.supernova.fermions.choosed != "" && player.supernova.fermions.choosed2 != ""
     for (i = 0; i < 2; i++) {
         tf.gains[i] = FERMIONS.gain(i)
         for (let x = 0; x < FERMIONS.types[i].length; x++) {

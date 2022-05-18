@@ -1,5 +1,7 @@
 function E(x){return new Decimal(x)};
 
+const EINF = Decimal.dInf
+
 function uni(x) { return E(1.5e56).mul(x) }
 function mlt(x) { return uni(E(10).pow(E(1e9).mul(x))) }
 function meg(x) { return mlt(E(10).pow(E(1e9).mul(x))) }
@@ -42,7 +44,7 @@ function calc(dt, dt_offline) {
     if (hasElement(43)) for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
 	if (player.bh.unl && tmp.pass) {
 		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
-		if (player.bh.eb2 && player.bh.eb2.gt(0) && !CHALS.inChal(14)) {
+		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
 			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
 			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
 			var ss = tmp.bh.rad_ss
@@ -88,26 +90,29 @@ function calc(dt, dt_offline) {
         if (player.ext.amt.lt(1e10) && !CHROMA.unl()) addPopup(POPUP_GROUPS.fermions)
     }
 
-	if (hasTree("qol_ext10") && tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) {
+	if (hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
 		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
-		else SUPERNOVA.reset(false, false, false, false, true)
+		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
 	}
 	if (player.supernova.auto.on > -2) {
 		var list = player.supernova.auto.list
 		player.supernova.auto.t += dt
 		if (player.supernova.auto.t >= 1.5) {
+			player.supernova.auto.t = 0
+			// Prevent multitasking
+
+			if (player.chal.active <= 12) CHALS.exit(false,true)
+			if (player.supernova.fermions.choosed) FERMIONS.backNormal()
+
 			player.supernova.auto.on++
-			if (player.chal.active <= 12) CHALS.exit()
-			FERMIONS.backNormal()
 			if (player.supernova.auto.on == list.length) player.supernova.auto.on = -2
 			else {
 				var id = list[player.supernova.auto.on]
 				if (id > 0) {
-					CHALS.reset(id, true)
 					player.chal.active = id
+					CHALS.reset(id, true)
 				} else FERMIONS.choose(Math.floor(-id/10), (-id-1)%10, true)
 			}
-			player.supernova.auto.t = 0
 		}
 	} else delete player.supernova.auto.list
 }
@@ -464,7 +469,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/11/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/17/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

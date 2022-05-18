@@ -628,6 +628,7 @@ td.ax {
 .boost_cs {
 	height: 36px;
 	width: 240px;
+	font-size: 80%;
 	border: 3px solid transparent
 }
 

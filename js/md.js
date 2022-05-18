@@ -14,6 +14,7 @@ const MASS_DILATION = {
 		if (CHALS.inChal(12)) return 3/7
 		var x = FERMIONS.onActive("02") ? 0.64 : 0.8
 		if (tmp.fermions) x = Math.pow(x, 1 / tmp.fermions.effs[0][4])
+		if (CHROMA.got("p2_2")) x /= CHROMA.eff("p2_2")
 		return x
 	},
 	applyDil(x) {

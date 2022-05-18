@@ -93,9 +93,13 @@ function updateTickspeedTemp() {
 }
 
 function updateUpgradesTemp() {
-    if (!tmp.upgs) tmp.upgs = {}
-    UPGS.mass.temp()
-    UPGS.main.temp()
+	if (!tmp.upgs) tmp.upgs = {}
+
+	tmp.upgs.fp = E(1)
+	if (CHROMA.got("t1_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t1_1"))
+
+	UPGS.mass.temp()
+	UPGS.main.temp()
 }
 
 function updateRagePowerTemp() {
