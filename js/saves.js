@@ -18,7 +18,7 @@ function calc(dt, dt_offline) {
     player.mass = player.mass.add(tmp.massGain.mul(dt))
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
-    if (player.mainUpg.rp.includes(3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (player.ranks.rank.gte(x) || player.mainUpg.atom.includes(1))) UPGS.mass.buyMax(x)
+    if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (player.ranks.rank.gte(x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
     if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
     if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
     if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
@@ -32,10 +32,10 @@ function calc(dt, dt_offline) {
         let upg = UPGS.main[x]
         if (upg.auto_unl ? upg.auto_unl() : false) if (player.auto_mainUpg[id]) for (let y = 1; y <= upg.lens; y++) if (upg[y].unl ? upg[y].unl() : true) upg.buy(y)
     }
-    if (player.mainUpg.bh.includes(6) || player.mainUpg.atom.includes(6)) player.rp.points = player.rp.points.add(tmp.rp.gain.mul(dt))
-    if (player.mainUpg.atom.includes(6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
+    if (hasUpgrade('bh',6) || hasUpgrade('atom',6)) player.rp.points = player.rp.points.add(tmp.rp.gain.mul(dt))
+    if (hasUpgrade('atom',6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
     if (hasTree("qol_ext8")) {
-		let max = hasTree("qol_ext9") ? 8 : 4
+		let max = 8
 		for (var c = 1; c <= max; c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
 	}
     if (hasElement(14)) player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain.mul(dt*tmp.atom.quarkGainSec))
@@ -48,7 +48,7 @@ function calc(dt, dt_offline) {
 			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
 			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
 			var ss = tmp.bh.rad_ss
-			var logProd = tmp.bh.mass_gain.max(10).softcap(ss, 0.9, 2).log10()
+			var logProd = tmp.bh.mass_gain.max(10).softcap(ss,0.5,2).log10()
 
 			var newMass = player.bh.mass.log10().div(logProd).root(log)
 			newMass = newMass.add(pow.mul(dt))
@@ -469,7 +469,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/17/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/19/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

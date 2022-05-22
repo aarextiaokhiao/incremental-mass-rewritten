@@ -593,7 +593,7 @@ td.ax {
 }
 
 .btn_ch {
-	height: 120px;
+	height: 54px;
 	width: 120px;
 	background: black;
 	border-color: #3f005f;
@@ -622,12 +622,12 @@ td.ax {
 
 .btn_cs {
 	height: 36px;
-	width: 96px;
+	width: 90px;
 }
 
 .boost_cs {
 	height: 36px;
-	width: 240px;
+	width: 180px;
 	font-size: 80%;
 	border: 3px solid transparent
 }

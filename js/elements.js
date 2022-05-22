@@ -8,7 +8,7 @@ function setupHTML() {
 	let table3 = ""
 	let table4 = ""
 	for (let x = 0; x < TABS[1].length; x++) {
-		table += `<div style="width: 130px">
+		table += `<div style="width: 130px" id="tab${x}_div">
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
 		</div>`
 		if (TABS[2][x]) {
@@ -131,7 +131,7 @@ function setupHTML() {
 	let confirm_table = new Element("confirm_table")
 	table = ""
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : CONFIRMS[x]}.png" style='width: 40px; height: 40px'><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">OFF</button></div>`
+		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : x == 5 ? "chal_ext" : CONFIRMS[x]}.png" style='width: 40px; height: 40px'><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">OFF</button></div>`
 	}
 	confirm_table.setHTML(table)
 
@@ -144,10 +144,11 @@ function setupHTML() {
 }
 
 function updateTabsHTML() {
+	tmp.el["tabs"].setDisplay(player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl)
 	for (let x = 0; x < TABS[1].length; x++) {
 		if (x != 5 && tmp.tab == 5) continue
 		let tab = TABS[1][x]
-		tmp.el["tab"+x].setDisplay(tab.unl ? tab.unl() : true)
+		tmp.el["tab"+x+"_div"].setDisplay(tab.unl ? tab.unl() : true)
 		tmp.el["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
 
 		if (tmp.el["tab_frame"+x]) tmp.el["tab_frame"+x].setDisplay(x == tmp.tab)
@@ -170,11 +171,11 @@ function updateUpperHTML() {
 
 	let unl = (player.stats.maxMass.gte(1e9) || player.rp.unl) && !hideSome
 	tmp.el.rp_div.setDisplay(unl)
-	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)))
+	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 
 	unl = FORMS.bh.see() && !hideSome
 	tmp.el.dm_div.setDisplay(unl)
-	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, player.mainUpg.atom.includes(6)))
+	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
 	unl = player.bh.unl && !hideSome
 	tmp.el.bh_div.setDisplay(unl)
 	tmp.el.atom_div.setDisplay(unl)
@@ -224,6 +225,7 @@ function updateRanksHTML() {
 	for (let x = 0; x < RANKS.names.length; x++) {
         let rn = RANKS.names[x]
 		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
+		if (x == 0) unl = unl&&!RANKS.unl.pent()
 		tmp.el["ranks_div_"+x].setDisplay(unl)
 		if (unl) {
 			let keys = Object.keys(RANKS.desc[rn])
@@ -258,7 +260,7 @@ function updateMassUpgradesHTML() {
 			tmp.el["massUpg_cost_"+x].setTxt(formatMass(tmp.upgs.mass[x].cost))
 			tmp.el["massUpg_step_"+x].setTxt(desc.step)
 			tmp.el["massUpg_eff_"+x].setHTML(desc.eff)
-			tmp.el["massUpg_auto_"+x].setDisplay(player.mainUpg.rp.includes(3))
+			tmp.el["massUpg_auto_"+x].setDisplay(hasUpgrade('rp',3))
 			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"ON":"OFF")
 		}
 	}
@@ -362,7 +364,7 @@ function updateBlackHoleHTML() {
 
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS[x]=="hex"?RANKS.unl.hex():CONFIRMS[x]=="ext"?EXT.unl():CONFIRMS[x] == "sn"?player.supernova.unl:player[CONFIRMS[x]].unl)
+		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS_UNL[CONFIRMS[x]]())
 		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	tmp.el.offline_active.setTxt(player.offline.active?"ON":"OFF")

@@ -38,7 +38,7 @@ const TREE_IDS = [
 		[],
 	],[
 		['s4','sn5','sn4'],
-		['qol_ext6','qol_ext7','qol_ext8','qol_ext9','qol_ext10'],
+		['qol_ext6','qol_ext7','qol_ext8','','qol_ext10'],
 		[],
 		[],
 		["ext_l4","ext_l5"],
@@ -106,7 +106,7 @@ const TREE_UPGS = {
             desc: `Tree “sn2”'s effect base is increased by Supernova.`,
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(15) },
-            reqDesc: `13 Supernovae.`,
+            reqDesc: `15 Supernovae.`,
             cost: E(1e8),
             effect() {
                 let x = player.supernova.times.mul(0.1).softcap(1.5,0.75,0)
@@ -453,18 +453,17 @@ const TREE_UPGS = {
 
 				let b = sn.div(300).add(1)
 				let e = sn.sub(40).max(0)
-				if (CHROMA.got("s3_2")) e = e.mul(player.supernova.fermions.tiers[1][4].div(2).pow(CHROMA.eff("s3_2",0).mul(2)))
+				if (CHROMA.got("t4_1")) e = e.mul(player.supernova.fermions.tiers[1][4].pow(CHROMA.eff("t4_1").mul(2)))
                 return b.pow(e).sub(1).div(10).add(1)
             },
             effDesc(x) { return format(x)+"x" },
         },
         qol8: {
-            branch: ["qol7"],
-            unl() { return hasTree("qol7") },
-            req() { return player.supernova.times.gte(50) },
-            reqDesc: `50 Supernovae.`,
-            desc: `You can automatically sweep challenges and fermions with at least 15 completions / tiers, after 1.5 seconds of Supernova.`,
-            cost: E(1e65),
+            branch: ["qol6"],
+            req() { return player.supernova.times.gte(20) },
+            reqDesc: `20 Supernovae.`,
+            desc: `You can automatically sweep challenges and fermions. [Req: 50 Challenge completions / 15 Fermion tiers]`,
+            cost: E(1e20),
 			perm: 2,
         },
         fn7: {
@@ -475,7 +474,7 @@ const TREE_UPGS = {
         },
         chal6: {
             branch: ["chal5"],
-            desc: `Unlock new challenge.`,
+            desc: `Unlock new challenge, and reduce auto-sweep threshold to 10.`,
             cost: E(1e94),
         },
         sn5: {
@@ -619,7 +618,7 @@ const TREE_UPGS = {
 			cost: E(0),
 			perm: 1,
 			onBuy: updateAxionLevelTemp,
-			icon: "axion",
+			icon: "ext_b",
 		},
 		ext_b2: {
 			unl() { return CHROMA.unl() },
@@ -630,7 +629,7 @@ const TREE_UPGS = {
 			cost: EINF,
 			perm: 1,
 			onBuy: updateAxionLevelTemp,
-			icon: "axion",
+			icon: "ext_b",
 		},
 		ext_b3: {
 			unl() { return CHROMA.unl() },
@@ -641,7 +640,7 @@ const TREE_UPGS = {
 			cost: EINF,
 			perm: 1,
 			onBuy: updateAxionLevelTemp,
-			icon: "axion",
+			icon: "ext_b",
 		},
 		ext_e1: {
 			unl() { return CHROMA.unl() },
@@ -714,16 +713,9 @@ const TREE_UPGS = {
 		},
 		qol_ext8: {
 			branch: ["qol_ext1"],
-			desc: `Automatically gain C1 - 4 completions without entering.`,
+			desc: `Automatically gain C1 - 8 completions without entering.`,
 			perm: 1,
 			cost: E("1e800"),
-			icon: "exotic"
-		},
-		qol_ext9: {
-			branch: ["qol_ext8"],
-			desc: `Automatically gain C5 - 8 completions without entering.`,
-			perm: 1,
-			cost: E("1e1500"),
 			icon: "exotic"
 		},
 		qol_ext10: {

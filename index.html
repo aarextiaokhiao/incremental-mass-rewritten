@@ -19,6 +19,7 @@
     <script src="js/elements.js"></script>
     <script src="js/other.js"></script>
     <script src="js/saves.js"></script>
+    <script src="js/upgrades.js"></script>
     <script src="js/challenges.js"></script>
 
     <script src="js/exotic/core.js"></script>
@@ -42,7 +43,6 @@
 
     <script src="js/formats.js"></script>
 
-    <script src="js/upgrades.js"></script>
     <script src="js/main.js"></script>
 
 	<title id="title">IM: Altrascendum</title>
@@ -166,7 +166,7 @@
 		<div style="position: absolute; left: 25%; top: 24px; height: 2px; width: 50%; background: #ff3f00">
 			<div id="ext_stabs" style="position: absolute; left: 0; top: -10px; width: 100%; min-height: 40px;"></div>
 		</div>
-		<div style="position: absolute; height: 80%; width: 80%; top: 10%; left: 10%; border: 3px solid #ff3f00; background: rgba(0, 0, 0, 0.9)">
+		<div style="position: absolute; height: 80%; width: 80%; top: 10%; left: 10%; border: 3px solid #ff3f00; background: rgba(0, 0, 0, 0.9); overflow-y: auto">
 			<div id="stab_frame6_0">
 				<span id="st_res0"></span> X Axions <span id="st_gain0"></span><br>
 				<span id="st_res1"></span> Y Axions <span id="st_gain1"></span><br>
@@ -179,13 +179,13 @@
                 </div><table id="ax_table"></table>
 			</div>
 			<div id="stab_frame6_1">
-				<span>Toning the reality will result in changes of scalings.</span>
+				<span>Toning the reality will rise <b class="scarlet">Exotic</b> in transfer of scalings.</span>
 				<br>
 				<div class="table_center">
-					<button class="btn btn_ch" id="ch_tone_0_btn" onclick="CHROMA.tones.toggle(0)"><b class='red' id="ch_tone_0">Red</b><br>Mass Upgrades</button>
-					<button class="btn btn_ch" id="ch_tone_1_btn" onclick="CHROMA.tones.toggle(1)"><b class='green' id="ch_tone_1">Green</b><br>Black Hole Condensers</button>
-					<button class="btn btn_ch" id="ch_tone_2_btn" onclick="CHROMA.tones.toggle(2)"><b class='sky' id="ch_tone_2">Blue</b><br>Cosmic Rays</button>
-					<button class="btn btn_ch" id="ch_tone_3_btn" onclick="CHROMA.tones.toggle(3)"><b class='magenta' id="ch_tone_3">Ultraviolet</b><br>Rank</button>
+					<button class="btn btn_ch" id="ch_tone_0_btn" onclick="CHROMA.tones.toggle(0)"><b class='red' id="ch_tone_0">Red</b><br><span id="ch_eff_0"></span></button>
+					<button class="btn btn_ch" id="ch_tone_1_btn" onclick="CHROMA.tones.toggle(1)"><b class='green' id="ch_tone_1">Green</b><br><span id="ch_eff_1"></span></button>
+					<button class="btn btn_ch" id="ch_tone_2_btn" onclick="CHROMA.tones.toggle(2)"><b class='sky' id="ch_tone_2">Blue</b><br><span id="ch_eff_2"></span></button>
+					<button class="btn btn_ch" id="ch_tone_3_btn" onclick="CHROMA.tones.toggle(3)"><b class='magenta' id="ch_tone_3">Ultraviolet</b><br><span id="ch_eff_3"></span></button>
 				</div>
 				(Your next tone requires <span id="ch_req">0.00</span> Exotic Matter!)
 				<br><br>
@@ -437,8 +437,8 @@
                     </div>
                 </div>
             </div><div id="stab_frame0_3">
-                You collapsed <span id="stars_Amt">X</span> stars, which makes mass gain is multiplied based on every type of Ranks<br>
-                <span class="green">Currently: <span id="stars_Eff">X</span>x</span><br><br>
+                You have collapsed <span id="stars_Amt">X</span> stars.<br>
+                <span class="green">Currently: <span id="stars_Eff">X</span></span><br><br>
                 <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
                 <div id="stars_table" class="table_center"></div><br><br>
                 <span id="starSoft1" class="red">After <b id="starSoftStart1">X</b> of collapsed stars gain will softcap collapsed stars gain!</span><br>
@@ -472,16 +472,18 @@
             </div>
         </div><div id="tab_frame4">
             <div id="stab_frame4_0">
-                You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
-                <div>
-                    <button class="btn" onclick="ATOM.particles.assignAll()">Distribute</button><br><br>
-                    <input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
-                    <input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
-                    <input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
+                <div id="particles_assign">
+                    You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
+                    <div>
+                        <button class="btn" onclick="ATOM.particles.assignAll()">Distribute</button><br><br>
+                        <input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
+                        <input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
+                        <input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
+                    </div>
+                    <br><br>
+                    Ratio Mode: <span id="atom_ratio">X</span><br>
+                    <button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
                 </div>
-                <br><br>
-                Ratio Mode: <span id="atom_ratio">X</span><br>
-                <button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
                 <div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
             </div><div id="stab_frame4_1">
                 <div id="elem_ch_div" style="min-height: 70px;">
@@ -504,9 +506,9 @@
             <button class="btn" onclick="export_copy()">Export to clipboard</button>
             <button class="btn" onclick="importy()">Import</button>
             <button class="btn" onclick="turnOffline()">Offline Production: <span id="offline_active">ON</span></button><br><br>
-            <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">Fonts</button>
             <button class="btn" onclick="updateAarex(true)">Aarex's Theme: <span id="aarex_active">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">Notations</button>
+            <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">Fonts</button>
             <button class="btn" id="tree_ani_btn" onclick="changeTreeAnimation()">Tree Animation: <span id="tree_anim">ON</span></button>
             <button class="btn" id="chroma_bg_btn" onclick="toggleChromaBG()">Chroma BG: <span id="chroma_bg">ON</span></button><br><br>
             <h2>Confirmation Settings</h2><br>

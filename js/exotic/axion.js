@@ -36,9 +36,9 @@ let AXION = {
 				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(2))
 			}
 			if (hasTree("ext_l4")) {
-				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(3))
-				if (i % 4 > 1) other = other.sub(player.ext.ax.upgs[i - 2].div(3))
-				if (i % 4 > 2) other = other.sub(player.ext.ax.upgs[i - 3].div(3))
+				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(2.5))
+				if (i % 4 > 1) other = other.sub(player.ext.ax.upgs[i - 2].div(2.5))
+				if (i % 4 > 2) other = other.sub(player.ext.ax.upgs[i - 3].div(2.5))
 			}
 		}
 
@@ -99,7 +99,7 @@ let AXION = {
 		if (x == 0) r = player.mass.max(1).log10().pow(0.6)
 			.mul(em.add(1).log(100).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
-			.mul(em.add(1).log10().add(1).sqrt())
+			.mul(em.add(1).log10().add(1))
 		if (x == 2 && hasTree("ext_e1")) r = player.supernova.radiation.hz.max(1).log10()
 			.mul(em.add(1).log10().add(1).sqrt())
 
@@ -194,13 +194,13 @@ let AXION = {
 		},
 		3: {
 			title: "Radiation Scaling",
-			desc: "Radiation Boosters scale slower.",
+			desc: "Radiation Boosters scale slower. [Max: ^1.25 for each tier]",
 			req: E(0.5),
 			eff(x) {
-				return x.pow(0.6).div(135).min(0.05)
+				return x.pow(0.6).div(135).softcap(0.05,1/3,0)
 			},
 			effDesc(x) {
-				return "-^"+format(x)
+				return "-^"+format(x,3)+getSoftcapHTML(x,0.05)
 			}
 		},
 
@@ -228,13 +228,13 @@ let AXION = {
 		},
 		6: {
 			title: "Superranked",
-			desc: "Meta Rank scaling is weaker.",
+			desc: "Weaken Meta Rank based on its starting point.",
 			req: E(5),
 			eff(x) {
-				return E(1).div(x.add(1).log(5).div(3).add(1))
+				return getScalingStart("meta", "rank").div(8e4).mul(x.cbrt()).add(1)
 			},
 			effDesc(x) {
-				return format(E(1).sub(x).mul(100)) + "%"
+				return format(x) + "x"
 			}
 		},
 		7: {
@@ -253,9 +253,9 @@ let AXION = {
 			title: "Supermassive",
 			desc: "Hawking Radiation softcap starts later.",
 			unl: () => CHROMA.unl(),
-			req: E(40),
+			req: E(20),
 			eff(x) {
-				return x.add(1).cbrt()
+				return x.mul(4).add(1).cbrt()
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -263,7 +263,7 @@ let AXION = {
 		},
 		9: {
 			title: "Dark Radiation",
-			desc: "Multiply Hawking Radiation effect.",
+			desc: "Multiply Hawking Radiation.",
 			req: E(10),
 			eff(x) {
 				return x.div(3).add(1).sqrt().softcap(4,2/3,0)
@@ -274,9 +274,9 @@ let AXION = {
 		},
 		10: {
 			title: "Quark Condenser",
-			desc: "Raise Neutron Condensers until HR softcap.",
+			desc: "Raise Neutron Condensers until evaporation.",
 			unl: () => CHROMA.unl(),
-			req: E(40),
+			req: E(100),
 			eff(x) {
 				return x.add(1).sqrt().softcap(4,4,3)
 			},
@@ -300,9 +300,9 @@ let AXION = {
 			title: "Supernovae",
 			desc: "Cheapen Supernovae.",
 			unl: () => CHROMA.unl(),
-			req: E(100),
+			req: E(50),
 			eff(x) {
-				return E(1.1).pow(x.pow(0.5))
+				return x.div(20).add(1).min(3)
 			},
 			effDesc(x) {
 				return "^1/"+format(x)
@@ -311,20 +311,20 @@ let AXION = {
 		13: {
 			title: "Challenge",
 			desc: "Increase the cap of Challenges 7, 9 - 12.",
-			req: E(0),
+			req: E(1),
 			eff(x) {
-				return x.times(25)
+				return x.add(1).log(2).times(25)
 			},
 			effDesc(x) {
 				return "+" + format(x)
 			}
 		},
 		14: {
-			title: "Impossible",
-			desc: "Weaken Impossible Challenge scaling.",
-			req: E(5),
+			title: "Insane",
+			desc: "Weaken Insane Challenge scaling.",
+			req: E(15),
 			eff(x) {
-				return E(1).div(x.add(1).div(100).add(1))
+				return E(4.5).sub(x.div(10).softcap(1,0.5,0)).max(1).log(4.5)
 			},
 			effDesc(x) {
 				return format(E(1).sub(x).mul(100)) + "%"
@@ -335,10 +335,13 @@ let AXION = {
 			desc: "Pent scales slower.",
 			req: E(1),
 			eff(x) {
-				return E(1).div(x.mul(2).add(1).log2().div(10).add(1))
+				return {
+					exp: E(1).add(E(0.25).div(x.add(1).cbrt())),
+					div: x.mul(2).add(1).log2().div(10).add(1)
+				}
 			},
 			effDesc(x) {
-				return format(E(1).sub(x).mul(100)) + "%"
+				return "^"+format(x.exp)+", /"+format(x.div)
 			}
 		},
 
@@ -346,9 +349,9 @@ let AXION = {
 			title: "Dyson Sphere",
 			desc: "Multiply BH Upgrade 15.",
 			unl: () => CHROMA.unl(),
-			req: E(10),
+			req: E(1),
 			eff(x) {
-				return x.pow(.75).div(15).add(1).min(3)
+				return x.add(1).cbrt().min(4)
 			},
 			effDesc(x) {
 				return "x"+format(x,3)
@@ -356,7 +359,7 @@ let AXION = {
 		},
 		17: {
 			title: "Quasar",
-			desc: "Increase the cap of C8.",
+			desc: "Increase the cap of C8. [Post-600 doesn't affect BH Mass!]",
 			unl: () => CHROMA.unl(),
 			req: E(30),
 			eff(x) {
@@ -370,9 +373,9 @@ let AXION = {
 			title: "Temporal Dimensionality",
 			desc: "Strengthen Tickspeed-Cap Boost.",
 			unl: () => CHROMA.unl(),
-			req: E(1),
+			req: E(10),
 			eff(x) {
-				return x.div(10).add(1).log10().div(5).add(1)
+				return x.div(5).add(1).log10().div(5).add(1)
 			},
 			effDesc(x) {
 				return "^"+format(x,3)
@@ -395,16 +398,16 @@ let AXION = {
 		},
 
 		20: {
-			title: "X-Automation",
-			desc: "Automate X AXION.",
+			title: "AX-Automation",
+			desc: "Automate X/Y AXIONS.",
 			unl: () => CHROMA.unl(),
 			req: E(50)
 		},
 		21: {
-			title: "Y-Automation",
-			desc: "Automate Y AXION.",
+			title: "Placeholder.",
+			desc: "Placeholder.",
 			unl: () => CHROMA.unl(),
-			req: E(100)
+			req: EINF
 		},
 		22: {
 			title: "Monochromacy Challenge",
@@ -508,8 +511,9 @@ function updateAxionTemp() {
 	d.cost = {}
 	d.bulk = {}
 	d.eff = {}
-	d.str = E(future_ax ? 3 : 1)
 	d.fp = AXION.costScale(i)
+	d.str = E(1)
+	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
 	for (var i = 0; i < 12; i++) {
 		d.cost[i] = AXION.cost(i)
 		d.bulk[i] = AXION.bulk(i)

@@ -6,8 +6,8 @@ const RANKS = {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
             let reset = true
-            if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
-            if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
+            if (type == "rank" && hasUpgrade('rp',4)) reset = false
+            if (type == "tier" && hasUpgrade('bh',4)) reset = false
             if (type == "tetr" && hasTree("qol5")) reset = false
             if (type == "pent") reset = false
             if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
@@ -19,8 +19,8 @@ const RANKS = {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk.max(player.ranks[type].add(1)))
             let reset = true
-            if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
-            if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
+            if (type == "rank" && hasUpgrade('rp',4)) reset = false
+            if (type == "tier" && hasUpgrade('bh',4)) reset = false
             if (type == "tetr" && hasTree("qol5")) reset = false
             if (type == "pent") reset = false
             if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
@@ -29,8 +29,8 @@ const RANKS = {
         }
     },
     unl: {
-        tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || player.mainUpg.atom.includes(3) },
-        tetr() { return player.mainUpg.atom.includes(3) },
+        tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || hasUpgrade('atom',3) },
+        tetr() { return hasUpgrade('atom',3) },
         pent() { return hasTree("sn5") || this.hex() },
         hex() { return false /*CHROMA.unl() || player.ranks.hex.gte(1)*/ },
     },
@@ -72,9 +72,9 @@ const RANKS = {
     },
     autoSwitch(rn) { player.auto_ranks[rn] = !player.auto_ranks[rn] },
     autoUnl: {
-        rank() { return player.mainUpg.rp.includes(5) },
-        tier() { return player.mainUpg.rp.includes(6) },
-        tetr() { return player.mainUpg.atom.includes(5) },
+        rank() { return hasUpgrade('rp',5) },
+        tier() { return hasUpgrade('rp',6) },
+        tetr() { return hasUpgrade('atom',5) },
         pent() { return true },
         hex() { return false },
     },
@@ -128,10 +128,10 @@ const RANKS = {
             '6': "Pent 5 effect is 2x stronger.",
             '10': "Stronger and Pent raise levels from Musculer and Booster.",
             '13': "Pent 1 effect is raised by Pents.",
+            '50': "Tickspeed Power boosts BH Condenser Power.",
             '80': "reduce MD Upgrade 6 and Stronger softcaps.",
-            '130': "Tickspeed Power boosts BH Condenser Power.",
-            '300': "mass upgrade 1-2 self-boosts multiply themselves, based on Pent.",
-            '1100': "Tickspeed Power multiplies Stronger.",
+            '200': "mass upgrade 1-2 self-boosts multiply themselves, based on Pent.",
+            '300': "Tickspeed Power multiplies Stronger.",
         },
         hex: {
             '1': "Unlock Chroma.",
@@ -149,7 +149,6 @@ const RANKS = {
             },
             '6'() {
                 let ret = player.ranks.rank.add(1).pow(player.ranks.rank.gte(17)?player.ranks.rank.add(1).root(3):2)
-                if (CHROMA.got("s1_2")) ret = ret.max(CHROMA.eff("s1_2"))
                 return ret
             },
             '40'() {
@@ -243,7 +242,7 @@ const RANKS = {
 				let ret = player.ranks.pent.add(6).div(18).sqrt().softcap(1.5,0.2,0)
 				return ret.min(1.5)
 			},
-			'300'() {
+			'150'() {
 				return player.ranks.pent.div(400).log10().div(2).min(2)
 			},
 		},
@@ -280,7 +279,7 @@ const RANKS = {
             5(x) { return format(E(1).div(x))+"x weaker" },
             10(x) { return "^"+format(x) },
             13(x) { return "^"+format(x,3) },
-            300(x) { return "^"+format(x,3) },
+            150(x) { return "^"+format(x,3) },
         },
 		hex: {
 		},
@@ -289,7 +288,6 @@ const RANKS = {
         rank() {
             let f = E(1)
             if (player.ranks.tier.gte(1)) f = f.mul(1/0.8)
-            if (scalingToned("rank")) f = E(0.5)
             f = f.mul(tmp.chal.eff[5].pow(-1))
             return f
         },
@@ -297,7 +295,7 @@ const RANKS = {
             let f = E(1)
             f = f.mul(tmp.fermions.effs[1][3])
             if (player.ranks.tetr.gte(1)) f = f.mul(1/0.75)
-            if (player.mainUpg.atom.includes(10)) f = f.mul(2)
+            if (hasUpgrade('atom',10)) f = f.mul(2)
             return f
         },
         tetr() {
@@ -307,7 +305,7 @@ const RANKS = {
         },
         pent() {
             let f = E(5/6)
-            if (AXION.unl()) f = f.mul(tmp.ax.eff[15])
+            if (AXION.unl()) f = f.div(tmp.ax.eff[15].div)
             if (hasElement(81)) f = f.mul(0.88)
             return f
         },

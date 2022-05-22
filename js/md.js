@@ -127,7 +127,7 @@ const MASS_DILATION = {
                     let s = E(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
                     if (hasElement(53)) x = x.mul(1.75)
-                    return x.softcap(1e3,player.ranks.pent.gte(80)?0.7:0.6,0)
+                    return x.softcap(1e3,player.ranks.pent.gte(75)?0.7:0.6,0)
                 },
                 effDesc(x) { return "+^"+format(x)+getSoftcapHTML(x,1e3) },
             },{

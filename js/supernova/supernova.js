@@ -203,21 +203,27 @@ function updateSupernovaEndingHTML() {
 //CHALLENGE AUTOMATION: Go through all unlocked challenges that have at least 15 completions / tiers.
 function getSupernovaAutoTemp(mode = "all") {
 	let ret = []
-	let thres = 15
-	if (hasTree("qol_ext2")) thres = 10
-	if (hasTree("feat4")) thres = 7
+
+	let c_thres = 50
+	if (hasTree("chal6")) c_thres = 15
+	if (hasTree("qol_ext2")) c_thres = 10
+	if (hasTree("feat4")) c_thres = 7
 	if (mode == "all" || mode == "chal") {
-		for (var x = (hasTree("qol_ext9") ? 9 : hasTree("qol_ext8") ? 5 : 1); x <= 12; x++) {
+		for (var x = (hasTree("qol_ext8") ? 9 : 1); x <= 12; x++) {
 			let tier = player.chal.comps[x]
-			if (tier.gte(thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
+			if (tier.gte(c_thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
 			else if (x == 12 && hasTree("qol_ext2")) ret.push(x)
 		}
 	}
+
+	let f_thres = 15
+	if (hasTree("qol_ext2")) f_thres = 10
+	if (hasTree("feat4")) f_thres = 7
 	if (mode == "all" || mode == "ferm") {
 		for (var y = 0; y < 2; y++) {
 			for (var x = 0; x < 6; x++) {
 				let tier = player.supernova.fermions.tiers[y][x]
-				if (tier.gte(thres) && tier.lt(FERMIONS.maxTier(y, x))) ret.push(-(y*10+x+1))
+				if (tier.gte(f_thres) && tier.lt(FERMIONS.maxTier(y, x))) ret.push(-(y*10+x+1))
 			}
 		}
 	}

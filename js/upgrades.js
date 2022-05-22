@@ -3,16 +3,14 @@ const UPGS = {
         cols: 3,
         autoOnly: [0,1,2],
 		temp() {
-			let d = tmp.upgs.mass || {}
-			tmp.upgs.mass = d
 			for (let x = this.cols; x >= 1; x--) {
-				if (!d[x]) d[x] = {}
+				let dx = tmp.upgs.mass[x]
 				let data = this.getData(x)
-				d[x].cost = data.cost
-				d[x].bulk = data.bulk
+				dx.cost = data.cost
+				dx.bulk = data.bulk
 				
-				d[x].bonus = this[x].bonus&&!CHALS.inChal(14)?this[x].bonus():E(0)
-				d[x].eff = this[x].effect(player.massUpg[x]||E(0))
+				dx.bonus = this[x].bonus&&!CHALS.inChal(14)?this[x].bonus():E(0)
+				dx.eff = this[x].effect(player.massUpg[x]||E(0))
 			}
 		},
         autoSwitch(x) {
@@ -23,7 +21,7 @@ const UPGS = {
 
             let cost = manual ? this.getData(x).cost : tmp.upgs.mass[x].cost
             if (player.mass.gte(cost)) {
-                if (!player.mainUpg.bh.includes(1)) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh',1)) player.mass = player.mass.sub(cost)
                 if (!player.massUpg[x]) player.massUpg[x] = E(0)
                 player.massUpg[x] = player.massUpg[x].add(1)
             }
@@ -36,7 +34,7 @@ const UPGS = {
             if (player.mass.gte(cost)) {
                 if (!player.massUpg[x]) player.massUpg[x] = E(0)
                 player.massUpg[x] = player.massUpg[x].max(bulk.floor().max(player.massUpg[x].plus(1)))
-                if (!player.mainUpg.bh.includes(1)) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh',1)) player.mass = player.mass.sub(cost)
             }
         },
         getData(i) {
@@ -55,7 +53,7 @@ const UPGS = {
             return {cost: cost, bulk: bulk}
         },
         1: {
-            unl() { return player.ranks.rank.gte(1) || player.mainUpg.atom.includes(1) },
+            unl() { return player.ranks.rank.gte(1) || hasUpgrade('atom',1) },
             title: "Muscler",
             start: E(10),
             inc: E(1.5),
@@ -64,7 +62,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
-                if (player.ranks.pent.gte(300)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[300]()))
+                if (player.ranks.pent.gte(150)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[150]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
@@ -77,13 +75,13 @@ const UPGS = {
             },
             bonus() {
                 let x = E(0)
-                if (player.mainUpg.rp.includes(1)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][1].effect:E(0))
-                if (player.mainUpg.rp.includes(2)) x = x.add(tmp.upgs.mass[2].bonus)
+                if (hasUpgrade('rp',1)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][1].effect:E(0))
+                if (hasUpgrade('rp',2)) x = x.add(tmp.upgs.mass[2].bonus)
                 return x
             },
         },
         2: {
-            unl() { return player.ranks.rank.gte(2) || player.mainUpg.atom.includes(1) },
+            unl() { return player.ranks.rank.gte(2) || hasUpgrade('atom',1) },
             title: "Booster",
             start: E(100),
             inc: E(4),
@@ -92,7 +90,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
-                if (player.ranks.pent.gte(300)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[300]()))
+                if (player.ranks.pent.gte(150)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[150]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
@@ -105,23 +103,23 @@ const UPGS = {
             },
             bonus() {
                 let x = E(0)
-                if (player.mainUpg.rp.includes(2)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][2].effect:E(0))
-                if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.mass[3].bonus)
+                if (hasUpgrade('rp',2)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][2].effect:E(0))
+                if (hasUpgrade('rp',7)) x = x.add(tmp.upgs.mass[3].bonus)
                 return x
             },
         },
         3: {
-            unl() { return player.ranks.rank.gte(3) || player.mainUpg.atom.includes(1) },
+            unl() { return player.ranks.rank.gte(3) || hasUpgrade('atom',1) },
             title: "Stronger",
             start: E(1000),
             inc: E(9),
 			effect(x) {
 				let step = E(1).add(RANKS.effect.tetr[2]())
-				if (player.mainUpg.rp.includes(9)) step = step.add(0.25)
-				if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
+				if (hasUpgrade('rp',9)) step = step.add(0.25)
+				if (hasUpgrade('rp',12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (player.ranks.pent.gte(1100) && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step.log10().div(1e4).add(1).pow(27/20))
+				if (player.ranks.pent.gte(300) && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step.log10().div(3e3).add(1).pow(27/20))
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
@@ -130,8 +128,8 @@ const UPGS = {
 				let ss = E(10)
 				let sp = 0.5
 				if (player.ranks.rank.gte(34)) ss = ss.add(2)
-				if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
-				if (player.mainUpg.atom.includes(9)) sp *= 1.15
+				if (hasUpgrade('bh',9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
+				if (hasUpgrade('atom',9)) sp *= 1.15
 				if (player.ranks.tier.gte(30)) sp *= 1.1
 				if (player.ranks.pent.gte(80)) sp *= (2/3) / 0.55 / 1.15
 
@@ -147,21 +145,18 @@ const UPGS = {
             },
             bonus() {
                 let x = E(0)
-                if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][7].effect:0)
+                if (hasUpgrade('rp',7)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][7].effect:0)
                 return x
             },
         },
     },
     main: {
 		temp() {
-			let d = tmp.upgs.main || {}
-			let u = UPGS.main
-			tmp.upgs.main = d
-			for (let x = 1; x <= u.cols; x++) {
-				if (!d[x]) d[x] = {}
-				for (let y = 1; y <= u[x].lens; y++) {
-					let it = u[x][y]
-					if (it.effDesc) d[x][y] = { effect: it.effect() }
+			for (let x = 1; x <= this.cols; x++) {
+				let ux = this[x]
+				for (let y = 1; y <= this[x].lens; y++) {
+					let uy = ux[y]
+					if (uy.effDesc) tmp.upgs.main[x][y] = { effect: uy.effect() }
 				}
 			}
 		},
@@ -174,14 +169,14 @@ const UPGS = {
             res: "Rage Power",
             getRes() { return player.rp.points },
             unl() { return player.rp.unl },
-            can(x) { return player.rp.points.gte(this[x].cost) && !player.mainUpg.rp.includes(x) },
+            can(x) { return player.rp.points.gte(this[x].cost) && !hasUpgrade('rp',x) },
             buy(x) {
                 if (this.can(x)) {
                     player.rp.points = player.rp.points.sub(this[x].cost)
                     player.mainUpg.rp.push(x)
                 }
             },
-            auto_unl() { return player.mainUpg.bh.includes(5) },
+            auto_unl() { return hasUpgrade('bh',5) },
             lens: 15,
             1: {
                 desc: "Boosters add Musclers.",
@@ -312,8 +307,8 @@ const UPGS = {
             res: "Dark Matter",
             getRes() { return player.bh.dm },
             unl() { return player.bh.unl },
-            auto_unl() { return player.mainUpg.atom.includes(2) },
-            can(x) { return player.bh.dm.gte(this[x].cost) && !player.mainUpg.bh.includes(x) },
+            auto_unl() { return hasUpgrade('atom',2) },
+            can(x) { return player.bh.dm.gte(this[x].cost) && !hasUpgrade('bh',x) },
             buy(x) {
                 if (this.can(x)) {
                     player.bh.dm = player.bh.dm.sub(this[x].cost)
@@ -453,7 +448,7 @@ const UPGS = {
             res: "Atom",
             getRes() { return player.atom.points },
             unl() { return player.atom.unl },
-            can(x) { return player.atom.points.gte(this[x].cost) && !player.mainUpg.atom.includes(x) },
+            can(x) { return player.atom.points.gte(this[x].cost) && !hasUpgrade('atom',x) },
             buy(x) {
                 if (this.can(x)) {
                     player.atom.points = player.atom.points.sub(this[x].cost)
@@ -575,3 +570,6 @@ const UPGS = {
     },
 },
 */
+
+function hasUpgrade(id,x) { return player.mainUpg[id].includes(x) }
+function hasUpgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]||def }

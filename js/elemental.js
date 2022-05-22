@@ -149,10 +149,10 @@ const ELEMENTS = {
             desc: `You can now automatically buy Cosmic Rays. Cosmic Ray raise tickspeed effect at an extremely reduced rate.`,
             cost: E(1e44),
             effect() {
-                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
+                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1).softcap(10,0.1,0)
                 return x
             },
-            effDesc(x) { return "^"+format(x) },
+            effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,10) },
         },
         {
             desc: `2nd Neutron's effect is better.`,
@@ -511,7 +511,7 @@ const ELEMENTS = {
             cost: E('e3.5e8'),
 			effect() {
 				let r = player.supernova.fermions.tiers[1][2].div(40).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
-				if (CHROMA.got("s3_2")) e = r.pow(player.supernova.times.pow(CHROMA.eff("s3_2",0)))
+				if (CHROMA.got("t4_1")) e = r.pow(player.supernova.times.pow(CHROMA.eff("t4_1")))
 				return r
 			},
             effDesc(x) { return format(x)+"x" },

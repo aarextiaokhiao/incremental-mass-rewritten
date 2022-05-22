@@ -47,7 +47,7 @@ const FERMIONS = {
 		}
     },
 	getTierScaling(t, bulk=false) {
-		let d = CHROMA.got("s2_2") && tmp.fermions.dual ? CHROMA.eff("s2_2",1) : E(0)
+		let d = CHROMA.got("s1_2") && tmp.fermions.dual ? CHROMA.eff("s1_2") : E(0)
 		if (!bulk) t = t.sub(d)
 
 		let r = t.scaleEvery("fTier", bulk)
@@ -131,7 +131,7 @@ const FERMIONS = {
 				},
 				softcapMult() {
 					let x = E(1)
-					if (CHROMA.got("p3_1")) x = x.mul(CHROMA.eff("p3_1"))
+					if (tmp.bosons && bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
 					return x
 				},
 				desc(x) {
@@ -176,7 +176,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    return t.div(100).times(i.max(1).log(1e20).softcap(50,1e3,3)).add(1)
+                    return t.div(100).times(i.max(1).log(1e20).softcap(30,1e3,3)).add(1)
                 },
                 desc(x) {
                     return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`

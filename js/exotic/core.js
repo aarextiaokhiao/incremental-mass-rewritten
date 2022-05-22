@@ -1,6 +1,7 @@
 let EXOTIC = {
 	setup() {
 		return {
+			unl: false,
 			amt: E(0),
 			chal: { },
 			ec: 0,
@@ -10,7 +11,7 @@ let EXOTIC = {
 	},
 
 	unl(disp) {
-		return (disp && player.chal.comps[12].gte(1)) || player.ext.amt.gte(1) || player.ranks.hex.gte(1)
+		return (disp && player.chal.comps[12].gte(1)) || player.ext.unl
 	},
 	gain() {
 		if (player.chal.comps[12].eq(0)) return E(0)
@@ -44,7 +45,7 @@ let EXOTIC = {
 		let r = player.ext.amt
 		if (this.extLvl() >= 2) r = r.div(10).pow(2).mul(10)
 		if (this.extLvl() >= 1) r = E(10).pow(r.div(10).root(5)).div(10)
-		if (CHROMA.got("p1_1")) r = r.pow(CHROMA.eff("p1_1"))
+		if (CHROMA.got("p1_1")) r = expMult(r,CHROMA.eff("p1_1"))
 		return r
 	},
 
@@ -126,7 +127,9 @@ let EXOTIC = {
 	},
 
 	calc(dt) {
-		if (!EXOTIC.unl()) return
+		if (player.ext.amt.gt(0)) player.ext.unl = true
+		if (!player.ext.unl) return
+
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
 		if (true) player.ext.chal.f9 = false
@@ -142,7 +145,7 @@ let EXOTIC = {
 		if (needUpdate) updateAxionLevelTemp()
 
 		//CHROMA
-		if (!player.ext.ch.unl && CHROMA.unl()) {
+		if (!player.ext.ch.unl && player.chal.comps[13].gte(13)) {
 			addPopup(POPUP_GROUPS.chroma)
 			player.ext.ch.unl = true
 		}
@@ -203,6 +206,7 @@ let EXTRA_BUILDINGS = {
 			if (AXION.unl() && tmp.bh && player.bh.mass.lt(tmp.bh.rad_ss)) x = x.pow(tmp.ax.eff[10])
 
 			let r = x.add(1).log10().add(5).div(25)
+			if (CHROMA.got("p3_2")) r = r.add(CHROMA.eff("p3_2"))
 			return r
 		}
 	},
@@ -222,7 +226,7 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			if (x.eq(0)) return E(0)
 			let exp = x.add(1).log(3).div(100)
-			return E(tmp.atom ? tmp.atom.atomicEff : E(0)).add(1).pow(exp.min(1/10)).sub(1).mul(hasTree("rad4")?1:2/3).mul(exp.mul(10).max(1))
+			return E(tmp.atom ? tmp.atom.atomicEff : E(0)).add(1).pow(exp.min(1/20)).sub(1).mul(hasTree("rad4")?1:2/3)
 		}
 	}
 }
@@ -238,7 +242,7 @@ function updateExtraBuildingHTML(type, x) {
 	tmp.el[id+"cost"].setHTML(format(data.cost,0))
 	tmp.el[id+"btn"].setClasses({btn: true, locked: data.gain.lte(getExtraBuildings(type,x))})
 	tmp.el[id+"lvl"].setHTML(format(getExtraBuildings(type,x),0))
-	tmp.el[id+"pow"].setHTML(format(data.eff) + (data2.softcapHTML ? data2.softcapHTML(data.eff) : ""))
+	tmp.el[id+"pow"].setHTML(format(data.eff,type=="bh"&&x==3?3:2) + (data2.softcapHTML ? data2.softcapHTML(data.eff) : ""))
 }
 
 function updateExtraBuildingsHTML(type) {
@@ -272,7 +276,7 @@ function getExtraBuildings(type, x) {
 function resetExtraBuildings(type) {
 	let s = EXTRA_BUILDINGS.saves[type]()
 	for (let b = EXTRA_BUILDINGS.start[type]; b <= EXTRA_BUILDINGS.max; b++) {
-		if (type == "bh" && b == 2 && CHROMA.got("t2_1")) s["eb"+b] = s["eb"+b].pow(CHROMA.eff("t2_1",0))
+		if (type == "bh" && b == 2 && CHROMA.got("t2_1")) s["eb"+b] = s["eb"+b].pow(CHROMA.eff("t2_1"))
 		else delete s["eb"+b]
 	}
 }

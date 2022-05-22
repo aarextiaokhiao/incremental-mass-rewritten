@@ -11,7 +11,12 @@ function resetTemp() {
         notify: [],
         popup: [],
         saving: 0,
-    
+
+        upgs: {
+            main: {},
+            mass: {},
+        },
+
         fermions: {
             ch: [0,0],
             gains: [E(0),E(0)],
@@ -45,7 +50,10 @@ function resetTemp() {
                 eff: [],
             },
         },
+        ch: {}
     }
+    for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
+    for (let x = 1; x <= UPGS.main.cols; x++) tmp.upgs.main[x] = {}
     for (let j = 0; j < TREE_TAB.length; j++) {
         tmp.supernova.tree_had2[j] = []
         tmp.supernova.tree_afford2[j] = []
@@ -85,7 +93,7 @@ function updateTickspeedTemp() {
     tmp.tickspeedEffect = FORMS.tickspeed.effect()
 
 	let scale = scalingInitPower("tickspeed")
-    tmp.tickspeedFP = tmp.fermions.effs[1][2]
+    tmp.tickspeedFP = tmp.upgs.fp.mul(tmp.fermions.effs[1][2])
     tmp.tickspeedCost = E(2).pow(player.tickspeed.scaleEvery("tickspeed").pow(scale)).floor()
     tmp.tickspeedBulk = player.rp.points.max(1).log(2).root(scale).scaleEvery("tickspeed", 1).add(1).floor()
     if (player.rp.points.lt(1)) tmp.tickspeedBulk = E(0)
@@ -93,13 +101,12 @@ function updateTickspeedTemp() {
 }
 
 function updateUpgradesTemp() {
-	if (!tmp.upgs) tmp.upgs = {}
-
 	tmp.upgs.fp = E(1)
-	if (CHROMA.got("t1_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t1_1"))
+	if (CHROMA.got("s3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("s3_1"))
+	if (CHROMA.got("t3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t3_1"))
 
-	UPGS.mass.temp()
 	UPGS.main.temp()
+	UPGS.mass.temp()
 }
 
 function updateRagePowerTemp() {

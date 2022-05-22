@@ -4,7 +4,7 @@ const ATOM = {
         let x = player.bh.mass.div(1.5e156)
         if (x.lt(1)) return E(0)
         x = x.root(5)
-        if (player.mainUpg.rp.includes(15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:E(1))
+        if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:E(1))
         if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
         if (hasElement(17)) x = x.pow(1.1)
         if (FERMIONS.onActive("10")) x = expMult(x,0.625)
@@ -15,8 +15,8 @@ const ATOM = {
         if (tmp.atom.gain.lt(1)) return E(0)
         x = tmp.atom.gain.max(1).log10().pow(1.1).add(1)
         if (hasElement(1)) x = E(1.25).pow(tmp.atom.gain.max(1).log10())
-        if (player.mainUpg.bh.includes(13)) x = x.mul(10)
-        if (player.mainUpg.atom.includes(8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:E(1))
+        if (hasUpgrade('bh',13)) x = x.mul(10)
+        if (hasUpgrade('atom',8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:E(1))
         if (player.ranks.rank.gte(300)) x = x.mul(RANKS.effect.rank[300]())
         if (hasElement(6)) x = x.mul(tmp.elements.effect[6])
         if (hasElement(42)) x = x.mul(tmp.elements.effect[42])
@@ -43,7 +43,7 @@ const ATOM = {
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         player.mainUpg.bh = keep
-        if (chal_reset && !player.mainUpg.atom.includes(4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = E(0)
+        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = E(0)
         FORMS.bh.doReset()
     },
     atomic: {
@@ -89,12 +89,11 @@ const ATOM = {
             let t = player.atom.gamma_ray
             if (!scalingToned("gamma_ray")) t = t.mul(tmp.radiation.bs.eff[10])
             let pow = E(2)
-            if (player.mainUpg.atom.includes(4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
-            if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
+            if (hasUpgrade('atom',4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
+            if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
             if (hasTree("gr1")) pow = pow.mul(treeEff("gr1"))
-            pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
+            if (!bosonsMastered()) pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             if (hasTree("gr2")) pow = pow.pow(1.25)
-            if (CHROMA.got("p3_2")) pow = pow.pow(CHROMA.eff("p3_2"))
             pow = pow.softcap(tmp.atom.gamma_ray_ss,10,3)
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             return {pow: pow, eff: eff}
@@ -102,6 +101,7 @@ const ATOM = {
         bonus() {
 			if (CHALS.inChal(14)) return E(0)
             let x = tmp.fermions.effs[0][0]||E(0)
+            if (future) x = x.add(tmp.stars.effect.log10().pow(1/1.5).div(100))
             return x
         },
     },
@@ -147,7 +147,7 @@ const ATOM = {
         },
         gain(i) {
             let x = tmp.atom.particles[i]?tmp.atom.particles[i].effect:E(0)
-            if (player.mainUpg.atom.includes(7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
+            if (hasUpgrade('atom',7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
             return x
         },
         powerEffect: [
@@ -209,7 +209,8 @@ function updateAtomTemp() {
 
     tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)
     tmp.atom.gamma_ray_bonus = ATOM.gamma_ray.bonus()
-    tmp.atom.gamma_ray_ss = CHROMA.got("p3_3")?E(1e20).pow(CHROMA.eff("p3_3")):E(1e20)
+    tmp.atom.gamma_ray_ss = E(1e20)
+    if (bosonsMastered()) tmp.atom.gamma_ray_ss = tmp.atom.gamma_ray_ss.mul(tmp.bosons.upgs.gluon[1].effect)
     tmp.atom.gamma_ray_eff = ATOM.gamma_ray.effect()
 
     for (let x = 0; x < ATOM.particles.names.length; x++) {
@@ -226,7 +227,7 @@ function setupAtomHTML() {
 	let table = ""
     for (let x = 0; x < ATOM.particles.names.length; x++) {
         table += `
-        <div style="width: 30%"><button class="btn" onclick="ATOM.particles.assign(${x})">Assign</button><br><br>
+        <div style="width: 30%"><button id="particle_${x}_assign" class="btn" onclick="ATOM.particles.assign(${x})">Assign</button><br><br>
             <div style="color: ${ATOM.particles.colors[x]}; min-height: 120px">
                 <h2><span id="particle_${x}_amt">X</span> ${ATOM.particles.names[x]}s</h2><br>
                 Which generates <span id="particle_${x}_amtEff">X</span> ${ATOM.particles.names[x]} Powers<span id="particle_${x}_sc">X</span> <br>
@@ -255,9 +256,11 @@ function updateAtomicHTML() {
 }
 
 function updateAtomHTML() {
+    tmp.el.particles_assign.setDisplay(!EXT.unl())
     tmp.el.atom_ratio.setTxt(RATIO_ID[player.atom.ratio])
     tmp.el.unassignQuarkAmt.setTxt(format(player.atom.quarks,0))
     for (let x = 0; x < ATOM.particles.names.length; x++) {
+        tmp.el["particle_"+x+"_assign"].setDisplay(!EXT.unl())
         tmp.el["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
         tmp.el["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
         tmp.el["particle_"+x+"_sc"].setHTML(getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))

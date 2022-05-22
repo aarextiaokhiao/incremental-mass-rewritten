@@ -124,23 +124,24 @@ const BOSONS = {
         ],
         gluon: [
             {
-                desc: () =>bosonsMastered() ? "???" :  "Gain more Atoms & Atomic Powers based on Gluon.",
+                desc: () => bosonsMastered() ? "Charm softcap starts later." : "Gain more Atoms & Atomic Powers based on Gluon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1)
+					if (bosonsMastered()) return x.add(1).log10().div(4).add(1)
 					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: () => "Boost Cosmic Ray Power.",
+                desc: () => bosonsMastered() ? "Cosmic Ray Power softcap starts later." : "Boost Cosmic Ray Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
                     let a = x.add(1).pow(0.75)
                     if (hasTree("fn4")) a = a.pow(2)
+                    if (bosonsMastered()) a = a.sqrt()
                     return a
                 },
                 effDesc(x) { return format(x)+"x" },
@@ -158,9 +159,13 @@ const BOSONS = {
                 desc: () => "Supernova requirement is decreased based on Gluon.",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : E(0) },
-                effect(x) {
+				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(tmp.fermions.effs[0][3]).root(3)).div(10).add(1)
+
+					let exp = E(1/3)
+					exp = exp.mul(tmp.fermions.effs[0][3])
+					if (CHROMA.got("t5_1")) exp = exp.mul(CHROMA.eff("t5_1"))
+					return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(exp)).div(10).add(1)
 				},
                 effDesc(x) { return "/"+format(x) },
             },
@@ -234,5 +239,5 @@ function updateBosonsHTML() {
 }
 
 function bosonsMastered() {
-	return CHROMA.got("t5_1")
+	return CHROMA.got("p3_3")
 }

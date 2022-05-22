@@ -72,10 +72,11 @@ function updateStarsTemp() {
 
 	ts.generator_boost_base = E(2)
 	if (hasElement(57)) ts.generator_boost_base = ts.generator_boost_base.mul(tmp.elements.effect[57])
-	if (tmp.chal) ts.generator_boost_base.pow(tmp.chal.eff[11])
+	if (tmp.chal) ts.generator_boost_base = ts.generator_boost_base.pow(tmp.chal.eff[11])
+	if (CHROMA.got("s2_1")) ts.generator_boost_base = ts.generator_boost_base.pow(CHROMA.eff("s2_1"))
 
 	ts.generator_boost_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
-	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus).pow(CHROMA.got("t6_1")?CHROMA.eff("t6_1"):1))
+	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus))
 
 	for (let x = 0; x < 5; x++) ts.generators_gain[x] = STARS.generators.gain(x)
 	ts.softPower = STARS.softPower()
@@ -131,7 +132,7 @@ function updateStarsHTML() {
     tmp.el.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
 	tmp.el.starSoftStart1.setTxt(format(tmp.stars.softGain))
     tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
-    tmp.el.stars_Eff.setTxt(format(tmp.stars.effect))
+    tmp.el.stars_Eff.setTxt((future?"+"+format(tmp.stars.effect.log10().pow(1/1.5).div(100),0)+" Cosmic Rays":format(tmp.stars.effect)+"x mass")+" (based on all types of Rank)")
 
     tmp.el.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
 	tmp.el.star_btn.setHTML(

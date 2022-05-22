@@ -1,26 +1,24 @@
 TO-DO LIST:
 1: Remaining mechanics:
-	1c. Quantum Foam:
+	1a. Quantum Foam:
 		Connectable products?
-	1d. Spectra Generators:
+	1b. Spectra Generators:
 		You get Spectra Generators by fusing from Quantum Foam resources.
 		Spectra Generators generate Chroma which is used to mix for both kinds from Chroma Tree.
 		Spectra Generators boost stuff by upgrades, and boosted by Exotic Matter.
-2: Another new layer: Strange
-	2a. Blueprint:
+	1c. Blueprint - Primordium:
 		Coding with groups.
-	2b. Primordium:
-		???
-	2c. ???:
+	1d. ???:
 		Mirror Mechanic?
-3: Another Post-Strange layer or a new game?
+2: Strange layer or a new game?
 	(Maybe called Hex, the High Ranked)
 	(or Strange, the Strangely Matter?)
 	(or Lightning / Cloudy)
-
-B1 (upgrades):
-1. [Axion?] RP base formula is better. [^b^11/60, decay]
-2. [???]    Multiply Particle Powers based on original formula.
-
-B2: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
+3: Upgrades
+	3a. [Axion?] RP base formula is better. [^b^11/60, decay]
+	3b. [Future] Multiply Particle Powers based on original formula.
+	3c. [Future] Collapsed Stars add Cosmic Rays.
+	3d. [Future] Charm softcap starts later.
+	3e. [Future] Cosmic Ray effect softcap starts later.
+4: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)

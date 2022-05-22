@@ -118,6 +118,7 @@ const CHALS = {
 		let act = this.getActive(x)
 
 		if (act == x) return
+		if (x > 12 && player.confirms.ec && !confirm("Make sure to sweep before starting! Are you sure?")) return
 		if (act > 0) this.exit()
 		this.choosed(x)
 		this.reset(player.chal.choosed, false)
@@ -137,7 +138,7 @@ const CHALS = {
         if (x < 5) return "Entering challenge will reset with Dark Matters!"
         if (x < 9) return "Entering challenge will reset with Atoms except previous challenges!"
         if (x < 13) return "Entering challenge will reset without being Supernova!"
-        return "Entering challenge will rise the power of Exotic!"
+        return "Entering challenge will rise Exotic, and will lose your progress! (Recommended to sweep)"
     },
     getMax(i) {
         let x = this[i].max
@@ -157,9 +158,9 @@ const CHALS = {
     },
     getScaleName(i) {
         if (i >= 12) return ""
-        if (player.chal.comps[i].gte(CHALS.getPower3Start())) return " Impossible"
-        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " Insane"
-        if (player.chal.comps[i].gte(i>8?10:75)) return " Hardened"
+        if (player.chal.comps[i].gte(CHALS.getPower3Start(i))) return " Impossible"
+        if (player.chal.comps[i].gte(CHALS.getPower2Start(i))) return " Insane"
+        if (player.chal.comps[i].gte(CHALS.getPower1Start(i))) return " Hardened"
         return ""
     },
     getPower(i) {
@@ -169,17 +170,22 @@ const CHALS = {
         if (hasTree("feat7")) x = x.mul(0.96)
         return x
     },
+    getPower1Start(i) {
+        return i > 8 ? 10 : 75
+    },
     getPower2(i) {
-        let x = E(1)
-        return x
-    },
-    getPower3Start() {
-        return CHROMA.got("t4_1") ? E(1000).add(CHROMA.eff("t4_1",0)) : 1000
-    },
-    getPower3(i) {
         let x = E(1)
         if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
         return x
+    },
+    getPower2Start(i) {
+        return i > 8 ? 50 : i == 8 ? 200 : 300
+    },
+    getPower3(i) {
+        return E(1)
+    },
+    getPower3Start(i) {
+        return i > 8 ? 1 / 0 : 1000
     },
     getChalData(x, r=E(-1), a) {
 		let res = CHALS.inChal(x)||a?this.getResource(x):E(0)
@@ -200,9 +206,9 @@ const CHALS = {
         let bulk = res.div(chal.start).max(1).log(chal.inc).root(pow).add(1).floor()
         if (res.lt(chal.start)) bulk = E(0)
 
-        let s1 = x > 8 ? 10 : 75
-        let s2 = x > 8 ? 50 : x == 8 ? 200 : 300
-        let s3 = CHALS.getPower3Start()
+        let s1 = CHALS.getPower1Start(x)
+        let s2 = CHALS.getPower2Start(x)
+        let s3 = CHALS.getPower3Start(x)
 
         if (lvl.max(bulk).gte(s1)) {
             let start = E(s1);
@@ -248,11 +254,10 @@ const CHALS = {
             let start2 = E(s2);
             let exp2 = E(4.5).pow(this.getPower2())
             let start3 = E(s3);
-            let power3 = this.getPower3()
-            let exp3_base = E(1.001)
+            let exp3_base = E(1).div(s3).add(1).pow(this.getPower3())
             goal =
             chal.inc.pow(
-                    exp3_base.pow(lvl.sub(start3).mul(power3)).mul(start3)
+                    exp3_base.pow(lvl.sub(start3)).mul(start3)
                     .pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
                 ).mul(chal.start)
             bulk = res
@@ -267,7 +272,6 @@ const CHALS = {
                 .div(start3)
 			    .max(1)
 			    .log(exp3_base)
-			    .div(power3)
 			    .add(start3)
                 .add(1)
                 .floor();
@@ -428,7 +432,7 @@ const CHALS = {
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
-            return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(1.5).add(1).pow(3.5) }
+            return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(3.5) }
         },
         effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", x"+format(x.mul):"") },
     },
