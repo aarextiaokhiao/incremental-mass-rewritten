@@ -178,15 +178,15 @@ let AXION = {
 				return x.sqrt().div(10).add(1.2).pow(x)
 			},
 			effDesc(x) {
-				return x.eq(1/0) ? "<span class='rainbow'>Removed!</span>" : format(x) + "x later"
+				return x.eq(EINF) ? "<span class='rainbow'>Removed!</span>" : format(x) + "x later"
 			}
 		},
 		2: {
 			title: "Tickspeed Bravery",
-			desc: "Weaken Tickspeed scalings inside Challenges.",
+			desc: "Weaken Tickspeed inside Challenges.",
 			req: E(0),
 			eff(x) {
-				return x.add(1).log10().div(4).add(1)
+				return x.add(1).log10().div(3).add(1)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -302,7 +302,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(50),
 			eff(x) {
-				return x.div(20).add(1).min(3)
+				return x.div(10).add(2).log(2)
 			},
 			effDesc(x) {
 				return "^1/"+format(x)

@@ -125,7 +125,7 @@ const SCALE_START = {
 	},
 }
 
-const SCALE_POWER= {
+const SCALE_POWER = {
     super: {
 		rank: 1.5,
 		tier: 1.5,
@@ -175,6 +175,8 @@ const SCALE_TONE = {
 	massUpg() { return player.ext.ch.tones[0] },
 	tickspeed() { return player.ext.ch.tones[0] },
 	rank() { return player.ext.ch.tones[3] },
+	tier() { return player.ext.ch.tones[3] },
+	tetr() { return player.ext.ch.tones[3] },
 	bh_condenser() { return player.ext.ch.tones[1] },
 	gamma_ray() { return player.ext.ch.tones[2] },
 }
@@ -267,7 +269,7 @@ function scalingActive(name, amt, type) {
 	if (SCALE_START[type][name] === undefined) return false
 	if (scalingToned(name)) return false
 	amt = E(amt);
-	return amt.gte(getScalingStart(type, name));
+	return amt.gte(getScalingStart(type, name)) && getScalingPower(type, name).gt(0);
 }
 
 function getScalingName(name, x=0, y=0) {

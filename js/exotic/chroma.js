@@ -15,7 +15,7 @@ let CHROMA = {
 
 	tones: {
 		colors: ["Red", "Green", "Blue", "Ultraviolet"],
-		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank"],
+		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank - Tetr"],
 		reqs: [E(0), EINF, EINF, EINF],
 		toggle(x) {
 			if (!player.ext.ch.tones[x] && !this.can(x)) return

@@ -18,7 +18,8 @@ TO-DO LIST:
 	3a. [Axion?] RP base formula is better. [^b^11/60, decay]
 	3b. [Future] Multiply Particle Powers based on original formula.
 	3c. [Future] Collapsed Stars add Cosmic Rays.
-	3d. [Future] Charm softcap starts later.
-	3e. [Future] Cosmic Ray effect softcap starts later.
+	3d. [Rank]   Argon-18 boosts Tickspeed Power instead.
+	3e. [Future] Mass multiplies their softcaps by ^x.
+	3f. [Future] Add Neutron Condensers.
 4: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)

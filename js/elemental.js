@@ -149,10 +149,10 @@ const ELEMENTS = {
             desc: `You can now automatically buy Cosmic Rays. Cosmic Ray raise tickspeed effect at an extremely reduced rate.`,
             cost: E(1e44),
             effect() {
-                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1).softcap(10,0.1,0)
+                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1).softcap(2,0.5,0)
                 return x
             },
-            effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,10) },
+            effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,2) },
         },
         {
             desc: `2nd Neutron's effect is better.`,

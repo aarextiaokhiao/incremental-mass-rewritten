@@ -125,12 +125,13 @@ const FORMS = {
 			step = step.mul(tmp.bosons.effect.z_boson[0])
 			if (hasTree("t1")) step = step.pow(1.15)
 			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
+			if (player.ranks.pent.gte(300) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
 			step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
-			if (hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (player.ranks.pent.lt(300) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus}
 		},

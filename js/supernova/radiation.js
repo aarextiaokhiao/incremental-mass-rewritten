@@ -148,7 +148,7 @@ const RADIATION = {
             title: `BH-Exponent Boost`,
             eff(b) {
                 let x = b.root(2).div(100)
-                return x.min(0.45)
+                return x.min(0.35)
             },
             desc(x) { return `Exponent from the mass of BH formula is increased by ${format(x)}` },
         },{
@@ -260,7 +260,7 @@ const RADIATION = {
         {
             title: `Supernova Boost`,
             eff(b) {
-                return E(1).div(b.div(25).add(1).pow(1.5))
+                return E(1).sub(b.pow(2/3).div(10)).max(0)
             },
             desc(x) { return `Ultra Supernova scales ${format(E(1).sub(x).times(100))}% slower.` },
         },

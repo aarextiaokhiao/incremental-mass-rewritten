@@ -131,7 +131,7 @@ const RANKS = {
             '50': "Tickspeed Power boosts BH Condenser Power.",
             '80': "reduce MD Upgrade 6 and Stronger softcaps.",
             '200': "mass upgrade 1-2 self-boosts multiply themselves, based on Pent.",
-            '300': "Tickspeed Power multiplies Stronger.",
+            '300': "Tickspeed Power multiplies Stronger, and Argon-18 boosts Tickspeed Power instead.",
         },
         hex: {
             '1': "Unlock Chroma.",
