@@ -13,9 +13,9 @@ const TABS = {
     1: [
         { id: "Main" },
         { id: "Stats", unl() { return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl } },
-        { id: "Upgrades", unl() { return player.rp.unl } },
+        { id: "Upgrades", unl() { return player.rp.unl && !hex() } },
         { id: "Challenges", unl() { return player.chal.unl } },
-        { id: "Atom", unl() { return player.atom.unl }, style: "atom" },
+        { id: "Atom", unl() { return player.atom.unl && !hex() }, style: "atom" },
         { id: "Supernova", unl() { return player.supernova.unl } },
         { id: "Exotic", unl() { return EXT.unl() } },
         { id: "Options" },
@@ -23,9 +23,9 @@ const TABS = {
     2: {
         0: [
             { id: "Mass" },
-            { id: "Black Hole", unl() { return player.bh.unl }, style: "bh" },
-            { id: "Atomic Generator", unl() { return player.atom.unl }, style: "atom" },
-            { id: "Stars", unl() { return STARS.unlocked() } },
+            { id: "Black Hole", unl() { return player.bh.unl && !hex() }, style: "bh" },
+            { id: "Atomic Generator", unl() { return player.atom.unl && !hex() }, style: "atom" },
+            { id: "Stars", unl() { return STARS.unlocked() && !hex() } },
         ],
         1: [
             { id: "Ranks Rewards" },

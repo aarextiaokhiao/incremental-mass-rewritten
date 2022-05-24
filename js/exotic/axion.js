@@ -228,7 +228,7 @@ let AXION = {
 		},
 		6: {
 			title: "Superranked",
-			desc: "Weaken Meta Rank based on its starting point.",
+			desc: "Weaken Meta Rank based on its start.",
 			req: E(5),
 			eff(x) {
 				return getScalingStart("meta", "rank").div(8e4).mul(x.cbrt()).add(1)

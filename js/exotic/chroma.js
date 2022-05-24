@@ -174,7 +174,7 @@ let CHROMA = {
 		t5_1: {
 			desc: (x) => "Raise 4th Photon Upgrade by ^"+format(x)+".",
 			eff(x) {
-				return x.div(10).add(1).min(1.5)
+				return x.div(10).add(1).min(2)
 			},
 		},
 		t6_1: {

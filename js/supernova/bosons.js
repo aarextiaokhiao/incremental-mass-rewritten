@@ -80,22 +80,22 @@ const BOSONS = {
         },
         photon: [
             {
-                desc: () => bosonsMastered() ? "???" : "Gain more Dark Matters & Mass from Black Hole based on Photon.",
+                desc: () => bosonsMastered() ? "Mass multiplies its own softcaps." : "Gain more Dark Matters & Mass from Black Hole based on Photon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1)
+					if (bosonsMastered()) return x.add(1).log10().div(1e3)
 					return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
-                effDesc(x) { return format(x)+"x" },
+                effDesc(x) { return bosonsMastered() ? "^"+format(x,4) : format(x)+"x" },
             },{
-                desc: () => bosonsMastered() ? "???" : "Boost BH Condenser Power.",
+                desc: () => bosonsMastered() ? "Multiply Pent 50." : "Boost BH Condenser Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1)
+					if (bosonsMastered()) return x.add(1).log10().div(5).add(1).cbrt()
 					let a = x.add(1).pow(0.75)
 					if (hasTree("fn4")) a = a.pow(2)
 					return a
@@ -141,7 +141,6 @@ const BOSONS = {
 					if (FERMIONS.onActive(15)) return E(1)
                     let a = x.add(1).pow(0.75)
                     if (hasTree("fn4")) a = a.pow(2)
-                    if (bosonsMastered()) a = a.sqrt()
                     return a
                 },
                 effDesc(x) { return format(x)+"x" },

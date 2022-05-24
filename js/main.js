@@ -19,7 +19,7 @@ const CONFIRMS_UNL = {
 	sn: () => player.supernova.unl,
 	ext: () => EXT.unl(),
 	ec: () => CHROMA.unl(),
-	hex: () => player.ranks.hex.gte(1)
+	hex: () => hex()
 }
 
 const FORMS = {
@@ -58,6 +58,7 @@ const FORMS = {
         if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e100)
         if (hasUpgrade('bh',7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:E(1))
         if (hasUpgrade('rp',13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:E(1))
+        if (bosonsMastered()) s = s.mul(player.mass.max(1).pow(tmp.bosons.upgs.photon[0].effect))
         return s.min(tmp.massSoftGain2||1/0)
     },
     massSoftPower() {
@@ -73,9 +74,8 @@ const FORMS = {
         if (hasTree("m2")) s = s.pow(1.5)
         if (hasTree("m2")) s = s.pow(treeEff("m3"))
         if (player.ranks.tetr.gte(8)) s = s.pow(1.5)
-
         s = s.pow(tmp.bosons.effect.neg_w[0])
-
+        if (bosonsMastered()) s = s.mul(player.mass.max(1).pow(tmp.bosons.upgs.photon[0].effect))
         return s.min(tmp.massSoftGain3||1/0)
     },
     massSoftPower2() {
@@ -87,6 +87,7 @@ const FORMS = {
         let s = uni("ee8")
         if (hasTree("m3")) s = s.pow(treeEff("m3"))
         s = s.pow(tmp.radiation.bs.eff[2])
+        if (bosonsMastered()) s = s.mul(player.mass.max(1).pow(tmp.bosons.upgs.photon[0].effect))
         return s
     },
     massSoftPower3() {
@@ -125,13 +126,13 @@ const FORMS = {
 			step = step.mul(tmp.bosons.effect.z_boson[0])
 			if (hasTree("t1")) step = step.pow(1.15)
 			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
-			if (player.ranks.pent.gte(300) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
+			if (player.ranks.pent.gte(150) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
 			step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
-			if (player.ranks.pent.lt(300) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (player.ranks.pent.lt(150) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus}
 		},
@@ -264,7 +265,7 @@ const FORMS = {
                     if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
                     if (!bosonsMastered()) pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
                     if (hasTree("bh2")) pow = pow.pow(1.15)
-                    if (player.ranks.pent.gte(50)) pow = pow.pow(tmp.tickspeedEffect?tmp.tickspeedEffect.step.log10().div(100).add(1):E(1))
+                    if (player.ranks.pent.gte(50)) pow = pow.pow(RANKS.effect.pent[50]())
                 let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
                 return {pow: pow, eff: eff}
             },

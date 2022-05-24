@@ -2,29 +2,26 @@ const RANKS = {
     names: ['rank', 'tier', 'tetr', 'pent', 'hex'],
     fullNames: ['Rank', 'Tier', 'Tetr', 'Pent', 'Hex'],
 	resetDescs: ['mass and upgrades', 'Rank', 'Tier', 'Tetr', 'Exotic'],
+	mustReset(type) {
+		if (type == "rank" && hasUpgrade('rp',4)) return false
+		if (type == "tier" && hasUpgrade('bh',4)) return false
+		if (type == "tetr" && hasTree("qol5")) return false
+		if (type == "pent") return false
+		return true
+	},
     reset(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
-            let reset = true
-            if (type == "rank" && hasUpgrade('rp',4)) reset = false
-            if (type == "tier" && hasUpgrade('bh',4)) reset = false
-            if (type == "tetr" && hasTree("qol5")) reset = false
-            if (type == "pent") reset = false
             if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
-            if (reset) this.doReset[type]()
+            if (this.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
     },
     bulk(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk.max(player.ranks[type].add(1)))
-            let reset = true
-            if (type == "rank" && hasUpgrade('rp',4)) reset = false
-            if (type == "tier" && hasUpgrade('bh',4)) reset = false
-            if (type == "tetr" && hasTree("qol5")) reset = false
-            if (type == "pent") reset = false
             if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
-            if (reset) this.doReset[type]()
+            if (this.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
     },
@@ -32,7 +29,7 @@ const RANKS = {
         tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || hasUpgrade('atom',3) },
         tetr() { return hasUpgrade('atom',3) },
         pent() { return hasTree("sn5") || this.hex() },
-        hex() { return false /*CHROMA.unl() || player.ranks.hex.gte(1)*/ },
+        hex() { return hex() /* || CHROMA.unl()*/ },
     },
     doReset: {
         rank() {
@@ -121,17 +118,18 @@ const RANKS = {
             '18': "Meta-Tickspeed starts later based on Tiers.",
         },
         pent: {
-            '1': "raise collapsed star effect by Pents.",
-            '2': "Super Tetr scaling starts later based on Supernovae.",
-            '4': "Meta Rank and Super Tier scales weaker based on Pents.",
-            '5': "Meta Tickspeed scales weaker based on their starting point.",
-            '6': "Pent 5 effect is 2x stronger.",
-            '10': "Stronger and Pent raise levels from Musculer and Booster.",
-            '13': "Pent 1 effect is raised by Pents.",
-            '50': "Tickspeed Power boosts BH Condenser Power.",
+            '1': "Pent raises star effect.",
+            '2': "Supernovae makes Super Tetr starts later.",
+            '4': "Pent weakens Meta Rank and Super Tier.",
+            '5': "weaken Meta Tickspeed based on its start.",
+            '6': "double Pent 5.",
+            '10': "Stronger and Pent raise Musculer and Booster.",
+            '13': "Pent raises Pent 1.",
+            '50': "Tickspeed Power raises BH Condenser Power.",
             '80': "reduce MD Upgrade 6 and Stronger softcaps.",
-            '200': "mass upgrade 1-2 self-boosts multiply themselves, based on Pent.",
-            '300': "Tickspeed Power multiplies Stronger, and Argon-18 boosts Tickspeed Power instead.",
+            '150': "Argon-18 boosts Tickspeed Power instead.",
+            '200': "mass upgrade 1-2 self-boosts multiply themselves.",
+            '300': "Tickspeed Power multiplies Stronger.",
         },
         hex: {
             '1': "Unlock Chroma.",
@@ -242,8 +240,18 @@ const RANKS = {
 				let ret = player.ranks.pent.add(6).div(18).sqrt().softcap(1.5,0.2,0)
 				return ret.min(1.5)
 			},
-			'150'() {
+			'50'() {
+				if (!tmp.tickspeedEffect) return E(1)
+				let ts = tmp.tickspeedEffect.step.log10().div(100)
+				if (bosonsMastered()) ts = ts.mul(tmp.bosons.upgs.photon[1].effect)
+				return ts.add(1)
+			},
+			'200'() {
 				return player.ranks.pent.div(400).log10().div(2).min(2)
+			},
+			'300'() {
+				if (!tmp.tickspeedEffect) return E(1)
+				return tmp.tickspeedEffect.step.log10().div(3e3).add(1).pow(27/20)
 			},
 		},
 		hex: {
@@ -279,7 +287,9 @@ const RANKS = {
             5(x) { return format(E(1).div(x))+"x weaker" },
             10(x) { return "^"+format(x) },
             13(x) { return "^"+format(x,3) },
-            150(x) { return "^"+format(x,3) },
+            50(x) { return "^"+format(x) },
+            200(x) { return "^"+format(x,3)+" from Pent" },
+            300(x) { return format(x)+"x" },
         },
 		hex: {
 		},
@@ -355,4 +365,8 @@ function updateRanksTemp() {
             d[rn].can = s[u.names[x-1]].gte(d[rn].req)
         }
     }
+}
+
+function hex() {
+	return player.ranks.hex.gt(0) || future
 }

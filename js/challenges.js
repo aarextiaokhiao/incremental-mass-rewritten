@@ -12,6 +12,7 @@ function updateChalHTML() {
         let max = player.chal.comps[x].gte(tmp.chal.max[x])
         let chal = CHALS[x]
         let unl = chal.unl ? chal.unl() : true
+        if (x <= 8 && hasTree("qol_ext8")) unl = false
         tmp.el["chal_div_"+x].setDisplay(unl)
         tmp.el["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: max})
         if (unl) {
@@ -502,7 +503,7 @@ const CHALS = {
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
 	14: {
-		unl() { return AXION.unl() && tmp.ax.lvl[22].gt(0) },
+		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || hex() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain Main Buildings, and also can't dilate mass.",
 		reward: `Raise Challenge 10.<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
@@ -519,7 +520,7 @@ const CHALS = {
         effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul) },
 	},
 	15: {
-		unl() { return false },
+		unl() { return hex() },
 		title: "Chernobyl Exclusion",
 		desc: "You can't gain Radiation.",
 		reward: `Placeholder.<br><span class="yellow">On 1st completion, unlock Primordiums! [Coming soon!]</span>`,
@@ -534,7 +535,7 @@ const CHALS = {
 		effDesc(x) { return format(x)+"x" },
 	},
 	16: {
-		unl() { return false },
+		unl() { return hex() },
 		title: "Placeholder",
 		desc: "Placeholder.",
 		reward: `Placeholder.`,

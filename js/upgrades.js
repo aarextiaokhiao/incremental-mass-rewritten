@@ -62,7 +62,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
-                if (player.ranks.pent.gte(150)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[150]()))
+                if (player.ranks.pent.gte(200)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[200]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
@@ -90,7 +90,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
-                if (player.ranks.pent.gte(150)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[150]()))
+                if (player.ranks.pent.gte(200)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[200]()))
                 if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
@@ -119,7 +119,7 @@ const UPGS = {
 				if (hasUpgrade('rp',12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (player.ranks.pent.gte(300) && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step.log10().div(3e3).add(1).pow(27/20))
+				if (player.ranks.pent.gte(300)) step = step.mul(RANKS.effect.pent[300]())
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
