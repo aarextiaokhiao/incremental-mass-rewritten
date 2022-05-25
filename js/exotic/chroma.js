@@ -28,6 +28,11 @@ let CHROMA = {
 	},
 
 	spices: {
+		rows: [
+			"p1", "p2", "p3",
+			"s1", "s2", "s3",
+			"t1", "t2", "t3", "t4", "t5", "t6",
+		],
 		all: [
 			"p1_1", "p2_1", "p3_1",
 			"p1_2", "p2_2", "p3_2",
@@ -47,8 +52,14 @@ let CHROMA = {
 			if (!CHROMA.can(x)) return
 			player.ext.ch.upg.push(x)
 		},
+		cost(x) {
+			return EINF
+		},
 		can(x) {
-			return false
+			if (player.ext.ch.bp.lt(CHROMA.spices.cost())) return
+			if (player.ext.ch.upg.includes(x)) return
+			if (x[0] != "p") return
+			return true
 		},
 
 		//PRIMARY
@@ -219,7 +230,7 @@ function updateChromaTemp() {
 function updateChromaHTML() {
 	let save = player.ext.ch
 	tmp.el.ch_req.setTxt(format(tmp.ch.req))
-	tmp.el.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments")
+	tmp.el.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments, Next Upgrade: " + format(CHROMA.spices.cost(),0))
 	tmp.el.ch_nxt.setTxt(tmp.ch.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
 
 	for (var i = 0; i < save.tones.length; i++) {
@@ -237,6 +248,11 @@ function updateChromaHTML() {
 		let id = all[i]
 		tmp.el["cs_"+id].setTxt(s[id].desc(tmp.ch.eff[id]))
 		tmp.el["cs_"+id].setOpacity(CHROMA.got(id) ? 1 : 0.25)
+	}
+	let rows = s.rows
+	for (var i = 0; i < rows.length; i++) {
+		let id = rows[i]
+		tmp.el["cs_"+id+"_a"].setClasses({btn: true, locked: !CHROMA.spices.can(id), btn_cs: true})
 	}
 
 	tmp.el.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")

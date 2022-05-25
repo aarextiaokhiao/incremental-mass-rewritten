@@ -185,11 +185,34 @@ function updateUpperHTML() {
 	}
 
 	let chal = CHALS.lastActive()
-	tmp.el.chal_upper.setVisible(chal)
-	if (chal) {
+	let md = player.md.active
+	let f = player.supernova.fermions.choosed
+	tmp.el.chal_upper.setVisible(chal || md || f)
+	if (md) {
+		tmp.el.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
+	} else if (f) {
+		let f1_y = f[0]
+		let f1_x = f[1]
+		let fm = FERMIONS.types[f1_y][f1_x]
+		let ft = player.supernova.fermions.tiers[f1_y][f1_x]
+		let ff = fm.isMass?formatMass:format
+
+		let f2 = player.supernova.fermions.choosed2
+		let f2_y = f2[0]
+		let f2_x = f2[1]
+
+		tmp.el.chal_upper.setHTML(
+			"You are in "+FERMIONS.sub_names[f1_y][f1_x]+" "+FERMIONS.names[f1_y]+
+			(f2?" and "+FERMIONS.sub_names[f2_y][f2_x]+" "+FERMIONS.names[f2_y]:"")+
+			"!"+
+			(f2||ft.gte(FERMIONS.maxTier(f1_y,f1_x)) ? "" :
+				"<br>Go over "+ff(fm.res())+" / "+ff(fm.nextTierAt(ft))+" "+fm.inc+" to complete."
+			)
+		)
+	} else if (chal) {
 		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
-			tmp.el.chal_upper.setHTML(
-			`You are now in [${CHALS[chal].title}] Challenge!` +
+		tmp.el.chal_upper.setHTML(
+			`You are in [${CHALS[chal].title}] Challenge!` +
 			(player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
 				` Go over ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.` +
 				`<br>+${tmp.chal.gain} Completions (+1 at ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})`

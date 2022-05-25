@@ -23,7 +23,7 @@ function updateChalHTML() {
 	let shrt = SHORTCUT_EDIT.mode == 1
     tmp.el.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
     tmp.el.chal_exit.setVisible(CHALS.lastActive())
-    tmp.el.chal_exit.setDisplay(!sweep && !shrt)
+    tmp.el.chal_exit.setDisplay(!sweep)
     tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
     tmp.el.chal_sweep.setDisplay(player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
@@ -105,12 +105,12 @@ const CHALS = {
 				if (active <= 12) {
 					player.chal.active = 0
 					this.reset(active)
+					player.supernova.auto.t = 1/0
 				}
 				if (!noExt && active > 12) {
+					if (player.confirms.ec && !confirm("You'll not lose progress on exiting. Proceed?")) return
 					player.ext.ec = 0
-					this.reset(active)
 				}
-				player.supernova.auto.t = 1/0
 			}
 		}
 	},
@@ -119,8 +119,11 @@ const CHALS = {
 		let act = this.getActive(x)
 
 		if (act == x) return
-		if (x > 12 && player.confirms.ec && !confirm("Make sure to sweep before starting! Are you sure?")) return
-		if (act > 0) this.exit()
+		if (x > 12) {
+			if (player.confirms.ec && !confirm("Make sure to sweep before starting! Are you sure?")) return
+			player.chal.active = 0
+		}
+		if (act > 0) this.exit(false, true)
 		this.choosed(x)
 		this.reset(player.chal.choosed, false)
     },

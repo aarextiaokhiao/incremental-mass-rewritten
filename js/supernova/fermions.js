@@ -90,6 +90,7 @@ const FERMIONS = {
                     return `Adds ${format(x,0)} free Cosmic Rays`
                 },
                 inc: "Atomic Powers",
+                res: () => player.atom.atomic,
                 cons: "^0.6 to the exponent of Atomic Powers gain",
             },{
                 nextTierAt(x) {
@@ -111,6 +112,7 @@ const FERMIONS = {
                     return `x${format(x)} to Relativistic Particles gain`+getSoftcapHTML(x,'ee3')
                 },
                 inc: "Relativistic Particle",
+                res: () => player.md.particles,
                 cons: "The exponent of the RP formula is divided by 10",
             },{
                 nextTierAt(x) {
@@ -139,6 +141,7 @@ const FERMIONS = {
 					return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+getSoftcapHTML(x,s.mul(5),s.mul(100))
 				},
                 inc: "Mass",
+                res: () => player.mass,
                 cons: "You are trapped in Mass Dilation, but they are twice effective",
                 isMass: true,
             },{
@@ -162,6 +165,7 @@ const FERMIONS = {
                     return `4th Photon & Gluon upgrades are ${format(x)}x stronger`+getSoftcapHTML(x,1.5)
                 },
                 inc: "Rage Power",
+                res: () => player.rp.points,
                 cons: "You are trapped in Mass Dilation and Challenges 3-5",
             },{
                 nextTierAt(x) {
@@ -182,6 +186,7 @@ const FERMIONS = {
                     return `Reduce the penalty of Mass Dilation by ${format(E(100).sub(E(100).div(x)))}%.`
                 },
                 inc: "Atoms",
+                res: () => player.atom.points,
                 cons: "All challenges are disabled.",
             },
             {
@@ -203,6 +208,7 @@ const FERMIONS = {
                     return `Radiation boosts scale ${format(E(1).sub(x).mul(100))}% slower.`
                 },
                 inc: "Tickspeed Effect",
+                res: () => tmp.tickspeedEffect.eff,
                 cons: "U-Quarks and Radiation Boosts do nothing.",
             },
         ],[
@@ -231,6 +237,7 @@ const FERMIONS = {
                     return `Star gain softcap starts ^${format(x)} later`+getSoftcapHTML(x,1.5)
                 },
                 inc: "Quark",
+                res: () => player.atom.quarks,
                 cons: "^0.625 to the exponent of Atoms gain",
             },{
                 nextTierAt(x) {
@@ -253,6 +260,7 @@ const FERMIONS = {
                 },
                 isMass: true,
                 inc: "Mass of Black Hole",
+                res: () => player.bh.mass,
                 cons: "The power from the mass of the BH formula is always -1",
             },{
                 nextTierAt(x) {
@@ -275,6 +283,7 @@ const FERMIONS = {
                     return `Tickspeed is ${format(x)}x cheaper` + (scalingToned("tickspeed") ? "" : " (before Meta scaling)")
                 },
                 inc: "Dark Matter",
+                res: () => player.bh.dm,
                 cons: "You are trapped in Challenges 8-9",
             },{
                 maxTier: 15,
@@ -301,6 +310,7 @@ const FERMIONS = {
                     return `Tier requirement is ${format(x)}x cheaper`+getSoftcapHTML(x,1.5,sc)
                 },
                 inc: "Collapsed Star",
+                res: () => player.stars.points,
                 cons: "Star generators are decreased to ^0.5",
             },{
                 maxTier: 100,
@@ -326,6 +336,7 @@ const FERMIONS = {
                 },
 				isMass: true,
                 inc: "Dilated mass",
+                res: () => player.md.mass,
                 cons: "There's no Meta Scalings, but U-Leptons do nothing and Rank is capped at 20,000.",
             },
             {
@@ -349,6 +360,7 @@ const FERMIONS = {
                     return `Increase Rage Power exponent cap by ^${format(x)}.`
                 },
                 inc: "Tickspeed power",
+                res: () => tmp.tickspeedEffect.step,
                 cons: "Boson Upgrades and W Bosons are disabled.",
             },
 
@@ -421,7 +433,7 @@ function updateFermionsHTML() {
 	let shrt = SHORTCUT_EDIT.mode == 1
 	tmp.el.f_hint.setDisplay(!shrt)
 	tmp.el.f_shrt.setDisplay(shrt)
-	tmp.el.f_normal.setDisplay(player.supernova.fermions.choosed && !shrt ? 1 : 0)
+	tmp.el.f_normal.setDisplay(player.supernova.fermions.choosed ? 1 : 0)
     tmp.el.f_sweep.setDisplay(!player.supernova.fermions.choosed && !shrt && hasTree("qol10"))
 	tmp.el.f_dual.setDisplay(!player.supernova.fermions.choosed && !shrt && hasTree("qol9"))
 	tmp.el.f_dual.setTxt("Dual: " + (player.supernova.fermions.dual ? "ON" : "OFF"))
@@ -447,12 +459,7 @@ function updateFermionsHTML() {
 
                 tmp.el[id+"_cur"].setDisplay(active)
                 if (active) {
-                    tmp.el[id+"_cur"].setTxt(max ? "" : `Currently: ${fm(
-                        [
-                            [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.atom.points, tmp.tickspeedEffect.eff],
-                            [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.md.mass, tmp.tickspeedEffect.step]
-                        ][i][x]
-                    )}`)
+                    tmp.el[id+"_cur"].setTxt(max ? "" : `Currently: ${fm(f.res())}`)
                 }
             }
         }

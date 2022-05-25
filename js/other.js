@@ -208,6 +208,7 @@ if (beta) saveId = "testBeta"
 // SHORTCUTS
 function updateShortcuts() {
 	let edit = SHORTCUT_EDIT.mode
+	let quick = player.md.active || CHALS.lastActive() || player.supernova.fermions.choosed
 	let data = []
 	if (edit == 0) data = player.shrt.order
 	else {
@@ -223,12 +224,12 @@ function updateShortcuts() {
 			let id = data[i]
 			let mode = id[0] + 1
 			let ix = id[1]
-			document.getElementById("shrt_"+i).setAttribute("src", "images/" + (ix > 0 && mode == 3 ? "ferm-" + ["qua","lep"][Math.floor(ix / 10)] : ix > 0 && mode == 2 ? "chal_" + ["dm","atom","sn","ext"][Math.ceil(ix/4)-1] : ["empty", "md", "chal", "ferm", "exit"][mode]) + ".png")
+			document.getElementById("shrt_"+i).setAttribute("src", "images/" + (!edit && mode == 3 ? "ferm-" + ["qua","lep"][Math.floor(ix / 10)] : ix > 0 && mode == 2 ? "chal_" + ["dm","atom","sn","ext"][Math.ceil(ix/4)-1] : ["empty", "md", "chal", "ferm", "exit"][mode]) + ".png")
 			document.getElementById("shrt_"+i+"_tooltip").setAttribute("tooltip", ix >= 0 && mode == 3 ? FERMIONS.sub_names[Math.floor(ix / 10)][ix % 10] : ix > 0 && mode == 2 ? CHALS[id[1]].title : ["Add Shortcut", "Mass Dilation", "Challenge (Proceed to Challenges tab)", "Fermion (Proceed to Fermions tab)", "Exit"][mode])
 		} else document.getElementById("shrt_"+i+"_tooltip").removeAttribute("tooltip")
 	}
-	document.getElementById("shrt_m").setAttribute("src", "images/" + (edit ? "cancel" : ["click", "edit", "remove"][SHORTCUT_EDIT.cur]) + ".png")
-	document.getElementById("shrt_m_tooltip").setAttribute("tooltip", (edit ? "Cancel (discard your changes)" : ["Mode: Normal (click to switch)", "Mode: Edit", "Mode: Remove"][SHORTCUT_EDIT.cur]))
+	document.getElementById("shrt_m").setAttribute("src", "images/" + (edit ? (quick ? "quick" : "cancel") : ["click", "edit", "remove"][SHORTCUT_EDIT.cur]) + ".png")
+	document.getElementById("shrt_m_tooltip").setAttribute("tooltip", (edit ? (quick ? "Quick Add" : "Cancel (discard your changes)") : ["Mode: Normal (click to switch)", "Mode: Edit", "Mode: Remove"][SHORTCUT_EDIT.cur]))
 }
 
 function doShortcut(a, b) {
@@ -241,6 +242,11 @@ function doShortcut(a, b) {
 		}
 	}
 	if (a == 2) FERMIONS.choose(Math.floor(b / 10), b % 10)
+	if (a == 3) {
+		if (player.md.active) MASS_DILATIOn.onactive()
+		else if (player.supernova.fermions.choosed) FERMIONS.backNormal()
+		else if (CHALS.lastActive()) CHALS.exit()
+	}
 }
 
 function editShortcut(x) {
@@ -250,6 +256,9 @@ function editShortcut(x) {
 
 function switchShortcut() {
 	if (SHORTCUT_EDIT.mode) {
+		if (player.md.active) player.shrt.order[SHORTCUT_EDIT.pos] = [0, -1]
+		else if (player.supernova.fermions.choosed) player.shrt.order[SHORTCUT_EDIT.pos] = [2, parseInt(player.supernova.fermions.choosed)]
+		else if (CHALS.lastActive()) player.shrt.order[SHORTCUT_EDIT.pos] = [1, CHALS.lastActive()]
 		SHORTCUT_EDIT.mode = 0
 		return
 	}
