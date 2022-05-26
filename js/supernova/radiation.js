@@ -2,7 +2,7 @@ const RADIATION = {
     names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma"],
     unls: ["0","1e6","1e13","1e20","5e26","5e29","1e35"],
     hz_gain() {
-		if (CHALS.inChal(15)) return E(0)
+		if (CHALS.inChal(14)) return E(0)
 
         let x = E(1)
         x = x.mul(tmp.radiation.ds_eff[0])
@@ -17,7 +17,7 @@ const RADIATION = {
     },
 	ds_gains: ["1", "1", "1", "1", "0.005", "0.00002", "1e-7"],
     ds_gain(i) {
-		if (CHALS.inChal(15)) return E(0)
+		if (CHALS.inChal(14)) return E(0)
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return E(0)
 
         let x = E(RADIATION.ds_gains[i])

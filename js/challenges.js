@@ -508,7 +508,7 @@ const CHALS = {
 	14: {
 		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || hex() },
 		title: "Monochromatic Mass",
-		desc: "You can't gain Main Buildings, and also can't dilate mass.",
+		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass.",
 		reward: `Raise Challenge 10.<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
 		max: E(100),
 		inc: E(10),
@@ -525,8 +525,8 @@ const CHALS = {
 	15: {
 		unl() { return hex() },
 		title: "Chernobyl Exclusion",
-		desc: "You can't gain Radiation.",
-		reward: `Placeholder.<br><span class="yellow">On 1st completion, unlock Primordiums! [Coming soon!]</span>`,
+		desc: `Placeholder.`,
+		reward: `Placeholder.`,
 		max: E(100),
 		inc: E(10),
 		pow: E(1.25),

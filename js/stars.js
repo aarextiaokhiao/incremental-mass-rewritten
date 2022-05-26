@@ -34,6 +34,7 @@ const STARS = {
             }
         },
         gain(i) {
+            if (CHALS.inChal(14)) return E(0)
             let pow = E(1.5)
             if (FERMIONS.onActive("13")) pow = E(0.5)
             else {

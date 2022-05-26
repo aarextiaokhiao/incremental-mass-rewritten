@@ -16,12 +16,15 @@ let EXOTIC = {
 	gain() {
 		if (player.chal.comps[12].eq(0)) return E(0)
 
-		let s = player.supernova.times.div(500)
-		let c = player.chal.comps[12].add(1)
+		let s = player.supernova.times
+			.mul(player.chal.comps[12].add(1))
+			.div(500)
+		if (hasTree("feat11")) s = s.mul(1.2)
+		if (hasTree("ext_u1")) s = s.mul(E(1.01).pow(player.chal.comps[12].add(1)))
 		if (CHROMA.got("p1_3")) s = s.mul(CHROMA.eff("p1_3"))
-		if (CHROMA.got("p1_2")) c = c.mul(CHROMA.eff("p1_2"))
+		if (CHROMA.got("p1_2")) s = s.mul(CHROMA.eff("p1_2"))
 
-		let r = player.mass.add(1).log10().div(1e9).add(1).pow(s.mul(c))
+		let r = player.mass.add(1).log10().div(1e9).add(1).pow(s)
 		return this.amt(r)
 	},
 	extLvl() {
@@ -38,12 +41,12 @@ let EXOTIC = {
 	},
 	reduce(t, x) {
 		if (t == 1) return x.eq(0) ? E(0) : x.mul(10).log10().max(0).pow(5).mul(10)
-		if (t == 2) return x.div(10).sqrt().mul(10)
+		if (t == 2) return expMult(x, 0.75)
 		return x
 	},
 	eff() {
 		let r = player.ext.amt
-		if (this.extLvl() >= 2) r = r.div(10).pow(2).mul(10)
+		if (this.extLvl() >= 2) r = expMult(r, 1/0.75)
 		if (this.extLvl() >= 1) r = E(10).pow(r.div(10).root(5)).div(10)
 		if (CHROMA.got("p1_1")) r = expMult(r,CHROMA.eff("p1_1"))
 		return r

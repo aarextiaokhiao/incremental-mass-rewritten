@@ -96,7 +96,7 @@ const FORMS = {
     },
     tickspeed: {
         cost(x=player.tickspeed) { return E(2).pow(x).floor() },
-        can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.inChal(2) && !CHALS.inChal(6) && !CHALS.inChal(10) && !CHALS.inChal(14) },
+        can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.inChal(2) && !CHALS.inChal(6) && !CHALS.inChal(10) },
         buy() {
             if (this.can()) {
                 if (!hasUpgrade('atom',2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)

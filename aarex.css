@@ -125,11 +125,11 @@ body {
 }
 
 #tab5 {
-	background: linear-gradient(#ff007f, #ff003f, #ff00ff) !important;
-	box-shadow: 0 0 3px #ff007f, 0 0 6px #ff007f, 0 0 24px #7f3f00;
+	background: radial-gradient(#ffbfdf, #ff7fbf, #7f003f) !important;
+	box-shadow: 0 0 3px #ff003f, 0 0 6px #ff003f;
 
-	color: #bf7fff !important;
-	text-shadow: 3px 3px 3px #bf7fff, -3px -3px 3px #bf7fff, 0 0 3px #bf7fff
+	color: #ffbfff !important;
+	text-shadow: 3px 3px 3px #bf7fff, -3px -3px 3px #bf7fff
 }
 
 #stab5_1 {

@@ -17,6 +17,7 @@ Decimal.prototype.modular=Decimal.prototype.mod=function (other){
 function calc(dt, dt_offline) {
     player.mass = player.mass.add(tmp.massGain.mul(dt))
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
+	if (CHROMA.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
     if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (player.ranks.rank.gte(x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
     if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
@@ -469,7 +470,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/23/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/25/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

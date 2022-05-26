@@ -20,7 +20,7 @@ const TREE_IDS = [
 		['qol7','qol6','qol5'],
 		['chal2','chal4a','chal3'],
 		['bs4','bs2','fn1','bs3','','','rad2','rad3'],
-		['ext_c'],
+		['','ext_c','ext_u1'],
 		['feat6','feat7','feat8','feat9','feat10'],
 	],[
 		['s2','m2','t1','d1','bh2','gr1','sn2'],
@@ -28,7 +28,7 @@ const TREE_IDS = [
 		['chal4','chal8'],
 		['fn3','fn4','fn2','fn5','','','rad4','rad5'],
 		["ext_l1","","ext_b1"],
-		[],
+		['feat11'],
 	],[
 		['s3','m3','gr2','sn3'],
 		['qol_ext1','qol_ext2','qol_ext3','qol_ext4','qol_ext5'],
@@ -612,8 +612,8 @@ const TREE_UPGS = {
 		ext_b1: {
 			unl() { return hasTree("ext_l2") || hasTree("ext_l3") },
 			branch: ["ext_c"],
-			req() { return player.ext.amt.gte(EXT.amt(1e25)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e25)) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(3e23)) },
+			reqDesc() { return "Get " + format(EXT.amt(3e23)) + " Exotic Matter." },
 			desc: `Row-4 levels synergize with row-1 levels.`,
 			cost: E(0),
 			perm: 1,
@@ -623,8 +623,8 @@ const TREE_UPGS = {
 		ext_b2: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "1e400" : "1e150")) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "1e400" : "1e150")) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "1e400" : 1e150)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "1e400" : 1e150)) + " Exotic Matter." },
 			desc: `Levels synergize boosts diagonally on the right. [Coming soon!]`,
 			cost: EINF,
 			perm: 1,
@@ -634,8 +634,8 @@ const TREE_UPGS = {
 		ext_b3: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "1e400" : "1e150")) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "1e400" : "1e150")) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "1e400" : 1e150)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "1e400" : 1e150)) + " Exotic Matter." },
 			desc: `Levels synergize boosts diagonally on the left. [Coming soon!]`,
 			cost: EINF,
 			perm: 1,
@@ -645,11 +645,21 @@ const TREE_UPGS = {
 		ext_e1: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_c"],
-			req() { return player.ext.amt.gte(EXT.amt("1e60")) },
-			reqDesc() { return "Get " + format(EXT.amt("1e60")) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(1e60)) },
+			reqDesc() { return "Get " + format(EXT.amt(1e60)) + " Exotic Matter." },
 			desc: `Start producing Z-Axions based on Frequency.`,
 			cost: E(0),
 			perm: 1,
+		},
+		ext_u1: {
+			unl() { return EXT.unl() },
+			branch: ["ext_c"],
+			req() { return player.ext.amt.gte(EXT.amt(1e15)) },
+			reqDesc() { return "Get " + format(EXT.amt(1e15)) + " Exotic Matter." },
+			desc: `Coming soon!`,
+			cost: EINF,
+			perm: 1,
+			icon: "exotic",
 		},
 		qol_ext1: {
 			branch: ["qol1"],
@@ -659,7 +669,7 @@ const TREE_UPGS = {
 			desc: `You don't need to do requirements before buying several Supernova upgrades.`,
 			perm: 2,
 			cost: E(2000),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext2: {
 			branch: ["qol_ext1"],
@@ -668,14 +678,14 @@ const TREE_UPGS = {
 			desc: `Reduce the auto-sweeper threshold to 10, and auto-sweep Challenge 12.`,
 			perm: 2,
 			cost: E(1e100),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext3: {
 			branch: ["qol_ext1"],
 			desc: `Radiation Boosters are fully automated for at least 100,000 radiation.`,
 			perm: 2,
 			cost: E(1e185),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext4: {
 			branch: ["qol_ext1"],
@@ -688,49 +698,49 @@ const TREE_UPGS = {
 			desc: `Keep the 'chal' upgrades except you start with 50 completions and 10 tiers for each Fermion.`,
 			perm: 2,
 			cost: E(1e200),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext5: {
 			branch: ["qol_ext1"],
 			desc: `Keep the core Supernova upgrades.`,
 			perm: 2,
 			cost: E(1e170),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext6: {
 			branch: ["qol_ext1"],
 			desc: `Keep the Boson - Fermion upgrades, and start with 10 completions for C9 - 11.`,
 			perm: 2,
 			cost: E(1e250),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext7: {
 			branch: ["qol_ext1"],
 			desc: `Keep the Radiation upgrades.`,
 			perm: 2,
 			cost: E("1e400"),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext8: {
 			branch: ["qol_ext1"],
 			desc: `Automatically gain C1 - 8 completions without entering.`,
 			perm: 1,
 			cost: E("1e800"),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext10: {
-			branch: ["qol_ext9"],
+			branch: ["qol_ext5"],
 			desc: `Gain Supernovae at least 30% more, passively during a sweep.`,
 			perm: 2,
 			cost: E("1e2500"),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_ext11: {
-			branch: ["qol_ext9"],
+			branch: ["qol_ext4"],
 			desc: `You can stay in Mass Dilation on reset.`,
 			perm: 2,
 			cost: E("1e1e4"),
-			icon: "exotic"
+			icon: "qol_ext"
 		},
 		qol_shrt: {
 			branch: ["qol_ext1"],
@@ -745,10 +755,10 @@ const TREE_UPGS = {
 				if (!FERMIONS.outside()) return
 				if (!featCheck()) return
 
-				return player.mass.lt(player.stats.maxMass.pow(1e-3))
+				return player.mass.lt(player.stats.maxMass.pow(3e-3))
 			},
-			reqDesc: () => `Get mass below ^0.001 best in Fermion, with automation on.` +
-				(FERMIONS.outside() ? " (not in Fermion)" : " (" + formatMass(player.mass) + " / " + formatMass(player.stats.maxMass.pow(1e-3)) + ")"),
+			reqDesc: () => `Get mass below ^0.002 best in Fermion, with automation on.` +
+				(FERMIONS.outside() ? " (not in Fermion)" : " (" + formatMass(player.mass) + " / " + formatMass(player.stats.maxMass.pow(2e-3)) + ")"),
 			failed: () => FERMIONS.outside(),
 			desc: `Gain 3x more Radiation.`,
 			perm: 2,
@@ -783,10 +793,12 @@ const TREE_UPGS = {
 				return !TREE_UPGS.ids.feat4.failed()
 			},
 			failed() {
-				for (var i = 1; i <= 11; i++) if (player.chal.comps[i].lte(50)) return false
-				return true
+				let sum = E(0)
+				for (var i = 1; i <= CHALS.cols; i++) sum = sum.add(player.chal.comps[i])
+				for (var i = 1; i <= 8; i++) if (player.chal.comps[i].lte(sum.mul(.05))) return true
+				return false
 			},
-			reqDesc() { return `Get ${formatMass(mlt(1))} mass without 50 completions of C1 - 11.` + failedHTML(!TREE_UPGS.ids.feat4.failed()) },
+			reqDesc() { return `Get ${formatMass(mlt(1))} mass with one of C1-8s having < 5% total.` },
 			desc: `Reduce the auto-sweeper threshold to 7.`,
 			perm: 2,
 			cost: E(1e100),
@@ -819,18 +831,18 @@ const TREE_UPGS = {
 		},
 		feat8: {
 			unl() { return CHROMA.unl() },
-			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f8 },
+			req() { return player.mass.gte(mlt(100)) & player.ext.chal.f8 },
 			failed() { return !player.ext.chal.f8 },
-			reqDesc() { return `Get ??? mass, but can only gain at least 5 Supernovae.` + failedHTML(player.ext.chal.f8) },
+			reqDesc() { return `Get ${formatMass(mlt(100))} mass, but can only gain >= 5 Supernovae after 20.` + failedHTML(player.ext.chal.f8) },
 			desc: `Supernova scalings start 2 later.`,
 			perm: 2,
 			cost: E(0),
 		},
 		feat9: {
 			unl() { return CHROMA.unl() },
-			req() { return player.mass.gte(mlt(1/0)) & player.ext.chal.f9 },
+			req() { return player.mass.gte(mlt(1e4)) & player.ext.chal.f9 },
 			failed() { return !player.ext.chal.f9 },
-			reqDesc() { return `Get ??? mass, but in any U-Lepton.` + failedHTML(player.ext.chal.f9) },
+			reqDesc() { return `Get ${formatMass(mlt(1e4))} mass, but in any U-Lepton.` + failedHTML(player.ext.chal.f9) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),
@@ -839,11 +851,19 @@ const TREE_UPGS = {
 		feat10: {
 			unl() { return CHROMA.unl() },
 			req() { return player.ext.chal.f10 },
-			reqDesc() { return `At 300 Supernovae, get 2x Supernovae while in Dual Fermions.` + failedHTML(player.ext.chal.f10, true) },
+			reqDesc() { return `Gain 10% more Supernovae after 100 in Dual Fermions.` + failedHTML(player.ext.chal.f10, true) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			perm: 2,
 			cost: E(0),
 			onBuy: () => player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
+		},
+		feat11: {
+			unl() { return CHROMA.unl() },
+			req() { return player.ext.chal.f11 },
+			reqDesc() { return `Raise best mass in Mass Dilation.` },
+			desc: `Raise Exotic Matter by ^1.2.`,
+			perm: 2,
+			cost: E(0)
 		},
 
         /*

@@ -9,7 +9,7 @@ const UPGS = {
 				dx.cost = data.cost
 				dx.bulk = data.bulk
 				
-				dx.bonus = this[x].bonus&&!CHALS.inChal(14)?this[x].bonus():E(0)
+				dx.bonus = this[x].bonus?this[x].bonus():E(0)
 				dx.eff = this[x].effect(player.massUpg[x]||E(0))
 			}
 		},
@@ -17,8 +17,6 @@ const UPGS = {
             player.autoMassUpg[x] = !player.autoMassUpg[x]
         },
         buy(x, manual=false) {
-            if (CHALS.inChal(14)) return
-
             let cost = manual ? this.getData(x).cost : tmp.upgs.mass[x].cost
             if (player.mass.gte(cost)) {
                 if (!hasUpgrade('bh',1)) player.mass = player.mass.sub(cost)
@@ -27,8 +25,6 @@ const UPGS = {
             }
         },
         buyMax(x) {
-            if (CHALS.inChal(14)) return
-
             let bulk = tmp.upgs.mass[x].bulk
             let cost = tmp.upgs.mass[x].cost
             if (player.mass.gte(cost)) {

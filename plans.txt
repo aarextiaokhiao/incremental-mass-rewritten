@@ -15,11 +15,10 @@ TO-DO LIST:
 	(or Strange, the Strangely Matter?)
 	(or Lightning / Cloudy)
 3: Upgrades
-	3a. [Axion?] RP base formula is better. [^b^11/60, decay]
-	3b. [Future] Multiply Particle Powers based on original formula.
-	3c. [Future] Collapsed Stars add Cosmic Rays.
-	3d. [Rank]   Argon-18 boosts Tickspeed Power instead.
-	3e. [Future] Mass multiplies their softcaps by ^x.
-	3f. [Future] Add Neutron Condensers.
+	3a-i. RP base formula is better. [^b^11/60, decay]
+	3a-ii. Or reduce both MD6 effect and softcap. [decay]
+	3b. Remove softcaps of MD Upgrades, and MD11 - 12.
+	3c. Multiply Particle Powers based on original formula.
+	3d. Add Neutron Condensers.
 4: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)
