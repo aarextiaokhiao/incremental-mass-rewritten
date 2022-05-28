@@ -26,7 +26,7 @@ const RANKS = {
     unl: {
         tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || hasUpgrade('atom',3) },
         tetr() { return hasUpgrade('atom',3) },
-        pent() { return hasTree("sn5") || this.zeta() },
+        pent() { return hasTree("sn5") },
     },
     doReset: {
         rank() {
