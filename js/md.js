@@ -40,7 +40,7 @@ const MASS_DILATION = {
 	},
 	RPgain(m=player.mass,bm=tmp.md.rp_base_mult) {
 		if (CHALS.inChal(11)) return E(0)
-		let x = this.RPbasegain(m).mul(bm).pow(tmp.md.rp_exp_gain)
+		let x = this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
 		return x.sub(player.md.particles).max(0).floor()
 	},
     massGain() {
@@ -55,7 +55,7 @@ const MASS_DILATION = {
         return x
     },
     mass_req() {
-        let x = E(10).pow(player.md.particles.add(1).root(tmp.md.rp_exp_gain).div(tmp.md.rp_base_mult).add(14).mul(40)).mul(1.50005e56)
+        let x = E(10).pow(player.md.particles.add(1).root(tmp.md.rp_exp_gain).add(14).mul(40)).mul(1.50005e56)
         return x
     },
     effect() {
