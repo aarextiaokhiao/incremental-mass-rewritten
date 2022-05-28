@@ -126,7 +126,6 @@ function getPlayerData() {
             tier: E(0),
             tetr: E(0),
             pent: E(0),
-            hex: E(0),
         },
         auto_ranks: {
             rank: false,
@@ -470,7 +469,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/25/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/27/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

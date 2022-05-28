@@ -60,7 +60,7 @@ let EXOTIC = {
 		EXT.doReset()
 		return true
 	},
-	doReset(hex) {
+	doReset(zeta) {
 		player.ext.time = 0
 		player.ext.chal.f7 = true
 		player.ext.chal.f8 = true
@@ -77,8 +77,8 @@ let EXOTIC = {
 		for (let x = 0; x < player.supernova.tree.length; x++) {
 			let it = player.supernova.tree[x]
 			if (list.includes(it)) list_keep.push(it)
-			else if (hex && TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm === 2) list_keep.push(it)
-			else if (!hex && TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) list_keep.push(it)
+			else if (zeta && TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm === 2) list_keep.push(it)
+			else if (!zeta && TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) list_keep.push(it)
 		}
 		player.supernova.tree = list_keep
 		player.supernova.times = E(0)
@@ -163,9 +163,6 @@ function updateExoticHTML() {
 		tmp.el.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateChromaHTML()
-
-		tmp.el.hexDisp.setDisplay(RANKS.unl.hex())
-		tmp.el.hexAmt.setHTML(format(player.ranks.hex,0))
 	}
 }
 

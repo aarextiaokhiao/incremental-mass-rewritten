@@ -1023,7 +1023,7 @@ function updateTreeHTML() {
 	let t_ch = TREE_UPGS.ids[tmp.supernova.tree_choosed]
 	if (tmp.supernova.tree_choosed != "") {
 		req = t_ch.req?`<span class="${t_ch.req()?"green":"red"}">${t_ch.reqDesc?" Require: "+(typeof t_ch.reqDesc == "function"?t_ch.reqDesc():t_ch.reqDesc):""}</span>`:""
-		perm = t_ch.perm ? `<span class='yellow'> [${[null, "Last 1 Hex", "Permanent"][t_ch.perm]}]</span>` : ``
+		perm = t_ch.perm ? `<span class='yellow'> [${[null, "Permanent", "Zeta-Permanent"][t_ch.perm]}]</span>` : ``
 	}
 	tmp.el.tree_desc.setHTML(
 		tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click any tree upgrade to show)</span></div>`

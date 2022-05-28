@@ -10,10 +10,12 @@ TO-DO LIST:
 		Coding with groups.
 	1d. ???:
 		Mirror Mechanic?
-2: Strange layer or a new game?
-	(Maybe called Hex, the High Ranked)
-	(or Strange, the Strangely Matter?)
-	(or Lightning / Cloudy)
+2: Zeta layer, Metaphysics from Chakra's gifts.
+	2a. Fluid
+	2b. Imaginary
+	2c. Mirror
+	2d. Strange
+	2e. Muonic
 3: Upgrades
 	3a-i. RP base formula is better. [^b^11/60, decay]
 	3a-ii. Or reduce both MD6 effect and softcap. [decay]

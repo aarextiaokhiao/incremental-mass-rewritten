@@ -305,3 +305,8 @@ CLICKING A KIND WILL COMPLETE THE PROCESS. */
 //TECHNICAL
 future = false
 future_ax = false
+
+//FUTURE
+function zeta() {
+	return future
+}

@@ -1,7 +1,7 @@
 const RANKS = {
-    names: ['rank', 'tier', 'tetr', 'pent', 'hex'],
-    fullNames: ['Rank', 'Tier', 'Tetr', 'Pent', 'Hex'],
-	resetDescs: ['mass and upgrades', 'Rank', 'Tier', 'Tetr', 'Exotic'],
+    names: ['rank', 'tier', 'tetr', 'pent'],
+    fullNames: ['Rank', 'Tier', 'Tetr', 'Pent'],
+	resetDescs: ['mass and upgrades', 'Rank', 'Tier', 'Tetr'],
 	mustReset(type) {
 		if (type == "rank" && hasUpgrade('rp',4)) return false
 		if (type == "tier" && hasUpgrade('bh',4)) return false
@@ -12,7 +12,6 @@ const RANKS = {
     reset(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
-            if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
             if (this.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
@@ -20,7 +19,6 @@ const RANKS = {
     bulk(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk.max(player.ranks[type].add(1)))
-            if (type == "hex" && player.confirms.hex && !confirm("This will reset all your Exotic content and below, in trade of the study for stranger physics. Metaphysics awaits from Chakra's request. Are you really sure?")) return
             if (this.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
@@ -28,8 +26,7 @@ const RANKS = {
     unl: {
         tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || hasUpgrade('atom',3) },
         tetr() { return hasUpgrade('atom',3) },
-        pent() { return hasTree("sn5") || this.hex() },
-        hex() { return hex() /* || CHROMA.unl()*/ },
+        pent() { return hasTree("sn5") || this.zeta() },
     },
     doReset: {
         rank() {
@@ -48,24 +45,6 @@ const RANKS = {
             player.ranks.tetr = E(0)
             this.tetr()
         },
-        hex() {
-			player.ext.amt = E(0)
-			for (var i = 0; i < 3; i++) player.ext.ax.res[i] = E(0)
-			for (var i = 0; i < 12; i++) player.ext.ax.upgs[i] = E(0)
-			updateAxionLevelTemp()
-			//To-do: Reset Chroma
-
-			if (player.ranks.hex.eq(1)) {
-				let list_keep = []
-				for (let x = 0; x < player.supernova.tree.length; x++) {
-					var id = player.supernova.tree[x]
-					if (TREE_UPGS.ids[id] && TREE_UPGS.ids[id].perm === 2) list_keep.push(id)
-				}
-				player.supernova.tree = list_keep
-			}
-
-            EXT.doReset(true)
-        },
     },
     autoSwitch(rn) { player.auto_ranks[rn] = !player.auto_ranks[rn] },
     autoUnl: {
@@ -73,7 +52,6 @@ const RANKS = {
         tier() { return hasUpgrade('rp',6) },
         tetr() { return hasUpgrade('atom',5) },
         pent() { return true },
-        hex() { return false },
     },
     desc: {
         rank: {
@@ -126,13 +104,10 @@ const RANKS = {
             '10': "Stronger and Pent raise Musculer and Booster.",
             '13': "Pent raises Pent 1.",
             '50': "Tickspeed Power raises BH Condenser Power.",
-            '80': "reduce MD Upgrade 6 and Stronger softcaps.",
+            '75': "reduce MD Upgrade 6 and Stronger softcaps.",
             '150': "Argon-18 boosts Tickspeed Power instead.",
             '200': "mass upgrade 1-2 self-boosts multiply themselves.",
             '300': "Tickspeed Power multiplies Stronger.",
-        },
-        hex: {
-            '1': "Unlock Chroma.",
         },
     },
     effect: {
@@ -254,8 +229,6 @@ const RANKS = {
 				return tmp.tickspeedEffect.step.log10().div(3e3).add(1).pow(27/20)
 			},
 		},
-		hex: {
-		},
     },
     effDesc: {
         rank: {
@@ -291,8 +264,6 @@ const RANKS = {
             200(x) { return "^"+format(x,3)+" from Pent" },
             300(x) { return format(x)+"x" },
         },
-		hex: {
-		},
     },
     fp: {
         rank() {
@@ -319,9 +290,6 @@ const RANKS = {
             if (hasElement(81)) f = f.mul(0.88)
             return f
         },
-		hex() {
-			return E(1)
-		},
     },
 }
 
@@ -355,18 +323,10 @@ function updateRanksTemp() {
 	d.pent.req = s.pent.mul(fp).pow(1.25).add(15).floor()
 	d.pent.bulk = s.tetr.sub(15).max(0).root(1.25).div(fp).add(1).floor();
 
-	fp = u.fp.hex()
-	d.hex.req = E(1.1).pow(s.hex.div(fp)).mul(50).floor()
-	d.hex.bulk = s.pent.div(50).log(1.1).mul(fp).add(1).floor()
-
     for (let x = 0; x < u.names.length; x++) {
         let rn = u.names[x]
         if (x > 0) {
             d[rn].can = s[u.names[x-1]].gte(d[rn].req)
         }
     }
-}
-
-function hex() {
-	return player.ranks.hex.gt(0) || future
 }

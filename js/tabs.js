@@ -13,19 +13,20 @@ const TABS = {
     1: [
         { id: "Main" },
         { id: "Stats", unl() { return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl } },
-        { id: "Upgrades", unl() { return player.rp.unl && !hex() } },
+        { id: "Upgrades", unl() { return player.rp.unl && !zeta() } },
         { id: "Challenges", unl() { return player.chal.unl } },
-        { id: "Atom", unl() { return player.atom.unl && !hex() }, style: "atom" },
+        { id: "Atom", unl() { return player.atom.unl && !zeta() }, style: "atom" },
         { id: "Supernova", unl() { return player.supernova.unl } },
         { id: "Exotic", unl() { return EXT.unl() } },
+        { id: "Zeta", unl() { return zeta() } },
         { id: "Options" },
     ],
     2: {
         0: [
             { id: "Mass" },
-            { id: "Black Hole", unl() { return player.bh.unl && !hex() }, style: "bh" },
-            { id: "Atomic Generator", unl() { return player.atom.unl && !hex() }, style: "atom" },
-            { id: "Stars", unl() { return STARS.unlocked() && !hex() } },
+            { id: "Black Hole", unl() { return player.bh.unl && !zeta() }, style: "bh" },
+            { id: "Atomic Generator", unl() { return player.atom.unl && !zeta() }, style: "atom" },
+            { id: "Stars", unl() { return STARS.unlocked() && !zeta() } },
         ],
         1: [
             { id: "Ranks Rewards" },
@@ -44,8 +45,10 @@ const TABS = {
         ],
         6: [
             { id: "Axions" },
-            { id: "Chroma", unl() { return player.ext.ch.unl } },
-            { id: "Primordium", unl() { return player.chal.comps[15].gte(1) } }
+            { id: "Chroma", unl() { return player.ext.ch.unl || zeta() } },
+            { id: "Primordium", unl() { return player.chal.comps[15].gte(1) || zeta() } },
+            { id: "Entropy", unl() { return zeta() } },
+            { id: "Big Rip", unl() { return zeta() } }
         ],
     },
 }

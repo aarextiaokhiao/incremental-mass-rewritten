@@ -249,7 +249,6 @@ function updateRanksHTML() {
         let rn = RANKS.names[x]
 		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
 		if (x == 0) unl = unl&&!RANKS.unl.pent()
-		if (x == 1) unl = unl&&!RANKS.unl.hex()
 		tmp.el["ranks_div_"+x].setDisplay(unl)
 		if (unl) {
 			let keys = Object.keys(RANKS.desc[rn])

@@ -457,7 +457,7 @@ const CHALS = {
 				exp = exp.mul(c14.exp)
 				mul = mul.mul(c14.mul)
 			}
-			let ret = x.pow(exp).mul(mul).add(1)
+			let ret = x.pow(exp).mul(mul).add(1).min(2)
 			return ret
 		},
         effDesc(x) { return format(x)+"x" },
@@ -506,7 +506,7 @@ const CHALS = {
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || hex() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || zeta() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass.",
 		reward: `Raise Challenge 10.<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
@@ -523,7 +523,7 @@ const CHALS = {
         effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul) },
 	},
 	15: {
-		unl() { return hex() },
+		unl() { return zeta() },
 		title: "Chernobyl Exclusion",
 		desc: `Placeholder.`,
 		reward: `Placeholder.`,
@@ -538,7 +538,7 @@ const CHALS = {
 		effDesc(x) { return format(x)+"x" },
 	},
 	16: {
-		unl() { return hex() },
+		unl() { return zeta() },
 		title: "Placeholder",
 		desc: "Placeholder.",
 		reward: `Placeholder.`,

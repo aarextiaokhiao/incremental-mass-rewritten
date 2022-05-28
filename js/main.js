@@ -2,7 +2,7 @@ var diff = 0;
 var date = Date.now();
 var player
 
-const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'hex']
+const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'zeta']
 const CONFIRMS_PNG = {
 	rp: "rp",
 	bh: "dm",
@@ -10,7 +10,7 @@ const CONFIRMS_PNG = {
 	sn: "sn",
 	ext: "ext",
 	ec: "chal_ext",
-	hex: "hex"
+	zeta: "zeta"
 }
 const CONFIRMS_UNL = {
 	rp: () => player.rp.unl && !EXT.unl(),
@@ -19,7 +19,7 @@ const CONFIRMS_UNL = {
 	sn: () => player.supernova.unl,
 	ext: () => EXT.unl(),
 	ec: () => CHROMA.unl(),
-	hex: () => hex()
+	zeta: () => zeta()
 }
 
 const FORMS = {
@@ -163,9 +163,8 @@ const FORMS = {
             }
         },
         doReset() {
-			//Hex comes after EXT. :)
-			player.ranks.pent = E(0)
-			RANKS.doReset.pent()
+            player.ranks[RANKS.names[RANKS.names.length-1]] = E(0)
+            RANKS.doReset[RANKS.names[RANKS.names.length-1]]()
         },
     },
     bh: {
