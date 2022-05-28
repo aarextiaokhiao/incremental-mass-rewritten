@@ -126,13 +126,13 @@ const FORMS = {
 			step = step.mul(tmp.bosons.effect.z_boson[0])
 			if (hasTree("t1")) step = step.pow(1.15)
 			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
-			if (player.ranks.pent.gte(150) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
+			if (hasTree("ext_u2") && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
 			step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
-			if (player.ranks.pent.lt(150) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (!hasTree("ext_u2") && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus}
 		},
@@ -306,6 +306,7 @@ function loop() {
     diff = Date.now()-date;
     updateTemp()
     updateHTML()
+    if (tmp.supernova.reached && !player.supernova.unl) player.offline.time = 0
     calc(diff/1000*tmp.offlineMult,diff/1000);
     date = Date.now();
     player.offline.current = date

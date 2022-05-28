@@ -457,7 +457,7 @@ function updateHTML() {
 			if (tmp.stab[4] == 1) updateElementsHTML()
 			if (tmp.stab[4] == 2) updateMDHTML()
 		}
-		if (tmp.tab == 7) {
+		if (tmp.tab == 8) {
 			updateOptionsHTML()
 		}
 	}

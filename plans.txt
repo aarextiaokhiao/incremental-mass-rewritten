@@ -17,10 +17,13 @@ TO-DO LIST:
 	2d. Strange
 	2e. Muonic
 3: Upgrades
-	3a-i. RP base formula is better. [^b^11/60, decay]
-	3a-ii. Or reduce both MD6 effect and softcap. [decay]
-	3b. Remove softcaps of MD Upgrades, and MD11 - 12.
-	3c. Multiply Particle Powers based on original formula.
-	3d. Add Neutron Condensers.
+	3a. Multiply Particle Powers based on original formula.
+	3b. Add Neutron Condensers.
+	3c. Raise Axion Levels by itself.
 4: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)
+5:
+"Should I rework early Exotic resets to start off with small mass, or let Big Rip consumes OP multiplicity boosts?
+OP multiplicity boosts: m1, rp1, bh1, W+ Bosons. 
+By the way "Master Bosons" will be permanent on Big Rips. And you will lose access on un-Big Rip at Zeta.
+Just like a Supernova - Exotic restart, but with twists."

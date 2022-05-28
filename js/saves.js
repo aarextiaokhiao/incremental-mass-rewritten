@@ -78,7 +78,7 @@ function calc(dt, dt_offline) {
     if (hasTree("qol6")) CHALS.exit(true)
 
     tmp.pass = true
-	tmp.el.title.setTxt(formatMass(player.mass) + " | IM: Altrascendum")
+	tmp.el.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | IM: Altrascendum")
 
     player.offline.time = Math.max(player.offline.time-tmp.offlineMult*dt_offline,0)
     player.supernova.time += dt
@@ -469,7 +469,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("update").textContent = "5/27/22 BETA BUILD"
+			document.getElementById("update").textContent = "5/28/22 BETA BUILD"
 			document.getElementById("update").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

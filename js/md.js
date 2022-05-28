@@ -38,9 +38,9 @@ const MASS_DILATION = {
 	RPbasegain(m=player.mass) {
 		return m.div(uni(1)).max(1).log10().div(40).sub(14)
 	},
-	RPgain(m=player.mass,bm=tmp.md.rp_base_mult) {
+	RPgain(m=player.mass) {
 		if (CHALS.inChal(11)) return E(0)
-		let x = this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
+		let x = this.RPbasegain(m).pow(tmp.md.rp_exp_gain).mul(tmp.md.rp_mult_gain)
 		return x.sub(player.md.particles).max(0).floor()
 	},
     massGain() {
@@ -55,7 +55,7 @@ const MASS_DILATION = {
         return x
     },
     mass_req() {
-        let x = E(10).pow(player.md.particles.add(1).root(tmp.md.rp_exp_gain).add(14).mul(40)).mul(1.50005e56)
+        let x = E(10).pow(player.md.particles.add(1).div(tmp.md.rp_mult_gain).root(tmp.md.rp_exp_gain).add(14).mul(40)).mul(1.50005e56)
         return x
     },
     effect() {
@@ -77,23 +77,29 @@ const MASS_DILATION = {
                 effect(x) {
                     let b = 2
                     if (hasElement(25)) b++
+                    if (hasTree("ext_u1")) return E(b).pow(x)
                     return E(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)
                 },
-                effDesc(x) { return format(x,0)+"x"+getSoftcapHTML(x,'e1.2e4') },
+                effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,'e1.2e4')) },
             },{
                 desc: `Make dilated mass effect stronger.`,
                 cost(x) { return E(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
-                effect(x) {
-                    return player.md.upgs[7].gte(1)?x.mul(tmp.md.upgs[11].eff||1).root(1.5).mul(0.25).add(1):x.mul(tmp.md.upgs[11].eff||1).root(2).mul(0.15).add(1)
-                },
+				effect(x) {
+					if (!hasTree("ext_u1")) x = x.mul(tmp.md.upgs[11].eff||1)
+					if (player.md.upgs[7].gte(1)) return x.root(1.5).mul(0.25).add(1)
+					return x.root(2).mul(0.15).add(1)
+				},
                 effDesc(x) { return (x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")+" stronger" },
             },{
                 desc: `Double relativistic particles gain.`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(E(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():E(0) },
-                effect(x) { return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0) },
-                effDesc(x) { return format(x,0)+"x"+getSoftcapHTML(x,1e25) },
+				effect(x) {
+                    if (hasTree("ext_u1")) return E(2).pow(x)
+					return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0)
+				},
+                effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,1e25)) },
             },{
                 desc: `Dilated mass also boost Stronger's power.`,
                 maxLvl: 1,
@@ -145,10 +151,12 @@ const MASS_DILATION = {
                 desc: `Double quarks gain.`,
                 cost(x) { return E(5).pow(x).mul('1.50001e536') },
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():E(0) },
-                effect(x) {
-                    return E(2).pow(x).softcap(1e25,2/3,0)
-                },
-                effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,1e25) },
+				effect(x) {
+					let r = E(2).pow(x)
+					if (!hasTree("ext_u1")) r = r.softcap(1e25,2/3,0)
+					return r
+				},
+                effDesc(x) { return format(x)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,1e25)) },
             },{
                 unl() { return player.supernova.times.gte(1) },
                 desc: `Add 0.015 Mass Dilation upgrade 6's base.`,
@@ -159,7 +167,7 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,0.2) },
             },{
-                unl() { return player.supernova.post_10 },
+                unl() { return player.supernova.post_10 && !hasTree("ext_u1") },
                 desc: `First 3 Mass Dilation upgrades are stronger.`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },

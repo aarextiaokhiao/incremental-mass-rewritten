@@ -62,7 +62,7 @@ function updateChalTemp() {
 	let active = CHALS.lastActive()
     tmp.chal.format = active != 0 ? CHALS.getFormat() : format
     tmp.chal.gain = active != 0 ? tmp.chal.bulk[active].min(tmp.chal.max[active]).sub(player.chal.comps[active]).max(0).floor() : E(0)
-    tmp.chal.canFinish = active != 0 ? tmp.chal.bulk[active].gt(player.chal.comps[active]) : false
+    tmp.chal.canFinish = active != 0 ? tmp.chal.gain.gt(0) : false
 	tmp.chal.outside = active == 0 && !player.md.active && player.supernova.fermions.choosed == ""
 }
 

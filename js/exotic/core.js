@@ -73,12 +73,14 @@ let EXOTIC = {
 		if (hasTree("qol_ext6")) list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6","fn7","fn8")
 		if (hasTree("qol_ext7")) list = list.concat("unl1","rad1","rad2","rad3","rad4","rad5")
 
+		let perm_lvl = zeta ? 2 : 1
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
 			let it = player.supernova.tree[x]
 			if (list.includes(it)) list_keep.push(it)
-			else if (zeta && TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm === 2) list_keep.push(it)
-			else if (!zeta && TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) list_keep.push(it)
+			else if (it.includes("qol") || it.includes("feat")) list_keep.push(it)
+			else if (it.includes("ext") && perm_lvl == 1) list_keep.push(it)
+			else if (TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm >= perm_lvl) list_keep.push(it)
 		}
 		player.supernova.tree = list_keep
 		player.supernova.times = E(0)

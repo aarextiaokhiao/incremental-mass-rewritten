@@ -166,17 +166,17 @@ function updateSupernovaTemp() {
 
 function updateSupernovaEndingHTML() {
 	let scene = tmp.supernova.reached && !player.supernova.unl
-	let reached = player.supernova.unl || scene
-    if (scene && !tmp.offlineActive) {
+	let reached = player.supernova.unl
+    if (scene) {
         tmp.tab = 5
-        document.body.style.backgroundColor = `hsl(0, 0%, ${7-Math.min(tmp.supernova.time/4,1)*7}%)`
-        tmp.el.supernova_scene.setDisplay(tmp.supernova.time>4)
-        tmp.el.sns1.setOpacity(Math.max(Math.min(tmp.supernova.time-4,1),0))
-        tmp.el.sns2.setOpacity(Math.max(Math.min(tmp.supernova.time-7,1),0))
-        tmp.el.sns3.setOpacity(Math.max(Math.min(tmp.supernova.time-10,1),0))
-        tmp.el.sns4.setOpacity(Math.max(Math.min(tmp.supernova.time-14,1),0))
-        tmp.el.sns5.setVisible(tmp.supernova.time>17)
-        tmp.el.sns5.setOpacity(Math.max(Math.min(tmp.supernova.time-17,1),0))
+        document.body.style.backgroundColor = `hsl(0, 0%, ${100-Math.min(tmp.supernova.time,1)*100}%)`
+        tmp.el.supernova_scene.setDisplay(tmp.supernova.time>1)
+        tmp.el.sns1.setOpacity(Math.max(Math.min(tmp.supernova.time-1,1),0))
+        tmp.el.sns2.setOpacity(Math.max(Math.min(tmp.supernova.time-2,1),0))
+        tmp.el.sns3.setOpacity(Math.max(Math.min(tmp.supernova.time-3,1),0))
+        tmp.el.sns4.setOpacity(Math.max(Math.min(tmp.supernova.time-4,1),0))
+        tmp.el.sns5.setVisible(tmp.supernova.time>4)
+        tmp.el.sns5.setOpacity(Math.max(Math.min(tmp.supernova.time-5,1),0))
     }
     if (reached) document.body.style.backgroundColor = tmp.tab == 5 ? "#000" : "#111"
 
@@ -188,6 +188,7 @@ function updateSupernovaEndingHTML() {
         tmp.el.supernova_scale.setTxt(getScalingName('supernova', true))
         tmp.el.supernova_rank.setTxt(format(player.supernova.times,0))
         tmp.el.supernova_next.setTxt("Next Supernova at " + format(tmp.supernova.maxlimit,2) + " stars")
+        tmp.el.supernova_restart.setDisplay(player.supernova.times.gte(2))
         if (tmp.stab[5] == 0) {
             tmp.el.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain))
             updateTreeHTML()

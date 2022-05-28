@@ -105,7 +105,6 @@ const RANKS = {
             '13': "Pent raises Pent 1.",
             '50': "Tickspeed Power raises BH Condenser Power.",
             '75': "reduce MD Upgrade 6 and Stronger softcaps.",
-            '150': "Argon-18 boosts Tickspeed Power instead.",
             '200': "mass upgrade 1-2 self-boosts multiply themselves.",
             '300': "Tickspeed Power multiplies Stronger.",
         },
