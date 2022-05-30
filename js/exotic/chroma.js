@@ -24,7 +24,7 @@ let CHROMA = {
 			EXOTIC.reset(true)
 		},
 		can(x) {
-			return player.ext.amt.gte(tmp.ch.req) && player.ext.amt.gte(this.reqs[x])
+			return player.ext.amt.gte(tmp.ch.req) && player.ext.amt.gte(EXT.amt(this.reqs[x]))
 		}
 	},
 
@@ -53,7 +53,7 @@ let CHROMA = {
 			return log.log10().add(1).pow(.75).sub(1)
 		},
 		cost(x) {
-			return future ? E(0) : tmp.ch.mlt.mul(player.ext.ch.upg.length * 2 + 1).floor()
+			return tmp.ch.mlt.mul(player.ext.ch.upg.length * 2 + 1).floor()
 		},
 		next(x) {
 			if (CHROMA.got(x+"_2")) return x+"_3"
@@ -61,7 +61,7 @@ let CHROMA = {
 			return x+"_1"
 		},
 		unl(x) {
-			if (x[0] == "t" || x[3] == "3") return zeta()
+			if (x[0] == "t" || x[3] == "3") return PRIM.unl()
 			return true
 		},
 
@@ -277,11 +277,11 @@ function updateChromaHTML() {
 
 	for (var i = 0; i < save.tones.length; i++) {
 		let choosed = save.tones[i]
-		let unl = player.ext.amt.gte(CHROMA.tones.reqs[i])
+		let unl = player.ext.amt.gte(EXT.amt(CHROMA.tones.reqs[i]))
 		let unavailable = !CHROMA.tones.can(i) && !choosed
 		tmp.el["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, unavailable: unavailable, choosed: choosed})
 		tmp.el["ch_tone_" + i].setTxt(unl ? CHROMA.tones.colors[i] + (save.tones[i] ? ": ON" : ": OFF") : "Locked")
-		tmp.el["ch_eff_" + i].setTxt(unl ? CHROMA.tones.effs[i] : "Req: " + format(CHROMA.tones.reqs[i]) + " EM")
+		tmp.el["ch_eff_" + i].setTxt(unl ? CHROMA.tones.effs[i] : "Req: " + format(EXT.amt(CHROMA.tones.reqs[i])) + " EM")
 	}
 
 	let s = CHROMA.spices

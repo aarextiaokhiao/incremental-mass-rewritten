@@ -210,7 +210,7 @@ const RADIATION = {
 			eff(b) {
 				if (AXION.unl()) b = b.pow(tmp.ax.eff[18])
 				let x = E(1e3).pow(b.pow(0.9))
-				if (hasTree("ext_u2") && hasElement(18) && tmp.elements.effect) x = x.pow(tmp.elements.effect[18])
+				if (hasTree("ext_u2") && hasElement(18) && tmp.elements) x = x.pow(tmp.elements.effect[18])
 				return x
 			},
             desc(x) { return `Tickspeed power's softcap starts ${format(x)}x later` },

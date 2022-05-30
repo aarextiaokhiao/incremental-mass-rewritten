@@ -553,7 +553,6 @@ const TREE_UPGS = {
 			reqDesc() { return "Get " + format(EXT.amt(1e8)) + " Exotic Matter." },
 			desc: `Axion Levels increase costs 20% slower.`,
 			cost: E("1e400"),
-			icon: "axion",
 		},
 		ext_l2: {
 			branch: ["ext_l1"],
@@ -562,7 +561,7 @@ const TREE_UPGS = {
 			desc: `Axion Levels synergize with ones from the other side.`,
 			cost: E(0),
 			onBuy: updateAxionLevelTemp,
-			icon: "axion",
+			icon: "ext_l",
 		},
 		ext_l3: {
 			branch: ["ext_l1"],
@@ -570,7 +569,7 @@ const TREE_UPGS = {
 			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l2") ? 1e40 : 1e11)) + " Exotic Matter. [increased with ext_l2]" },
 			desc: `Axion Levels cheapen the nearest ones.`,
 			cost: E(0),
-			icon: "axion",
+			icon: "ext_l",
 		},
 		ext_l4: {
 			branch: ["ext_l2", "ext_l3"],
@@ -578,7 +577,7 @@ const TREE_UPGS = {
 			reqDesc() { return "Get 'ext_l2' and 'ext_l3' upgrades." },
 			desc: `Axion Levels cheapen ones on the right / underneath.`,
 			cost: E("1e1800"),
-			icon: "axion",
+			icon: "ext_l",
 		},
 		ext_l5: {
 			unl() { return CHROMA.unl() },
@@ -591,7 +590,6 @@ const TREE_UPGS = {
             },
             effDesc(x) { return format(x)+"x" },
 			cost: E("1e4500"),
-			icon: "axion",
 		},
 		ext_b1: {
 			unl() { return hasTree("ext_l2") || hasTree("ext_l3") },
@@ -601,27 +599,24 @@ const TREE_UPGS = {
 			desc: `Row-4 levels synergize with row-1 levels.`,
 			cost: E(0),
 			onBuy: updateAxionLevelTemp,
-			icon: "ext_b",
 		},
 		ext_b2: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "1e400" : 1e150)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "1e400" : 1e150)) + " Exotic Matter." },
-			desc: `Levels synergize boosts diagonally on the right. [Coming soon!]`,
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "ee4" : 1e150)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "ee4" : 1e150)) + " Exotic Matter." },
+			desc: `X Axion Upgrades multiply levels.`,
 			cost: EINF,
 			onBuy: updateAxionLevelTemp,
-			icon: "ext_b",
 		},
 		ext_b3: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "1e400" : 1e150)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "1e400" : 1e150)) + " Exotic Matter." },
-			desc: `Levels synergize boosts diagonally on the left. [Coming soon!]`,
-			cost: EINF,
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "ee4" : 1e300)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "ee4" : 1e300)) + " Exotic Matter." },
+			desc: `Y Axion Upgrades multiply levels.`,
+			cost: E(0),
 			onBuy: updateAxionLevelTemp,
-			icon: "ext_b",
 		},
 		ext_e1: {
 			unl() { return CHROMA.unl() },
@@ -657,7 +652,6 @@ const TREE_UPGS = {
 			desc: `Bring Particle Powers back to glory. [Nullify boosts and softcaps]`,
 			cost: E(0),
 			perm: 2,
-			icon: "exotic"
 		},
 		qol_ext1: {
 			branch: ["qol1"],

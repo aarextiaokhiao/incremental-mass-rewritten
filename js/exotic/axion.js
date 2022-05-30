@@ -155,10 +155,11 @@ let AXION = {
 		var r = E(0)
 
 		if (y > 0) r = tmp.ax.upg[y + 3].sub((x + 4) * (y + 1)).div(y + 2).max(0)
-		if (hasTree("ext_b1") && y == 0) r = AXION.getBaseLvl(p + 12).mul(2).add(r)
+		if (hasTree("ext_b1") && y == 0) r = this.getBaseLvl(p + 12).mul(2).add(r)
 
-		var t = AXION.getBaseLvl(p).add(r)
-		if (future_ax && y < 4) r = E(1.01).pow(t).sub(1).mul(t)
+		let t = r.add(this.getBaseLvl(p))
+		if (hasTree("ext_b2")) r = E(1.01).pow(this.getXLvl(p)).sub(1).mul(t).add(r)
+		if (hasTree("ext_b3")) r = E(1.01).pow(this.getYLvl(p)).sub(1).mul(t).add(r)
 		return r
 	},
 	getEff(p, l) {
@@ -264,7 +265,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(20),
 			eff(x) {
-				return x.mul(4).add(1).cbrt()
+				return x.add(1).log(4).add(1)
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -275,7 +276,7 @@ let AXION = {
 			desc: "Multiply Hawking Radiation.",
 			req: E(10),
 			eff(x) {
-				return x.div(3).add(1).sqrt().softcap(4,2/3,0)
+				return x.div(3).add(1).sqrt().softcap(4,8,3)
 			},
 			effDesc(x) {
 				return format(x) + "x" + getSoftcapHTML(x,4)
@@ -287,7 +288,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(100),
 			eff(x) {
-				return x.add(1).sqrt().softcap(4,4,3)
+				return x.add(1).sqrt().softcap(4,4,3).min(8)
 			},
 			effDesc(x) {
 				return "^" + format(x) + getSoftcapHTML(x,4)
@@ -481,7 +482,6 @@ function updateAxionLevelTemp() {
 	d.lvl = {}
 	d.max = {}
 	for (var i = 0; i < 12; i++) d.upg[i] = AXION.getUpgLvl(i)
-	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)
 	for (var i = 0; i < 3; i++) d.max[i] = AXION.maxLvl(i)
 }
 
@@ -511,6 +511,7 @@ function updateAxionTemp() {
 		d.cost[i] = AXION.cost(i)
 		d.bulk[i] = AXION.bulk(i)
 	}
+	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)
 	for (var i = 0; i < 20; i++) d.eff[i] = AXION.getEff(i, d.lvl[i].mul(d.str))
 }
 
