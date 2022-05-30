@@ -105,6 +105,7 @@ function updateUpgradesTemp() {
 	tmp.upgs.fp = E(1)
 	if (CHROMA.got("s3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("s3_1"))
 	if (CHROMA.got("t3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t3_1"))
+	if (hasPrim("p3_0")) tmp.upgs.fp = tmp.upgs.fp.mul(tmp.pr.eff["p3_0"])
 
 	UPGS.main.temp()
 	UPGS.mass.temp()
@@ -141,6 +142,7 @@ function updateBlackHoleTemp() {
 function updateTemp() {
     tmp.offlineActive = player.offline.time > 1
     tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
+	updatePrimTemp()
 	updateChromaTemp()
     updateAxionTemp()
 	updateExtraBuildingTemp()

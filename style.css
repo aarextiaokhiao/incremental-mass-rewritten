@@ -655,3 +655,12 @@ td.ax {
 		background: #ff0000
 	}
 }
+
+.primordium {
+	width: 500px;
+	align-items: center;
+}
+
+.primordium > div {
+	text-align: left;
+}

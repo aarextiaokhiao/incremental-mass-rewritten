@@ -113,7 +113,7 @@ function setupHTML() {
 	setupBosonsHTML()
 	setupFermionsHTML()
 	setupRadiationHTML()
-	setupAxionHTML()
+	setupExtHTML()
 
 	/*
 	function setupTestHTML() {

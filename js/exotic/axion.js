@@ -94,15 +94,20 @@ let AXION = {
 	prod(x) {
 		if (!AXION.unl()) return E(0)
 
+		//X + Y
 		let r = E(0)
 		let em = EXT.eff()
 		if (x == 0) r = player.mass.max(1).log10().pow(0.6)
 			.mul(em.add(1).log(100).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
 			.mul(em.add(1).log10().add(1))
-		if (x == 2 && hasTree("ext_e1")) r = em.add(1).log10().add(1).log10().add(1).pow(5)
 
-		if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
+		//Z
+		if (x == 2 && hasTree("ext_e1")) {
+			r = em.add(1).log10().add(1).log10().add(1).pow(5)
+			if (hasPrim("p1_0")) r = r.pow(tmp.pr.eff["p1_0"])
+		} else if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
+
 		return r
 	},
 
@@ -428,25 +433,6 @@ let AXION = {
 	}
 }
 
-function setupAxionHTML() {
-	var html = ""
-	for (var y = -1; y < AXION.maxRows; y++) {
-		html += "</tr><tr>"
-		for (var x = -1; x < 5; x++) {
-			var x_empty = x == -1 || x == 4
-			var y_empty = y == -1
-			if (x_empty && y_empty) html += "<td class='ax'></td>"
-			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
-			if (x_empty && !y_empty && y < 4) {
-				var type = x == 4 ? 2 : 1
-				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
-			}
-			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
-		}
-	}
-	new Element("ax_table").setHTML(html)
-}
-
 function updateAxionHTML() {
 	tmp.el.st_res0.setHTML(format(player.ext.ax.res[0]))
 	tmp.el.st_res1.setHTML(format(player.ext.ax.res[1]))
@@ -516,8 +502,11 @@ function updateAxionTemp() {
 	d.bulk = {}
 	d.eff = {}
 	d.fp = AXION.costScale(i)
+
 	d.str = E(1)
 	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
+	if (hasPrim("p4_0")) d.str = d.str.add(tmp.pr.eff["p4_0"])
+
 	for (var i = 0; i < 12; i++) {
 		d.cost[i] = AXION.cost(i)
 		d.bulk[i] = AXION.bulk(i)

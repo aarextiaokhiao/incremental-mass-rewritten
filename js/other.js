@@ -107,6 +107,17 @@ const POPUP_GROUPS = {
             'font-size': "14px",
         },
 	},
+	prim: {
+        html: `
+            Congratulations!<br><br><b class='yellow'>You have went below spacetime and found Primordiums!</b><br><br>
+            <b style='color:#3f00bf'>Primordiums have been unlocked in Exotic tab!</b>
+        `,
+        width: 400,
+        height: 150,
+        otherStyle: {
+            'font-size': "14px",
+        },
+	},
 
 	ap_chroma: {
 		html: `

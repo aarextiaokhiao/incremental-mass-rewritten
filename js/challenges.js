@@ -487,6 +487,7 @@ const CHALS = {
 		pow: E(1),
 		start: uni("e47250"),
 		effect(x) {
+			if (hasPrim("p5_0")) x = x.add(tmp.pr.eff["p5_0"])
             return E(0.985).pow(x)
 		},
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
@@ -515,6 +516,7 @@ const CHALS = {
 		pow: E(1.25),
 		start: EINF,
 		effect(x) {
+			if (hasPrim("p6_0")) x = x.add(tmp.pr.eff["p6_0"])
 			return {
 				exp: E(1.75).sub(E(0.75).div(x.div(5).add(1))),
 				mul: x.div(25).add(1)
@@ -526,14 +528,14 @@ const CHALS = {
 		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
 		desc: `Placeholder.`,
-		reward: `Placeholder.`,
-		max: E(100),
-		inc: E(10),
-		pow: E(1.25),
-		start: EINF,
+		reward: `Multiply Beauty Pigments.`,
+		max: E(10),
+		inc: E(2),
+		pow: E(3),
+		start: EINF, //mlt(1e3),
 		effect(x) {
 			let ret = E(1)
-			return ret
+			return x.add(1).log10().add(1)
 		},
 		effDesc(x) { return format(x)+"x" },
 	},

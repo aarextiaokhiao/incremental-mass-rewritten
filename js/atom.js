@@ -139,8 +139,8 @@ const ATOM = {
         effect(i) {
             let p = player.atom.particles[i]
             let x = p.pow(2)
+            if (hasTree("ext_u3")) return x
             if (hasElement(12)) x = p.pow(this.mg12(p))
-            if (future) x = x.mul(p.pow(2))
 			if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
             x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
             return x
@@ -201,8 +201,11 @@ function updateAtomTemp() {
     tmp.atom.atomicGain = ATOM.atomic.gain()
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
+	let fp = scalingToned("gamma_ray") ? E(30) : E(1)
+	if (CHROMA.got("s3_2")) fp = fp.div(CHROMA.eff("s3_2"))
+	if (hasPrim("p3_0")) fp = fp.div(tmp.pr.eff["p3_0"])
+
 	let scale = scalingInitPower("gamma_ray")
-	let fp = scalingToned("gamma_ray") ? 30 : 1
     tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
     tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).root(scale).div(fp).scaleEvery("gamma_ray", 1).add(1).floor()
     if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = E(0)
@@ -263,7 +266,7 @@ function updateAtomHTML() {
         tmp.el["particle_"+x+"_assign"].setDisplay(!EXT.unl())
         tmp.el["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
         tmp.el["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
-        tmp.el["particle_"+x+"_sc"].setHTML(getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
+        tmp.el["particle_"+x+"_sc"].setHTML(hasTree("ext_u3") ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
         tmp.el["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain))
         tmp.el["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
     }

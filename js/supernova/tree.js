@@ -13,14 +13,14 @@ const TREE_IDS = [
 		['qol1','qol2','qol3','qol4'],
 		['chal1'],
 		['','bs1','','','unl1','rad1'],
-		['eb1','eb2'],
+		['eb1','eb2','ext_u1','ext_u2'],
 		['feat1','feat2','feat3','feat4','feat5'],
 	],[
 		['s1','m1','rp1','bh1','sn1'],
 		['qol7','qol6','qol5'],
 		['chal2','chal4a','chal3'],
 		['bs4','bs2','fn1','bs3','','','rad2','rad3'],
-		['','','ext_c','ext_u1','ext_u2'],
+		['','','ext_c','','ext_u3'],
 		['feat6','feat7','feat8','feat9','feat10'],
 	],[
 		['s2','m2','t1','d1','bh2','gr1','sn2'],
@@ -643,11 +643,21 @@ const TREE_UPGS = {
 		ext_u2: {
 			unl() { return EXT.unl() },
 			branch: ["ext_u1"],
-			req() { return player.ext.amt.gte(EXT.amt(1e100)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e100)) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(1e200)) },
+			reqDesc() { return "Get " + format(EXT.amt(1e200)) + " Exotic Matter." },
 			desc: `Argon-18 boosts Tickspeed Power and Tickspeed-Cap Boost instead.`,
 			cost: E(0),
 			perm: 2,
+		},
+		ext_u3: {
+			unl() { return EXT.unl() },
+			branch: ["ext_u2"],
+			req() { return player.ext.amt.gte(EXT.amt("e1e4")) },
+			reqDesc() { return "Get " + format(EXT.amt("e1e4")) + " Exotic Matter." },
+			desc: `Bring Particle Powers back to glory. [Nullify boosts and softcaps]`,
+			cost: E(0),
+			perm: 2,
+			icon: "exotic"
 		},
 		qol_ext1: {
 			branch: ["qol1"],

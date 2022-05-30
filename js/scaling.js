@@ -164,7 +164,6 @@ const SCALE_FP = {
 	tickspeed() { return [1,1,1,tmp.tickspeedFP] },
 	massUpg() { return [1,1,1,tmp.upgs.fp] },
 	bh_condenser() { return [1,1,1,tmp.upgs.fp] },
-	gamma_ray() { return [1,1,1,CHROMA.got("s3_2")?CHROMA.eff("s3_2"):1] },
 }
 
 const SCALE_FLOORS = {

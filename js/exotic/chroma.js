@@ -45,12 +45,15 @@ let CHROMA = {
 			"t1_1", "t2_1", "t3_1", "t4_1", "t5_1", "t6_1",
 		],
 		power() {
-			let log = player.mass.max(1).log(mlt(3e4))
+			let start = mlt(3e4)
+			if (hasPrim("p0_0")) start = start.root(tmp.pr.eff["p0_0"])
+
+			let log = player.mass.max(1).log(start)
 			if (log.lt(1)) return E(0)
 			return log.log10().add(1).pow(.75).sub(1)
 		},
 		cost(x) {
-			return future ? E(0) : tmp.ch.mlt.mul(player.ext.ch.upg.length * 3 + 1).floor()
+			return future ? E(0) : tmp.ch.mlt.mul(player.ext.ch.upg.length * 2 + 1).floor()
 		},
 		next(x) {
 			if (CHROMA.got(x+"_2")) return x+"_3"
@@ -242,8 +245,12 @@ function updateChromaTemp() {
 	data.req = EXT.amt(CHROMA.tones.reqs_toggle[data.toned])
 
 	let em_log = EXT.eff().add(1).log10().sqrt().add(1)
-	data.bp_next = E(10).pow(E(1.6).pow(save.bp).mul(1e15).div(em_log))
-	data.bp_bulk = player.mass.div(uni(1)).log10().div(1e15).mul(em_log).log(1.6).floor().add(1)
+		.softcap(1e5,0.2,0)
+	let fP = E(1)
+	if (tmp.chal) fP = tmp.chal.eff[15]
+
+	data.bp_next = E(10).pow(E(1.6).pow(save.bp.div(fP)).mul(1e15).div(em_log))
+	data.bp_bulk = player.mass.div(uni(1)).log10().div(1e15).mul(em_log).log(1.6).mul(fP).floor().add(1)
 	if (player.mass.lte("e6e13")) data.bp_bulk = E(0)
 
 	let s = CHROMA.spices

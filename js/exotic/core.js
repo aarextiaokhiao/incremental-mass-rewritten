@@ -6,7 +6,8 @@ let EXOTIC = {
 			chal: { },
 			ec: 0,
 			ax: AXION.setup(),
-			ch: CHROMA.setup()
+			ch: CHROMA.setup(),
+			pr: PRIM.setup()
 		}
 	},
 
@@ -42,12 +43,12 @@ let EXOTIC = {
 	},
 	reduce(t, x) {
 		if (t == 1) return x.eq(0) ? E(0) : x.mul(10).log10().max(0).pow(5).mul(10)
-		if (t == 2) return expMult(x, 0.75)
+		if (t == 2) return expMult(x, 0.8)
 		return x
 	},
-	eff() {
-		let r = player.ext.amt
-		if (this.extLvl() >= 2) r = expMult(r, 1/0.75)
+	eff(r) {
+		if (!r) r = player.ext.amt
+		if (this.extLvl() >= 2) r = expMult(r, 1/0.8)
 		if (this.extLvl() >= 1) r = E(10).pow(r.div(10).root(5)).div(10)
 		if (CHROMA.got("p1_1")) r = expMult(r,CHROMA.eff("p1_1"))
 		return r
@@ -125,6 +126,10 @@ let EXOTIC = {
 			t: 0
 		}
 
+		player.ext.pr.bp = E(0)
+		player.ext.pr.pt = E(0)
+		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = E(0)
+
 		SUPERNOVA.doReset()
 		updateTemp()
 
@@ -153,8 +158,13 @@ let EXOTIC = {
 		if (!player.ext.ch.unl && player.chal.comps[13].gte(13)) {
 			addPopup(POPUP_GROUPS.chroma)
 			player.ext.ch.unl = true
-		}
-		if (player.ext.ch.unl) CHROMA.calc(dt)
+		} else if (player.ext.ch.unl) CHROMA.calc(dt)
+
+		//PRIMORDIUMS
+		if (!player.ext.pr.unl && tmp.ax && tmp.ax.lvl[22].gt(0)) {
+			addPopup(POPUP_GROUPS.prim)
+			player.ext.pr.unl = true
+		} else if (player.ext.pr.unl) PRIM.calc(dt)
 	}
 }
 let EXT = EXOTIC
@@ -165,6 +175,7 @@ function updateExoticHTML() {
 		tmp.el.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateChromaHTML()
+		if (tmp.stab[6] == 2) updatePrimHTML()
 	}
 }
 
@@ -196,6 +207,7 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			let r = x.times(5).add(1).log(2).div(500)
 			if (AXION.unl()) r = r.mul(tmp.ax.eff[9])
+			if (hasPrim("p2_0")) r = r.add(tmp.pr.eff["p2_0"])
 			return r
 		}
 	},
@@ -287,4 +299,37 @@ function buyExtraBuildings(type, x) {
 	if (!EXTRA_BUILDINGS.unls[x]()) return
 	if (tmp.eb[type+x].gain.lt(getExtraBuildings(type,x))) return
 	EXTRA_BUILDINGS.saves[type]()["eb"+x] = tmp.eb[type+x].gain
+}
+
+function setupExtHTML() {
+	//AXIONS
+	var html = ""
+	for (var y = -1; y < AXION.maxRows; y++) {
+		html += "</tr><tr>"
+		for (var x = -1; x < 5; x++) {
+			var x_empty = x == -1 || x == 4
+			var y_empty = y == -1
+			if (x_empty && y_empty) html += "<td class='ax'></td>"
+			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
+			if (x_empty && !y_empty && y < 4) {
+				var type = x == 4 ? 2 : 1
+				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
+			}
+			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
+		}
+	}
+	new Element("ax_table").setHTML(html)
+
+	//PRIM
+	var html = ""
+	for (var x = 0; x < 8; x++) {
+		html += `
+		<div class="primordium table_center">
+			<div style="width: 240px; height: 54px;">
+				<h2>${PRIM.prim[x].name} Particles [${PRIM.prim[x].sym}]</h2><br>[<span id="pr_${x}"></span>]
+			</div><div style="width: 240px; height: 54px; background: transparent; box-shadow: 0 0 6px #ffdf00; color: white" id="pr_eff${x}"></div>
+		</div>
+		`
+	}
+	new Element("pr_table").setHTML(html)
 }
