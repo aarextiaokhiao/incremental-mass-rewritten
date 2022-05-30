@@ -628,7 +628,7 @@ const TREE_UPGS = {
 			branch: ["ext_c"],
 			req() { return player.ext.amt.gte(EXT.amt(1e60)) },
 			reqDesc() { return "Get " + format(EXT.amt(1e60)) + " Exotic Matter." },
-			desc: `Start producing Z-Axions based on Frequency.`,
+			desc: `Start producing Z-Axions based on log^2(EM).`,
 			cost: E(0),
 		},
 		ext_u1: {
@@ -643,8 +643,8 @@ const TREE_UPGS = {
 		ext_u2: {
 			unl() { return EXT.unl() },
 			branch: ["ext_u1"],
-			req() { return player.ext.amt.gte(EXT.amt(1/0)) },
-			reqDesc() { return "Coming soon!" },
+			req() { return player.ext.amt.gte(EXT.amt(1e100)) },
+			reqDesc() { return "Get " + format(EXT.amt(1e100)) + " Exotic Matter." },
 			desc: `Argon-18 boosts Tickspeed Power and Tickspeed-Cap Boost instead.`,
 			cost: E(0),
 			perm: 2,

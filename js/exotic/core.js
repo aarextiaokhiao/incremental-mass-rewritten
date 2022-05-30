@@ -23,6 +23,7 @@ let EXOTIC = {
 		if (hasTree("ext_u1")) s = s.mul(E(1.01).pow(player.chal.comps[12].add(1)))
 		if (CHROMA.got("p1_3")) s = s.mul(CHROMA.eff("p1_3"))
 		if (CHROMA.got("p1_2")) s = s.mul(CHROMA.eff("p1_2"))
+        if (tmp.chal) s = s.mul(tmp.chal.eff[14].exp)
 
 		let r = player.mass.add(1).log10().div(1e9).add(1).pow(s)
 		return this.amt(r)
@@ -52,11 +53,10 @@ let EXOTIC = {
 		return r
 	},
 
-	reset(force, auto) {
-		if (!force) {
-			if (player.chal.comps[12].eq(0)) return false
-			player.ext.amt = player.ext.amt.add(EXT.gain())
-		} else if (!auto && player.confirms.ext && !confirm("Are you sure?")) return false
+	reset(force) {
+		let can = player.chal.comps[12].gt(0)
+		if (!force && player.confirms.ext && !confirm("Are you sure?")) return false
+		if (can) player.ext.amt = player.ext.amt.add(EXT.gain())
 		EXT.doReset()
 		return true
 	},

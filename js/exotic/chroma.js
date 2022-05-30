@@ -16,11 +16,12 @@ let CHROMA = {
 	tones: {
 		colors: ["Red", "Green", "Blue", "Ultraviolet"],
 		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank - Tetr"],
-		reqs: [E(0), EINF, EINF, EINF],
+		reqs: [E(0), E(1e50), E("1e2500"), E("1e125000")],
+		reqs_toggle: [E(0), E(1e100), E("1e10000"), E("1e1000000")],
 		toggle(x) {
 			if (!player.ext.ch.tones[x] && !this.can(x)) return
 			player.ext.ch.tones[x] = !player.ext.ch.tones[x]
-			EXOTIC.reset(player.chal.comps[12].eq(0), true)
+			EXOTIC.reset(true)
 		},
 		can(x) {
 			return player.ext.amt.gte(tmp.ch.req) && player.ext.amt.gte(this.reqs[x])
@@ -48,17 +49,16 @@ let CHROMA = {
 			if (log.lt(1)) return E(0)
 			return log.log10().add(1).pow(.75).sub(1)
 		},
-		get(x) {
-			if (!CHROMA.can(x)) return
-			player.ext.ch.upg.push(x)
-		},
 		cost(x) {
-			return EINF
+			return future ? E(0) : tmp.ch.mlt.mul(player.ext.ch.upg.length * 3 + 1).floor()
 		},
-		can(x) {
-			if (player.ext.ch.bp.lt(CHROMA.spices.cost())) return
-			if (player.ext.ch.upg.includes(x)) return
-			if (x[0] != "p") return
+		next(x) {
+			if (CHROMA.got(x+"_2")) return x+"_3"
+			if (CHROMA.got(x+"_1")) return x+"_2"
+			return x+"_1"
+		},
+		unl(x) {
+			if (x[0] == "t" || x[3] == "3") return zeta()
 			return true
 		},
 
@@ -199,9 +199,36 @@ let CHROMA = {
 	eff(i,v=1) {
 		return tmp.ch.eff[i]
 	},
+	can(x) {
+		if (player.ext.ch.bp.lt(CHROMA.spices.cost())) return false
+
+		let next = CHROMA.spices.next(x)
+		if (CHROMA.got(next)) return false
+		if (!CHROMA.spices.all.includes(next)) return false
+
+		if (next[0] == "p") {
+			if (next[3] != "1") return CHROMA.got("s" + next[1] + "_" + (next[3] - 1)) && CHROMA.got("s" + (next[1] == "1" ? 3 : next[1] - 1) + "_" + (next[3] - 1))
+			return true
+		}
+		if (next[0] == "s") {
+			if (next[3] != "1") return CHROMA.got("t" + (next[1] * 2) + "_" + (next[3] - 1)) && CHROMA.got("t" + (next[1] * 2 - 1) + "_" + (next[3] - 1))
+			return CHROMA.got("p" + next[1] + "_" + next[3]) && CHROMA.got("p" + (next[1] % 3 + 1) + "_" + next[3])
+		}
+		if (next[0] == "t") return CHROMA.got("s" + Math.ceil(next[1] / 2) + "_" + next[3]) && CHROMA.got("s" + (Math.ceil(next[1] / 2) % 3 + 1) + "_" + next[3])
+		return false
+	},
+	get(x) {
+		if (!CHROMA.can(x)) return
+		player.ext.ch.upg.push(CHROMA.spices.next(x))
+	},
 	got(i) {
 		return tmp.ch.eff && player.ext.ch.upg.includes(i)
 	},
+	respec() {
+		if (!confirm("Are you sure do you want to respec your Chroma?")) return
+		player.ext.ch.upg = []
+		EXT.reset(true)
+	}
 }
 
 function updateChromaTemp() {
@@ -212,18 +239,26 @@ function updateChromaTemp() {
 
 	data.toned = 0
 	for (var i = 0; i < save.tones.length; i++) if (save.tones[i]) data.toned++
-	data.req = EXT.amt([E(0), E("ee100"), E("ee100"), E("ee100")][data.toned])
+	data.req = EXT.amt(CHROMA.tones.reqs_toggle[data.toned])
 
-	data.bp_next = E(10).pow(E(1.6).pow(save.bp).mul(6e13))
-	data.bp_bulk = player.mass.div(uni(1)).log10().div(6e13).log(1.6).floor().add(1)
+	let em_log = EXT.eff().add(1).log10().sqrt().add(1)
+	data.bp_next = E(10).pow(E(1.6).pow(save.bp).mul(1e15).div(em_log))
+	data.bp_bulk = player.mass.div(uni(1)).log10().div(1e15).mul(em_log).log(1.6).floor().add(1)
 	if (player.mass.lte("e6e13")) data.bp_bulk = E(0)
 
 	let s = CHROMA.spices
 	data.pwr = s.power()
+	data.mlt = E(1)
 	data.eff = {}
 	for (var i = 0; i < s.all.length; i++) {
 		let id = s.all[i]
 		data.eff[id] = s[id].eff(data.pwr)
+		if (CHROMA.got(id)) {
+			if (id[3] != "1") data.mlt = data.mlt.mul(0.9)
+			else if (id[0] == "p") data.mlt = data.mlt.mul(1.3)
+			else if (id[0] == "s") data.mlt = data.mlt.mul(1.2)
+			else if (id[0] == "t") data.mlt = data.mlt.mul(1.2)
+		}
 	}
 }
 
@@ -248,11 +283,14 @@ function updateChromaHTML() {
 		let id = all[i]
 		tmp.el["cs_"+id].setTxt(s[id].desc(tmp.ch.eff[id]))
 		tmp.el["cs_"+id].setOpacity(CHROMA.got(id) ? 1 : 0.25)
+		tmp.el["cs_"+id].setDisplay(s.unl(id))
 	}
 	let rows = s.rows
 	for (var i = 0; i < rows.length; i++) {
 		let id = rows[i]
-		tmp.el["cs_"+id+"_a"].setClasses({btn: true, locked: !CHROMA.spices.can(id), btn_cs: true})
+		tmp.el["cs_"+id+"_a"].setClasses({btn: true, locked: !CHROMA.can(id), btn_cs: true})
+		tmp.el["cs_"+id+"_a"].setTxt(CHROMA.got(id+"_1") ? "Extend" : id[0] == "p" ? "Assign" : "Spread")
+		tmp.el["cs_"+id+"_a"].setDisplay(s.unl(id+"_1"))
 	}
 
 	tmp.el.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")

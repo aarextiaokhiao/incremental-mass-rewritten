@@ -95,7 +95,7 @@ const CHALS = {
         if (x <= 4) FORMS.bh.doReset()
         else if (x <= 8) ATOM.doReset(chal_reset)
         else if (x <= 12) SUPERNOVA.reset(true, true)
-        else EXT.reset(true, true)
+        else EXT.reset(true)
     },
 	exit(auto=false, noExt) {
 		let active = this.lastActive()
@@ -509,7 +509,7 @@ const CHALS = {
 		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || zeta() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass.",
-		reward: `Raise Challenge 10.<br><span class="yellow">On ???th completion, unlock Primordiums! [Coming soon!]</span>`,
+		reward: `Raise Challenge 10 and Exotic Matter.`,
 		max: E(100),
 		inc: E(10),
 		pow: E(1.25),
@@ -520,10 +520,10 @@ const CHALS = {
 				mul: x.div(25).add(1)
 			}
 		},
-        effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul) },
+        effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul)+" to C10" },
 	},
 	15: {
-		unl() { return zeta() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
 		desc: `Placeholder.`,
 		reward: `Placeholder.`,

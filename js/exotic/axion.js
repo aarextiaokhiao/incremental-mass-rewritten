@@ -48,9 +48,9 @@ let AXION = {
 
 		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
 
-		var r = E([2,3,10][type])
+		var r = E([2,3,1.5][type])
 			.pow(sum.add(i - 4))
-			.mul(i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (50 / (i + 5) * Math.pow(3, i)))
+			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (50 / (i + 5) * Math.pow(3, i)))
 		return r
 	},
 	costScale() {
@@ -65,7 +65,7 @@ let AXION = {
 		if (player.ext.ax.res[type].lt(cost)) return E(0)
 		var bulk = player.ext.ax.res[type]
 			.div(cost)
-			.log([2,3,10][type])
+			.log([2,3,1.5][type])
 			.div(tmp.ax.fp)
 			.add(1).floor()
 		bulk = bulk.min(tmp.ax.max[type].sub(player.ext.ax.upgs[p]))
@@ -81,7 +81,7 @@ let AXION = {
 		var type = Math.floor(i / 4)
 		if (bulk.eq(0)) return
 		if (!a) player.ext.ax.res[type] = player.ext.ax.res[type].sub(
-			E([2,3,10][type]).pow(
+			E([2,3,1.5][type]).pow(
 				bulk.sub(1)
 				.mul(tmp.ax.fp)
 			).mul(cost)
@@ -100,8 +100,7 @@ let AXION = {
 			.mul(em.add(1).log(100).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
 			.mul(em.add(1).log10().add(1))
-		if (x == 2 && hasTree("ext_e1")) r = player.supernova.radiation.hz.max(1).log10()
-			.mul(em.add(1).log10().add(1).sqrt())
+		if (x == 2 && hasTree("ext_e1")) r = em.add(1).log10().add(1).log10().add(1).pow(5)
 
 		if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
 		return r
@@ -137,7 +136,8 @@ let AXION = {
 		if (hasTree("ext_e1")) {
 			r = r.add(tmp.ax.upg[y + 8])
 			if (y > 0) r = r.add(tmp.ax.upg[y + 7])
-			if (y == 5) r = r.add(tmp.ax.upg[y + 6])
+			if (y < 4) r = r.mul(5)
+			if (y == 5) r = tmp.ax.upg[8].add(tmp.ax.upg[9]).add(tmp.ax.upg[10]).add(tmp.ax.upg[11])
 		}
 		return r
 	},
@@ -148,8 +148,12 @@ let AXION = {
 		var x = p % 4
 		var y = Math.floor(p / 4)
 		var r = E(0)
+
 		if (y > 0) r = tmp.ax.upg[y + 3].sub((x + 4) * (y + 1)).div(y + 2).max(0)
 		if (hasTree("ext_b1") && y == 0) r = AXION.getBaseLvl(p + 12).mul(2).add(r)
+
+		var t = AXION.getBaseLvl(p).add(r)
+		if (future_ax && y < 4) r = E(1.01).pow(t).sub(1).mul(t)
 		return r
 	},
 	getEff(p, l) {
@@ -349,9 +353,9 @@ let AXION = {
 			title: "Dyson Sphere",
 			desc: "Multiply BH Upgrade 15.",
 			unl: () => CHROMA.unl(),
-			req: E(1),
+			req: E(3),
 			eff(x) {
-				return x.add(1).cbrt().min(4)
+				return x.sqrt().add(1).min(4)
 			},
 			effDesc(x) {
 				return "x"+format(x,3)
@@ -361,9 +365,9 @@ let AXION = {
 			title: "Quasar",
 			desc: "Increase the cap of C8. [Post-600 doesn't affect BH Mass!]",
 			unl: () => CHROMA.unl(),
-			req: E(30),
+			req: E(2),
 			eff(x) {
-				return x.add(1).log(2).mul(100)
+				return x.sqrt().mul(100)
 			},
 			effDesc(x) {
 				return "+"+format(x)
@@ -373,9 +377,9 @@ let AXION = {
 			title: "Temporal Dimensionality",
 			desc: "Strengthen Tickspeed-Cap Boost.",
 			unl: () => CHROMA.unl(),
-			req: E(10),
+			req: E(0.5),
 			eff(x) {
-				return x.div(5).add(1).log10().div(5).add(1)
+				return x.sqrt().div(5).add(1)
 			},
 			effDesc(x) {
 				return "^"+format(x,3)
@@ -384,12 +388,12 @@ let AXION = {
 		19: {
 			title: "General Relativity",
 			desc: "Dilated Mass raises Tickspeed power.",
-			req: E(100),
+			req: E(4),
 			unl: () => CHROMA.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
 				let r = player.md.mass.add(1).log10().add(1).log10().add(1) // log^2(Dilated mass)
-				r = r.pow(x.add(1).log10().div(10)) // log(Levels)
+				r = r.pow(x.sqrt().div(10)) // Levels
 				return r.min(3)
 			},
 			effDesc(x) {
@@ -401,17 +405,17 @@ let AXION = {
 			title: "AX-Automation",
 			desc: "Automate X/Y AXIONS.",
 			unl: () => CHROMA.unl(),
-			req: E(50)
+			req: E(5)
 		},
 		21: {
-			title: "Placeholder.",
-			desc: "Placeholder.",
+			title: "Monochromacy Challenge",
+			desc: "Unlock Challenges 14 - 15.",
 			unl: () => CHROMA.unl(),
-			req: EINF
+			req: E(10)
 		},
 		22: {
-			title: "Monochromacy Challenge",
-			desc: "Unlock Challenge 14.",
+			title: "Primordial Lookback",
+			desc: "Unlock Primordiums. [Coming soon!]",
 			unl: () => CHROMA.unl(),
 			req: EINF
 		},
@@ -535,7 +539,7 @@ function hoverAxion(x) {
 			let hide = true
 			let bonus = false
 			if (id >= 8) {
-				hide = py != id - 8 && py != id - 7
+				hide = py != id - 8 && py != 5
 			} else if (id >= 4) {
 				bonus = py == id - 3 && tmp.ax.upg[id].gt((px + 4) * (py + 1))
 				hide = !bonus && (py == id - 4 ? tmp.ax.upg[id].lte(px * py) : true)
@@ -554,7 +558,7 @@ function hoverAxion(x) {
 				if (i < 4 && px == i && tmp.ax.upg[i].gt(py * 4)) hide = false
 				if (i >= 4 && py == i - 4 && tmp.ax.upg[i].gt(px * py)) hide = false
 				if (i >= 4 && py == i - 3 && tmp.ax.upg[i - 1].div(py + 2).gt((px + 4) * py)) hide = false
-			}
+			} else if (i > 8 && tmp.ax.upg[i].gt(0)) hide = false
 			if (hide) tmp.ax.hover.hide.push("u"+i)
 		}
 	}

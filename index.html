@@ -25,6 +25,7 @@
     <script src="js/exotic/core.js"></script>
     <script src="js/exotic/axion.js"></script>
     <script src="js/exotic/chroma.js"></script>
+    <script src="js/exotic/prim.js"></script>
 
     <script src="js/supernova/radiation.js"></script>
     <script src="js/supernova/fermions.js"></script>
@@ -185,77 +186,77 @@
 				</div>
 				(Your next tone requires <span id="ch_req">0.00</span> Exotic Matter!)
 				<br><br>
-				<span class="rainbow" id="ch_bp">You have 0 Beauty Pigments.</span> <span id="ch_nxt"></span>
-				<br>
-				<span class="rainbow" id="ch_pwr"></span>
+				<span class="rainbow" id="ch_bp">You have 0 Beauty Pigments.</span> <span id="ch_nxt"></span><br>
+				<span class="rainbow" id="ch_pwr"></span><br>
+				<button class="btn btn_cs" onclick="CHROMA.respec()">Respec</button><br>
 				<div class="table_center">
-					<button class="btn btn_cs" id="cs_p1_a">Assign</button>
+					<button id="cs_p1_a" onclick="CHROMA.get('p1')"></button>
 					<div class="boost_cs" id="cs_p1_1" style="border-color: #7f0000"></div>
 					<div class="boost_cs" id="cs_p1_2" style="border-color: #bf0000"></div>
 					<div class="boost_cs" id="cs_p1_3" style="border-color: #ff0000"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_t1_a">Spread</button>
+					<button id="cs_t1_a" onclick="CHROMA.get('t1')"></button>
 					<div class="boost_cs" id="cs_t1_1" style="border-color: #7f3f00"></div>
 					<div class="boost_cs"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_s1_a">Spread</button>
+					<button id="cs_s1_a" onclick="CHROMA.get('s1')"></button>
 					<div class="boost_cs" id="cs_s1_1" style="border-color: #7f7f00"></div>
 					<div class="boost_cs" id="cs_s1_2" style="border-color: #bfbf00"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_t2_a">Spread</button>
+					<button id="cs_t2_a" onclick="CHROMA.get('t2')"></button>
 					<div class="boost_cs" id="cs_t2_1" style="border-color: #3f7f00"></div>
 					<div class="boost_cs"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn btn_cs" id="cs_p2_a">Assign</button>
+					<button id="cs_p2_a" onclick="CHROMA.get('p2')"></button>
 					<div class="boost_cs" id="cs_p2_1" style="border-color: #007f00"></div>
 					<div class="boost_cs" id="cs_p2_2" style="border-color: #00bf00"></div>
 					<div class="boost_cs" id="cs_p2_3" style="border-color: #00ff00"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_t3_a">Spread</button>
+					<button id="cs_t3_a" onclick="CHROMA.get('t3')"></button>
 					<div class="boost_cs" id="cs_t3_1" style="border-color: #007f3f"></div>
 					<div class="boost_cs"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_s2_a">Spread</button>
+					<button id="cs_s2_a" onclick="CHROMA.get('s2')"></button>
 					<div class="boost_cs" id="cs_s2_1" style="border-color: #007f7f"></div>
 					<div class="boost_cs" id="cs_s2_2" style="border-color: #00bfbf"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_t4_a">Spread</button>
+					<button id="cs_t4_a" onclick="CHROMA.get('t4')"></button>
 					<div class="boost_cs" id="cs_t4_1" style="border-color: #003f7f"></div>
 					<div class="boost_cs"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn btn_cs" id="cs_p3_a">Assign</button>
+					<button id="cs_p3_a" onclick="CHROMA.get('p3')"></button>
 					<div class="boost_cs" id="cs_p3_1" style="border-color: #00007f"></div>
 					<div class="boost_cs" id="cs_p3_2" style="border-color: #0000bf"></div>
 					<div class="boost_cs" id="cs_p3_3" style="border-color: #0000ff"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_t5_a">Spread</button>
+					<button id="cs_t5_a" onclick="CHROMA.get('t5')"></button>
 					<div class="boost_cs" id="cs_t5_1" style="border-color: #3f007f"></div>
 					<div class="boost_cs"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_s3_a">Spread</button>
+					<button id="cs_s3_a" onclick="CHROMA.get('s3')"></button>
 					<div class="boost_cs" id="cs_s3_1" style="border-color: #7f007f"></div>
 					<div class="boost_cs" id="cs_s3_2" style="border-color: #bf00bf"></div>
 					<div class="boost_cs"></div>
 				</div>
 				<div class="table_center">
-					<button class="btn locked btn_cs" id="cs_t6_a">Spread</button>
+					<button id="cs_t6_a" onclick="CHROMA.get('t6')"></button>
 					<div class="boost_cs" id="cs_t6_1" style="border-color: #7f003f"></div>
 					<div class="boost_cs"></div>
 					<div class="boost_cs"></div>

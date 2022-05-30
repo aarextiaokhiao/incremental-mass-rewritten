@@ -46,7 +46,7 @@ const TABS = {
         6: [
             { id: "Axions" },
             { id: "Chroma", unl() { return player.ext.ch.unl || zeta() } },
-            { id: "Primordium", unl() { return player.chal.comps[15].gte(1) || zeta() } },
+            { id: "Primordium", unl() { return PRIM.unl() || zeta() } },
             { id: "Entropy", unl() { return zeta() } },
             { id: "Big Rip", unl() { return zeta() } }
         ],

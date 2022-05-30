@@ -197,7 +197,11 @@ function checkAPVers() {
 	else {
 		if (player.ap_ver < 1) addPopup(POPUP_GROUPS.ap_chroma)
 	}
-	player.ap_ver = 1
+	if (player.ap_var < 1.001) {
+		player.ext.ax.res[2] = E(0)
+		for (var i = 8; i < 12; i++) player.ext.ax.upg[i] = E(0)
+	}
+	player.ap_ver = 1.001
 }
 
 let beta = true

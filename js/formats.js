@@ -370,6 +370,7 @@ function colorize(x, color, id = 'red') {
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
     ex = E(ex)
+    if (ex.gte(EINF)) return f(ex)
     if (ex.gte(meg(1))) return f(ex.div(1.5e56).log10().div(1e9).log10().div(1e9), 3) + ' ' + colorize('meg', color, "rainbow")
     if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
     if (ex.gte(uni(1))) return f(ex.div(1.5e56)) + ' uni'
