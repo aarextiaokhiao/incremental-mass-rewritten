@@ -4,7 +4,7 @@ let CHROMA = {
 	setup() {
 		return {
 			unl: false,
-			tones: [false, false, false, false],
+			tones: [false, false, false, false, false],
 			bp: E(0),
 			upg: [],
 		}
@@ -14,10 +14,10 @@ let CHROMA = {
 	},
 
 	tones: {
-		colors: ["Red", "Green", "Blue", "Ultraviolet"],
-		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank - Tetr"],
-		reqs: [E(0), E(1e50), E("1e2500"), E("1e125000")],
-		reqs_toggle: [E(0), E(1e100), E("1e10000"), E("1e1000000")],
+		colors: ["Red", "Green", "Blue", "Violet", "Ultraviolet"],
+		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank - Tetr", "Supernovae - Fermions"],
+		reqs: [E(0), E(1e50), E("1e2500"), E("1e125000"), E("1e10000000")],
+		reqs_toggle: [E(0), E(1e100), E("1e10000"), E("1e1000000"), E("1e10000000")],
 		toggle(x) {
 			if (!player.ext.ch.tones[x] && !this.can(x)) return
 			player.ext.ch.tones[x] = !player.ext.ch.tones[x]
@@ -30,9 +30,9 @@ let CHROMA = {
 
 	spices: {
 		rows: [
-			"p1", "p2", "p3",
-			"s1", "s2", "s3",
-			"t1", "t2", "t3", "t4", "t5", "t6",
+			"p1", "t1", "s1", "t2",
+			"p2", "t3", "s2", "t4",
+			"p3", "t5", "s3", "t6",
 		],
 		all: [
 			"p1_1", "p2_1", "p3_1",
@@ -68,54 +68,63 @@ let CHROMA = {
 		//PRIMARY
 		p1_1: {
 			desc: (x) => "Strengthen Exotic Matter by ^"+format(x)+".",
+			color: "#7f0000",
 			eff(x) {
 				return E(3).sub(E(2).div(x.div(2).add(1)))
 			},
 		},
 		p2_1: {
 			desc: (x) => "Raise mass outside of MD, by ^"+format(x)+".",
+			color: "#007f00",
 			eff(x) {
 				return x.div(4).add(1).min(2)
 			},
 		},
 		p3_1: {
 			desc: (x) => "Raise Radiation self-boosts by ^"+format(x)+".",
+			color: "#00007f",
 			eff(x) {
 				return E(1)
 			},
 		},
 		p1_2: {
 			desc: (x) => "C12 raises Exotic Matter by ^"+format(x)+".",
+			color: "#bf0000",
 			eff(x) {
 				return E(1).add(x.div(100)).min(1.05).pow(player.chal.comps[12])
 			},
 		},
 		p2_2: {
 			desc: (x) => "Reduce the Mass Dilation penalty by "+format((1-1/x)*100)+"%.",
+			color: "#00bf00",
 			eff(x) {
 				return x.div(4).add(1).toNumber()
 			},
 		},
 		p3_2: {
 			desc: (x) => "Add Neutron Condensers by +^"+format(x,3)+".",
+			color: "#0000bf",
 			eff(x) {
 				return x.div(30)
 			},
 		},
 		p1_3: {
 			desc: (x) => "Supernovae raises Exotic Matter by ^"+format(x)+".",
+			color: "#ff0000",
 			eff(x) {
 				return player.supernova.times.div(300).add(1).pow(x.mul(0.5).min(2))
 			},
 		},
 		p2_3: {
 			desc: (x) => "Green-1 equalizes Ni-28.",
+			color: "#00ff00",
 			eff(x) {
 				return CHROMA.eff("p2_1").max(1.5)
 			},
 		},
 		p3_3: {
 			desc: (x) => "Master Bosons, with new effects.",
+			color: "#0000ff",
 			eff(x) {
 				return 1
 			},
@@ -124,36 +133,42 @@ let CHROMA = {
 		//SECONDARY
 		s1_1: {
 			desc: (x) => "Weaken Ultra Fermion scaling by "+format(E(1).sub(E(1).div(x)).mul(100))+"%.",
+			color: "#7f7f00",
 			eff(x) {
 				return x.mul(0.4).add(1)
 			},
 		},
 		s2_1: {
 			desc: (x) => "Strengthen Star Boosters by "+format(x)+"x.",
+			color: "#007f7f",
 			eff(x) {
 				return x.div(2.5).add(1)
 			},
 		},
 		s3_1: {
 			desc: (x) => "Weaken Pre-Atom buildings by "+format(x)+"x.",
+			color: "#7f007f",
 			eff(x) {
 				return E(1.5).pow(x)
 			},
 		},
 		s1_2: {
 			desc: (x) => "Dual Fermions give +"+format(x,0)+" Tiers.",
+			color: "#bfbf00",
 			eff(x) {
 				return x.mul(5).floor()
 			},
 		},
 		s2_2: {
 			desc: (x) => "Rank boosts Mass by "+format(x)+"x.",
+			color: "#00bfbf",
 			eff(x) {
 				return E(1.1).pow(player.ranks.rank.pow(3))
 			},
 		},
 		s3_2: {
 			desc: (x) => "Weaken Cosmic Rays by "+format(x)+"x.",
+			color: "#bf00bf",
 			eff(x) {
 				return E(1.5).pow(x.sub(1)).max(1)
 			},
@@ -162,18 +177,21 @@ let CHROMA = {
 		//TERITARY
 		t1_1: {
 			desc: (x) => "Bank "+format(x.mul(100))+"% of black hole mass.",
+			color: "#7f3f00",
 			eff(x) {
 				return x.mul(.05).add(.3).min(.7)
 			},
 		},
 		t2_1: {
 			desc: (x) => "Bank "+format(x.mul(100))+"% of Hawking Radiation.",
+			color: "#3f7f00",
 			eff(x) {
 				return x.mul(.05).add(.5).min(.7)
 			},
 		},
 		t3_1: {
 			desc: (x) => "Cosmic Ray Power weakens pre-Atom Buildings.",
+			color: "#007f3f",
 			eff(x) {
 				if (!tmp.atom) return E(1)
 				return tmp.atom.gamma_ray_eff.pow.log(1e20).max(1)
@@ -181,18 +199,21 @@ let CHROMA = {
 		},
 		t4_1: {
 			desc: (x) => "“rad2” and “Os-73” synergize at "+format(x.mul(100))+"% power.",
+			color: "#003f7f",
 			eff(x) {
 				return x.div(40).min(1)
 			},
 		},
 		t5_1: {
 			desc: (x) => "Raise 4th Photon Upgrade by ^"+format(x)+".",
+			color: "#3f007f",
 			eff(x) {
 				return x.div(10).add(1).min(2)
 			},
 		},
 		t6_1: {
 			desc: (x) => "Multiply Axion Boosts by "+format(x)+"x.",
+			color: "#7f003f",
 			eff(x) {
 				return x.div(4).add(1)
 			},
@@ -279,7 +300,7 @@ function updateChromaHTML() {
 		let choosed = save.tones[i]
 		let unl = player.ext.amt.gte(EXT.amt(CHROMA.tones.reqs[i]))
 		let unavailable = !CHROMA.tones.can(i) && !choosed
-		tmp.el["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, unavailable: unavailable, choosed: choosed})
+		tmp.el["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, locked: unavailable, choosed: choosed})
 		tmp.el["ch_tone_" + i].setTxt(unl ? CHROMA.tones.colors[i] + (save.tones[i] ? ": ON" : ": OFF") : "Locked")
 		tmp.el["ch_eff_" + i].setTxt(unl ? CHROMA.tones.effs[i] : "Req: " + format(EXT.amt(CHROMA.tones.reqs[i])) + " EM")
 	}

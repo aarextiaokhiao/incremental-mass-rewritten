@@ -285,8 +285,8 @@ const RANKS = {
         },
         pent() {
             let f = E(5/6)
-            if (AXION.unl()) f = f.div(tmp.ax.eff[15].div)
-            if (hasElement(81)) f = f.mul(0.88)
+            if (AXION.unl()) f = f.mul(tmp.ax.eff[15].div)
+            if (hasElement(81)) f = f.div(0.88)
             return f
         },
     },
@@ -319,8 +319,8 @@ function updateRanksTemp() {
     d.tetr.bulk = s.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery("tetr", 1).add(1).floor();
 
 	fp = u.fp.pent()
-	d.pent.req = s.pent.mul(fp).pow(1.25).add(15).floor()
-	d.pent.bulk = s.tetr.sub(15).max(0).root(1.25).div(fp).add(1).floor();
+	d.pent.req = s.pent.div(fp).pow(1.25).add(15).floor()
+	d.pent.bulk = s.tetr.sub(15).max(0).root(1.25).mul(fp).add(1).floor();
 
     for (let x = 0; x < u.names.length; x++) {
         let rn = u.names[x]

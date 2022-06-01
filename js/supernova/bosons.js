@@ -163,6 +163,7 @@ const BOSONS = {
 
 					let exp = E(1/3)
 					exp = exp.mul(tmp.fermions.effs[0][3])
+					if (scalingToned("supernova")) exp = exp.mul(1/9)
 					if (CHROMA.got("t5_1")) exp = exp.mul(CHROMA.eff("t5_1"))
 					return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(exp)).div(10).add(1)
 				},

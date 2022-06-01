@@ -74,8 +74,9 @@ const SUPERNOVA = {
     req(x=player.supernova.times) {
         ml_fp = E(1).mul(tmp.bosons.upgs.gluon[3].effect)
         ml_fp2 = E(1).mul(AXION.unl()?tmp.ax.eff[12]:1)
-        maxlimit = E(1e20).pow(x.scaleEvery("supernova").div(ml_fp).pow(1.25)).mul(1e90).root(ml_fp2)
-        bulk = player.stars.points.pow(ml_fp2).div(1e90).max(1).log(1e20).max(0).root(1.25).mul(ml_fp).scaleEvery("supernova",1).add(1).floor()
+        exp = scalingInitPower("supernova")
+        maxlimit = E(1e20).pow(x.scaleEvery("supernova").div(ml_fp).pow(exp)).mul(1e90).root(ml_fp2)
+        bulk = player.stars.points.pow(ml_fp2).div(1e90).max(1).log(1e20).max(0).root(exp).mul(ml_fp).scaleEvery("supernova",1).add(1).floor()
         if (bulk.lt(1)) bulk = E(0)
         return {maxlimit: maxlimit, bulk: bulk}
     },

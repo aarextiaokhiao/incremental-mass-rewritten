@@ -241,7 +241,11 @@ function updateUpperHTML() {
 
 	unl = EXT.unl(true)
 	tmp.el.ext_div.setDisplay(unl)
+	tmp.el.res_col2.setDisplay(!unl)
 	if (unl) tmp.el.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
+
+	unl = zeta()
+	tmp.el.zt_div.setDisplay(unl)
 }
 
 function updateRanksHTML() {
@@ -298,7 +302,7 @@ function updateTickspeedHTML() {
 		tmp.el.tickspeed_lvl.setTxt(format(player.tickspeed,0)+(tmp.atom.atomicEff.gte(1)?" + "+format(tmp.atom.atomicEff,0):""))
 		tmp.el.tickspeed_btn.setClasses({btn: true, locked: !FORMS.tickspeed.can()})
 		tmp.el.tickspeed_cost.setTxt(format(tmp.tickspeedCost,0))
-		tmp.el.tickspeed_step.setHTML((tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")+getSoftcapHTML(tmp.tickspeedEffect.step,1e50))
+		tmp.el.tickspeed_step.setHTML((tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")+getSoftcapHTML(tmp.tickspeedEffect.step,tmp.tickspeedEffect.ss))
 		tmp.el.tickspeed_eff.setTxt(format(tmp.tickspeedEffect.eff))
 
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())

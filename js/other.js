@@ -119,6 +119,68 @@ const POPUP_GROUPS = {
         },
 	},
 
+
+    zeta_1: {
+        html: `
+            <img src="images/story/zeta_1.png"><br><br>
+            Spacetime has been imploded into unknown substances...
+            The everyday life has been obliberated, but what cost?
+            Primordium Zeta seems to be remain mysterious.
+        `,
+        button: "Uh oh",
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    zeta_2: {
+        html: `
+            <img src="images/story/zeta_2.png"><br><br>
+            It is unknown whether it is good, bad, chaos, or not.
+            You are nothing in spacetime now... Or it is?
+            You're a dimensionless now.
+        `,
+        button: "Sigh",
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    zeta_3: {
+        html: `
+            <img src="images/story/zeta_3.png"><br><br>
+            Spacetime is devoided, cracking the dimensionality into pieces.
+            As you gain the sense of Primordials, their gods have requested you.
+            Regardless of abstraction, I wonder what will you become?
+        `,
+        button: "Accept the gift",
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    zeta_4: {
+        html: `
+            <img src="images/story/zeta_4.png"><br><br>
+            Invisibly observing the clouds, they give you a surprise.
+            The recipe of Primordium Zetas. Let's unravel the mystery!
+            The reason why is they need to find what cause wrong!
+            To sustain, mass has been reformulated based on Primordiums!
+        `,
+        button: "Build em' all!",
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    zeta_5: {
+        html: `
+            Good luck!
+        `,
+        button: "Cool",
+        width: 400,
+        height: 150,
+        otherStyle: {
+            'font-size': "36px",
+        },
+    },
+
 	ap_chroma: {
 		html: `
 			<b class='rainbow' style='font-size: 20px'>Welcome to Chroma update!</b><br>
@@ -324,4 +386,12 @@ future_ax = false
 //FUTURE
 function zeta() {
 	return future
+}
+
+function zeta_story() {
+	addPopup(POPUP_GROUPS.zeta_1)
+	addPopup(POPUP_GROUPS.zeta_2)
+	addPopup(POPUP_GROUPS.zeta_3)
+	addPopup(POPUP_GROUPS.zeta_4)
+	addPopup(POPUP_GROUPS.zeta_5)
 }

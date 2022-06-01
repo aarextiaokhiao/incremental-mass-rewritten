@@ -56,6 +56,10 @@ const SCALE_INIT_POWERS = {
 	},
 	pent: {
 		normal: 1.25
+	},
+	supernova: {
+		normal: 1.25,
+		toned: 6
 	}
 }
 
@@ -178,6 +182,8 @@ const SCALE_TONE = {
 	tetr() { return player.ext.ch.tones[3] },
 	bh_condenser() { return player.ext.ch.tones[1] },
 	gamma_ray() { return player.ext.ch.tones[2] },
+	supernova() { return player.ext.ch.tones[4] },
+	fTier() { return player.ext.ch.tones[4] },
 }
 
 const SCALE_RES = {

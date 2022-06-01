@@ -167,6 +167,10 @@ button {
 	color: skyblue;
 }
 
+.purple {
+	color: #9f5fff
+}
+
 .magenta {
 	color: magenta;
 }
@@ -609,7 +613,7 @@ td.ax {
 	box-shadow: 0 0 24px #7f00bf;
 }
 
-.btn_ch.unavailable {
+.btn_ch.locked {
 	background: #3f0000 !important;
 	border-color: #7f0000;
 	color: #5f3f3f;
@@ -663,4 +667,11 @@ td.ax {
 
 .primordium > div {
 	text-align: left;
+}
+
+.btn_pr.choosed {
+	background: #7f3f00;
+	border-color: #ffbf00;
+	color: #ffbf00;
+	box-shadow: 0 0 24px #ffbf00;
 }

@@ -320,7 +320,41 @@ function setupExtHTML() {
 	}
 	new Element("ax_table").setHTML(html)
 
+	//CHROMA
+	var html = ""
+	var sData = CHROMA.spices
+	for (var y = 0; y < sData.rows.length; y++) {
+		var sp = sData.rows[y]
+		html += `<div class="table_center">`
+		for (var x = 0; x < 4; x++) {
+			if (x == 0) html += `<button id="cs_${sp}_a" onclick="CHROMA.get('${sp}')"></button>`
+			else if (sData.all.includes(sp+"_"+x)) html += `<div class="boost_cs" id="cs_${sp}_${x}" style='border-color: ${sData[sp+"_"+x].color}'></div>`
+			else html += `<div class="boost_cs"></div>`
+		}
+		html += `</div>`
+	}
+	new Element("ch_table").setHTML(html)
+
 	//PRIM
+	var html = ""
+	for (var y = 0; y < 4; y++) {
+		var conv = PRIM.conv[y]
+		html += `</tr><tr id='pr_cr${y}'>`
+		for (var x = 0; x < 4; x++) {
+			var ratio = conv.ratios[x]
+			var div = PRIM.disp(ratio[0], conv.res[0], true) + " -> "
+			var l = 0
+			for (var i = 1; i < conv.ratios[0].length; i++) {
+				if (ratio[i] == 0) continue
+				if (l) div += ", "
+				div += PRIM.disp(ratio[i], conv.res[i])
+				l++
+			}
+			html += `<td class='pr'><button class='btn' id='pr_c${y*10+x}' style='width: 150px; height: 48px' onclick='PRIM.toggle(${y}, ${x})'>${div}</button></td>`
+		}
+	}
+	new Element("pr_cloud").setHTML(html)
+
 	var html = ""
 	for (var x = 0; x < 8; x++) {
 		html += `

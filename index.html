@@ -182,111 +182,22 @@
 					<button class="btn btn_ch" id="ch_tone_0_btn" onclick="CHROMA.tones.toggle(0)"><b class='red' id="ch_tone_0">Red</b><br><span id="ch_eff_0"></span></button>
 					<button class="btn btn_ch" id="ch_tone_1_btn" onclick="CHROMA.tones.toggle(1)"><b class='green' id="ch_tone_1">Green</b><br><span id="ch_eff_1"></span></button>
 					<button class="btn btn_ch" id="ch_tone_2_btn" onclick="CHROMA.tones.toggle(2)"><b class='sky' id="ch_tone_2">Blue</b><br><span id="ch_eff_2"></span></button>
-					<button class="btn btn_ch" id="ch_tone_3_btn" onclick="CHROMA.tones.toggle(3)"><b class='magenta' id="ch_tone_3">Ultraviolet</b><br><span id="ch_eff_3"></span></button>
+					<button class="btn btn_ch" id="ch_tone_3_btn" onclick="CHROMA.tones.toggle(3)"><b class='purple' id="ch_tone_3">Violet</b><br><span id="ch_eff_3"></span></button>
+					<button class="btn btn_ch" id="ch_tone_4_btn" onclick="CHROMA.tones.toggle(4)"><b class='magenta' id="ch_tone_4">Ultraviolet</b><br><span id="ch_eff_4"></span></button>
 				</div>
 				(Your next tone requires <span id="ch_req">0.00</span> Exotic Matter!)
 				<br><br>
 				<span class="rainbow" id="ch_bp">You have 0 Beauty Pigments.</span> <span id="ch_nxt"></span><br>
 				<span class="rainbow" id="ch_pwr"></span><br>
 				<button class="btn btn_cs" onclick="CHROMA.respec()">Respec</button><br>
-				<div class="table_center">
-					<button id="cs_p1_a" onclick="CHROMA.get('p1')"></button>
-					<div class="boost_cs" id="cs_p1_1" style="border-color: #7f0000"></div>
-					<div class="boost_cs" id="cs_p1_2" style="border-color: #bf0000"></div>
-					<div class="boost_cs" id="cs_p1_3" style="border-color: #ff0000"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_t1_a" onclick="CHROMA.get('t1')"></button>
-					<div class="boost_cs" id="cs_t1_1" style="border-color: #7f3f00"></div>
-					<div class="boost_cs"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_s1_a" onclick="CHROMA.get('s1')"></button>
-					<div class="boost_cs" id="cs_s1_1" style="border-color: #7f7f00"></div>
-					<div class="boost_cs" id="cs_s1_2" style="border-color: #bfbf00"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_t2_a" onclick="CHROMA.get('t2')"></button>
-					<div class="boost_cs" id="cs_t2_1" style="border-color: #3f7f00"></div>
-					<div class="boost_cs"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_p2_a" onclick="CHROMA.get('p2')"></button>
-					<div class="boost_cs" id="cs_p2_1" style="border-color: #007f00"></div>
-					<div class="boost_cs" id="cs_p2_2" style="border-color: #00bf00"></div>
-					<div class="boost_cs" id="cs_p2_3" style="border-color: #00ff00"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_t3_a" onclick="CHROMA.get('t3')"></button>
-					<div class="boost_cs" id="cs_t3_1" style="border-color: #007f3f"></div>
-					<div class="boost_cs"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_s2_a" onclick="CHROMA.get('s2')"></button>
-					<div class="boost_cs" id="cs_s2_1" style="border-color: #007f7f"></div>
-					<div class="boost_cs" id="cs_s2_2" style="border-color: #00bfbf"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_t4_a" onclick="CHROMA.get('t4')"></button>
-					<div class="boost_cs" id="cs_t4_1" style="border-color: #003f7f"></div>
-					<div class="boost_cs"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_p3_a" onclick="CHROMA.get('p3')"></button>
-					<div class="boost_cs" id="cs_p3_1" style="border-color: #00007f"></div>
-					<div class="boost_cs" id="cs_p3_2" style="border-color: #0000bf"></div>
-					<div class="boost_cs" id="cs_p3_3" style="border-color: #0000ff"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_t5_a" onclick="CHROMA.get('t5')"></button>
-					<div class="boost_cs" id="cs_t5_1" style="border-color: #3f007f"></div>
-					<div class="boost_cs"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_s3_a" onclick="CHROMA.get('s3')"></button>
-					<div class="boost_cs" id="cs_s3_1" style="border-color: #7f007f"></div>
-					<div class="boost_cs" id="cs_s3_2" style="border-color: #bf00bf"></div>
-					<div class="boost_cs"></div>
-				</div>
-				<div class="table_center">
-					<button id="cs_t6_a" onclick="CHROMA.get('t6')"></button>
-					<div class="boost_cs" id="cs_t6_1" style="border-color: #7f003f"></div>
-					<div class="boost_cs"></div>
-					<div class="boost_cs"></div>
-				</div>
+				<div id="ch_table"></div>
 			</div>
 			<div id="stab_frame6_2">
-				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Theorems
-				<table>
-					<tr>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-					</tr><tr>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-					</tr><tr>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-					</tr><tr>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-						<td><button class="btn" style="width: 72px; height: 72px"></button></td>
-					</tr>
-				</table>
+				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
+				<br>
+				Disabling will rise <b class="scarlet">Exotic!</b>
+				<br>
+				<table id="pr_cloud"></table>
 				<br>
 				<div id="pr_table" class="table_center"></div>
 			</div>
@@ -307,7 +218,7 @@
         <div style="height: 190px">
             <div id="chal_upper" style='height: 40px'></div>
             <div class="table_center" style="margin: 5px 0px;">
-                <div>
+                <div id="res_col1">
                     <div class="resources sml">
                         <div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="mass">X</span>
@@ -317,8 +228,11 @@
                     </div><div class="resources yellow" id="dm_div">
                         <div tooltip="Dark Matter" t-size="small"><img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="dmAmt">X</span>
+                    </div><div class="resources sml green" id="zt_div">
+                        <div tooltip="Zeta" t-size="small"><img class="res_img" src="images/zeta.png" tooltip="Zeta" style="cursor: pointer;"></div>
+                        <span style="margin-left: 5px; text-align: left;" id="ztAmt">0</span>
                     </div>
-                </div><div>
+                </div><div id="res_col2">
                     <div class="resources sml yellow" id="bh_div">
                         <div tooltip="Black Hole" t-size="small"><img class="res_img" src="images/bh.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="bhMass">X</span>
@@ -329,12 +243,11 @@
                         <div tooltip="Quark" t-size="small"><img class="res_img" src="images/quark.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="quarkAmt">X</span>
                     </div>
-                </div><div>
+                </div><div id="res_col3">
                     <div class="resources sml green" id="md_div">
                         <div tooltip="Mass Dilation" t-size="small"><img class="res_img" class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="md_massAmt">X</span>
-                    </div>
-                    <div class="resources sml" id="scut_div">
+                    </div><div class="resources sml" id="scut_div">
                         <div id="shrt_0_tooltip" t-size="small"><img class="res_img" id="shrt_0" src="images/md.png" onclick="clickShortcut(0)" style="cursor: pointer;"></div>
                         <div id="shrt_1_tooltip" t-size="small"><img class="res_img" id="shrt_1" src="images/chal.png" onclick="clickShortcut(1)" style="cursor: pointer;"></div>
                         <div id="shrt_2_tooltip" t-size="small"><img class="res_img" id="shrt_2" src="images/ferm.png" onclick="clickShortcut(2)" style="cursor: pointer;"></div>
@@ -343,12 +256,10 @@
                         <div id="shrt_5_tooltip" t-size="small"><img class="res_img" id="shrt_5" src="images/empty.png" onclick="clickShortcut(5)" style="cursor: pointer;"></div>
                         <div id="shrt_6_tooltip" t-size="small"><img class="res_img" id="shrt_6" src="images/empty.png" onclick="clickShortcut(6)" style="cursor: pointer;"></div>
                         <div id="shrt_m_tooltip" t-size="small"><img class="res_img" id="shrt_m" src="images/remove.png" onclick="switchShortcut()" style="cursor: pointer;"></div>
-                    </div>
-                    <div class="resources sml magenta" id="sn_div">
+                    </div><div class="resources sml magenta" id="sn_div">
                         <div tooltip="Supernova" t-size="small"><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="supernovaAmt">X</span>
-                    </div>
-                    <div class="resources sml scarlet" id="ext_div">
+                    </div><div class="resources sml scarlet" id="ext_div">
                         <div tooltip="Exotic Matter" t-size="small"><img class="res_img" src="images/ext.png" tooltip="Exotic Matter" onclick="EXOTIC.reset()" onmousemove="FORMS.reset_msg.set('ext')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="extAmt">X</span>
                     </div>

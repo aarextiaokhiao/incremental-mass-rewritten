@@ -7,15 +7,74 @@ let PRIM = {
 			bp: E(0),
 			pt: E(0),
 			prim: [ E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0) ],
-			field: [],
+			f: {},
 		}
 	},
 	calc(dt) {
 		player.ext.pr.bp = player.ext.pr.bp.add(tmp.pr.bp.mul(dt))
-		player.ext.pr.pt = player.ext.pr.bp.add(1).log(1.1)
-		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = future ? player.ext.pr.pt.div(10) : E(0)
+
+		let pt = player.ext.pr.bp.add(1).log(1.1)
+		player.ext.pr.pt = pt.mul(tmp.pr.pt_ratio)
+		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = pt.mul(tmp.pr.ratio[i])
 	},
 
+	getName(x) {
+		if (x == -1) return "PC"
+		return PRIM.prim[x].sym
+	},
+	disp(per, prim, res) {
+		if (prim == -1) return Math.round(100 - 100 / per) + "% " + PRIM.getName(prim)
+		if (prim >= -1 && !res) return Math.round(per * 100) + "% " + PRIM.getName(prim)
+		if (prim >= -1 && res) return Math.round(-per * 100) + "% " + PRIM.getName(prim)
+	},
+	can(y) {
+		return player.ext.pr.pt.gte(50) && player.ext.pr.f[y] == undefined
+	},
+	toggle(y, x) {
+		if (player.ext.pr.f[y] === x) {
+			delete player.ext.pr.f[y]
+			EXT.reset(true)
+		} else if (PRIM.can(y)) player.ext.pr.f[y] = x
+	},
+	conv: [
+		{
+			unl: () => true,
+			res: [-1, 0, 1, 2],
+			ratios: [
+				[1, 0.01, 0, 0],
+				[1.5, 0.02, 0, 0.01],
+				[2, 0.03, 0, 0.02],
+				[3, 0.04, 0.01, 0.03],
+			]
+		}, {
+			unl: () => false,
+			res: [-1, 0],
+			ratios: [
+				[1, 0],
+				[1, 0],
+				[1, 0],
+				[1, 0],
+			]
+		}, {
+			unl: () => false,
+			res: [-1, 0],
+			ratios: [
+				[1, 0],
+				[1, 0],
+				[1, 0],
+				[1, 0],
+			]
+		}, {
+			unl: () => false,
+			res: [3, 7],
+			ratios: [
+				[0, 0],
+				[0, 0],
+				[0, 0],
+				[0, 0],
+			]
+		}
+	],
 	prim: [
 		// COMMON PRIMORDIUMS
 		{
@@ -122,7 +181,20 @@ function updatePrimTemp() {
 	if (!save.unl) return
 
 	data.bp = expMult(player.mass.max(1).log10(),0.2).div(50).pow(20)
-	//CONVERSIONS SOON
+
+	data.pt_ratio = 1
+	data.ratio = [0, 0, 0, 0, 0, 0, 0, 0]
+	for (var y = 0; y < PRIM.conv.length; y++) {
+		var conv = PRIM.conv[y]
+		if (save.f[y] !== undefined) {
+			var ratio = conv.ratios[save.f[y]]
+			for (var i = 0; i < ratio.length; i++) {
+				var res = conv.res[i]
+				if (res == -1) data.pt_ratio /= ratio[i]
+				else data.ratio[res] += ratio[i]
+			}
+		}
+	}
 
 	let b = {}
 	for (var i = 0; i < 8; i++) {
@@ -137,6 +209,12 @@ function updatePrimHTML() {
 	tmp.el.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
 	tmp.el.pr_pt.setTxt(format(player.ext.pr.pt,0))
 
+	for (var y = 0; y < PRIM.conv.length; y++) {
+		tmp.el["pr_cr"+y].setDisplay(PRIM.conv[y].unl())
+		for (var x = 0; x < 4; x++) {
+			tmp.el["pr_c"+(y*10+x)].setClasses({btn: true, btn_pr: true, locked: !PRIM.can(y, x) & player.ext.pr.f[y] !== x, choosed: player.ext.pr.f[y] === x})
+		}
+	}
 	for (var i = 0; i < 8; i++) {
 		tmp.el["pr_"+i].setTxt(format(player.ext.pr.prim[i],0))
 		tmp.el["pr_eff"+i].setTxt(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))

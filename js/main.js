@@ -137,7 +137,7 @@ const FORMS = {
 			let eff = step.pow(t.add(bonus))
 			if (!hasTree("ext_u2") && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
-			return {step: step, eff: eff, bonus: bonus}
+			return {step: step, eff: eff, bonus: bonus, ss: ss}
 		},
         autoUnl() { return hasUpgrade('bh',5) },
         autoSwitch() { player.autoTickspeed = !player.autoTickspeed },
