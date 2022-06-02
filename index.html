@@ -185,12 +185,15 @@
 					<button class="btn btn_ch" id="ch_tone_3_btn" onclick="CHROMA.tones.toggle(3)"><b class='purple' id="ch_tone_3">Violet</b><br><span id="ch_eff_3"></span></button>
 					<button class="btn btn_ch" id="ch_tone_4_btn" onclick="CHROMA.tones.toggle(4)"><b class='magenta' id="ch_tone_4">Ultraviolet</b><br><span id="ch_eff_4"></span></button>
 				</div>
-				(Your next tone requires <span id="ch_req">0.00</span> Exotic Matter!)
+				<span id="ch_req"></span>
 				<br><br>
-				<span class="rainbow" id="ch_bp">You have 0 Beauty Pigments.</span> <span id="ch_nxt"></span><br>
-				<span class="rainbow" id="ch_pwr"></span><br>
-				<button class="btn btn_cs" onclick="CHROMA.respec()">Respec</button><br>
+				<button class="btn btn_cs" id="ch_rs" onclick="CHROMA.respec()">Respec</button><br>
+				<span class="ch_color" id="ch_bp"></span>
+				<span class="purple" id="ch_nxt"></span><br>
+
 				<div id="ch_table"></div>
+				<span class="ch_color" id="ch_pwr"></span><br>
+				<span class="purple" id="ch_nxt_assign"></span>
 			</div>
 			<div id="stab_frame6_2">
 				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
@@ -451,15 +454,17 @@
             <button class="btn" id="chroma_bg_btn" onclick="toggleChromaBG()">Chroma BG: <span id="chroma_bg">ON</span></button><br><br>
             <h2>Confirmation Settings</h2><br>
             <div id="confirm_table" class="table_center"></div>
-            <br><br>
-            Incremental Mass: Altrascendum - by Aarex - <span class="rainbow" id="update">The Chroma Update</span><br>
-            This mod is an alternative path from original <a href="https://mrredshark77.github.io/incremental-mass-rewritten/">Incremental Mass</a> by MrRedShark77.<br><br><br>
+			<br><br>
+			Incremental Mass: Altrascendum - by Aarex -
+			<span id="ver">(v1.0)</span> <span class="purple">Prismatic Recall</span>
+			<br>
+            This mod is an alternative to MrRedShark77's <a href="https://mrredshark77.github.io/incremental-mass-rewritten/">Incremental Mass: Rewritten</a>.<br><br><br>
             Hint 1: Hover top image above tabs to show description...
 			<div style="position: fixed; left: 3px; bottom: 3px; text-align: left">
 				<button class="btn" onclick="addPopup(POPUP_GROUPS.help)">Help</button><br>
-				<button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">Join IMR Discord</button>
-				<button class="btn locked">Join IM:AP Discord (Soon)</button><br>
-				<button class="btn" onclick="window.open('https://aarextiaokhiao.github.io')">Aarex's Home</button>
+				<button class="btn locked">Discord (Soon)</button>
+				<button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">IM:R Discord</button>
+				<button class="btn" onclick="window.open('https://aarextiaokhiao.github.io')">Home</button>
 				<button id="beta" class="btn" onclick="window.open('http://raw.githack.com/aarextiaokhiao/incremental-mass-rewritten/'+betaLink+'/')">Test Server</button>
 			</div>
         </div>

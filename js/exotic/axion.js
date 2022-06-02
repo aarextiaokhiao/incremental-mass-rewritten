@@ -188,7 +188,7 @@ let AXION = {
 				return x.sqrt().div(10).add(1.2).pow(x)
 			},
 			effDesc(x) {
-				return x.eq(EINF) ? "<span class='rainbow'>Removed!</span>" : format(x) + "x later"
+				return x.eq(EINF) ? "<span class='ch_color'>Removed!</span>" : format(x) + "x later"
 			}
 		},
 		2: {

@@ -98,7 +98,7 @@ const POPUP_GROUPS = {
     },
 	chroma: {
         html: `
-            Congratulations!<br><br><b class='rainbow'>You have unravelled the prism, and unleashed the colors!</b><br><br>
+            Congratulations!<br><br><b class='ch_color'>You have unravelled the prism, and unleashed the colors!</b><br><br>
             <b style='color:#3f00bf'>Chroma has been unlocked in Exotic tab!</b>
         `,
         width: 400,
@@ -135,9 +135,9 @@ const POPUP_GROUPS = {
     zeta_2: {
         html: `
             <img src="images/story/zeta_2.png"><br><br>
-            It is unknown whether it is good, bad, chaos, or not.
-            You are nothing in spacetime now... Or it is?
-            You're a dimensionless now.
+            It is unknown whether it is good, chaos, prime, or not.
+            You have come far enough, but unfortunately...
+			You are descended into a dimensionless entity.
         `,
         button: "Sigh",
         otherStyle: {
@@ -147,9 +147,9 @@ const POPUP_GROUPS = {
     zeta_3: {
         html: `
             <img src="images/story/zeta_3.png"><br><br>
-            Spacetime is devoided, cracking the dimensionality into pieces.
-            As you gain the sense of Primordials, their gods have requested you.
-            Regardless of abstraction, I wonder what will you become?
+            The dimensions bent beyond recogition, devoiding space.
+            As you gain the sense of Primordials, you are proficient enough.
+            Invisibly seeing the clouds, they give you a gift.
         `,
         button: "Accept the gift",
         otherStyle: {
@@ -159,39 +159,35 @@ const POPUP_GROUPS = {
     zeta_4: {
         html: `
             <img src="images/story/zeta_4.png"><br><br>
-            Invisibly observing the clouds, they give you a surprise.
-            The recipe of Primordium Zetas. Let's unravel the mystery!
-            The reason why is they need to find what cause wrong!
-            To sustain, mass has been reformulated based on Primordiums!
+            The recipe of Primordium Zeta. The unknownness has come!
+            Let's reformulate the spatial and temporal axises!
+			<br><br>
+            Mass has been rebuilt based on Primordiums.
+            <b style='font-size: 24px'>Good luck!</b>
         `,
         button: "Build em' all!",
         otherStyle: {
             'font-size': "14px",
         },
     },
-    zeta_5: {
-        html: `
-            Good luck!
-        `,
-        button: "Cool",
-        width: 400,
-        height: 150,
-        otherStyle: {
-            'font-size': "36px",
-        },
-    },
 
 	ap_chroma: {
 		html: `
-			<b class='rainbow' style='font-size: 20px'>Welcome to Chroma update!</b><br>
-			This update adds a new mechanic called Chroma, bringing out colors with a new buildable spectrum!<br>
-			Final pack of Neutron upgrades and 2 rows of Axion Boosts have been added in this update!<br>
-			<span class='rainbow'>Colors</span> <span class='red'>aw</span><span class='green'>ai</span><span class='sky'>t.</span><span class='magenta'>..</span><br><br>
-			Good luck!<br>
-			You need to get 15 C13 completions to unlock Chroma.<br>
-			End-game: ???<br><br>
+			<b class='purple' style='font-size: 20px'>v1 - Prismatic Recall!</b><br>
+			<i>Recalling the Altar, <span class='ch_color'>colors</span> <span class='red'>aw</span><span class='green'>ai</span><span class='sky'>t</span><span class='magenta'>...</span></i>
+            <br>
+			Introducing 2 new features:
+            <br><br>
+			<span class='ch_color'>Chroma</span>, bringing out colors with a new buildable spectrum!<br>
+			You need to get 13 C13 completions to unlock Chroma.
+            <br><br>
+			And <span class='pr_color'>Primordiums</span>: the unseen, hyperspatial elements!<br>
+			<span class='pr_color'>Formulate the spacetime!</span>
+            <br><br>
+			Final Neutron upgrades and Axion Boosts have been also added.<br>
+			Have fun! End-game: e50 - e60 mlt<br><br>
 			
-			<b class='rainbow' style='font-size: 7px'>Oh, this is the first of Spectraglow series.</b>
+			<b class='purple' style='font-size: 7px'>Oh, this is a part of Spectraglow series.</b>
 		`,
 		width: 600,
 		height: 300,
@@ -393,5 +389,4 @@ function zeta_story() {
 	addPopup(POPUP_GROUPS.zeta_2)
 	addPopup(POPUP_GROUPS.zeta_3)
 	addPopup(POPUP_GROUPS.zeta_4)
-	addPopup(POPUP_GROUPS.zeta_5)
 }

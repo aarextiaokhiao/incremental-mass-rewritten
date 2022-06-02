@@ -292,8 +292,8 @@ function updateChromaTemp() {
 
 function updateChromaHTML() {
 	let save = player.ext.ch
-	tmp.el.ch_req.setTxt(format(tmp.ch.req))
-	tmp.el.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments, Next Upgrade: " + format(CHROMA.spices.cost(),0))
+	tmp.el.ch_req.setTxt(tmp.ch.toned ? "(Your next tone requires " + format(tmp.ch.req) + " EM!)" : "")
+	tmp.el.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments")
 	tmp.el.ch_nxt.setTxt(tmp.ch.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
 
 	for (var i = 0; i < save.tones.length; i++) {
@@ -321,7 +321,10 @@ function updateChromaHTML() {
 		tmp.el["cs_"+id+"_a"].setDisplay(s.unl(id+"_1"))
 	}
 
+	tmp.el.ch_rs.setVisible(save.upg.length > 0)
 	tmp.el.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")
+	tmp.el.ch_pwr.setTxt(save.upg.length > 0 ? "Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%" : "")
+	tmp.el.ch_nxt_assign.setTxt(save.upg.length > 0 && save.upg.length < 21 ? "Next: " + format(CHROMA.spices.cost(),0) + " Beauty Pigments" : "")
 }
 
 function toggleChromaBG() {
