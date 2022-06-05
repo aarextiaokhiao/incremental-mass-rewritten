@@ -581,11 +581,11 @@ const TREE_UPGS = {
 		ext_l5: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_l4"],
-			req() { return player.ext.amt.gte(EXT.amt(1e200)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e200)) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt("ee4")) },
+			reqDesc() { return "Get " + format(EXT.amt("ee4")) + " Exotic Matter." },
 			desc: `Exotic Matter weakens Axion Upgrades.`,
             effect() {
-                return EXT.eff().add(1).log10().div(100).add(1).log10().div(5).add(1).min(2)
+                return EXT.eff().add(1).log10().div(1e3).add(1).log10().div(6).add(1).min(1.5)
             },
             effDesc(x) { return format(x)+"x" },
 			cost: E("1e4500"),
@@ -601,8 +601,8 @@ const TREE_UPGS = {
 		ext_b2: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "ee4" : 1e300)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "ee4" : 1e300)) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "ee4" : 1e300)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "ee4" : 1e300)) + " Exotic Matter." },
 			desc: `X Axion Upgrades multiply levels.`,
 			cost: EINF,
 		},
@@ -643,8 +643,8 @@ const TREE_UPGS = {
 		ext_u3: {
 			unl() { return EXT.unl() },
 			branch: ["ext_u2"],
-			req() { return player.ext.amt.gte(EXT.amt("e1e4")) },
-			reqDesc() { return "Get " + format(EXT.amt("e1e4")) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt("e1e6")) },
+			reqDesc() { return "Get " + format(EXT.amt("e1e6")) + " Exotic Matter." },
 			desc: `Bring Particle Powers back to glory. [Nullify boosts and softcaps]`,
 			cost: E(0),
 			perm: 2,

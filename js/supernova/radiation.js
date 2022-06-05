@@ -208,7 +208,6 @@ const RADIATION = {
         },{
             title: `Tickspeed-Cap Boost`,
 			eff(b) {
-				if (AXION.unl()) b = b.pow(tmp.ax.eff[18])
 				let x = E(1e3).pow(b.pow(0.9))
 				return x
 			},

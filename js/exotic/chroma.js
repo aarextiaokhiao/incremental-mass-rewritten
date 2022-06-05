@@ -45,12 +45,12 @@ let CHROMA = {
 			"t1_1", "t2_1", "t3_1", "t4_1", "t5_1", "t6_1",
 		],
 		power() {
-			let start = mlt(2e4)
+			let start = mlt(1e4)
 			if (hasPrim("p0_0")) start = start.root(tmp.pr.eff["p0_0"])
 
 			let log = player.mass.max(1).log(start)
 			if (log.lt(1)) return E(0)
-			return log.log10().mul(1.5).add(1).pow(.75).sub(1)
+			return log.log10().div(2).add(1).sqrt().sub(1)
 		},
 		cost(x) {
 			return tmp.ch.mlt.add(player.ext.ch.upg.length).floor()
@@ -70,21 +70,21 @@ let CHROMA = {
 			desc: (x) => "Strengthen Exotic Matter by ^"+format(x)+".",
 			color: "#7f0000",
 			eff(x) {
-				return E(3).sub(E(2).div(x.div(2).add(1)))
+				return E(3).sub(E(2).div(x.div(3).add(1)))
 			},
 		},
 		p2_1: {
 			desc: (x) => "Raise mass outside of MD, by ^"+format(x)+".",
 			color: "#007f00",
 			eff(x) {
-				return x.div(4).add(1).min(2)
+				return x.div(2).add(1).cbrt().min(2)
 			},
 		},
 		p3_1: {
 			desc: (x) => "Raise Radiation self-boosts by ^"+format(x,3)+".",
 			color: "#00007f",
 			eff(x) {
-				return E(1.2).pow(x)
+				return E(1.15).pow(x)
 			},
 		},
 		p1_2: {
@@ -135,14 +135,14 @@ let CHROMA = {
 			desc: (x) => "Weaken Ultra Fermion scaling by "+format(E(1).sub(E(1).div(x)).mul(100))+"%.",
 			color: "#7f7f00",
 			eff(x) {
-				return x.mul(0.4).add(1)
+				return x.mul(0.3).add(1)
 			},
 		},
 		s2_1: {
 			desc: (x) => "Strengthen Star Boosters by "+format(x)+"x.",
 			color: "#007f7f",
 			eff(x) {
-				return x.div(2.5).add(1)
+				return x.div(3.5).add(1)
 			},
 		},
 		s3_1: {
@@ -266,11 +266,11 @@ function updateChromaTemp() {
 	data.req = EXT.amt(CHROMA.tones.reqs_toggle[data.toned])
 
 	let em_log = EXT.eff().add(1).log10().add(1).sqrt()
-	let fP = E(1)
+	let fP = E(data.toned).sqrt()
 	if (tmp.chal) fP = tmp.chal.eff[15]
 
-	data.bp_next = E(10).pow(E(2).pow(save.bp.div(fP)).mul(1e15).div(em_log))
-	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(2).mul(fP).floor().add(1)
+	data.bp_next = E(10).pow(E(1.75).pow(save.bp.div(fP)).mul(1e15).div(em_log))
+	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).floor().add(1)
 
 	let s = CHROMA.spices
 	data.pwr = s.power()

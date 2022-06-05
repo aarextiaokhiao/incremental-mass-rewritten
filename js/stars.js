@@ -3,6 +3,7 @@ const STARS = {
     gain() {
         let x = player.stars.generators[0]
         if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
+        if (CHALS.inChal(14)) x = x.pow(.01)
         return x.softcap(tmp.stars.softGain,tmp.stars.softPower,0)
     },
     softGain() {
@@ -34,7 +35,6 @@ const STARS = {
             }
         },
         gain(i) {
-            if (CHALS.inChal(14)) return E(0)
             let pow = E(1.5)
             if (FERMIONS.onActive("13")) pow = E(0.5)
             else {

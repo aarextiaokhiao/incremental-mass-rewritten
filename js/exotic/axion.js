@@ -19,7 +19,7 @@ let AXION = {
 		}
 		if (x == 0) return sum.add(1).div(15/4).min(min.mul(1.2).add(1)).floor().add(1)
 		if (x == 1) return sum.div(4).min(min.mul(1.5).add(1)).floor().add(2)
-		if (x == 2) return min.add(1)
+		if (x == 2) return min.max(1.5).add(1).round()
 	},
 	cost(i) {
 		var normal = E(0)
@@ -46,7 +46,7 @@ let AXION = {
 		if (tmp.chal) inc = inc.mul(tmp.chal.eff[13])
 
 		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
-		var r = E([2,3,1.5][type])
+		var r = E([2,3,1.6][type])
 			.pow(sum.add(i - 4))
 			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (50 / (i + 5) * Math.pow(3, i)))
 		return r
@@ -79,7 +79,7 @@ let AXION = {
 		var type = Math.floor(i / 4)
 		if (bulk.eq(0)) return
 		if (!a) player.ext.ax.res[type] = player.ext.ax.res[type].sub(
-			E([2,3,1.5][type]).pow(
+			E([2,3,1.6][type]).pow(
 				bulk.sub(1)
 				.mul(tmp.ax.fp)
 			).mul(cost)
@@ -137,10 +137,8 @@ let AXION = {
 		var y = Math.floor(p / 4)
 		var r = E(0)
 		if (hasTree("ext_e1")) {
-			r = r.add(E(1.5).pow(E(tmp.ax.upg[y + 8]).div(5).add(2)).mul(tmp.ax.upg[y + 8]))
-			if (y > 0) r = r.add(tmp.ax.upg[y + 7])
-			if (y < 4) r = r.mul(5)
-			if (y == 5) r = tmp.ax.upg[8].add(tmp.ax.upg[9]).add(tmp.ax.upg[10]).add(tmp.ax.upg[11])
+			r = r.add(E(1.3).pow(E(tmp.ax.upg[y + 8]).sqrt()).mul(2).mul(tmp.ax.upg[y + 8]))
+			if (y >= 4) r = tmp.ax.upg[8].add(tmp.ax.upg[9]).add(tmp.ax.upg[10]).add(tmp.ax.upg[11])
 		}
 		return r
 	},
@@ -156,8 +154,8 @@ let AXION = {
 		if (hasTree("ext_b1") && y == 0) r = this.getBaseLvl(p + 12).mul(2).add(r)
 
 		let t = r.add(this.getBaseLvl(p))
-		if (hasTree("ext_b2")) r = E(1.01).pow(this.getXLvl(p)).sub(1).mul(t).add(r)
-		if (hasTree("ext_b3")) r = E(1.01).pow(this.getYLvl(p)).sub(1).mul(t).add(r)
+		if (hasTree("ext_b2")) r = E(1.03).pow(this.getXLvl(p)).sub(1).mul(t).add(r)
+		if (hasTree("ext_b3")) r = E(1.03).pow(this.getYLvl(p)).sub(1).mul(t).add(r)
 		return r
 	},
 	getEff(p, l) {
@@ -297,7 +295,7 @@ let AXION = {
 			desc: "Weaken Neutrino and Neut-Muon softcaps.",
 			req: E(5),
 			eff(x) {
-				return x.add(4).sqrt().add(3).min(10).div(5)
+				return x.add(4).sqrt().add(3).div(5).min(1.6)
 			},
 			effDesc(x) {
 				return "^" + format(x,3)
@@ -357,9 +355,9 @@ let AXION = {
 			title: "Dyson Sphere",
 			desc: "Multiply BH Upgrade 15.",
 			unl: () => CHROMA.unl(),
-			req: E(3),
+			req: E(1),
 			eff(x) {
-				return x.sqrt().add(1).min(4)
+				return x.div(5).add(1).sqrt().min(4)
 			},
 			effDesc(x) {
 				return "x"+format(x,3)
@@ -369,35 +367,35 @@ let AXION = {
 			title: "Quasar",
 			desc: "Increase the cap of C8. [Post-600 doesn't affect BH Mass!]",
 			unl: () => CHROMA.unl(),
-			req: E(2),
+			req: E(10),
 			eff(x) {
-				return x.sqrt().mul(100)
+				return x.add(1).cbrt().sub(1).mul(100)
 			},
 			effDesc(x) {
 				return "+"+format(x)
 			}
 		},
 		18: {
-			title: "Temporal Dimensionality",
-			desc: "Strengthen Tickspeed-Cap Boost.",
+			title: "Temporal Dimensionality [Coming soon!]",
+			desc: "Placeholder.",
 			unl: () => CHROMA.unl(),
-			req: E(0.5),
+			req: EINF,
 			eff(x) {
-				return x.sqrt().div(5).add(1)
+				return E(1)
 			},
 			effDesc(x) {
-				return "^"+format(x,3)
+				return format(x)+"x"
 			}
 		},
 		19: {
 			title: "General Relativity",
 			desc: "Dilated Mass raises Tickspeed power.",
-			req: E(4),
+			req: EINF,
 			unl: () => CHROMA.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
-				let r = player.md.mass.add(1).log10().add(1).log10().add(1) // log^2(Dilated mass)
-				r = r.pow(x.sqrt().div(10)) // Levels
+				let r = player.md.mass.add(1).log10().add(1).log10().div(75).add(1) // log^2(Dilated mass)
+				r = r.pow(x.sqrt().div(3)) // Levels
 				return r.min(3)
 			},
 			effDesc(x) {
@@ -409,13 +407,13 @@ let AXION = {
 			title: "AX-Automation",
 			desc: "Automate X/Y AXIONS.",
 			unl: () => CHROMA.unl(),
-			req: E(5)
+			req: E(10)
 		},
 		21: {
 			title: "Monochromacy Challenge",
 			desc: "Unlock Challenges 14 - 15.",
 			unl: () => CHROMA.unl(),
-			req: E(10)
+			req: E(20)
 		},
 		22: {
 			title: "Primordial Lookback",
@@ -427,7 +425,7 @@ let AXION = {
 			title: "Shortcut Mastery",
 			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
 			unl: () => CHROMA.unl(),
-			req: E(20)
+			req: E(100)
 		},
 	}
 }

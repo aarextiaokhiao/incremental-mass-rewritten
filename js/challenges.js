@@ -24,7 +24,7 @@ function updateChalHTML() {
     tmp.el.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
     tmp.el.chal_exit.setVisible(CHALS.lastActive())
     tmp.el.chal_exit.setDisplay(!sweep)
-    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
+    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : CHALS.lastActive() > 12 ? "Exit Exotic Challenge" : "Exit Challenge")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
     tmp.el.chal_sweep.setDisplay(player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
     tmp.el.chal_hint.setDisplay(!shrt)
@@ -507,29 +507,29 @@ const CHALS = {
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || zeta() },
+		unl() { return true || (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Monochromatic Mass",
-		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass.",
+		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and Exotic Matter.`,
 		max: E(100),
-		inc: E(10),
+		inc: E(1.5),
 		pow: E(1.25),
-		start: EINF,
+		start: mlt(1e3),
 		effect(x) {
 			if (hasPrim("p6_0")) x = x.add(tmp.pr.eff["p6_0"])
 			return {
-				exp: E(1.75).sub(E(0.75).div(x.div(5).add(1))),
+				exp: E(1.75).sub(E(0.75).div(x.div(10).add(1))),
 				mul: x.div(25).add(1)
 			}
 		},
         effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul)+" to C10" },
 	},
 	15: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[22].gt(0)) || zeta() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
 		desc: `Placeholder.`,
 		reward: `Multiply Beauty Pigments.`,
-		max: E(10),
+		max: E(1),
 		inc: E(2),
 		pow: E(3),
 		start: EINF, //mlt(1e3),

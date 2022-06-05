@@ -469,7 +469,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/4/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/5/22a BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}
