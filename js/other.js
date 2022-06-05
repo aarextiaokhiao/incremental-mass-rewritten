@@ -172,7 +172,7 @@ const POPUP_GROUPS = {
     },
 
 	ap_chroma: {
-		html: `
+		html() { return `
 			<b class='purple' style='font-size: 20px'>v1 - Prismatic Recall!</b><br>
 			<i>Recalling the Altar, <span class='ch_color'>colors</span> <span class='red'>aw</span><span class='green'>ai</span><span class='sky'>t</span><span class='magenta'>...</span></i>
             <br>
@@ -185,10 +185,10 @@ const POPUP_GROUPS = {
 			<span class='pr_color'>Formulate the spacetime!</span>
             <br><br>
 			Final Neutron upgrades and Axion Boosts have been also added.<br>
-			Have fun! End-game: e50 - e60 mlt<br><br>
+			Have fun! End-game: `+formatMass(E("1e1e30"))+` - `+formatMass(E("1e1e48"))+`<br><br>
 			
 			<b class='purple' style='font-size: 7px'>Oh, this is a part of Spectraglow series.</b>
-		`,
+		` },
 		width: 600,
 		height: 300,
 		otherStyle: {
@@ -199,7 +199,7 @@ const POPUP_GROUPS = {
 
 function addPopup(data) {
     tmp.popup.push({
-        html: data.html||"",
+        html: (data.html&&(typeof(data.html)=="function"?data.html():data.html))||"",
         button: data.button||"Okay",
         callFunctions: data.callFunction?function() {removePopup();data.callFunctions()}:removePopup,
 
@@ -390,3 +390,24 @@ function zeta_story() {
 	addPopup(POPUP_GROUPS.zeta_3)
 	addPopup(POPUP_GROUPS.zeta_4)
 }
+
+/*
+                <button class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">Prestiges</span><button class="btn locked">--></button><br>
+				<div class="table_center">
+					<div style="width: 300px">
+						<button class="btn" style="width: 80px; visibility: hidden">OFF</button>
+						<button class="btn reset">
+							Prestige up. At Prestige 1, all Mass softcaps start ^10 later.<br>
+							Req: 500,000 total Rank tiers
+						</button>
+					</div>
+					<div style="width: 300px">
+						<button class="btn" style="width: 80px; visibility: hidden">OFF</button>
+						<button class="btn reset">
+							Honor up. At Honor 1, all-Star resources are raised by ^2.<br>
+							Req: Prestige 10
+						</button>
+					</div>
+				</div>
+                <div id="ranks_table" class="table_center" style="min-height: 180px; display: none"></div>
+*/

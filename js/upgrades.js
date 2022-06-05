@@ -36,10 +36,10 @@ const UPGS = {
         getData(i) {
             let upg = this[i]
             let inc = upg.inc
-            if (i == 1 && player.ranks.rank.gte(2)) inc = inc.pow(0.8)
-            if (i == 2 && player.ranks.rank.gte(3)) inc = inc.pow(0.8)
-            if (i == 3 && player.ranks.rank.gte(4)) inc = inc.pow(0.8)
-            if (player.ranks.tier.gte(3)) inc = inc.pow(0.8)
+            if (i == 1 && hasRank("rank", 2)) inc = inc.pow(0.8)
+            if (i == 2 && hasRank("rank", 3)) inc = inc.pow(0.8)
+            if (i == 3 && hasRank("rank", 4)) inc = inc.pow(0.8)
+            if (hasRank("tier", 3)) inc = inc.pow(0.8)
             let lvl = player.massUpg[i]||E(0)
 			let scale = scalingInitPower("massUpg")
             let cost = inc.pow(lvl.scaleEvery("massUpg").pow(scale)).mul(upg.start)
@@ -49,17 +49,17 @@ const UPGS = {
             return {cost: cost, bulk: bulk}
         },
         1: {
-            unl() { return player.ranks.rank.gte(1) || hasUpgrade('atom',1) },
+            unl() { return hasRank("rank", 1) || hasUpgrade('atom',1) },
             title: "Muscler",
             start: E(10),
             inc: E(1.5),
             effect(x) {
                 let step = E(1)
-                if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
+                if (hasRank("rank", 3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
-                if (player.ranks.pent.gte(200)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[200]()))
-                if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
+                if (hasRank("pent", 200)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[200]()))
+                if (hasRank("pent", 10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
             },
@@ -77,17 +77,17 @@ const UPGS = {
             },
         },
         2: {
-            unl() { return player.ranks.rank.gte(2) || hasUpgrade('atom',1) },
+            unl() { return hasRank("rank", 2) || hasUpgrade('atom',1) },
             title: "Booster",
             start: E(100),
             inc: E(4),
             effect(x) {
                 let step = E(2)
-                if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
+                if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
-                if (player.ranks.pent.gte(200)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[200]()))
-                if (player.ranks.pent.gte(10)) total = total.pow(RANKS.effect.pent[10]())
+                if (hasRank("pent", 200)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[200]()))
+                if (hasRank("pent", 10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
             },
@@ -105,7 +105,7 @@ const UPGS = {
             },
         },
         3: {
-            unl() { return player.ranks.rank.gte(3) || hasUpgrade('atom',1) },
+            unl() { return hasRank("rank", 3) || hasUpgrade('atom',1) },
             title: "Stronger",
             start: E(1000),
             inc: E(9),
@@ -115,7 +115,7 @@ const UPGS = {
 				if (hasUpgrade('rp',12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (player.ranks.pent.gte(300)) step = step.mul(RANKS.effect.pent[300]())
+				if (hasRank("pent", 300)) step = step.mul(RANKS.effect.pent[300]())
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
@@ -123,11 +123,11 @@ const UPGS = {
 
 				let ss = E(10)
 				let sp = 0.5
-				if (player.ranks.rank.gte(34)) ss = ss.add(2)
+				if (hasRank("rank", 34)) ss = ss.add(2)
 				if (hasUpgrade('bh',9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
 				if (hasUpgrade('atom',9)) sp *= 1.15
-				if (player.ranks.tier.gte(30)) sp *= 1.1
-				if (player.ranks.pent.gte(75)) sp *= (2/3) / 0.55 / 1.15
+				if (hasRank("tier", 30)) sp *= 1.1
+				if (hasRank("pent", 75)) sp *= (2/3) / 0.55 / 1.15
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)

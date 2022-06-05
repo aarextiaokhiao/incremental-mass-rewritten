@@ -336,7 +336,7 @@ const FERMIONS = {
                     return t.add(1).times(i.div(1e30).add(1).log10()).div(400).add(1).softcap(2.5, sc, 0)
                 },
                 desc(x) {
-                    return `Meta Rank scaling starts ${format(x)}x later.`+getSoftcapHTML(x,2.5)
+                    return `Meta-Rank scaling starts ${format(x)}x later.`+getSoftcapHTML(x,2.5)
                 },
 				isMass: true,
                 inc: "Dilated mass",

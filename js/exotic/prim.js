@@ -15,7 +15,11 @@ let PRIM = {
 
 		let pt = player.ext.pr.bp.add(1).log(1.1)
 		player.ext.pr.pt = pt.mul(tmp.pr.pt_ratio)
-		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = pt.mul(tmp.pr.ratio[i])
+		for (var i = 0; i < 8; i++) {
+			let pr = pt.mul(tmp.pr.ratio[i])
+			let pr_exp = 1.5
+			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.div(100).add(1).pow(pr_exp-1):1)
+		}
 	},
 
 	getName(x) {
@@ -83,7 +87,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1.5).pow(x),
+					eff: (x) => E(1.5).pow(x).min(1e6),
 					desc: (x) => "Reduce Luminosity start by ^"+format(x)+"."
 				}
 			]
@@ -129,7 +133,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(10),
+					eff: (x) => x.div(20),
 					desc: (x) => "Add Axion Strength by "+format(x.mul(100))+"%."
 				}
 			]
@@ -195,6 +199,7 @@ function updatePrimTemp() {
 			}
 		}
 	}
+	if (future) for (var v = 0; v < 8; v++) data.ratio[v] = 0.2
 
 	let b = {}
 	for (var i = 0; i < 8; i++) {

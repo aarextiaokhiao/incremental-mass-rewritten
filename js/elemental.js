@@ -149,8 +149,9 @@ const ELEMENTS = {
             desc: `You can now automatically buy Cosmic Rays. Cosmic Ray raise tickspeed effect at an extremely reduced rate.`,
             cost: E(1e44),
             effect() {
-                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1).softcap(2,0.5,0)
-                return x
+                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
+                if (hasTree("ext_u2")) x = x.pow(2)
+                return x.softcap(2,0.25,0)
             },
             effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,2) },
         },
@@ -321,7 +322,7 @@ const ELEMENTS = {
             desc: `Collapsed star's effect boost mass gain from the black hole at a reduced rate.`,
             cost: E('e510'),
             effect() {
-                let x = tmp.stars?tmp.stars.effect.add(1).pow(0.02):E(1)
+                let x = tmp.stars?tmp.stars.effect.eff.add(1).pow(0.02):E(1)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -470,12 +471,12 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50) },
         },
         {
-            desc: `Ranks make Meta Tickspeed starts later.`,
+            desc: `Ranks make Meta-Tickspeed starts later.`,
             cost: E('e4e7'),
             effect() {
                 let x = player.ranks.rank
                 x = x.div(2e4).add(1)
-				return x.min(2).pow(x.div(1.5).max(1)).min(20)
+				return x.min(2).pow(x.div(1.5).max(1))
             },
             effDesc(x) { return format(x)+"x" },
         },

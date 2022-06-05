@@ -242,7 +242,7 @@ function updateScalingHTML() {
 				tmp.el['scaling_'+x+'_'+id+'_div'].setDisplay(have)
 				if (have) {
 					tmp.el['scaling_'+x+'_'+id+'_power'].setTxt(SCALE_FUNCS[mode].desc(SCALE_POWER[type][id], getScalingPower(type, id)))
-					tmp.el['scaling_'+x+'_'+id+'_start'].setTxt(format(getScalingStart(type, id),0))
+					tmp.el['scaling_'+x+'_'+id+'_start'].setTxt(format(getScalingStart(type, id), 0))
 				}
 			}
 		}
@@ -298,8 +298,8 @@ function getScalingStart(type, name) {
 			if (hasUpgrade('atom',5)) start = start.add(10)
 		}
 		if (name=="tetr") {
-			if (player.ranks.tier.gte(100)) start = start.add(5)
-			if (player.ranks.pent.gte(2)) start = start.add(player.supernova.times.pow(1.5).div(200))
+			if (hasRank("tier", 100)) start = start.add(5)
+			if (hasRank("pent", 2)) start = start.add(player.supernova.times.pow(1.5).div(200))
 		}
 		if (name=="massUpg") {
 			if (CHALS.inChal(1) || CHALS.inChal(10)) return E(25)
@@ -317,7 +317,7 @@ function getScalingStart(type, name) {
 	if (type=="hyper") {
 		if (name=="tickspeed") {
 			if (hasUpgrade('rp',14)) start = start.add(50)
-			if (player.ranks.tetr.gte(5)) start = start.add(RANKS.effect.tetr[5]())
+			if (hasRank("tetr", 5)) start = start.add(RANKS.effect.tetr[5]())
 		}
 		if (name=="rank") {
 			if (hasUpgrade('atom',10)) start = start.add(tmp.upgs?tmp.upgs.main?tmp.upgs.main[3][10].effect:0:0)
@@ -333,7 +333,7 @@ function getScalingStart(type, name) {
 			if (hasElement(62)) start = start.add(tmp.elements.effect[62])
 		}
 		if (name=="tickspeed") {
-			if (player.ranks.tetr.gte(5)) start = start.add(RANKS.effect.tetr[5]())
+			if (hasRank("tetr", 5)) start = start.add(RANKS.effect.tetr[5]())
 		}
 		if (name=='supernova') {
 			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
@@ -348,8 +348,9 @@ function getScalingStart(type, name) {
 		if (name=="tickspeed") {
 			if (hasElement(68)) start = start.mul(2)
 			if (hasElement(72)) start = start.mul(tmp.elements.effect[72])
-			if (player.ranks.tetr.gte(18)) start = start.mul(RANKS.effect.tetr[18]())
+			if (hasRank("tetr", 18)) start = start.mul(RANKS.effect.tetr[18]())
 			if (tmp.radiation) start = start.mul(tmp.radiation.bs.eff[14])
+			start = start.min(2e8)
 		}
 	}
 	if (SCALE_FLOORS[name] && !SCALE_FLOORS[name]()) return start
@@ -361,14 +362,14 @@ function getScalingPower(type, name) {
 	if (type=="super") {
 		if (name=="rank") {
 			if (hasUpgrade('rp',10)) power = power.mul(0.8)
-			if (player.ranks.tetr.gte(4)) power = power.mul(RANKS.effect.tetr[4]())
+			if (hasRank("tetr", 4)) power = power.mul(RANKS.effect.tetr[4]())
 		}
 		if (name=="tier") {
-			if (player.ranks.tetr.gte(4)) power = power.mul(0.8)
+			if (hasRank("tetr", 4)) power = power.mul(0.8)
 			if (hasElement(37)) power = power.mul(tmp.elements.effect[37])
 		}
 		if (name=="tetr") {
-			if (player.ranks.pent.gte(4)) power = power.mul(RANKS.effect.pent[4]())
+			if (hasRank("pent", 4)) power = power.mul(RANKS.effect.pent[4]())
 		}
 		if (name=="massUpg") {
 			if (hasUpgrade('rp',8)) power = power.mul(tmp.upgs.main?tmp.upgs.main[1][8].effect:1)
@@ -390,11 +391,11 @@ function getScalingPower(type, name) {
 	}
 	if (type=="hyper") {
 		if (name=="rank") {
-			if (player.ranks.tetr.gte(1)) power = power.mul(0.85)
+			if (hasRank("tetr", 1)) power = power.mul(0.85)
 			if (hasElement(27)) power = power.mul(0.75)
 		}
 		if (name=="tier") {
-			if (player.ranks.tetr.gte(4)) power = power.mul(0.8)
+			if (hasRank("tetr", 4)) power = power.mul(0.8)
 			if (hasElement(37)) power = power.mul(tmp.elements.effect[37])
 		}
 		if (name=="massUpg") {
@@ -438,11 +439,11 @@ function getScalingPower(type, name) {
 	}
 	if (type=="meta") {
 		if (name=="rank") {
-			if (player.ranks.pent.gte(4)) power = power.mul(RANKS.effect.pent[4]())
+			if (hasRank("pent", 4)) power = power.mul(RANKS.effect.pent[4]())
 			if (AXION.unl()) power = power.div(tmp.ax.eff[6])
 		}
 		if (name=='tickspeed') {
-			if (player.ranks.pent.gte(5)) power = power.mul(RANKS.effect.pent[5]())
+			if (hasRank("pent", 5)) power = power.mul(RANKS.effect.pent[5]())
 			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}

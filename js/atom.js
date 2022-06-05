@@ -17,7 +17,7 @@ const ATOM = {
         if (hasElement(1)) x = E(1.25).pow(tmp.atom.gain.max(1).log10())
         if (hasUpgrade('bh',13)) x = x.mul(10)
         if (hasUpgrade('atom',8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:E(1))
-        if (player.ranks.rank.gte(300)) x = x.mul(RANKS.effect.rank[300]())
+        if (hasRank("rank", 300)) x = x.mul(RANKS.effect.rank[300]())
         if (hasElement(6)) x = x.mul(tmp.elements.effect[6])
         if (hasElement(42)) x = x.mul(tmp.elements.effect[42])
         if (hasElement(67)) x = x.mul(tmp.elements.effect[67])
@@ -101,7 +101,6 @@ const ATOM = {
         bonus() {
 			if (CHALS.inChal(14)) return E(0)
             let x = tmp.fermions.effs[0][0]||E(0)
-            if (future) x = x.add(tmp.stars.effect.log10().pow(1/1.5).div(100))
             return x
         },
     },

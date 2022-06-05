@@ -49,7 +49,7 @@ const RADIATION = {
     getBoostScalingMul(i) {
 		let f4 = E(1)
 		if (tmp.fermions) f4 = f4.mul(tmp.fermions.effs[0][5]||1)
-		f4 = f4.mul(tmp.chal?tmp.chal.eff[12]:1)
+		f4 = f4.div(tmp.chal?tmp.chal.eff[12]:1)
 		if (hasElement(78) && i % 2 == 1) f4 = f4.mul(0.85)
 		return f4
     },
@@ -113,7 +113,7 @@ const RADIATION = {
 		else r = player.supernova.radiation.ds[x-1]
         r = r.add(1).log10().add(1)
 
-        if (CHROMA.got("p3_1")) b = b.pow(CHROMA.eff("p3_1"))
+        if (CHROMA.got("p3_1")) r = r.pow(CHROMA.eff("p3_1"))
 		return r.pow(b).softcap(1e30,0.5,0)
 	},
     boosts: [
@@ -128,7 +128,7 @@ const RADIATION = {
 			eff(b) {
 				let x = b.add(1).root(2)
 				if (scalingToned("tickspeed")) x = x.log10().add(1).root(3)
-				return x.min(50)
+				return x.min(10)
 			},
             desc(x) { return `Non-bonus tickspeed is ${format(x)}x stronger` },
         },{
@@ -210,14 +210,13 @@ const RADIATION = {
 			eff(b) {
 				if (AXION.unl()) b = b.pow(tmp.ax.eff[18])
 				let x = E(1e3).pow(b.pow(0.9))
-				if (hasTree("ext_u2") && hasElement(18) && tmp.elements) x = x.pow(tmp.elements.effect[18])
 				return x
 			},
             desc(x) { return `Tickspeed power's softcap starts ${format(x)}x later` },
         },{
             title: `Meta-Tickspeed Boost`,
             eff(b) {
-                let x = E(1.1).pow(b).softcap(15,3,3).min(40)
+                let x = E(1.1).pow(b).softcap(15,3,3)
                 return x
             },
             desc(x) { return `Meta-Tickspeed starts ${format(x)}x later`+getSoftcapHTML(x,15) },

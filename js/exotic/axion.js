@@ -44,10 +44,8 @@ let AXION = {
 
 		var inc = E(1)
 		if (tmp.chal) inc = inc.mul(tmp.chal.eff[13])
-		if (future_ax) inc = E(0)
 
 		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
-
 		var r = E([2,3,1.5][type])
 			.pow(sum.add(i - 4))
 			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (50 / (i + 5) * Math.pow(3, i)))
@@ -139,7 +137,7 @@ let AXION = {
 		var y = Math.floor(p / 4)
 		var r = E(0)
 		if (hasTree("ext_e1")) {
-			r = r.add(tmp.ax.upg[y + 8])
+			r = r.add(E(1.5).pow(E(tmp.ax.upg[y + 8]).div(5).add(2)).mul(tmp.ax.upg[y + 8]))
 			if (y > 0) r = r.add(tmp.ax.upg[y + 7])
 			if (y < 4) r = r.mul(5)
 			if (y == 5) r = tmp.ax.upg[8].add(tmp.ax.upg[9]).add(tmp.ax.upg[10]).add(tmp.ax.upg[11])
@@ -196,7 +194,7 @@ let AXION = {
 			desc: "Weaken Tickspeed inside Challenges.",
 			req: E(0),
 			eff(x) {
-				return x.add(1).log10().div(3).add(1)
+				return x.add(1).log10().div(5).add(1).min(1.4)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -238,7 +236,7 @@ let AXION = {
 		},
 		6: {
 			title: "Superranked",
-			desc: "Weaken Meta Rank based on its start.",
+			desc: "Weaken Meta-Rank based on its start.",
 			req: E(5),
 			eff(x) {
 				return getScalingStart("meta", "rank").div(8e4).mul(x.cbrt()).add(1)
@@ -263,9 +261,9 @@ let AXION = {
 			title: "Supermassive",
 			desc: "Hawking Radiation softcap starts later.",
 			unl: () => CHROMA.unl(),
-			req: E(20),
+			req: E(18),
 			eff(x) {
-				return x.add(1).log(4).add(1)
+				return x.add(1).log(3).add(1)
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -276,7 +274,7 @@ let AXION = {
 			desc: "Multiply Hawking Radiation.",
 			req: E(10),
 			eff(x) {
-				return x.div(3).add(1).sqrt().softcap(4,8,3)
+				return x.div(3).add(1).pow(.75).softcap(4,8,3)
 			},
 			effDesc(x) {
 				return format(x) + "x" + getSoftcapHTML(x,4)
@@ -468,7 +466,7 @@ function updateAxionHTML() {
 		if (tmp.ax.hover.id[0] == "b") {
 			var id = Number(tmp.ax.hover.id.split("b")[1])
 			var locked = tmp.ax.lvl[id].eq(0)
-			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + id + ")")
+			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + (id + 1) + ")")
 			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
 			tmp.el.ax_req.setClasses({"red": locked})
 			tmp.el.ax_eff.setHTML(locked ? "" : "Level: " + format(AXION.getBaseLvl(id).sub(AXION.ids[id].req.sub(1)), 0) + (AXION.getBonusLvl(id).gt(0) ? "+" + format(AXION.getBonusLvl(id)) : "") + (id < 20 ? ", Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) : ""))

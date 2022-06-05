@@ -22,8 +22,8 @@ const STARS = {
 		let p = STARS.rankStr()
 		let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
 		let b = s.max(1).log10().add(1).max(s.pow(1e-9))
-		let e = r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)).softcap(5e12,10,3)
-		return b.pow(e)
+		let e = r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)).softcap(1e12,1e3,3)
+		return { eff: b.pow(e), exp: e }
 	},
     generators: {
         req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
@@ -133,7 +133,8 @@ function updateStarsHTML() {
     tmp.el.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
 	tmp.el.starSoftStart1.setTxt(format(tmp.stars.softGain))
     tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
-    tmp.el.stars_Eff.setTxt((future?"+"+format(tmp.stars.effect.log10().pow(1/1.5).div(100),0)+" Cosmic Rays":format(tmp.stars.effect)+"x mass")+" (based on all types of Rank)")
+    tmp.el.stars_eff.setTxt(format(tmp.stars.effect.eff))
+    tmp.el.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)" + getSoftcapHTML(tmp.stars.effect.exp, 1e12))
 
     tmp.el.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
 	tmp.el.star_btn.setHTML(

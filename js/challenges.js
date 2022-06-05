@@ -488,9 +488,9 @@ const CHALS = {
 		start: uni("e47250"),
 		effect(x) {
 			if (hasPrim("p5_0")) x = x.add(tmp.pr.eff["p5_0"])
-            return E(0.985).pow(x)
+            return E(1/0.985).pow(x)
 		},
-		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
+		effDesc(x) { return format(x,3)+"x slower" },
 	},
 	13: {
 		unl() { return hasTree("chal8") },

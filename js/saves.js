@@ -19,7 +19,7 @@ function calc(dt, dt_offline) {
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
 	if (CHROMA.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
-    if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (player.ranks.rank.gte(x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
+    if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (hasRank("rank", x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
     if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
     if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
     if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
@@ -469,7 +469,7 @@ function loadGame(start=true, save) {
             })
         }
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/1/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/4/22 BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

@@ -24,7 +24,7 @@ const RANKS = {
         }
     },
     unl: {
-        tier() { return player.ranks.rank.gte(3) || player.ranks.tier.gte(1) || hasUpgrade('atom',3) },
+        tier() { return hasRank("rank", 3) || hasRank("tier", 1) || hasUpgrade('atom',3) },
         tetr() { return hasUpgrade('atom',3) },
         pent() { return hasTree("sn5") },
     },
@@ -98,8 +98,8 @@ const RANKS = {
         pent: {
             '1': "Pent raises star effect.",
             '2': "Supernovae makes Super Tetr starts later.",
-            '4': "Pent weakens Meta Rank and Super Tier.",
-            '5': "weaken Meta Tickspeed based on its start.",
+            '4': "Pent weakens Meta-Rank and Super Tier.",
+            '5': "weaken Meta-Tickspeed based on its start.",
             '6': "double Pent 5.",
             '10': "Stronger and Pent raise Musculer and Booster.",
             '13': "Pent raises Pent 1.",
@@ -120,13 +120,13 @@ const RANKS = {
                 return ret
             },
             '6'() {
-                let ret = player.ranks.rank.add(1).pow(player.ranks.rank.gte(17)?player.ranks.rank.add(1).root(3):2)
+                let ret = player.ranks.rank.add(1).pow(hasRank("rank", 17)?player.ranks.rank.add(1).root(3):2)
                 return ret
             },
             '40'() {
                 let ret = player.ranks.rank.root(2).div(100)
-                if (player.ranks.rank.gte(90)) ret = player.ranks.rank.root(1.6).div(100)
-                if (player.ranks.rank.gte(220)) ret = player.ranks.rank.div(100)
+                if (hasRank("rank", 90)) ret = player.ranks.rank.root(1.6).div(100)
+                if (hasRank("rank", 220)) ret = player.ranks.rank.div(100)
                 return ret
             },
             '45'() {
@@ -138,7 +138,7 @@ const RANKS = {
                 return ret
             },
             '380'() {
-                let ret = E(10).pow(player.ranks.rank.sub(379).pow(1.5).pow(player.ranks.tier.gte(55)?RANKS.effect.tier[55]():1).softcap(1000,0.5,0))
+                let ret = E(10).pow(player.ranks.rank.sub(379).pow(1.5).pow(hasRank("tier", 55)?RANKS.effect.tier[55]():1).softcap(1000,0.5,0))
                 return ret
             },
             '800'() {
@@ -149,13 +149,13 @@ const RANKS = {
         tier: {
             '4'() {
                 let ret = E(0)
-                if (player.ranks.tier.gte(12)) ret = player.ranks.tier.mul(0.1)
+                if (hasRank("tier", 12)) ret = player.ranks.tier.mul(0.1)
                 else ret = player.ranks.tier.mul(0.05).add(1).softcap(1.4,0.75,0).sub(1)
                 return ret
             },
             '6'() {
                 let ret = E(2).pow(player.ranks.tier)
-                if (player.ranks.tier.gte(8)) ret = ret.pow(RANKS.effect.tier[8]())
+                if (hasRank("tier", 8)) ret = ret.pow(RANKS.effect.tier[8]())
                 return ret
             },
             '8'() {
@@ -189,7 +189,7 @@ const RANKS = {
 			'1'(p) {
 				if (!p) p = player.ranks.pent.mul(STARS.rankStr())
 				let exp = E(0.8)
-				if (player.ranks.pent.gte(13)) exp = RANKS.effect.pent[13]()
+				if (hasRank("pent", 13)) exp = RANKS.effect.pent[13]()
 				return p.pow(exp).div(40).add(1)
 			},
 			'2'() {
@@ -202,7 +202,7 @@ const RANKS = {
 			},
 			'5'() {
 				let ret = E(3e5).div(getScalingStart("meta", "tickspeed"))
-				if (player.ranks.pent.gte(6)) ret = ret.div(2)
+				if (hasRank("pent", 6)) ret = ret.div(2)
 				return ret.min(1)
 			},
 			'10'() {
@@ -216,7 +216,7 @@ const RANKS = {
 			},
 			'50'() {
 				if (!tmp.tickspeedEffect) return E(1)
-				let ts = tmp.tickspeedEffect.step.log10().div(100)
+				let ts = tmp.tickspeedEffect.step.log10().div(1e3)
 				if (bosonsMastered()) ts = ts.mul(tmp.bosons.upgs.photon[1].effect)
 				return ts.add(1)
 			},
@@ -267,14 +267,14 @@ const RANKS = {
     fp: {
         rank() {
             let f = E(1)
-            if (player.ranks.tier.gte(1)) f = f.mul(1/0.8)
+            if (hasRank("tier", 1)) f = f.mul(1/0.8)
             f = f.mul(tmp.chal.eff[5].pow(-1))
             return f
         },
         tier() {
             let f = E(1)
             f = f.mul(tmp.fermions.effs[1][3])
-            if (player.ranks.tetr.gte(1)) f = f.mul(1/0.75)
+            if (hasRank("tetr", 1)) f = f.mul(1/0.75)
             if (hasUpgrade('atom',10)) f = f.mul(2)
             return f
         },
@@ -290,6 +290,10 @@ const RANKS = {
             return f
         },
     },
+}
+
+function hasRank(t, x) {
+	return player.ranks[t].gte(x)
 }
 
 function updateRanksTemp() {

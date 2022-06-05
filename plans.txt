@@ -18,8 +18,7 @@ TO-DO LIST:
 	2e. Muonic
 3: Upgrades
 	3a. [1/2] Add Neutron Condensers.
-	3b. [F]   Raise Axion Levels by itself.
-	3c. [F]   Z-Axion Upgrades multiply same row boosts.
+	3b. [F]   Primordiums boost itself.
 4: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)
 5:
