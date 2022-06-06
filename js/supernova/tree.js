@@ -619,7 +619,7 @@ const TREE_UPGS = {
 			branch: ["ext_c"],
 			req() { return player.ext.amt.gte(EXT.amt(1e65)) },
 			reqDesc() { return "Get " + format(EXT.amt(1e65)) + " Exotic Matter." },
-			desc: `Start producing Z-Axions based on log^2(EM). <span class='scarlet'>[Z-Axion Upgrades add same-row boosts exponentially!]</span>`,
+			desc: `Start producing Z-Axions based on log^2(EM). <span class='scarlet'>[Z-Axion Upgrades multiply!]</span>`,
 			cost: E(0),
 		},
 		ext_u1: {

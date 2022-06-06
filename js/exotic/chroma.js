@@ -345,3 +345,12 @@ function updateChromaScreen() {
 	tmp.el.chroma_bg3.setDisplay(high)
 	if (high) tmp.el.chroma_bg3.setOpacity(progress)
 }
+
+/*
+Thinking about reworking the combination for Primary T3.
+
+   Candidates
+// 1 Secondary T2s + 0 Tertiary T1s
+// 2 Secondary T1s + 2 Tertiary T1s
+// 2 Secondary T1s + 1 Tertiary T1s
+*/

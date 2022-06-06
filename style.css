@@ -260,6 +260,82 @@ button {
 	background-color: #25ff30;
 }
 
+.btn_tab.star {
+	color: #ff9f00;
+	border-color: #ff9f00;
+}
+
+.btn_tab.star:not(.choosed):hover {
+	background-color: #7f4f00;
+}
+
+.btn_tab.star.choosed {
+	color: #3f1f00;
+	background-color: #ff9f00;
+}
+
+.btn_tab.sn {
+	color: #ffbfdf;
+	border-color: #ff007f;
+}
+
+.btn_tab.sn:not(.choosed):hover {
+	background-color: #7f005f;
+}
+
+.btn_tab.sn.choosed {
+	color: black;
+	background-color: #ff007f;
+}
+
+.btn_tab.ext {
+	color: #ffefbf;
+	background-color: #3f1f00;
+	border-color: #ff1f00;
+}
+
+.btn_tab.ext:not(.choosed):hover {
+	background-color: #7f1f00;
+}
+
+.btn_tab.ext.choosed {
+	color: black;
+	background-color: #ff007f;
+}
+
+.btn_tab.ch {
+	background: #1f003f;
+	border-color: #7f00bf;
+	color: #7f7fff;
+	box-shadow: 0 0 24px #7f00bf;
+}
+
+.btn_tab.ch:not(.choosed):hover {
+	background: #3f005f;
+}
+
+.btn_tab.ch.choosed {
+	color: #00003f;
+	border-color: #9f00bf;
+	background-color: #9f00bf;
+}
+
+.btn_tab.pr {
+	background: #7f3f00;
+	border-color: #ffbf00;
+	color: #ffbf00;
+	box-shadow: 0 0 24px #ffbf00;
+}
+
+.btn_tab.pr:not(.choosed):hover {
+	background: #bf5f00
+}
+
+.btn_tab.pr.choosed {
+	background: #ffbf00;
+	color: #3f1f00;
+}
+
 .btn_tab:not(.choosed):hover {
 	background-color: #444
 }
@@ -564,7 +640,7 @@ td.ax {
 }
 
 .ch_color {
-	color: #dfbfff;
+	color: #bfbfff;
 	text-shadow:
 		0px 0px 6px #00ff00, 0px 0px 6px #00ff00,
 		-6px 0px 6px #ff0000, -6px 0px 6px #ff0000,
@@ -604,6 +680,7 @@ td.ax {
 	width: 120px;
 	background: black;
 	border-color: #3f005f;
+	color: #dfdfff;
 	box-shadow: 0 0 12px #3f005f;
 	margin: 6px;
 	padding: 3px

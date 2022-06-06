@@ -390,24 +390,3 @@ function zeta_story() {
 	addPopup(POPUP_GROUPS.zeta_3)
 	addPopup(POPUP_GROUPS.zeta_4)
 }
-
-/*
-                <button class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">Prestiges</span><button class="btn locked">--></button><br>
-				<div class="table_center">
-					<div style="width: 300px">
-						<button class="btn" style="width: 80px; visibility: hidden">OFF</button>
-						<button class="btn reset">
-							Prestige up. At Prestige 1, all Mass softcaps start ^10 later.<br>
-							Req: 500,000 total Rank tiers
-						</button>
-					</div>
-					<div style="width: 300px">
-						<button class="btn" style="width: 80px; visibility: hidden">OFF</button>
-						<button class="btn reset">
-							Honor up. At Honor 1, all-Star resources are raised by ^2.<br>
-							Req: Prestige 10
-						</button>
-					</div>
-				</div>
-                <div id="ranks_table" class="table_center" style="min-height: 180px; display: none"></div>
-*/

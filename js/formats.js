@@ -371,7 +371,7 @@ function formatMass(ex, color) {
 	let f = color ? formatColored : format
     ex = E(ex)
     if (ex.gte(EINF)) return f(ex)
-    if (ex.gte(meg(1))) return f(ex.div(1.5e56).log10().div(1e9).log10().div(1e9), 3) + ' ' + colorize('meg', color, "ch_color")
+    //if (ex.gte(meg(1))) return f(ex.div(1.5e56).log10().div(1e9).log10().div(1e9), 3) + ' ' + colorize('meg', color, "ch_color")
     if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
     if (ex.gte(uni(1))) return f(ex.div(1.5e56)) + ' uni'
     if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'
@@ -390,23 +390,29 @@ function formatMultiply(a) {
 	
 function formatGain(amt, gain, isMass=false, main=false) {
 	let [al, gl] = [amt.max(1).log10(), gain.max(1).log10()]
-	let [al2, gl2] = [al.max(1).log10(), gl.max(1).log10()]
-
 	let f = isMass?formatMass:format
-	if (!main && gain.max(amt).gte("ee4")) return ""
-	if (al.gt(0) && gl.sub(al).gte(E(1e3).div(al))) {
-		if (al2.gt(0) && gl2.sub(al2).gte(E(1e3).div(al2))) return "(x"+format(E(10).pow(gl2.sub(al2).mul(20)))+"s)"
-		if (amt.gte(mlt(1))) return "(+"+format(gl.sub(al).mul(2e-8),3)+" mlt/s)"
-		return "("+formatMultiply(E(10).pow(gl.sub(al).mul(20)))+"/s)"
+
+	if (!main && amt.gte("ee4")) return ""
+	if (main && amt.max(gain).gte(mlt(1))) {
+		amt = amt.max(1).log10().div(1e9)
+		gain = gain.max(1).log10().div(1e9).sub(amt).mul(20)
+		f = (x) => format(x) + ' ' + colorize('mlt', true)
 	}
-	if (gain.div(amt).gte(1e-6)) return "(+"+f(gain)+"/s)"
+
+	if (amt.gte("e100") && gain.log(amt).gte(1.1)) return "(^"+format(gain.log(amt), 3)+"/s)"
+	else if (amt.gte(100) && gain.div(amt).gte(0.1)) return "("+formatMultiply(gain.div(amt).add(1))+"/s)"
+	else if (gain.div(amt).gte(1e-4)) return "(+"+f(gain)+"/s)"
 	return ""
 }
 
 function formatGet(a, g, always) {
 	g = g.max(0)
-	if (g.lt(always ? 0 : a.div(1e3))) return ""
-	return "(+" + format(g,0) + (a.gte(100) && g.gte(a.div(5)) ? "/" + formatMultiply(g.div(a).add(1),2) : "") + ")"
+	if (g.lte(always ? 0 : a.div(1e-4))) return ""
+	return "(" + (
+		a.gte("e100") && g.log(a).gte(1.1) ? "^" + format(g.log(a), 3) :
+		a.gte(100) && g.div(a).gte(0.1) ? formatMultiply(g.div(a).add(1)) :
+		"+" + format(g,0)
+	) + ")"
 }
 
 function formatGainOrGet(a, g, p) {

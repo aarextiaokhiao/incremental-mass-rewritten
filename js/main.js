@@ -281,7 +281,11 @@ const FORMS = {
         },
 
 		radSoftStart() {
-			let r = expMult(player.md.mass,0.92).pow(1e3)
+			let r = player.md.mass
+			let exp = 0.92
+			if (AXION.unl()) exp += tmp.ax.eff[18]
+
+			r = expMult(r, exp).pow(1e3)
 			if (hasElement(80)) r = r.pow(2)
 			if (AXION.unl()) r = r.pow(tmp.ax.eff[8])
 			return r

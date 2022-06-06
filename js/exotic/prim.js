@@ -18,6 +18,7 @@ let PRIM = {
 		for (var i = 0; i < 8; i++) {
 			let pr = pt.mul(tmp.pr.ratio[i])
 			let pr_exp = 1.5
+			if (future) pr_exp = 2
 			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.div(100).add(1).pow(pr_exp-1):1)
 		}
 	},

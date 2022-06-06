@@ -14,31 +14,31 @@ let AXION = {
 		var sum = E(0)
 		var min = EINF
 		for (var i = 4 * x; i < 4 * x + 4; i++) {
-			sum = tmp.ax.upg[i].add(sum)
-			min = tmp.ax.upg[i].min(min)
+			sum = axUpg(i).add(sum)
+			min = axUpg(i).min(min)
 		}
 		if (x == 0) return sum.add(1).div(15/4).min(min.mul(1.2).add(1)).floor().add(1)
 		if (x == 1) return sum.div(4).min(min.mul(1.5).add(1)).floor().add(2)
-		if (x == 2) return min.max(1.5).add(1).round()
+		if (x == 2) return min.mul(2).add(1).round()
 	},
 	cost(i) {
 		var normal = E(0)
 		var other = E(0)
 		var type = Math.floor(i / 4)
 		for (var x = 4 * type; x < 4 * type + 4; x++) {
-			var lvl = player.ext.ax.upgs[x]
+			var lvl = axUpg(x)
 			if (i == x) normal = lvl
 			else other = other.add(lvl)
 		}
 		if (type < 2) {
 			if (hasTree("ext_l3")) {
-				if (i % 4 < 3) other = other.sub(player.ext.ax.upgs[i + 1].div(2))
-				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(2))
+				if (i % 4 < 3) other = other.sub(axUpg(i+1).div(2))
+				if (i % 4 > 0) other = other.sub(axUpg(i-1).div(2))
 			}
 			if (hasTree("ext_l4")) {
-				if (i % 4 > 0) other = other.sub(player.ext.ax.upgs[i - 1].div(2.5))
-				if (i % 4 > 1) other = other.sub(player.ext.ax.upgs[i - 2].div(2.5))
-				if (i % 4 > 2) other = other.sub(player.ext.ax.upgs[i - 3].div(2.5))
+				if (i % 4 > 0) other = other.sub(axUpg(i-1).div(1.5))
+				if (i % 4 > 1) other = other.sub(axUpg(i-2).div(2))
+				if (i % 4 > 2) other = other.sub(axUpg(i-3).div(2.5))
 			}
 		}
 
@@ -66,11 +66,11 @@ let AXION = {
 			.log([2,3,1.5][type])
 			.div(tmp.ax.fp)
 			.add(1).floor()
-		bulk = bulk.min(tmp.ax.max[type].sub(player.ext.ax.upgs[p]))
+		bulk = bulk.min(tmp.ax.max[type].sub(axUpg(p)))
 		return bulk
 	},
 	canBuy(i) {
-		if (i % 4 > 0 && player.ext.ax.upgs[i-1].eq(0)) return
+		if (i % 4 > 0 && axUpg(i-1).eq(0)) return
 		return tmp.ax.bulk[i].gt(0)
 	},
 	buy(i,a) {
@@ -92,70 +92,63 @@ let AXION = {
 	prod(x) {
 		if (!AXION.unl()) return E(0)
 
-		//X + Y
+		//Base
 		let r = E(0)
-		let em = EXT.eff()
+		let em = EXT.eff().add(1).log10()
 		if (x == 0) r = player.mass.max(1).log10().pow(0.6)
-			.mul(em.add(1).log(100).add(1).pow(2))
+			.mul(em.mul(2).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
-			.mul(em.add(1).log10().add(1))
+			.mul(em.add(1))
+		if (x == 2 && hasTree("ext_e1")) r = em.sqrt()
 
-		//Z
-		if (x == 2 && hasTree("ext_e1")) {
-			r = em.add(1).log10().add(1).log10().add(1).pow(5)
-			if (hasPrim("p1_0")) r = r.pow(tmp.pr.eff["p1_0"])
-		} else if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
-
+		//Multipliers
+		if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
 		return r
 	},
 
-	getUpgLvl(i) {
-		var r = player.ext.ax.upgs[i]
-		var type = Math.floor(i / 4)
-		if (hasTree("ext_l2") && type < 2) r = r.add(player.ext.ax.upgs[[i+4,i-4][type]].div([1.5,i*1.5][type]))
-		return r.max(0)
-	},
 	getLvl(p, base) {
-		var req = AXION.ids[p].req
-		if (future_ax && p >= 20) req = E(-1)
-		var r = AXION.getBaseLvl(p).add(AXION.getBonusLvl(p))
-		if (!base) r = r.sub(req)
-		return r.max(0)
+		var req = this.ids[p].req
+		var r = this.getBaseLvl(p).add(this.getBonusLvl(p)).mul(this.getMultLvl(p))
+
+		if (!base) r = r.sub(req).max(0)
+		return r
 	},
 	getXLvl(p) {
 		var x = p % 4
 		var y = Math.floor(p / 4)
-		return y < 4 ? tmp.ax.upg[x].sub(y * 4).div(y + 1) : E(0)
+		return y < 4 ? axUpg(x).sub(y*4).div(y+1) : E(0)
 	},
 	getYLvl(p) {
 		var x = p % 4
 		var y = Math.floor(p / 4)
-		return tmp.ax.upg[y + 4].sub(x * y).max(0)
+		return axUpg(y+4).sub(x*y).max(0)
 	},
 	getZLvl(p) {
-		var x = p % 4
 		var y = Math.floor(p / 4)
-		var r = E(0)
-		if (hasTree("ext_e1")) {
-			r = r.add(E(1.3).pow(E(tmp.ax.upg[y + 8]).sqrt()).mul(2).mul(tmp.ax.upg[y + 8]))
-			if (y >= 4) r = tmp.ax.upg[8].add(tmp.ax.upg[9]).add(tmp.ax.upg[10]).add(tmp.ax.upg[11])
-		}
-		return r
+		if (y >= 4) return axUpg(8).add(axUpg(9)).add(axUpg(10)).add(axUpg(11))
+		else return axUpg(y+8)
 	},
 	getBaseLvl(p) {
-		return this.getXLvl(p).add(this.getYLvl(p).add(this.getZLvl(p)))
+		return this.getXLvl(p).add(this.getYLvl(p))
 	},
 	getBonusLvl(p) {
 		var x = p % 4
 		var y = Math.floor(p / 4)
 		var r = E(0)
 
-		if (y > 0) r = tmp.ax.upg[y + 3].sub((x + 4) * (y + 1)).div(y + 2).max(0)
-		if (hasTree("ext_b1") && y == 0) r = this.getBaseLvl(p + 12).mul(2).add(r)
-
-		let t = r.add(this.getBaseLvl(p))
-		if (hasTree("ext_b2")) r = E(1.03).pow(this.getXLvl(p)).sub(1).mul(t).add(r)
-		if (hasTree("ext_b3")) r = E(1.03).pow(this.getYLvl(p)).sub(1).mul(t).add(r)
+		if (y > 0 && y < 4) r = axUpg(y+3).sub((x+4)*(y+1)).div(y+2).max(0)
+		if (hasTree("ext_l2")) {
+			r = r.add(axUpg(x+4).div(1.5))
+			r = r.add(axUpg(y-4).div(6))
+		}
+		if (hasTree("ext_b1") && y == 0) r = this.getBaseLvl(p+12).mul(2).add(r)
+		return r
+	},
+	getMultLvl(p) {
+		let r = E(1)
+		if (hasTree("ext_b2")) r = E(1.04).pow(this.getXLvl(p)).mul(r)
+		if (hasTree("ext_b3")) r = E(1.04).pow(this.getYLvl(p).mul(2*Math.log2(3))).mul(r)
+		if (hasTree("ext_e1") && p < 16) r = E(1.04).pow(this.getZLvl(p).mul(4*Math.log2(1.6))).mul(r)
 		return r
 	},
 	getEff(p, l) {
@@ -195,7 +188,7 @@ let AXION = {
 				return x.add(1).log10().div(5).add(1).min(1.4)
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return formatMultiply(x)
 			}
 		},
 		3: {
@@ -203,7 +196,7 @@ let AXION = {
 			desc: "Radiation Boosters scale slower. [Max: ^1.25 for each tier]",
 			req: E(0.5),
 			eff(x) {
-				return x.pow(0.6).div(135).softcap(0.05,1/3,0)
+				return x.pow(0.6).div(135).softcap(0.05,100,3)
 			},
 			effDesc(x) {
 				return "-^"+format(x,3)+getSoftcapHTML(x,0.05)
@@ -257,7 +250,7 @@ let AXION = {
 
 		8: {
 			title: "Supermassive",
-			desc: "Hawking Radiation softcap starts later.",
+			desc: "Evaporation softcap starts later.",
 			unl: () => CHROMA.unl(),
 			req: E(18),
 			eff(x) {
@@ -357,7 +350,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(1),
 			eff(x) {
-				return x.div(5).add(1).sqrt().min(4)
+				return x.div(8).add(1).min(4)
 			},
 			effDesc(x) {
 				return "x"+format(x,3)
@@ -367,7 +360,7 @@ let AXION = {
 			title: "Quasar",
 			desc: "Increase the cap of C8. [Post-600 doesn't affect BH Mass!]",
 			unl: () => CHROMA.unl(),
-			req: E(10),
+			req: E(8),
 			eff(x) {
 				return x.add(1).cbrt().sub(1).mul(100)
 			},
@@ -376,15 +369,15 @@ let AXION = {
 			}
 		},
 		18: {
-			title: "Temporal Dimensionality [Coming soon!]",
-			desc: "Placeholder.",
+			title: "Temporal Dimensionality",
+			desc: "Dilated Mass pushes evaporation softcap farther.",
 			unl: () => CHROMA.unl(),
 			req: EINF,
 			eff(x) {
-				return E(1)
+				return x.sqrt().div(400).mul(.03).toNumber()
 			},
 			effDesc(x) {
-				return format(x)+"x"
+				return "+^"+format(x,4)
 			}
 		},
 		19: {
@@ -407,13 +400,13 @@ let AXION = {
 			title: "AX-Automation",
 			desc: "Automate X/Y AXIONS.",
 			unl: () => CHROMA.unl(),
-			req: E(10)
+			req: E(8)
 		},
 		21: {
 			title: "Monochromacy Challenge",
 			desc: "Unlock Challenges 14 - 15.",
 			unl: () => CHROMA.unl(),
-			req: E(20)
+			req: E(15)
 		},
 		22: {
 			title: "Primordial Lookback",
@@ -430,54 +423,13 @@ let AXION = {
 	}
 }
 
-function updateAxionHTML() {
-	tmp.el.st_res0.setHTML(format(player.ext.ax.res[0]))
-	tmp.el.st_res1.setHTML(format(player.ext.ax.res[1]))
-	tmp.el.st_res2.setHTML(format(player.ext.ax.res[2]))
-	tmp.el.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXION.prod(0)))
-	tmp.el.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXION.prod(1)))
-	tmp.el.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXION.prod(2)))
-	tmp.el.st_res2_disp.setDisplay(hasTree("ext_e1"))
-
-	for (var i = 0; i < 12; i++) {
-		tmp.el["ax_upg"+i].setClasses({btn_ax: true, locked: !AXION.canBuy(i)})
-		tmp.el["ax_upg"+i].setOpacity(tmp.ax.hover.hide.includes("u"+i) ? 0.25 : 1)
-		tmp.el["ax_upg"+i].setDisplay(i < 8 || hasTree("ext_e1"))
-	}
-	for (var i = 0; i < AXION.maxRows * 4; i++) {
-		tmp.el["ax_boost"+i].setClasses({btn_ax: true, locked: tmp.ax.lvl[i].eq(0), bonus: tmp.ax.hover.bonus.includes("b"+i)})
-		tmp.el["ax_boost"+i].setDisplay(AXION.ids[i].unl === undefined || AXION.ids[i].unl())
-		tmp.el["ax_boost"+i].setOpacity(tmp.ax.hover.bonus.includes("b"+i) ? 1 : tmp.ax.hover.hide.includes("b"+i) || tmp.ax.lvl[i].eq(0) ? 0.25 : 1)
-	}
-
-	tmp.el.ax_desc.setOpacity(tmp.ax.hover.id ? 1 : 0)
-	if (tmp.ax.hover.id) {
-		if (tmp.ax.hover.id[0] == "u") {
-			var id = Number(tmp.ax.hover.id.split("u")[1])
-			var type = Math.floor(id / 4)
-			var name = ["X","Y","Z"][type]
-			tmp.el.ax_title.setTxt(name + "-Axion Upgrade " + ((id % 4) + 1))
-			tmp.el.ax_req.setHTML("Cost: " + format(tmp.ax.cost[id]) + " " + name + "-Axions")
-			tmp.el.ax_req.setClasses({"red": !AXION.canBuy(id)})
-			tmp.el.ax_eff.setHTML("Level: " + format(player.ext.ax.upgs[id], 0) + " / " + format(tmp.ax.max[type], 0) + " (" + format(tmp.ax.upg[id]) + ")")
-		}
-		if (tmp.ax.hover.id[0] == "b") {
-			var id = Number(tmp.ax.hover.id.split("b")[1])
-			var locked = tmp.ax.lvl[id].eq(0)
-			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + (id + 1) + ")")
-			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
-			tmp.el.ax_req.setClasses({"red": locked})
-			tmp.el.ax_eff.setHTML(locked ? "" : "Level: " + format(AXION.getBaseLvl(id).sub(AXION.ids[id].req.sub(1)), 0) + (AXION.getBonusLvl(id).gt(0) ? "+" + format(AXION.getBonusLvl(id)) : "") + (id < 20 ? ", Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) : ""))
-		}
-	}
+function axUpg(x) {
+	return E(player.ext.ax.upgs[x])
 }
 
 function updateAxionLevelTemp() {
 	let d = tmp.ax
-	d.upg = {}
-	d.lvl = {}
 	d.max = {}
-	for (var i = 0; i < 12; i++) d.upg[i] = AXION.getUpgLvl(i)
 	for (var i = 0; i < 3; i++) d.max[i] = AXION.maxLvl(i)
 }
 
@@ -489,26 +441,81 @@ function updateAxionTemp() {
 
 	let d = tmp.ax || {}
 	tmp.ax = d
-	if (!tmp.ax.lvl) {
+	if (!tmp.ax.max) {
 		updateAxionLevelTemp()
 		tmp.ax.hover = {id: "", hide: [], bonus: []}
 	}
 
+	//UPGRADES
 	d.cost = {}
 	d.bulk = {}
 	d.eff = {}
 	d.fp = AXION.costScale(i)
-
-	d.str = E(1)
-	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
-	if (hasPrim("p4_0")) d.str = d.str.add(tmp.pr.eff["p4_0"])
-
 	for (var i = 0; i < 12; i++) {
 		d.cost[i] = AXION.cost(i)
 		d.bulk[i] = AXION.bulk(i)
 	}
+
+	//BOOSTS
+	d.str = E(1)
+	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
+	if (hasPrim("p4_0")) d.str = d.str.add(tmp.pr.eff["p4_0"])
+
+	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)
 	for (var i = 0; i < 20; i++) d.eff[i] = AXION.getEff(i, d.lvl[i].mul(d.str))
+}
+
+function updateAxionHTML() {
+	tmp.el.st_res0.setHTML(format(player.ext.ax.res[0]))
+	tmp.el.st_res1.setHTML(format(player.ext.ax.res[1]))
+	tmp.el.st_res2.setHTML(format(player.ext.ax.res[2]))
+	tmp.el.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXION.prod(0)))
+	tmp.el.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXION.prod(1)))
+	tmp.el.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXION.prod(2)))
+	tmp.el.st_res2_disp.setDisplay(hasTree("ext_e1"))
+
+	for (var i = 0; i < 12; i++) {
+		tmp.el["ax_upg"+i].setClasses({btn_ax: true, locked: !AXION.canBuy(i)})
+		tmp.el["ax_upg"+i].setOpacity(tmp.ax.hover.hide.includes("u"+i) ? 0.15 : 1)
+		tmp.el["ax_upg"+i].setDisplay(i < 8 || hasTree("ext_e1"))
+	}
+	for (var i = 0; i < AXION.maxRows * 4; i++) {
+		tmp.el["ax_boost"+i].setClasses({btn_ax: true, locked: tmp.ax.lvl[i].eq(0), bonus: tmp.ax.hover.bonus.includes("b"+i)})
+		tmp.el["ax_boost"+i].setDisplay(AXION.ids[i].unl === undefined || AXION.ids[i].unl())
+		tmp.el["ax_boost"+i].setOpacity(tmp.ax.hover.bonus.includes("b"+i) ? 1 : tmp.ax.hover.hide.includes("b"+i) || tmp.ax.lvl[i].eq(0) ? 0.15 : 1)
+	}
+
+	tmp.el.ax_desc.setOpacity(tmp.ax.hover.id ? 1 : 0)
+	if (tmp.ax.hover.id) {
+		if (tmp.ax.hover.id[0] == "u") {
+			var id = Number(tmp.ax.hover.id.split("u")[1])
+			var type = Math.floor(id / 4)
+			var name = ["X","Y","Z"][type]
+			tmp.el.ax_title.setTxt(name + "-Axion Upgrade " + ((id % 4) + 1))
+			tmp.el.ax_eff.setDisplay(false)
+
+			tmp.el.ax_req.setHTML("Cost: " + format(tmp.ax.cost[id]) + " " + name + "-Axions")
+			tmp.el.ax_req.setClasses({"red": !AXION.canBuy(id)})
+			tmp.el.ax_lvl.setHTML("Level: " + format(axUpg(id), 0) + " / " + format(tmp.ax.max[type], 0))
+
+		}
+		if (tmp.ax.hover.id[0] == "b") {
+			var id = Number(tmp.ax.hover.id.split("b")[1])
+			var locked = tmp.ax.lvl[id].eq(0)
+			var hasEff = !locked && id < 20
+			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + (id + 1) + ")")
+			tmp.el.ax_eff.setDisplay(hasEff)
+			if (hasEff) tmp.el.ax_eff.setHTML("Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) + "<br>")
+
+			var lvl_desc = format(AXION.getBaseLvl(id).sub(AXION.ids[id].req.sub(1)), 0)
+			if (AXION.getBonusLvl(id).gt(0)) lvl_desc += "+" + format(AXION.getBonusLvl(id))
+			if (AXION.getMultLvl(id).gt(1)) lvl_desc += ", x" + format(AXION.getMultLvl(id))
+			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
+			tmp.el.ax_req.setClasses({"red": locked})
+			tmp.el.ax_lvl.setHTML(locked ? "" : "Level: " + lvl_desc)
+		}
+	}
 }
 
 function hoverAxion(x) {
@@ -525,11 +532,11 @@ function hoverAxion(x) {
 			let hide = true
 			let bonus = false
 			if (id >= 8) {
-				hide = py != id - 8 && py != 5
+				hide = py != id - 8 && py < 4
 			} else if (id >= 4) {
-				bonus = py == id - 3 && tmp.ax.upg[id].gt((px + 4) * (py + 1))
-				hide = !bonus && (py == id - 4 ? tmp.ax.upg[id].lte(px * py) : true)
-			} else hide = (px != id) || (tmp.ax.upg[id].lte(py*4))
+				bonus = py == id - 3 && axUpg(id).gt((px + 4) * (py + 1))
+				hide = !bonus && (py == id - 4 ? axUpg(id).lte(px * py) : true)
+			} else hide = (px != id) || (axUpg(id).lte(py*4))
 			if (hide) tmp.ax.hover.hide.push("b"+i)
 			if (bonus) tmp.ax.hover.bonus.push("b"+i)
 		}
@@ -540,11 +547,12 @@ function hoverAxion(x) {
 		for (var i = 0; i < 20; i++) if (i != id) tmp.ax.hover.hide.push("b"+i)
 		for (var i = 0; i < 12; i++) {
 			let hide = true
-			if (py < 5) {
-				if (i < 4 && px == i && tmp.ax.upg[i].gt(py * 4)) hide = false
-				if (i >= 4 && py == i - 4 && tmp.ax.upg[i].gt(px * py)) hide = false
-				if (i >= 4 && py == i - 3 && tmp.ax.upg[i - 1].div(py + 2).gt((px + 4) * py)) hide = false
-			} else if (i > 8 && tmp.ax.upg[i].gt(0)) hide = false
+			if (py < 4) {
+				if (i >= 8 && py == i - 8 && axUpg(i).gt(0)) hide = false
+				else if (i < 4 && px == i && axUpg(i).gt(py * 4)) hide = false
+				else if (i >= 4 && py == i - 4 && axUpg(i).gt(px * py)) hide = false
+				else if (i >= 4 && py == i - 3 && axUpg(i-1).div(py + 2).gt((px + 4) * py)) hide = false
+			} else if (i >= 8 && axUpg(i).gt(0)) hide = false
 			if (hide) tmp.ax.hover.hide.push("u"+i)
 		}
 	}

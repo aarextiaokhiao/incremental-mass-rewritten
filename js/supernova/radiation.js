@@ -259,9 +259,9 @@ const RADIATION = {
         {
             title: `Supernova Boost`,
             eff(b) {
-                return E(1).sub(b.pow(2/3).div(10)).max(0)
+                return E(1).sub(b.pow(2/3).div(10).softcap(0.6,100,3)).max(0)
             },
-            desc(x) { return `Ultra Supernova scales ${format(E(1).sub(x).times(100))}% slower.` },
+            desc(x) { return `Ultra Supernova scales ${format(E(1).sub(x).times(100))}% slower.`+getSoftcapHTML(E(1).sub(x),0.6) },
         },
 
         /*

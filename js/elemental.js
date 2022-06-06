@@ -151,7 +151,7 @@ const ELEMENTS = {
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
                 if (hasTree("ext_u2")) x = x.pow(2)
-                return x.softcap(2,0.25,0)
+                return x.softcap(2,0.1,0)
             },
             effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,2) },
         },
@@ -466,7 +466,7 @@ const ELEMENTS = {
 				let [m1, m2] = [player.mass.max(10).log10().log10().times(4), player.mass.max(1).log10().pow(1/5).div(3)]
 				let exp = E(0.5)
 				if (hasElement(73)) exp = exp.mul(tmp.elements.effect[73]||1)
-                return m1.max(m2).pow(exp).softcap(50, 0.5, 0)
+                return m1.max(m2).pow(exp).softcap(50, 0.5, 0).min(100)
             },
             effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50) },
         },

@@ -438,7 +438,7 @@ const CHALS = {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
             return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(3.5) }
         },
-        effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", x"+format(x.mul):"") },
+        effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", "+formatMultiply(x.mul):"") },
     },
     10: {
         unl() { return hasTree("chal5") },
@@ -490,7 +490,7 @@ const CHALS = {
 			if (hasPrim("p5_0")) x = x.add(tmp.pr.eff["p5_0"])
             return E(1/0.985).pow(x)
 		},
-		effDesc(x) { return format(x,3)+"x slower" },
+		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	13: {
 		unl() { return hasTree("chal8") },
@@ -507,7 +507,7 @@ const CHALS = {
 		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
 	},
 	14: {
-		unl() { return true || (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and Exotic Matter.`,
@@ -522,7 +522,7 @@ const CHALS = {
 				mul: x.div(25).add(1)
 			}
 		},
-        effDesc(x) { return "^"+format(x.exp)+", x"+format(x.mul)+" to C10" },
+        effDesc(x) { return "^"+format(x.exp)+", "+formatMultiply(x.mul)+" to C10" },
 	},
 	15: {
 		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
