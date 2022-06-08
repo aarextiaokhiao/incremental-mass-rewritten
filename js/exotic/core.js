@@ -24,7 +24,6 @@ let EXOTIC = {
 		if (hasTree("ext_u1")) s = s.mul(E(1.01).pow(player.chal.comps[12].add(1)))
 		if (CHROMA.got("p1_3")) s = s.mul(CHROMA.eff("p1_3"))
 		if (CHROMA.got("p1_2")) s = s.mul(CHROMA.eff("p1_2"))
-        if (tmp.chal) s = s.mul(tmp.chal.eff[14].exp)
 
 		let r = player.mass.add(1).log10().div(1e9).add(1).pow(s)
 		return this.amt(r)
@@ -142,7 +141,7 @@ let EXOTIC = {
 
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
-		if (true) player.ext.chal.f9 = false
+		if (player.supernova.fermions.choosed == "") player.ext.chal.f9 = false
 
 		//AXIONS
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
@@ -151,7 +150,8 @@ let EXOTIC = {
 
 		if (AXION.unl()) {
 			let needUpdate = false
-			if (tmp.ax.lvl[20].gt(0)) for (var i = 0; i < 8; i++) AXION.buy(i,1)
+			if (tmp.ax.lvl[20].gt(0)) for (var i = 0; i < 8; i++) if (AXION.buy(i,1)) needUpdate = true
+			if (needUpdate) updateAxionLevelTemp()
 		}
 
 		//CHROMA

@@ -50,7 +50,7 @@ let CHROMA = {
 
 			let log = player.mass.max(1).log(start)
 			if (log.lt(1)) return E(0)
-			return log.log10().div(2).add(1).sqrt().sub(1)
+			return log.log10().div(2).add(1).pow(.6).sub(1)
 		},
 		cost(x) {
 			return tmp.ch.mlt.add(player.ext.ch.upg.length).floor()

@@ -100,7 +100,7 @@ let PRIM = {
 				{
 					unl: () => true,
 					eff: (x) => x.add(1).log10().add(1).sqrt().min(3),
-					desc: (x) => "Raise Z Axions by ^"+format(x)+"."
+					desc: (x) => "Axion Multiplication is "+formatMultiply(x)+" stronger."
 				}
 			]
 		},
@@ -162,8 +162,8 @@ let PRIM = {
 			]
 		},
 		{
-			name: "Zeta",
-			sym: "Z",
+			name: "Phi",
+			sym: "Φ",
 			eff: [
 				{
 					unl: () => true,

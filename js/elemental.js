@@ -466,9 +466,9 @@ const ELEMENTS = {
 				let [m1, m2] = [player.mass.max(10).log10().log10().times(4), player.mass.max(1).log10().pow(1/5).div(3)]
 				let exp = E(0.5)
 				if (hasElement(73)) exp = exp.mul(tmp.elements.effect[73]||1)
-                return m1.max(m2).pow(exp).softcap(50, 0.5, 0).min(100)
+                return m1.max(m2).pow(exp).softcap(50,0.5,0).softcap(100,5/21,0)
             },
-            effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50) },
+            effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50,100) },
         },
         {
             desc: `Ranks make Meta-Tickspeed starts later.`,

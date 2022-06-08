@@ -127,7 +127,7 @@ const UPGS = {
 				if (hasUpgrade('bh',9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
 				if (hasUpgrade('atom',9)) sp *= 1.15
 				if (hasRank("tier", 30)) sp *= 1.1
-				if (hasRank("pent", 75)) sp *= (2/3) / 0.55 / 1.15
+				if (hasRank("pent", 100)) sp *= Math.min(Math.max(player.mass.max(10).log10().log10().div(500).add(1).toNumber(), 1), (2/3) / 0.55 / 1.15)
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)

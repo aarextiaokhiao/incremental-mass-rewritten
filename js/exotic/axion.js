@@ -84,7 +84,7 @@ let AXION = {
 				.mul(tmp.ax.fp)
 			).mul(cost)
 		).max(0)
-		player.ext.ax.upgs[i] = player.ext.ax.upgs[i].add(bulk)
+		player.ext.ax.upgs[i] = player.ext.ax.upgs[i].add(bulk).min(tmp.ax.max[type])
 		if (!a) updateAxionLevelTemp()
 		return true
 	},
@@ -145,10 +145,13 @@ let AXION = {
 		return r
 	},
 	getMultLvl(p) {
+		let str = E(1)
+		if (hasPrim("p1_0")) str = str.mul(tmp.pr.eff["p1_0"])
+
 		let r = E(1)
-		if (hasTree("ext_b2")) r = E(1.04).pow(this.getXLvl(p)).mul(r)
-		if (hasTree("ext_b3")) r = E(1.04).pow(this.getYLvl(p).mul(2*Math.log2(3))).mul(r)
-		if (hasTree("ext_e1") && p < 16) r = E(1.04).pow(this.getZLvl(p).mul(4*Math.log2(1.6))).mul(r)
+		if (hasTree("ext_b2")) r = E(1.02).pow(this.getXLvl(p).mul(str)).mul(r)
+		if (hasTree("ext_b3")) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3)).mul(str)).mul(r)
+		if (hasTree("ext_e1") && p < 16) r = E(1.02).pow(this.getZLvl(p).mul(4*Math.log2(1.6)).mul(str)).mul(r)
 		return r
 	},
 	getEff(p, l) {
@@ -196,7 +199,7 @@ let AXION = {
 			desc: "Radiation Boosters scale slower. [Max: ^1.25 for each tier]",
 			req: E(0.5),
 			eff(x) {
-				return x.pow(0.6).div(135).softcap(0.05,100,3)
+				return x.pow(0.6).div(135).softcap(0.05,10,3)
 			},
 			effDesc(x) {
 				return "-^"+format(x,3)+getSoftcapHTML(x,0.05)
@@ -323,7 +326,7 @@ let AXION = {
 			desc: "Weaken Insane Challenge scaling.",
 			req: E(15),
 			eff(x) {
-				return E(4.5).sub(x.div(10).softcap(1,0.5,0)).max(1).log(4.5)
+				return E(4.5).sub(x.add(1).log10().div(2)).max(1).log(4.5)
 			},
 			effDesc(x) {
 				return format(E(1).sub(x).mul(100)) + "%"
@@ -374,7 +377,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: EINF,
 			eff(x) {
-				return x.sqrt().div(400).mul(.03).toNumber()
+				return x.sqrt().div(12000).min(.05).toNumber()
 			},
 			effDesc(x) {
 				return "+^"+format(x,4)

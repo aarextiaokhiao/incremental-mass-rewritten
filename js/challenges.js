@@ -436,7 +436,7 @@ const CHALS = {
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
-            return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(3.5) }
+            return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(1.5) }
         },
         effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", "+formatMultiply(x.mul):"") },
     },
@@ -510,7 +510,7 @@ const CHALS = {
 		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
-		reward: `Raise Challenge 10 and Exotic Matter.`,
+		reward: `Raise Challenge 10.`,
 		max: E(100),
 		inc: E(1.5),
 		pow: E(1.25),
@@ -522,14 +522,14 @@ const CHALS = {
 				mul: x.div(25).add(1)
 			}
 		},
-        effDesc(x) { return "^"+format(x.exp)+", "+formatMultiply(x.mul)+" to C10" },
+        effDesc(x) { return "^"+format(x.exp)+", "+formatMultiply(x.mul) },
 	},
 	15: {
 		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
-		desc: `Placeholder.`,
+		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead.`,
 		reward: `Multiply Beauty Pigments.`,
-		max: E(1),
+		max: E(100),
 		inc: E(2),
 		pow: E(3),
 		start: EINF, //mlt(1e3),
@@ -541,12 +541,12 @@ const CHALS = {
 	},
 	16: {
 		unl() { return zeta() },
-		title: "Placeholder",
-		desc: "Placeholder.",
-		reward: `Placeholder.`,
-		max: E(100),
-		inc: E(10),
-		pow: E(1.25),
+		title: "Subspatial Normalcy [Big Rip]",
+		desc: "Liquidate pre-Supernovae.",
+		reward: `Unlock Zeta Layer. <b style='color: red'>On completion, you are always stuck in this challenge permanently!</b>`,
+		max: E(1),
+		inc: E(1),
+		pow: E(1),
 		start: EINF,
 		effect(x) {
 			let ret = E(1)
