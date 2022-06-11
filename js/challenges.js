@@ -525,14 +525,14 @@ const CHALS = {
         effDesc(x) { return "^"+format(x.exp)+", "+formatMultiply(x.mul) },
 	},
 	15: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
+		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
-		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead.`,
+		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
 		reward: `Multiply Beauty Pigments.`,
 		max: E(100),
 		inc: E(2),
 		pow: E(3),
-		start: EINF, //mlt(1e3),
+		start: meg(1),
 		effect(x) {
 			let ret = E(1)
 			return x.add(1).log10().add(1)
