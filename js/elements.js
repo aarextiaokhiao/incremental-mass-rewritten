@@ -115,19 +115,6 @@ function setupHTML() {
 	setupRadiationHTML()
 	setupExtHTML()
 
-	/*
-	function setupTestHTML() {
-		let test_table = new Element("test_table")
-		let table = ""
-		for (let i = 0; i < 5; i++) {
-			table += `
-				
-			`
-		}
-		test_table.setHTML(table)
-	}
-	*/
-
 	let confirm_table = new Element("confirm_table")
 	table = ""
 	for (let x = 0; x < CONFIRMS.length; x++) {
@@ -135,30 +122,30 @@ function setupHTML() {
 	}
 	confirm_table.setHTML(table)
 
-    tmp.el = {}
+	elm = {}
 	let all = document.getElementsByTagName("*")
 	for (let i=0;i<all.length;i++) {
 		let x = all[i]
-		tmp.el[x.id] = new Element(x)
+		elm[x.id] = new Element(x)
 	}
 }
 
 function updateTabsHTML() {
-	tmp.el["tabs"].setDisplay(player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl)
+	elm["tabs"].setDisplay(player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl)
 	for (let x = 0; x < TABS[1].length; x++) {
 		if (x != 5 && tmp.tab == 5) continue
 		let tab = TABS[1][x]
-		tmp.el["tab"+x+"_div"].setDisplay(tab.unl ? tab.unl() : true)
-		tmp.el["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
+		elm["tab"+x+"_div"].setDisplay(tab.unl ? tab.unl() : true)
+		elm["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
 
-		if (tmp.el["tab_frame"+x]) tmp.el["tab_frame"+x].setDisplay(x == tmp.tab)
+		if (elm["tab_frame"+x]) elm["tab_frame"+x].setDisplay(x == tmp.tab)
 		if (TABS[2][x]) {
-			tmp.el["stabs"+x].setDisplay(x == tmp.tab)
+			elm["stabs"+x].setDisplay(x == tmp.tab)
 			if (x == tmp.tab) for (let y = 0; y < TABS[2][x].length; y++)  {
 				let stab = TABS[2][x][y]
-				tmp.el["stab"+x+"_"+y].setDisplay(stab.unl ? stab.unl() : true)
-				tmp.el["stab"+x+"_"+y].setClasses({btn_tab: true, [stab.style ? stab.style : "normal"]: true, choosed: y == tmp.stab[x]})
-				if (tmp.el["stab_frame"+x+"_"+y]) tmp.el["stab_frame"+x+"_"+y].setDisplay(y == tmp.stab[x])
+				elm["stab"+x+"_"+y].setDisplay(stab.unl ? stab.unl() : true)
+				elm["stab"+x+"_"+y].setClasses({btn_tab: true, [stab.style ? stab.style : "normal"]: true, choosed: y == tmp.stab[x]})
+				if (elm["stab_frame"+x+"_"+y]) elm["stab_frame"+x+"_"+y].setDisplay(y == tmp.stab[x])
 			}
 		}
 	}
@@ -166,30 +153,30 @@ function updateTabsHTML() {
 
 function updateUpperHTML() {
     let hideSome = EXT.unl()
-	tmp.el.reset_desc.setHTML(player.reset_msg)
-	tmp.el.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
+	elm.reset_desc.setHTML(player.reset_msg)
+	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
 
 	let unl = (player.stats.maxMass.gte(1e9) || player.rp.unl) && !hideSome
-	tmp.el.rp_div.setDisplay(unl)
-	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
+	elm.rp_div.setDisplay(unl)
+	elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 
 	unl = FORMS.bh.see() && !hideSome
-	tmp.el.dm_div.setDisplay(unl)
-	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
+	elm.dm_div.setDisplay(unl)
+	if (unl) elm.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
 	unl = player.bh.unl && !hideSome
-	tmp.el.bh_div.setDisplay(unl)
-	tmp.el.atom_div.setDisplay(unl)
+	elm.bh_div.setDisplay(unl)
+	elm.atom_div.setDisplay(unl)
 	if (unl) {
-		tmp.el.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
-		tmp.el.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
+		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
+		elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
 	}
 
 	let chal = CHALS.lastActive()
 	let md = player.md.active
 	let f = player.supernova.fermions.choosed
-	tmp.el.chal_upper.setVisible(chal || md || f)
+	elm.chal_upper.setVisible(chal || md || f)
 	if (md) {
-		tmp.el.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
+		elm.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
 	} else if (f) {
 		let f1_y = f[0]
 		let f1_x = f[1]
@@ -201,7 +188,7 @@ function updateUpperHTML() {
 		let f2_y = f2[0]
 		let f2_x = f2[1]
 
-		tmp.el.chal_upper.setHTML(
+		elm.chal_upper.setHTML(
 			"You are in "+FERMIONS.sub_names[f1_y][f1_x]+" "+FERMIONS.names[f1_y]+
 			(f2?" and "+FERMIONS.sub_names[f2_y][f2_x]+" "+FERMIONS.names[f2_y]:"")+
 			"!"+
@@ -211,7 +198,7 @@ function updateUpperHTML() {
 		)
 	} else if (chal) {
 		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
-		tmp.el.chal_upper.setHTML(
+		elm.chal_upper.setHTML(
 			`You are in [${CHALS[chal].title}] Challenge!` +
 			(player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
 				` Go over ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.` +
@@ -221,31 +208,31 @@ function updateUpperHTML() {
 	}
 
 	unl = player.atom.unl && !hideSome
-	tmp.el.quark_div.setDisplay(unl)
-	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
+	elm.quark_div.setDisplay(unl)
+	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
 	let scut = hasTree("qol_shrt")
-	tmp.el.scut_div.setDisplay(scut)
-	tmp.el.md_div.setDisplay(!scut)
+	elm.scut_div.setDisplay(scut)
+	elm.md_div.setDisplay(!scut)
 	if (scut) {
 		updateShortcuts()
 	} else {
 		unl = MASS_DILATION.unlocked()
-		tmp.el.md_div.setDisplay(unl)
-		if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+		elm.md_div.setDisplay(unl)
+		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
 	}
 
 	unl = player.supernova.post_10
-	tmp.el.sn_div.setDisplay(unl)
-	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
+	elm.sn_div.setDisplay(unl)
+	if (unl) elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
 
 	unl = EXT.unl(true)
-	tmp.el.ext_div.setDisplay(unl)
-	tmp.el.res_col2.setDisplay(!unl)
-	if (unl) tmp.el.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
+	elm.ext_div.setDisplay(unl)
+	elm.res_col2.setDisplay(!unl)
+	if (unl) elm.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 
 	unl = zeta()
-	tmp.el.zt_div.setDisplay(unl)
+	elm.zt_div.setDisplay(unl)
 }
 
 function updateRanksHTML() {
@@ -253,7 +240,7 @@ function updateRanksHTML() {
         let rn = RANKS.names[x]
 		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
 		if (x == 0) unl = unl&&!RANKS.unl.pent()
-		tmp.el["ranks_div_"+x].setDisplay(unl)
+		elm["ranks_div_"+x].setDisplay(unl)
 		if (unl) {
 			let keys = Object.keys(RANKS.desc[rn])
 			let desc = ""
@@ -264,14 +251,14 @@ function updateRanksHTML() {
 				}
 			}
 
-			tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
-			tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
-			tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
-			tmp.el["ranks_desc_"+x].setTxt(desc)
-			tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
-			tmp.el["ranks_reset_"+x].setDisplay(RANKS.mustReset(rn))
-			tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-			tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
+			elm["ranks_scale_"+x].setTxt(getScalingName(rn))
+			elm["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
+			elm["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
+			elm["ranks_desc_"+x].setTxt(desc)
+			elm["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
+			elm["ranks_reset_"+x].setDisplay(RANKS.mustReset(rn))
+			elm["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
+			elm["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
 		}
     }
 }
@@ -279,62 +266,62 @@ function updateRanksHTML() {
 function updateMassUpgradesHTML() {
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
 		let upg = UPGS.mass[x]
-		tmp.el["massUpg_div_"+x].setDisplay(upg.unl())
+		elm["massUpg_div_"+x].setDisplay(upg.unl())
 		if (upg.unl()) {
 			let desc = UPGS.mass[x].effDesc(tmp.upgs.mass[x].eff)
-			tmp.el["massUpg_scale_"+x].setTxt(getScalingName("massUpg", x))
-			tmp.el["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bonus.gt(0)?" + "+format(tmp.upgs.mass[x].bonus,0):""))
-			tmp.el["massUpg_btn_"+x].setClasses({btn: true, locked: player.mass.lt(tmp.upgs.mass[x].cost)})
-			tmp.el["massUpg_cost_"+x].setTxt(formatMass(tmp.upgs.mass[x].cost))
-			tmp.el["massUpg_step_"+x].setTxt(desc.step)
-			tmp.el["massUpg_eff_"+x].setHTML(desc.eff)
-			tmp.el["massUpg_auto_"+x].setDisplay(hasUpgrade('rp',3))
-			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"ON":"OFF")
+			elm["massUpg_scale_"+x].setTxt(getScalingName("massUpg", x))
+			elm["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bonus.gt(0)?" + "+format(tmp.upgs.mass[x].bonus,0):""))
+			elm["massUpg_btn_"+x].setClasses({btn: true, locked: player.mass.lt(tmp.upgs.mass[x].cost)})
+			elm["massUpg_cost_"+x].setTxt(formatMass(tmp.upgs.mass[x].cost))
+			elm["massUpg_step_"+x].setTxt(desc.step)
+			elm["massUpg_eff_"+x].setHTML(desc.eff)
+			elm["massUpg_auto_"+x].setDisplay(hasUpgrade('rp',3))
+			elm["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"ON":"OFF")
 		}
 	}
 }
 
 function updateTickspeedHTML() {
 	let unl = player.rp.unl
-	tmp.el.tickspeed_div.setDisplay(unl)
+	elm.tickspeed_div.setDisplay(unl)
 	if (unl) {
-		tmp.el.tickspeed_scale.setTxt(getScalingName('tickspeed'))
-		tmp.el.tickspeed_lvl.setTxt(format(player.tickspeed,0)+(tmp.atom.atomicEff.gte(1)?" + "+format(tmp.atom.atomicEff,0):""))
-		tmp.el.tickspeed_btn.setClasses({btn: true, locked: !FORMS.tickspeed.can()})
-		tmp.el.tickspeed_cost.setTxt(format(tmp.tickspeedCost,0))
-		tmp.el.tickspeed_step.setHTML((tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")+getSoftcapHTML(tmp.tickspeedEffect.step,tmp.tickspeedEffect.ss))
-		tmp.el.tickspeed_eff.setTxt(format(tmp.tickspeedEffect.eff))
+		elm.tickspeed_scale.setTxt(getScalingName('tickspeed'))
+		elm.tickspeed_lvl.setTxt(format(player.tickspeed,0)+(tmp.atom.atomicEff.gte(1)?" + "+format(tmp.atom.atomicEff,0):""))
+		elm.tickspeed_btn.setClasses({btn: true, locked: !FORMS.tickspeed.can()})
+		elm.tickspeed_cost.setTxt(format(tmp.tickspeedCost,0))
+		elm.tickspeed_step.setHTML((tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")+getSoftcapHTML(tmp.tickspeedEffect.step,tmp.tickspeedEffect.ss))
+		elm.tickspeed_eff.setTxt(format(tmp.tickspeedEffect.eff))
 
-		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
-		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"ON":"OFF")
+		elm.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
+		elm.tickspeed_auto.setTxt(player.autoTickspeed?"ON":"OFF")
 	}
 }
 
 function updateRanksRewardHTML() {
-	tmp.el["ranks_reward_name"].setTxt(RANKS.fullNames[player.ranks_reward])
+	elm["ranks_reward_name"].setTxt(RANKS.fullNames[player.ranks_reward])
 
 	if (player.ranks_reward === 0) {
-		tmp.el.ranks_left_arrow.addClass("locked")
+		elm.ranks_left_arrow.addClass("locked")
 	} else {
-		tmp.el.ranks_left_arrow.removeClass("locked")
+		elm.ranks_left_arrow.removeClass("locked")
 	}
 
 	const maxUnlockedRank = Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i)))
 	if (player.ranks_reward === maxUnlockedRank) {
-		tmp.el.ranks_right_arrow.addClass("locked")
+		elm.ranks_right_arrow.addClass("locked")
 	} else {
-		tmp.el.ranks_right_arrow.removeClass("locked")
+		elm.ranks_right_arrow.removeClass("locked")
 	}
 
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
-		tmp.el["ranks_reward_div_"+x].setDisplay(player.ranks_reward == x)
+		elm["ranks_reward_div_"+x].setDisplay(player.ranks_reward == x)
 		if (player.ranks_reward == x) {
 			let keys = Object.keys(RANKS.desc[rn])
 			for (let y = 0; y < keys.length; y++) {
 				let unl = player.ranks[rn].gte(keys[y])
-				tmp.el["ranks_reward_"+rn+"_"+y].setDisplay(unl)
-				if (unl) if (tmp.el["ranks_eff_"+rn+"_"+y]) tmp.el["ranks_eff_"+rn+"_"+y].setTxt(RANKS.effDesc[rn][keys[y]](RANKS.effect[rn][keys[y]]()))
+				elm["ranks_reward_"+rn+"_"+y].setDisplay(unl)
+				if (unl) if (elm["ranks_eff_"+rn+"_"+y]) elm["ranks_eff_"+rn+"_"+y].setTxt(RANKS.effDesc[rn][keys[y]](RANKS.effect[rn][keys[y]]()))
 			}
 		}
 	}
@@ -347,74 +334,75 @@ function updateMainUpgradesHTML() {
 		let upg2 = upg1[msg[1]]
 		let html = "<span class='sky'>"+upg2.desc+"</span><br><span>Cost: "+format(upg2.cost,0)+" "+upg1.res+"</span>"
 		if (upg2.effDesc !== undefined) html += "<br><span class='green'>Currently: "+upg2.effDesc()+"</span>"
-		tmp.el.main_upg_msg.setHTML(html)
-	} else tmp.el.main_upg_msg.setTxt("")
+		elm.main_upg_msg.setHTML(html)
+	} else elm.main_upg_msg.setTxt("")
 	for (let x = 1; x <= UPGS.main.cols; x++) {
 		let id = UPGS.main.ids[x]
 		let upg = UPGS.main[x]
 		let unl = upg.unl()
-		tmp.el["main_upg_"+x+"_div"].changeStyle("visibility", unl?"visible":"hidden")
-		tmp.el["main_upg_"+x+"_res"].setTxt(`You have ${format(upg.getRes(),0)} ${upg.res}`)
+		elm["main_upg_"+x+"_div"].changeStyle("visibility", unl?"visible":"hidden")
+		elm["main_upg_"+x+"_res"].setTxt(`You have ${format(upg.getRes(),0)} ${upg.res}`)
 		if (unl) {
 			for (let y = 1; y <= upg.lens; y++) {
 				let unl2 = upg[y].unl ? upg[y].unl() : true
-				tmp.el["main_upg_"+x+"_"+y].changeStyle("visibility", unl2?"visible":"hidden")
-				if (unl2) tmp.el["main_upg_"+x+"_"+y].setClasses({img_btn: true, locked: !upg.can(y), bought: player.mainUpg[id].includes(y)})
+				elm["main_upg_"+x+"_"+y].changeStyle("visibility", unl2?"visible":"hidden")
+				if (unl2) elm["main_upg_"+x+"_"+y].setClasses({img_btn: true, locked: !upg.can(y), bought: player.mainUpg[id].includes(y)})
 			}
-			tmp.el["main_upg_"+x+"_auto"].setDisplay(upg.auto_unl ? upg.auto_unl() : false)
-			tmp.el["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"ON":"OFF")
+			elm["main_upg_"+x+"_auto"].setDisplay(upg.auto_unl ? upg.auto_unl() : false)
+			elm["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"ON":"OFF")
 		}
 	}
 }
 
 function updateBlackHoleHTML() {
-	tmp.el.bhMass2.setHTML(formatMass(player.bh.mass)+" "+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
-	tmp.el.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
-	tmp.el.massSoft2.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
-	tmp.el.massSoftStart2.setTxt(formatMass(tmp.bh.massSoftGain))
-	tmp.el.bhEffect.setTxt(format(tmp.bh.effect))
+	elm.bhMass2.setHTML(formatMass(player.bh.mass)+" "+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
+	elm.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
+	elm.massSoft2.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
+	elm.massSoftStart2.setTxt(formatMass(tmp.bh.massSoftGain))
+	elm.bhEffect.setTxt(format(tmp.bh.effect))
 
-	tmp.el.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bonus.gte(1)?" + "+format(tmp.bh.condenser_bonus,0):""))
-	tmp.el.bhCondenser_btn.setClasses({btn: true, locked: !FORMS.bh.condenser.can()})
-	tmp.el.bhCondenser_scale.setTxt(getScalingName('bh_condenser'))
-	tmp.el.bhCondenser_cost.setTxt(format(tmp.bh.condenser_cost,0))
-	tmp.el.bhCondenser_pow.setTxt(format(tmp.bh.condenser_eff.pow))
-	tmp.el.bhCondenserEffect.setHTML(format(tmp.bh.condenser_eff.eff))
-	tmp.el.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
-	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
+	elm.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bonus.gte(1)?" + "+format(tmp.bh.condenser_bonus,0):""))
+	elm.bhCondenser_btn.setClasses({btn: true, locked: !FORMS.bh.condenser.can()})
+	elm.bhCondenser_scale.setTxt(getScalingName('bh_condenser'))
+	elm.bhCondenser_cost.setTxt(format(tmp.bh.condenser_cost,0))
+	elm.bhCondenser_pow.setTxt(format(tmp.bh.condenser_eff.pow))
+	elm.bhCondenserEffect.setHTML(format(tmp.bh.condenser_eff.eff))
+	elm.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
+	elm.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
 
 	updateExtraBuildingHTML("bh", 2)
 	updateExtraBuildingHTML("bh", 3)
 
-	tmp.el.massRadSoft.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(tmp.bh.rad_ss))
-	tmp.el.massRadSoftStart.setTxt(formatMass(tmp.bh.rad_ss))
+	elm.massRadSoft.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(tmp.bh.rad_ss))
+	elm.massRadSoftStart.setTxt(formatMass(tmp.bh.rad_ss))
 }
 
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS_UNL[CONFIRMS[x]]())
-		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
+		elm["confirm_div_"+x].setDisplay(CONFIRMS_UNL[CONFIRMS[x]]())
+		elm["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
-	tmp.el.offline_active.setTxt(player.offline.active?"ON":"OFF")
-	tmp.el.tree_ani_btn.setDisplay(player.supernova.unl)
-	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
-	tmp.el.chroma_bg_btn.setDisplay(CHROMA.unl())
-	tmp.el.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
+	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
+	elm.tree_ani_btn.setDisplay(player.supernova.unl)
+	elm.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
+	elm.chroma_bg_btn.setDisplay(CHROMA.unl())
+	elm.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
 }
 
 function updateHTML() {
 	if (tmp.offlineActive) {
-		tmp.el.offlineGain.setDisplay(tmp.offlineActive)
-		tmp.el.offlineSpeed.setTxt("(" + format(tmp.offlineMult) + "x speed, " + formatTime(player.offline.time) + " left)")
-		tmp.el.offlineGainDiv.setHTML(
+		elm.offlineGain.setDisplay(tmp.offlineActive)
+		elm.offlineSpeed.setTxt("(" + format(tmp.offlineMult) + "x speed, " + formatTime(player.offline.time) + " left)")
+		elm.offlineGainDiv.setHTML(
 			player.stats.maxMass.eq(player.offline.mass) || player.offline.mass.eq(0) ? "" :
 			(player.stats.maxMass.gte(uni("ee9")) ? "^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) + " mass gained!"
 			: format(player.stats.maxMass.div(player.offline.mass)) + "x mass gained!") + " " + formatGain(player.mass, tmp.massGain, true, true)
 		)
 	}
 
-	tmp.el.loading.setDisplay(tmp.offlineActive)
-    tmp.el.app.setDisplay(!tmp.offlineActive && tmp.tab != 5 && (!tmp.supernova.reached || player.supernova.unl))
+	elm.loading.setDisplay(tmp.offlineActive)
+    elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 5 && (!tmp.supernova.reached || player.supernova.unl))
+	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | IM: Altrascendum")
 	if (tmp.offlineActive) return
 
 	updateSupernovaEndingHTML()
@@ -428,12 +416,12 @@ function updateHTML() {
 				updateMassUpgradesHTML()
 				updateTickspeedHTML()
 				
-				tmp.el.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain))
-				tmp.el.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
-				tmp.el.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2))
-				tmp.el.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
-				tmp.el.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
-				tmp.el.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
+				elm.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain))
+				elm.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
+				elm.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2))
+				elm.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
+				elm.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
+				elm.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
@@ -446,7 +434,7 @@ function updateHTML() {
 			}
 		}
 		if (tmp.tab == 1) {
-			tmp.el.total_time.setTxt(formatTime(player.time))
+			elm.total_time.setTxt(formatTime(player.time))
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
 			if (tmp.stab[1] == 1) updateScalingHTML()
 		}

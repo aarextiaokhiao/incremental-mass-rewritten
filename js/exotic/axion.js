@@ -151,7 +151,7 @@ let AXION = {
 		let r = E(1)
 		if (hasTree("ext_b2")) r = E(1.02).pow(this.getXLvl(p).mul(str)).mul(r)
 		if (hasTree("ext_b3")) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3)).mul(str)).mul(r)
-		if (hasTree("ext_e1") && p < 16) r = E(1.02).pow(this.getZLvl(p).mul(4*Math.log2(1.6)).mul(str)).mul(r)
+		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6)).mul(str)).mul(r)
 		return r
 	},
 	getEff(p, l) {
@@ -377,7 +377,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: EINF,
 			eff(x) {
-				return x.sqrt().div(12000).min(.05).toNumber()
+				return x.sqrt().div(24000).min(.05).toNumber()
 			},
 			effDesc(x) {
 				return "+^"+format(x,4)
@@ -470,53 +470,53 @@ function updateAxionTemp() {
 }
 
 function updateAxionHTML() {
-	tmp.el.st_res0.setHTML(format(player.ext.ax.res[0]))
-	tmp.el.st_res1.setHTML(format(player.ext.ax.res[1]))
-	tmp.el.st_res2.setHTML(format(player.ext.ax.res[2]))
-	tmp.el.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXION.prod(0)))
-	tmp.el.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXION.prod(1)))
-	tmp.el.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXION.prod(2)))
-	tmp.el.st_res2_disp.setDisplay(hasTree("ext_e1"))
+	elm.st_res0.setHTML(format(player.ext.ax.res[0]))
+	elm.st_res1.setHTML(format(player.ext.ax.res[1]))
+	elm.st_res2.setHTML(format(player.ext.ax.res[2]))
+	elm.st_gain0.setHTML(formatGain(player.ext.ax.res[0], AXION.prod(0)))
+	elm.st_gain1.setHTML(formatGain(player.ext.ax.res[1], AXION.prod(1)))
+	elm.st_gain2.setHTML(formatGain(player.ext.ax.res[2], AXION.prod(2)))
+	elm.st_res2_disp.setDisplay(hasTree("ext_e1"))
 
 	for (var i = 0; i < 12; i++) {
-		tmp.el["ax_upg"+i].setClasses({btn_ax: true, locked: !AXION.canBuy(i)})
-		tmp.el["ax_upg"+i].setOpacity(tmp.ax.hover.hide.includes("u"+i) ? 0.15 : 1)
-		tmp.el["ax_upg"+i].setDisplay(i < 8 || hasTree("ext_e1"))
+		elm["ax_upg"+i].setClasses({btn_ax: true, locked: !AXION.canBuy(i)})
+		elm["ax_upg"+i].setOpacity(tmp.ax.hover.hide.includes("u"+i) ? 0.15 : 1)
+		elm["ax_upg"+i].setDisplay(i < 8 || hasTree("ext_e1"))
 	}
 	for (var i = 0; i < AXION.maxRows * 4; i++) {
-		tmp.el["ax_boost"+i].setClasses({btn_ax: true, locked: tmp.ax.lvl[i].eq(0), bonus: tmp.ax.hover.bonus.includes("b"+i)})
-		tmp.el["ax_boost"+i].setDisplay(AXION.ids[i].unl === undefined || AXION.ids[i].unl())
-		tmp.el["ax_boost"+i].setOpacity(tmp.ax.hover.bonus.includes("b"+i) ? 1 : tmp.ax.hover.hide.includes("b"+i) || tmp.ax.lvl[i].eq(0) ? 0.15 : 1)
+		elm["ax_boost"+i].setClasses({btn_ax: true, locked: tmp.ax.lvl[i].eq(0), bonus: tmp.ax.hover.bonus.includes("b"+i)})
+		elm["ax_boost"+i].setDisplay(AXION.ids[i].unl === undefined || AXION.ids[i].unl())
+		elm["ax_boost"+i].setOpacity(tmp.ax.hover.bonus.includes("b"+i) ? 1 : tmp.ax.hover.hide.includes("b"+i) || tmp.ax.lvl[i].eq(0) ? 0.15 : 1)
 	}
 
-	tmp.el.ax_desc.setOpacity(tmp.ax.hover.id ? 1 : 0)
+	elm.ax_desc.setOpacity(tmp.ax.hover.id ? 1 : 0)
 	if (tmp.ax.hover.id) {
 		if (tmp.ax.hover.id[0] == "u") {
 			var id = Number(tmp.ax.hover.id.split("u")[1])
 			var type = Math.floor(id / 4)
 			var name = ["X","Y","Z"][type]
-			tmp.el.ax_title.setTxt(name + "-Axion Upgrade " + ((id % 4) + 1))
-			tmp.el.ax_eff.setDisplay(false)
+			elm.ax_title.setTxt(name + "-Axion Upgrade " + ((id % 4) + 1))
+			elm.ax_eff.setDisplay(false)
 
-			tmp.el.ax_req.setHTML("Cost: " + format(tmp.ax.cost[id]) + " " + name + "-Axions")
-			tmp.el.ax_req.setClasses({"red": !AXION.canBuy(id)})
-			tmp.el.ax_lvl.setHTML("Level: " + format(axUpg(id), 0) + " / " + format(tmp.ax.max[type], 0))
+			elm.ax_req.setHTML("Cost: " + format(tmp.ax.cost[id]) + " " + name + "-Axions")
+			elm.ax_req.setClasses({"red": !AXION.canBuy(id)})
+			elm.ax_lvl.setHTML("Level: " + format(axUpg(id), 0) + " / " + format(tmp.ax.max[type], 0))
 
 		}
 		if (tmp.ax.hover.id[0] == "b") {
 			var id = Number(tmp.ax.hover.id.split("b")[1])
 			var locked = tmp.ax.lvl[id].eq(0)
 			var hasEff = !locked && id < 20
-			tmp.el.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + (id + 1) + ")")
-			tmp.el.ax_eff.setDisplay(hasEff)
-			if (hasEff) tmp.el.ax_eff.setHTML("Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) + "<br>")
+			elm.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + (id + 1) + ")")
+			elm.ax_eff.setDisplay(hasEff)
+			if (hasEff) elm.ax_eff.setHTML("Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) + "<br>")
 
 			var lvl_desc = format(AXION.getBaseLvl(id).sub(AXION.ids[id].req.sub(1)), 0)
 			if (AXION.getBonusLvl(id).gt(0)) lvl_desc += "+" + format(AXION.getBonusLvl(id))
 			if (AXION.getMultLvl(id).gt(1)) lvl_desc += ", x" + format(AXION.getMultLvl(id))
-			tmp.el.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
-			tmp.el.ax_req.setClasses({"red": locked})
-			tmp.el.ax_lvl.setHTML(locked ? "" : "Level: " + lvl_desc)
+			elm.ax_req.setTxt(locked ? "Locked (requires " + format(AXION.getLvl(id, true)) + " / " + format(AXION.ids[id].req, 0) + ")" : AXION.ids[id].desc)
+			elm.ax_req.setClasses({"red": locked})
+			elm.ax_lvl.setHTML(locked ? "" : "Level: " + lvl_desc)
 		}
 	}
 }

@@ -116,7 +116,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `For every c7 completion, add 2 c5 & 6 completion.`,
+            desc: `For every C7 completion, add 2 c5 & 6 completion.`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
@@ -151,7 +151,7 @@ const ELEMENTS = {
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
                 if (hasTree("ext_u2")) x = x.pow(2)
-                return x.softcap(2,0.1,0)
+                return x.softcap(1.3,0.1,0)
             },
             effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,2) },
         },
@@ -280,7 +280,7 @@ const ELEMENTS = {
             cost: E(1e285),
         },
         {
-            desc: `Collapsed star boost dilated mass gain.`,
+            desc: `Stars boost dilated mass gain.`,
             cost: E(1e303),
             effect() {
                 let x = player.stars.points.add(1).pow(0.5)
@@ -293,7 +293,7 @@ const ELEMENTS = {
             cost: E('e315'),
         },
         {
-            desc: `Collapsed star boost quark gain.`,
+            desc: `Stars boost quarks.`,
             cost: E('e325'),
             effect() {
                 let x = player.stars.points.add(1).pow(1/3)
@@ -310,7 +310,7 @@ const ELEMENTS = {
             cost: E('e380'),
         },
         {
-            desc: `Collapsed star boost relativistic particles gain.`,
+            desc: `Stars boost relativistic particles.`,
             cost: E('e420'),
             effect() {
                 let x = player.stars.points.add(1).pow(0.15).min(1e20)
@@ -439,7 +439,7 @@ const ELEMENTS = {
             cost: E('e1.1e6'),
         },
         {
-            desc: `Collapsed star boost quarks gain.`,
+            desc: `Stars boost quarks. [Stacked with Mo-42]`,
             cost: E('e1.7e6'),
             effect() {
                 let x = player.stars.points.add(1)
@@ -599,18 +599,18 @@ function setupElementsHTML() {
 
 function updateElementsHTML() {
     let ch = tmp.elements.choosed
-    tmp.el.elem_ch_div.setVisible(ch>0)
+    elm.elem_ch_div.setVisible(ch>0)
     if (ch) {
-        tmp.el.elem_desc.setTxt("["+ELEMENTS.fullNames[ch]+"] "+ELEMENTS.upgs[ch].desc)
-        tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0))
-        tmp.el.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"Currently: "+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
+        elm.elem_desc.setTxt("["+ELEMENTS.fullNames[ch]+"] "+ELEMENTS.upgs[ch].desc)
+        elm.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0))
+        elm.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"Currently: "+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
     }
-    tmp.el.element_la_1.setVisible(tmp.elements.unl_length>57)
-    tmp.el.element_la_3.setVisible(tmp.elements.unl_length>57)
-    tmp.el.element_la_2.setVisible(tmp.elements.unl_length>88)
-    tmp.el.element_la_4.setVisible(tmp.elements.unl_length>88)
+    elm.element_la_1.setVisible(tmp.elements.unl_length>57)
+    elm.element_la_3.setVisible(tmp.elements.unl_length>57)
+    elm.element_la_2.setVisible(tmp.elements.unl_length>88)
+    elm.element_la_4.setVisible(tmp.elements.unl_length>88)
     for (let x = 1; x <= tmp.elements.upg_length; x++) {
-        let upg = tmp.el['elementID_'+x]
+        let upg = elm['elementID_'+x]
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {

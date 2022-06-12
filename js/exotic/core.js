@@ -170,9 +170,9 @@ let EXOTIC = {
 let EXT = EXOTIC
 
 function updateExoticHTML() {
-	tmp.el.app_ext.setDisplay(tmp.tab == 6)
+	elm.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
-		tmp.el.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
+		elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateChromaHTML()
 		if (tmp.stab[6] == 2) updatePrimHTML()
@@ -251,13 +251,13 @@ function updateExtraBuildingHTML(type, x) {
 	let id = type+"_b"+x+"_"
 	let data = tmp.eb[type+x]
 	let data2 = EXTRA_BUILDINGS[type+x]
-	tmp.el[id+"div"].setDisplay(unl)
+	elm[id+"div"].setDisplay(unl)
 	if (!unl) return
 
-	tmp.el[id+"cost"].setHTML(format(data.cost,0))
-	tmp.el[id+"btn"].setClasses({btn: true, locked: data.gain.lte(getExtraBuildings(type,x))})
-	tmp.el[id+"lvl"].setHTML(format(getExtraBuildings(type,x),0))
-	tmp.el[id+"pow"].setHTML(format(data.eff,type=="bh"&&x==3?3:2) + (data2.softcapHTML ? data2.softcapHTML(data.eff) : ""))
+	elm[id+"cost"].setHTML(format(data.cost,0))
+	elm[id+"btn"].setClasses({btn: true, locked: data.gain.lte(getExtraBuildings(type,x))})
+	elm[id+"lvl"].setHTML(format(getExtraBuildings(type,x),0))
+	elm[id+"pow"].setHTML(format(data.eff,type=="bh"&&x==3?3:2) + (data2.softcapHTML ? data2.softcapHTML(data.eff) : ""))
 }
 
 function updateExtraBuildingsHTML(type) {

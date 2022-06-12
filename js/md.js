@@ -38,10 +38,17 @@ const MASS_DILATION = {
 	RPbasegain(m=player.mass) {
 		return m.div(uni(1)).max(1).log10().div(40).sub(14)
 	},
-	RPgain(m=player.mass) {
+	RPmassgain(m=player.mass) {
 		if (CHALS.inChal(11)) return E(0)
-		let x = this.RPbasegain(m).pow(tmp.md.rp_exp_gain).mul(tmp.md.rp_mult_gain)
+		return this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
+	},
+	RPgain(m=player.mass) {
+		let x = this.RPmassgain(m).min(this.undercapacity()).mul(tmp.md.rp_mult_gain)
 		return x.sub(player.md.particles).max(0).floor()
+	},
+	undercapacity() {
+		if (future) return EINF
+		return player.mass.pow(1e-5).max("ee11")
 	},
     massGain() {
         if (CHALS.inChal(11)) return E(0)
@@ -225,22 +232,23 @@ function updateMDTemp() {
 
 function updateMDHTML() {
 	let exp = AXION.unl() ? tmp.ax.eff[19] : E(1)
-    tmp.el.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
-    tmp.el.md_eff.setTxt(exp.gt(1)?"^"+format(exp,3):tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
-    tmp.el.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
-    tmp.el.md_btn.setTxt(player.md.active
+    elm.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
+    elm.md_eff.setTxt(exp.gt(1)?"^"+format(exp,3):tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
+    elm.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
+    elm.md_undercapacity.setHTML(MASS_DILATION.RPmassgain().gt(MASS_DILATION.undercapacity())?"To prevent temporal anomalies, base RP has been undercapacitied to "+format(MASS_DILATION.undercapacity())+"!<br>":"")
+    elm.md_btn.setTxt(player.md.active
         ?(tmp.md.rp_gain.gte(1)?`Cancel for ${format(tmp.md.rp_gain,0)} Relativistic particles`:`Reach ${formatMass(tmp.md.mass_req)} to gain Relativistic particles, or cancel dilation`)
         :"Dilate Mass"
     )
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) {
         let upg = MASS_DILATION.upgs.ids[x]
         let unl = upg.unl?upg.unl():true
-        tmp.el["md_upg"+x+"_div"].setVisible(unl)
+        elm["md_upg"+x+"_div"].setVisible(unl)
         if (unl) {
-            tmp.el["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can})
-            tmp.el["md_upg"+x+"_lvl"].setTxt(format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
-            if (upg.effDesc) tmp.el["md_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.md.upgs[x].eff))
-            tmp.el["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||1/0)?"Cost: "+formatMass(tmp.md.upgs[x].cost):"")
+            elm["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can})
+            elm["md_upg"+x+"_lvl"].setTxt(format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
+            if (upg.effDesc) elm["md_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.md.upgs[x].eff))
+            elm["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||1/0)?"Cost: "+formatMass(tmp.md.upgs[x].cost):"")
         }
     }
 }

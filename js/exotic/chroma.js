@@ -16,8 +16,8 @@ let CHROMA = {
 	tones: {
 		colors: ["Red", "Green", "Blue", "Violet", "Ultraviolet"],
 		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank - Tetr", "Supernovae - Fermions"],
-		reqs: [E(0), E(1e70), E("1e2500"), E("1e125000"), E("1e10000000")],
-		reqs_toggle: [E(0), E(1e100), E("1e10000"), E("1e1000000"), E("1e10000000")],
+		reqs: [E(0), E(1e70), E("1e600"), E("1e125000"), E("1e10000000")],
+		reqs_toggle: [E(0), E(1e100), E("1e3000"), E("1e1000000"), E("1e10000000")],
 		toggle(x) {
 			if (!player.ext.ch.tones[x] && !this.can(x)) return
 			player.ext.ch.tones[x] = !player.ext.ch.tones[x]
@@ -77,7 +77,7 @@ let CHROMA = {
 			desc: (x) => "Raise mass outside of MD, by ^"+format(x)+".",
 			color: "#007f00",
 			eff(x) {
-				return x.div(2).add(1).cbrt().min(2)
+				return x.div(2).add(1).cbrt().min(1.5)
 			},
 		},
 		p3_1: {
@@ -116,10 +116,10 @@ let CHROMA = {
 			},
 		},
 		p2_3: {
-			desc: (x) => "Green-1 equalizes Ni-28.",
+			desc: (x) => "Placeholder.",
 			color: "#00ff00",
 			eff(x) {
-				return CHROMA.eff("p2_1").max(1.5)
+				return E(0)
 			},
 		},
 		p3_3: {
@@ -132,10 +132,10 @@ let CHROMA = {
 
 		//SECONDARY
 		s1_1: {
-			desc: (x) => "Weaken Ultra Fermion scaling by "+format(E(1).sub(E(1).div(x)).mul(100))+"%.",
+			desc: (x) => "Dual Fermions give +"+format(x,0)+" Tiers.",
 			color: "#7f7f00",
 			eff(x) {
-				return x.mul(0.3).add(1)
+				return x.mul(10).floor()
 			},
 		},
 		s2_1: {
@@ -149,28 +149,28 @@ let CHROMA = {
 			desc: (x) => "Weaken Pre-Atom buildings by "+format(x)+"x.",
 			color: "#7f007f",
 			eff(x) {
-				return E(1.5).pow(x)
+				return E(1.2).pow(x)
 			},
 		},
 		s1_2: {
-			desc: (x) => "Dual Fermions give +"+format(x,0)+" Tiers.",
+			desc: (x) => "U-Lepton Boost shares with U-Quarks.",
 			color: "#bfbf00",
 			eff(x) {
-				return x.mul(5).floor()
+				return E(0)
 			},
 		},
 		s2_2: {
 			desc: (x) => "Rank boosts Mass by "+format(x)+"x.",
 			color: "#00bfbf",
 			eff(x) {
-				return E(1.1).pow(player.ranks.rank.pow(3))
+				return E(1.05).pow(player.ranks.rank.pow(3))
 			},
 		},
 		s3_2: {
 			desc: (x) => "Weaken Cosmic Rays by "+format(x)+"x.",
 			color: "#bf00bf",
 			eff(x) {
-				return E(1.5).pow(x.sub(1)).max(1)
+				return E(1.2).pow(x.sub(1)).max(1)
 			},
 		},
 
@@ -290,39 +290,39 @@ function updateChromaTemp() {
 
 function updateChromaHTML() {
 	let save = player.ext.ch
-	tmp.el.ch_req.setTxt(tmp.ch.toned ? "(Your next tone requires " + format(tmp.ch.req) + " EM!)" : "")
-	tmp.el.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments")
-	tmp.el.ch_nxt.setTxt(tmp.ch.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
+	elm.ch_req.setTxt(tmp.ch.toned ? "(Your next tone requires " + format(tmp.ch.req) + " EM!)" : "")
+	elm.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments")
+	elm.ch_nxt.setTxt(tmp.ch.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
 
 	for (var i = 0; i < save.tones.length; i++) {
 		let choosed = save.tones[i]
 		let unl = player.ext.amt.gte(EXT.amt(CHROMA.tones.reqs[i]))
 		let unavailable = !CHROMA.tones.can(i) && !choosed
-		tmp.el["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, locked: unavailable, choosed: choosed})
-		tmp.el["ch_tone_" + i].setTxt(unl ? CHROMA.tones.colors[i] + (save.tones[i] ? ": ON" : ": OFF") : "Locked")
-		tmp.el["ch_eff_" + i].setTxt(unl ? CHROMA.tones.effs[i] : "Req: " + format(EXT.amt(CHROMA.tones.reqs[i])) + " EM")
+		elm["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, locked: unavailable, choosed: choosed})
+		elm["ch_tone_" + i].setTxt(unl ? CHROMA.tones.colors[i] + (save.tones[i] ? ": ON" : ": OFF") : "Locked")
+		elm["ch_eff_" + i].setTxt(unl ? CHROMA.tones.effs[i] : "Req: " + format(EXT.amt(CHROMA.tones.reqs[i])) + " EM")
 	}
 
 	let s = CHROMA.spices
 	let all = s.all
 	for (var i = 0; i < all.length; i++) {
 		let id = all[i]
-		tmp.el["cs_"+id].setTxt(s[id].desc(tmp.ch.eff[id]))
-		tmp.el["cs_"+id].setOpacity(CHROMA.got(id) ? 1 : 0.25)
-		tmp.el["cs_"+id].setDisplay(s.unl(id))
+		elm["cs_"+id].setTxt(s[id].desc(tmp.ch.eff[id]))
+		elm["cs_"+id].setOpacity(CHROMA.got(id) ? 1 : 0.25)
+		elm["cs_"+id].setDisplay(s.unl(id))
 	}
 	let rows = s.rows
 	for (var i = 0; i < rows.length; i++) {
 		let id = rows[i]
-		tmp.el["cs_"+id+"_a"].setClasses({btn: true, locked: !CHROMA.can(id), btn_cs: true})
-		tmp.el["cs_"+id+"_a"].setTxt(CHROMA.got(id+"_1") ? "Extend" : id[0] == "p" ? "Assign" : "Spread")
-		tmp.el["cs_"+id+"_a"].setDisplay(s.unl(id+"_1"))
+		elm["cs_"+id+"_a"].setClasses({btn: true, locked: !CHROMA.can(id), btn_cs: true})
+		elm["cs_"+id+"_a"].setTxt(CHROMA.got(id+"_1") ? "Extend" : id[0] == "p" ? "Assign" : "Spread")
+		elm["cs_"+id+"_a"].setDisplay(s.unl(id+"_1"))
 	}
 
-	tmp.el.ch_rs.setVisible(save.upg.length > 0)
-	tmp.el.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")
-	tmp.el.ch_pwr.setTxt(save.upg.length > 0 ? "Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%" : "")
-	tmp.el.ch_nxt_assign.setTxt(save.upg.length > 0 && save.upg.length < 21 ? "Next: " + format(CHROMA.spices.cost(),0) + " Beauty Pigments" : "")
+	elm.ch_rs.setVisible(save.upg.length > 0)
+	elm.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")
+	elm.ch_pwr.setTxt(save.upg.length > 0 ? "Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%" : "")
+	elm.ch_nxt_assign.setTxt(save.upg.length > 0 && save.upg.length < 21 ? "Next: " + format(CHROMA.spices.cost(),0) + " Beauty Pigments" : "")
 }
 
 function toggleChromaBG() {
@@ -332,18 +332,18 @@ function toggleChromaBG() {
 
 function updateChromaScreen() {
 	let unl = CHROMA.unl() && !player.options.noChroma
-	tmp.el.chroma_bg.setDisplay(unl)
+	elm.chroma_bg.setDisplay(unl)
 	if (!unl) return
 
 	let progress = player.stats.maxMass.log10().log10().sub(14).div(16).max(0).min(1).toNumber()
-	tmp.el.chroma_bg1.setOpacity(progress)
-	tmp.el.chroma_bg2.setOpacity(progress)
+	elm.chroma_bg1.setOpacity(progress)
+	elm.chroma_bg2.setOpacity(progress)
 
 	//WARNING: PERFORMANCE!
 	let high = false
-	tmp.el.chroma_bg2.style.setProperty('background', high ? "linear-gradient(45deg, transparent, white, transparent, transparent)" : "linear-gradient(45deg, transparent, white)")
-	tmp.el.chroma_bg3.setDisplay(high)
-	if (high) tmp.el.chroma_bg3.setOpacity(progress)
+	elm.chroma_bg2.style.setProperty('background', high ? "linear-gradient(45deg, transparent, white, transparent, transparent)" : "linear-gradient(45deg, transparent, white)")
+	elm.chroma_bg3.setDisplay(high)
+	if (high) elm.chroma_bg3.setOpacity(progress)
 }
 
 /*

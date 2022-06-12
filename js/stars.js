@@ -59,6 +59,8 @@ function calcStars(dt) {
     player.stars.points = player.stars.points.add(tmp.stars.gain.mul(dt))
     if (!player.supernova.post_10) player.stars.points = player.stars.points.min(tmp.supernova.maxlimit)
     for (let x = 0; x < 5; x++) player.stars.generators[x] = player.stars.generators[x].add(tmp.stars.generators_gain[x].mul(dt))
+
+    if (hasTree("qol4")) STARS.generators.unl(true)
 }
 
 function updateStarsTemp() {
@@ -104,7 +106,7 @@ function setupStarsHTML() {
 function updateScreensHTML() {
 	//STARS
 	let shown = (!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5 && !CHROMA.unl()
-	tmp.el.star.setDisplay(shown)
+	elm.star.setDisplay(shown)
 	if (shown) {
 		let g = tmp.supernova.bulk.sub(player.supernova.times).max(0)
 		let percent = 0
@@ -120,9 +122,9 @@ function updateScreensHTML() {
 		if (percent>0.6) color = `rgb(255, ${213-(percent-0.6)/0.1*131}, 0)`
 		if (percent>0.7) color = `rgb(${255-(percent-0.7)/0.1*102}, ${82-(percent-0.7)/0.1*82}, 0)`
 		if (percent>0.8) color = `rgb(153, 0, 0)`
-		tmp.el.star.changeStyle('background-color',color)
-		tmp.el.star.changeStyle('width',size+"px")
-		tmp.el.star.changeStyle('height',size+"px")
+		elm.star.changeStyle('background-color',color)
+		elm.star.changeStyle('width',size+"px")
+		elm.star.changeStyle('height',size+"px")
 	}
 
 	//CHROMA
@@ -130,26 +132,26 @@ function updateScreensHTML() {
 }
 
 function updateStarsHTML() {
-    tmp.el.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
-	tmp.el.starSoftStart1.setTxt(format(tmp.stars.softGain))
-    tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
-    tmp.el.stars_eff.setTxt(format(tmp.stars.effect.eff))
-    tmp.el.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)" + getSoftcapHTML(tmp.stars.effect.exp, 1e12))
+    elm.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
+	elm.starSoftStart1.setTxt(format(tmp.stars.softGain))
+    elm.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
+    elm.stars_eff.setTxt(format(tmp.stars.effect.eff))
+    elm.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)" + getSoftcapHTML(tmp.stars.effect.exp, 1e12))
 
-    tmp.el.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
-	tmp.el.star_btn.setHTML(
+    elm.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
+	elm.star_btn.setHTML(
 		(player.stars.unls < 5 || !hasTree("s4")) ? `Unlock new type of Stars, require ${format(tmp.stars.generator_req)} Quark` :
 		`Boost all-Star resources gain, require ${format(tmp.stars.generator_boost_req)} Quark<br>`+
 		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.generator_boost_bonus.gt(0)?" + "+format(tmp.stars.generator_boost_bonus,0):"") +
 		`<br>Effect: ${format(tmp.stars.generator_boost_eff)}x (${format(tmp.stars.generator_boost_base,3)}x power)`
 	)
 
-    tmp.el.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
+    elm.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
 
     for (let x = 0; x < 5; x++) {
         let unl = player.stars.unls > x
-        tmp.el["star_gen_div_"+x].setDisplay(unl)
-        if (tmp.el["star_gen_arrow_"+x]) tmp.el["star_gen_arrow_"+x].setDisplay(unl)
-        if (unl) tmp.el["star_gen_"+x].setHTML(format(player.stars.generators[x],2)+"<br>"+formatGain(player.stars.generators[x],tmp.stars.generators_gain[x]))
+        elm["star_gen_div_"+x].setDisplay(unl)
+        if (elm["star_gen_arrow_"+x]) elm["star_gen_arrow_"+x].setDisplay(unl)
+        if (unl) elm["star_gen_"+x].setHTML(format(player.stars.generators[x],2)+"<br>"+formatGain(player.stars.generators[x],tmp.stars.generators_gain[x]))
     }
 }

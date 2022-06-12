@@ -330,42 +330,42 @@ function setupRadiationHTML() {
 }
 
 function updateRadiationHTML() {
-    tmp.el.frequency.setTxt(format(player.supernova.radiation.hz,1)+" "+formatGain(player.supernova.radiation.hz,tmp.radiation.hz_gain))
-    tmp.el.frequency_eff.setTxt(format(tmp.radiation.hz_effect))
+    elm.frequency.setTxt(format(player.supernova.radiation.hz,1)+" "+formatGain(player.supernova.radiation.hz,tmp.radiation.hz_gain))
+    elm.frequency_eff.setTxt(format(tmp.radiation.hz_effect))
 
     let rad_id = 1
     for (let x = 1; x < RAD_LEN; x++) {
         if (player.supernova.radiation.hz.lt(RADIATION.unls[x]||1/0)) break
         rad_id++
     }
-    tmp.el.next_radiation.setTxt()
+    elm.next_radiation.setTxt()
 
-    tmp.el.radiation_unl.setDisplay(rad_id < RAD_LEN)
-    tmp.el.next_radiation.setTxt(format(RADIATION.unls[rad_id]||1/0))
-    tmp.el.unl_radiation.setTxt(RADIATION.names[rad_id])
+    elm.radiation_unl.setDisplay(rad_id < RAD_LEN)
+    elm.next_radiation.setTxt(format(RADIATION.unls[rad_id]||1/0))
+    elm.unl_radiation.setTxt(RADIATION.names[rad_id])
 
     for (let x = 0; x < RAD_LEN; x++) {
         let unl = x==0||player.supernova.radiation.hz.gte(RADIATION.unls[x])
         let id = `rad_${x}`
 
-        tmp.el[id+"_div"].setDisplay(unl)
+        elm[id+"_div"].setDisplay(unl)
         if (unl) {
-            tmp.el[id+"_distance"].setTxt(format(player.supernova.radiation.ds[x],1)+" "+formatGain(player.supernova.radiation.ds[x],tmp.radiation.ds_gain[x]))
-            tmp.el[id+"_disEff"].setTxt(format(tmp.radiation.ds_eff[x]))
+            elm[id+"_distance"].setTxt(format(player.supernova.radiation.ds[x],1)+" "+formatGain(player.supernova.radiation.ds[x],tmp.radiation.ds_gain[x]))
+            elm[id+"_disEff"].setTxt(format(tmp.radiation.ds_eff[x]))
 
             for (let y = 0; y < 2; y++) {
                 let b = 2*x+y
                 let id2 = `rad_boost_${b}`
 
-                tmp.el[id2+"_lvl1"].setTxt(format(player.supernova.radiation.bs[b],0))
-                tmp.el[id2+"_cost"].setTxt(format(tmp.radiation.bs.cost[b],1))
-                tmp.el[id2+"_btn"].setClasses({btn: true, rad: true, locked: player.supernova.radiation.ds[x].lt(tmp.radiation.bs.cost[b])})
+                elm[id2+"_lvl1"].setTxt(format(player.supernova.radiation.bs[b],0))
+                elm[id2+"_cost"].setTxt(format(tmp.radiation.bs.cost[b],1))
+                elm[id2+"_btn"].setClasses({btn: true, rad: true, locked: player.supernova.radiation.ds[x].lt(tmp.radiation.bs.cost[b])})
             }
             for (let y = 0; y < 3; y++) {
                 let lvl = 3*x+y
                 let id2 = `rad_level_${lvl}`
-                tmp.el[id2].setTxt(format(tmp.radiation.bs.lvl[lvl],0)+(tmp.radiation.bs.bonus_lvl[lvl].gt(0)?" + "+format(tmp.radiation.bs.bonus_lvl[lvl]):""))
-                tmp.el[id2+"_desc"].setHTML(RADIATION.boosts[lvl].desc(tmp.radiation.bs.eff[lvl]))
+                elm[id2].setTxt(format(tmp.radiation.bs.lvl[lvl],0)+(tmp.radiation.bs.bonus_lvl[lvl].gt(0)?" + "+format(tmp.radiation.bs.bonus_lvl[lvl]):""))
+                elm[id2+"_desc"].setHTML(RADIATION.boosts[lvl].desc(tmp.radiation.bs.eff[lvl]))
             }
         }
     }

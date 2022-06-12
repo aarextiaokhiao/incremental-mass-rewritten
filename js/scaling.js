@@ -214,35 +214,35 @@ const NAME_FROM_RES = {
 
 function updateScalingHTML() {
 	let s = SCALE_TYPE[player.scaling_ch]
-	tmp.el.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
+	elm.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
 
 	if (player.scaling_ch === 0) {
-		tmp.el.scaling_left_arrow.addClass("locked")
+		elm.scaling_left_arrow.addClass("locked")
 	} else {
-		tmp.el.scaling_left_arrow.removeClass("locked")
+		elm.scaling_left_arrow.removeClass("locked")
 	}
 
 	let maxActiveScaling = Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1))
 	if (player.scaling_ch === maxActiveScaling) {
-		tmp.el.scaling_right_arrow.addClass("locked")
+		elm.scaling_right_arrow.addClass("locked")
 	} else {
-		tmp.el.scaling_right_arrow.removeClass("locked")
+		elm.scaling_right_arrow.removeClass("locked")
 	}
 
 	if (!tmp.scaling) return
 	for (let x = 0; x < SCALE_TYPE.length; x++) {
 		let type = SCALE_TYPE[x]
 		let mode = SCALE_MODE[type]
-		tmp.el["scaling_div_"+x].setDisplay(player.scaling_ch == x)
+		elm["scaling_div_"+x].setDisplay(player.scaling_ch == x)
 		if (player.scaling_ch == x) {
 			let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
 			for (let y = 0; y < key.length; y++) {
 				let id = key[y]
 				let have = tmp.scaling[SCALE_TYPE[x]].includes(key[y])
-				tmp.el['scaling_'+x+'_'+id+'_div'].setDisplay(have)
+				elm['scaling_'+x+'_'+id+'_div'].setDisplay(have)
 				if (have) {
-					tmp.el['scaling_'+x+'_'+id+'_power'].setTxt(SCALE_FUNCS[mode].desc(SCALE_POWER[type][id], getScalingPower(type, id)))
-					tmp.el['scaling_'+x+'_'+id+'_start'].setTxt(format(getScalingStart(type, id), 0))
+					elm['scaling_'+x+'_'+id+'_power'].setTxt(SCALE_FUNCS[mode].desc(SCALE_POWER[type][id], getScalingPower(type, id)))
+					elm['scaling_'+x+'_'+id+'_start'].setTxt(format(getScalingStart(type, id), 0))
 				}
 			}
 		}
@@ -432,9 +432,6 @@ function getScalingPower(type, name) {
 		}
 		if (name=='supernova') {
 			if (tmp.radiation) power = power.mul(tmp.radiation.bs.eff[20])
-		}
-		if (name=='fTier') {
-			if (CHROMA.got("s1_1")) power = power.div(CHROMA.eff("s1_1"))
 		}
 	}
 	if (type=="meta") {

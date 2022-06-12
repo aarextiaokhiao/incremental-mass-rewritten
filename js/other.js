@@ -9,17 +9,17 @@ function removeNotify() {
     let x = []
     for (let i = 1; i < tmp.notify.length; i++) x.push(tmp.notify[i])
     tmp.notify = x
-    tmp.el.notify.setVisible(false)
+    elm.notify.setVisible(false)
     updateNotify()
 }
 
 function updateNotify() {
     if (tmp.notify.length > 0) {
-        tmp.el.notify.setHTML(tmp.notify[0].text)
-        tmp.el.notify.setVisible(true)
-        tmp.el.notify.setClasses({hide: false})
+        elm.notify.setHTML(tmp.notify[0].text)
+        elm.notify.setVisible(true)
+        elm.notify.setClasses({hide: false})
         setTimeout(_=>{
-            tmp.el.notify.setClasses({hide: true})
+            elm.notify.setClasses({hide: true})
             setTimeout(removeNotify, 750)
         }, tmp.notify[0].duration*1000)
     }
@@ -27,7 +27,7 @@ function updateNotify() {
 
 const POPUP_GROUPS = {
     help: {
-        html: `
+        html: () => `
         <h1>Mass</h1><br>
         g (gram): 1 g<br>
         kg (kilogram): 1,000 g<br>
@@ -211,14 +211,14 @@ function addPopup(data) {
 }
 
 function updatePopup() {
-    tmp.el.popup.setDisplay(tmp.popup.length > 0)
+    elm.popup.setDisplay(tmp.popup.length > 0)
     if (tmp.popup.length > 0) {
-        tmp.el.popup_html.setHTML(tmp.popup[0].html)
-        tmp.el.popup_html.changeStyle("height", tmp.popup[0].height-35)
-        tmp.el.popup_button.setHTML(tmp.popup[0].button)
-        tmp.el.popup.changeStyle("width", tmp.popup[0].width)
-        tmp.el.popup.changeStyle("height", tmp.popup[0].height)
-        for (let x in tmp.popup[0].otherStyle) tmp.el.popup_html.changeStyle(x, tmp.popup[0].otherStyle[x])
+        elm.popup_html.setHTML(tmp.popup[0].html)
+        elm.popup_html.changeStyle("height", tmp.popup[0].height-35)
+        elm.popup_button.setHTML(tmp.popup[0].button)
+        elm.popup.changeStyle("width", tmp.popup[0].width)
+        elm.popup.changeStyle("height", tmp.popup[0].height)
+        for (let x in tmp.popup[0].otherStyle) elm.popup_html.changeStyle(x, tmp.popup[0].otherStyle[x])
     }
 }
 
@@ -292,7 +292,7 @@ function updateShortcuts() {
 	for (var i = 0; i < 7; i++) {
 		let unl = i < data.length
 		if (edit == 0) unl = unl && (i < 4 || (AXION.unl() && tmp.ax.lvl[23].gt(0)))
-		tmp.el["shrt_"+i].setVisible(unl)
+		elm["shrt_"+i].setVisible(unl)
 		if (unl) {
 			let id = data[i]
 			let mode = id[0] + 1

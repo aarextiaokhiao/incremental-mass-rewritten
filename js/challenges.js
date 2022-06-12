@@ -13,32 +13,32 @@ function updateChalHTML() {
         let chal = CHALS[x]
         let unl = chal.unl ? chal.unl() : true
         if (x <= 8 && hasTree("qol_ext8")) unl = false
-        tmp.el["chal_div_"+x].setDisplay(unl)
-        tmp.el["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: max})
+        elm["chal_div_"+x].setDisplay(unl)
+        elm["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: max})
         if (unl) {
-            tmp.el["chal_comp_"+x].setTxt(max?"Completed":format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
+            elm["chal_comp_"+x].setTxt(max?"Completed":format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
         }
     }
 	let sweep = !CHALS.lastActive() && hasTree("qol10")
 	let shrt = SHORTCUT_EDIT.mode == 1
-    tmp.el.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
-    tmp.el.chal_exit.setVisible(CHALS.lastActive())
-    tmp.el.chal_exit.setDisplay(!sweep)
-    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : CHALS.lastActive() > 12 ? "Exit Exotic Challenge" : "Exit Challenge")
-    tmp.el.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
-    tmp.el.chal_sweep.setDisplay(player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
-    tmp.el.chal_hint.setDisplay(!shrt)
-    tmp.el.chal_shrt.setDisplay(shrt)
+    elm.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
+    elm.chal_exit.setVisible(CHALS.lastActive())
+    elm.chal_exit.setDisplay(!sweep)
+    elm.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : CHALS.lastActive() > 12 ? "Exit Exotic Challenge" : "Exit Challenge")
+    elm.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
+    elm.chal_sweep.setDisplay(player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
+    elm.chal_hint.setDisplay(!shrt)
+    elm.chal_shrt.setDisplay(shrt)
     if (player.chal.choosed != 0 && !shrt) {
         let x = player.chal.choosed
         let chal = CHALS[x]
         let max = player.chal.comps[x].gte(tmp.chal.max[x])
-        tmp.el.chal_ch_title.setTxt(`[${x}]${CHALS.getScaleName(x)} ${chal.title} [${format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0)} Completions]`)
-        tmp.el.chal_ch_desc.setHTML(chal.desc)
-        tmp.el.chal_ch_reset.setTxt(CHALS.getReset(x))
-        tmp.el.chal_ch_goal.setTxt(max ? "" : "Goal: "+CHALS.getFormat(x)(tmp.chal.goal[x])+CHALS.getResName(x))
-        tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward)
-        tmp.el.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[x]))
+        elm.chal_ch_title.setTxt(`[${x}]${CHALS.getScaleName(x)} ${chal.title} [${format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0)} Completions]`)
+        elm.chal_ch_desc.setHTML(chal.desc)
+        elm.chal_ch_reset.setTxt(CHALS.getReset(x))
+        elm.chal_ch_goal.setTxt(max ? "" : "Goal: "+CHALS.getFormat(x)(tmp.chal.goal[x])+CHALS.getResName(x))
+        elm.chal_ch_reward.setHTML("Reward: "+chal.reward)
+        elm.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[x]))
     }
 }
 
@@ -454,13 +454,12 @@ const CHALS = {
 			let mul = E(0.01)
 			if (player.chal.comps[14].gte(0)) {
 				let c14 = CHALS[14].effect(player.chal.comps[14])
-				exp = exp.mul(c14.exp)
-				mul = mul.mul(c14.mul)
+				exp = exp.mul(c14)
 			}
-			let ret = x.pow(exp).mul(mul).add(1).min(2)
+			let ret = x.pow(exp).mul(mul).add(1)
 			return ret
 		},
-        effDesc(x) { return format(x)+"x" },
+        effDesc(x) { return "^"+format(x,3) },
     },
     11: {
         unl() { return hasTree("chal6") },
@@ -511,18 +510,14 @@ const CHALS = {
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10.`,
-		max: E(100),
+		max: E(20),
 		inc: E(1.5),
-		pow: E(1.25),
+		pow: E(1.5),
 		start: mlt(1e3),
 		effect(x) {
-			if (hasPrim("p6_0")) x = x.add(tmp.pr.eff["p6_0"])
-			return {
-				exp: E(1.75).sub(E(0.75).div(x.div(10).add(1))),
-				mul: x.div(25).add(1)
-			}
+			return E(1.75).sub(E(0.75).div(x.div(10).add(1)))
 		},
-        effDesc(x) { return "^"+format(x.exp)+", "+formatMultiply(x.mul) },
+        effDesc(x) { return "^"+format(x) },
 	},
 	15: {
 		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },

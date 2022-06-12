@@ -44,7 +44,7 @@ const FORMS = {
         if (!CHALS.inChal(3)) x = x.pow(tmp.chal.eff[3])
         if (tmp.md.active) {
             x = MASS_DILATION.applyDil(x)
-            if (hasElement(28)) x = x.pow(CHROMA.got("p2_3")?CHROMA.eff("p2_3"):1.5)
+            if (hasElement(28)) x = x.pow(1.5)
         }
         if (!tmp.md.active && CHROMA.got("p2_1")) x = x.pow(CHROMA.eff("p2_1"))
         if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
@@ -314,7 +314,6 @@ function loop() {
     diff = Date.now()-date;
     updateTemp()
     updateHTML()
-    if (tmp.supernova.reached && !player.supernova.unl) player.offline.time = 0
     calc(diff/1000*tmp.offlineMult,diff/1000);
     date = Date.now();
     player.offline.current = date

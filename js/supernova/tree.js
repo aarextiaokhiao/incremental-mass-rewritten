@@ -643,8 +643,8 @@ const TREE_UPGS = {
 		ext_u3: {
 			unl() { return EXT.unl() },
 			branch: ["ext_u2"],
-			req() { return player.ext.amt.gte(EXT.amt("ee4")) },
-			reqDesc() { return "Get " + format(EXT.amt("ee4")) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt("e500")) },
+			reqDesc() { return "Get " + format(EXT.amt("e500")) + " Exotic Matter." },
 			desc: `Bring Particle Powers back to glory. [Nullify boosts and softcaps]`,
 			cost: E(0),
 			perm: 2,
@@ -991,7 +991,7 @@ function updateTreeHTML() {
 		req = t_ch.req?`<span class="${t_ch.req()?"green":"red"}">${t_ch.reqDesc?" Require: "+(typeof t_ch.reqDesc == "function"?t_ch.reqDesc():t_ch.reqDesc):""}</span>`:""
 		perm = t_ch.perm ? `<span class='yellow'> [Permanent]</span>` : ``
 	}
-	tmp.el.tree_desc.setHTML(
+	elm.tree_desc.setHTML(
 		tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click any tree upgrade to show)</span></div>`
 		: `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click again to buy if affordable)</span>${req}</div>
 		<span class="sky">[${tmp.supernova.tree_choosed}] ${t_ch.desc}</span>${perm}<br>
@@ -1001,16 +1001,16 @@ function updateTreeHTML() {
 	)
 
 	for (let i = 0; i < TREE_TAB.length; i++) {
-		tmp.el["tree_tab"+i+"_btn"].setDisplay(TREE_TAB[i].unl?TREE_TAB[i].unl():true)
-		tmp.el["tree_tab"+i+"_notify"].setDisplay(tmp.supernova.tree_afford2[i].length>0)
-		tmp.el["tree_tab"+i+"_div"].setDisplay(tmp.tree_tab == i)
+		elm["tree_tab"+i+"_btn"].setDisplay(TREE_TAB[i].unl?TREE_TAB[i].unl():true)
+		elm["tree_tab"+i+"_notify"].setDisplay(tmp.supernova.tree_afford2[i].length>0)
+		elm["tree_tab"+i+"_div"].setDisplay(tmp.tree_tab == i)
 		if (tmp.tree_tab == i) for (let x = 0; x < tmp.supernova.tree_had2[i].length; x++) {
 			let id = tmp.supernova.tree_had2[i][x]
 			let unl = tmp.supernova.tree_unlocked[id]
-			tmp.el["treeUpg_"+id].setVisible(unl)
-			if (unl) tmp.el["treeUpg_"+id].setClasses({btn_tree: true, locked: !tmp.supernova.tree_afford[id], failed: TREE_UPGS.ids[id].failed && TREE_UPGS.ids[id].failed(id), bought: hasTree(id), perm: hasTree(id) && TREE_UPGS.ids[id].perm, choosed: id == tmp.supernova.tree_choosed})
+			elm["treeUpg_"+id].setVisible(unl)
+			if (unl) elm["treeUpg_"+id].setClasses({btn_tree: true, locked: !tmp.supernova.tree_afford[id], failed: TREE_UPGS.ids[id].failed && TREE_UPGS.ids[id].failed(id), bought: hasTree(id), perm: hasTree(id) && TREE_UPGS.ids[id].perm, choosed: id == tmp.supernova.tree_choosed})
 		}
 	}
 
-	tmp.el.feat_warn.setDisplay(tmp.tree_tab == 5)
+	elm.feat_warn.setDisplay(tmp.tree_tab == 5)
 }

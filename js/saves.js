@@ -15,35 +15,29 @@ Decimal.prototype.modular=Decimal.prototype.mod=function (other){
 };
 
 function calc(dt, dt_offline) {
-    player.mass = player.mass.add(tmp.massGain.mul(dt))
+	//PRE-DARK MATTER
+	player.mass = player.mass.add(tmp.massGain.mul(dt))
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
 	if (CHROMA.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
-    if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (hasRank("rank", x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
-    if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
-    if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
-    if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
-    if (player.mass.gte(1.5e136)) player.chal.unl = true
-    for (let x = 0; x < RANKS.names.length; x++) {
-        let rn = RANKS.names[x]
-        if (RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.bulk(rn)
-    }
-    for (let x = 1; x <= UPGS.main.cols; x++) {
-        let id = UPGS.main.ids[x]
-        let upg = UPGS.main[x]
-        if (upg.auto_unl ? upg.auto_unl() : false) if (player.auto_mainUpg[id]) for (let y = 1; y <= upg.lens; y++) if (upg[y].unl ? upg[y].unl() : true) upg.buy(y)
-    }
-    if (hasUpgrade('bh',6) || hasUpgrade('atom',6)) player.rp.points = player.rp.points.add(tmp.rp.gain.mul(dt))
-    if (hasUpgrade('atom',6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
-    if (hasTree("qol_ext8")) {
-		let max = 8
-		for (var c = 1; c <= max; c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
+
+	if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (hasRank("rank", x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
+	if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
+	for (let x = 0; x < RANKS.names.length; x++) {
+		let rn = RANKS.names[x]
+		if (RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.bulk(rn)
 	}
-    if (hasElement(14)) player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain.mul(dt*tmp.atom.quarkGainSec))
-    if (hasElement(24)) player.atom.points = player.atom.points.add(tmp.atom.gain.mul(dt))
-    if (hasElement(30) && !ATOM.particles.disabled()) for (let x = 0; x < 3; x++) player.atom.particles[x] = player.atom.particles[x].add(player.atom.quarks.mul(dt/10))
-    if (hasElement(43)) for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
+	for (let x = 1; x <= UPGS.main.cols; x++) {
+		let id = UPGS.main.ids[x]
+		let upg = UPGS.main[x]
+		if (upg.auto_unl ? upg.auto_unl() : false) if (player.auto_mainUpg[id]) for (let y = 1; y <= upg.lens; y++) if (upg[y].unl ? upg[y].unl() : true) upg.buy(y)
+	}
+	if (hasUpgrade('bh',6) || hasUpgrade('atom',6)) player.rp.points = player.rp.points.add(tmp.rp.gain.mul(dt))
+
+	//DARK MATTER
+	if (hasUpgrade('atom',6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
 	if (player.bh.unl && tmp.pass) {
+		if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
 		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
 		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
 			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
@@ -57,65 +51,25 @@ function calc(dt, dt_offline) {
 			if (newMass.gt(player.bh.mass)) player.bh.mass = newMass
 		}
 	}
-	if (player.atom.unl && tmp.pass) {
-		player.atom.atomic = player.atom.atomic.add(tmp.atom.atomicGain.mul(dt))
-		for (let x = 0; x < 3; x++) player.atom.powers[x] = player.atom.powers[x].add(tmp.atom.particles[x].powerGain.mul(dt))
+
+	if (player.mass.gte(1.5e136)) player.chal.unl = true
+	if (hasTree("qol6")) CHALS.exit(true)
+	if (hasTree("qol_ext8")) {
+		let max = 8
+		for (var c = 1; c <= max; c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
 	}
-    if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
-    player.md.mass = player.md.mass.add(tmp.md.mass_gain.mul(dt))
-    if (hasTree("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(dt) : tmp.md.passive_rp_gain.mul(dt))
-    if (hasTree("qol4")) STARS.generators.unl(true)
-    if (hasTree("qol7")) {
-        for (let x = 0; x < BOSONS.upgs.ids.length; x++) {
-            let id = BOSONS.upgs.ids[x]
-            for (let y = 0; y < BOSONS.upgs[id].length; y++) BOSONS.upgs.buy(id,y)
-        }
-    }
-    calcStars(dt)
-    calcSupernova(dt, dt_offline)
-    EXT.calc(dt)
 
-    if (hasTree("qol6")) CHALS.exit(true)
+	calcAtoms(dt, dt_offline)
+	calcSupernova(dt)
+	EXT.calc(dt)
 
-    tmp.pass = true
-	tmp.el.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | IM: Altrascendum")
+	player.offline.time = Math.max(player.offline.time-tmp.offlineMult*dt_offline,0)
+	player.supernova.time += dt
+	player.ext.time += dt
+	player.time += dt
+	tmp.tree_time = (tmp.tree_time+dt_offline) % 3
 
-    player.offline.time = Math.max(player.offline.time-tmp.offlineMult*dt_offline,0)
-    player.supernova.time += dt
-    player.ext.time += dt
-    player.time += dt
-    tmp.tree_time = (tmp.tree_time+dt_offline) % 3
-
-    if (player.chal.comps[10].gte(1) && !player.supernova.fermions.unl) {
-        player.supernova.fermions.unl = true
-        if (player.ext.amt.lt(1e10) && !CHROMA.unl()) addPopup(POPUP_GROUPS.fermions)
-    }
-
-	if (hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
-		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
-		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
-	}
-	if (player.supernova.auto.on > -2) {
-		var list = player.supernova.auto.list
-		player.supernova.auto.t += dt
-		if (player.supernova.auto.t >= 1.5) {
-			player.supernova.auto.t = 0
-			// Prevent multitasking
-
-			if (player.chal.active <= 12) CHALS.exit(false,true)
-			if (player.supernova.fermions.choosed) FERMIONS.backNormal()
-
-			player.supernova.auto.on++
-			if (player.supernova.auto.on == list.length) player.supernova.auto.on = -2
-			else {
-				var id = list[player.supernova.auto.on]
-				if (id > 0) {
-					player.chal.active = id
-					CHALS.reset(id, true)
-				} else FERMIONS.choose(Math.floor(-id/10), (-id-1)%10, true)
-			}
-		}
-	} else delete player.supernova.auto.list
+	tmp.pass = true
 }
 
 function getPlayerData() {
@@ -275,11 +229,9 @@ function getPlayerData() {
 function wipe(reload=false) {
     if (reload) {
         wipe()
-        save()
-        resetTemp()
         loadGame(false, btoa(JSON.stringify(player)))
-    }
-    else player = getPlayerData()
+        save()
+    } else player = getPlayerData()
 }
 
 function loadPlayer(load) {
@@ -296,6 +248,7 @@ function loadPlayer(load) {
 	if (player.atom.eb2) player.atom.eb2 = E(player.atom.eb2)
 	if (player.atom.eb3) player.atom.eb3 = E(player.atom.eb3)
 	if (player.supernova.times.gte(1)) player.supernova.unl = true
+	if (player.supernova.auto.on !== -2 && !player.supernova.auto.list) player.supernova.auto.on = -2
 	player.supernova.tree = removeDuplicates(player.supernova.tree)
     for (i = 0; i < 2; i++) for (let x = 0; x < FERMIONS.types[i].length; x++) {
         let f = FERMIONS.types[i][x]
@@ -435,7 +388,6 @@ function importy() {
 					}
 					load(loadgame)
 					save()
-					resetTemp()
 					loadGame(false, loadgame)
 				}, 200)
 			}
@@ -445,49 +397,56 @@ function importy() {
     }
 }
 
+let lastLoad = 0
 function loadGame(start=true, save) {
-    wipe()
-    load(save || localStorage.getItem(saveId))
-    setupHTML()
+	wipe()
+	load(save || localStorage.getItem(saveId))
+	checkAPVers()
+	lastLoad = new Date().getTime()
 
-    if (start) {
-        for (let x = 0; x < 3; x++) updateTemp()
-		checkAPVers()
-        updateHTML()
-        for (let x = 0; x < 3; x++) {
-            let r = document.getElementById('ratio_d'+x)
-            r.value = player.atom.dRatio[x]
-            r.addEventListener('input', e=>{
-                let n = Number(e.target.value)
-                if (n < 1) {
-                    player.atom.dRatio[x] = 1
-                    r.value = 1
-                } else {
-                    if (Math.floor(n) != n) r.value = Math.floor(n)
-                    player.atom.dRatio[x] = Math.floor(n)
-                }
-            })
-        }
+	resetTemp()
+	for (let x = 0; x < 3; x++) updateTemp()
+
+	if (start) {
+		setupHTML()
+
+		for (let x = 0; x < 3; x++) {
+			let r = document.getElementById('ratio_d'+x)
+			r.value = player.atom.dRatio[x]
+			r.addEventListener('input', e=>{
+				let n = Number(e.target.value)
+				if (n < 1) {
+					player.atom.dRatio[x] = 1
+					r.value = 1
+				} else {
+					if (Math.floor(n) != n) r.value = Math.floor(n)
+					player.atom.dRatio[x] = Math.floor(n)
+				}
+			})
+		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/7/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/11/22 BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}
-        setInterval(loop, 50)
-        setInterval(updateScreensHTML, 50)
-        treeCanvas()
-        setInterval(drawTreeHTML, 10)
-        setInterval(checkNaN,1000)
-    }
+		setInterval(loop, 50)
+		setInterval(updateScreensHTML, 50)
+		treeCanvas()
+		setInterval(drawTreeHTML, 10)
+		setInterval(checkNaN,1000)
+	}
+
+	elm.popup.setDisplay(0)
 }
 
 function checkNaN() {
-    if (findNaN(player)) {
-        addNotify("Game Data got NaNed")
-
-        resetTemp()
-        loadGame(false)
-    }
+	if (findNaN(player)) {
+		if (new Date().getTime() - lastLoad < 60000) wipe(true)
+		else {
+			loadGame(false)
+			addNotify("Game Data got NaNed")
+		}
+	}
 }
 
 function findNaN(obj, str=false, data=getPlayerData()) {

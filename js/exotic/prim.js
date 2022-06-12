@@ -156,8 +156,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(10),
-					desc: (x) => "Add "+format(x)+" C14 completions."
+					eff: (x) => E(1),
+					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -211,18 +211,18 @@ function updatePrimTemp() {
 }
 
 function updatePrimHTML() {
-	tmp.el.pr_bp.setTxt(format(player.ext.pr.bp,0))
-	tmp.el.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
-	tmp.el.pr_pt.setTxt(format(player.ext.pr.pt,0))
+	elm.pr_bp.setTxt(format(player.ext.pr.bp,0))
+	elm.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
+	elm.pr_pt.setTxt(format(player.ext.pr.pt,0))
 
 	for (var y = 0; y < PRIM.conv.length; y++) {
-		tmp.el["pr_cr"+y].setDisplay(PRIM.conv[y].unl())
+		elm["pr_cr"+y].setDisplay(PRIM.conv[y].unl())
 		for (var x = 0; x < 4; x++) {
-			tmp.el["pr_c"+(y*10+x)].setClasses({btn: true, btn_pr: true, locked: !PRIM.can(y, x) & player.ext.pr.f[y] !== x, choosed: player.ext.pr.f[y] === x})
+			elm["pr_c"+(y*10+x)].setClasses({btn: true, btn_pr: true, locked: !PRIM.can(y, x) & player.ext.pr.f[y] !== x, choosed: player.ext.pr.f[y] === x})
 		}
 	}
 	for (var i = 0; i < 8; i++) {
-		tmp.el["pr_"+i].setTxt(format(player.ext.pr.prim[i],0))
-		tmp.el["pr_eff"+i].setTxt(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))
+		elm["pr_"+i].setTxt(format(player.ext.pr.prim[i],0))
+		elm["pr_eff"+i].setTxt(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))
 	}
 }

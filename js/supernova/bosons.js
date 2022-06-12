@@ -224,16 +224,16 @@ function updateBosonsTemp() {
 function updateBosonsHTML() {
     for (let x in BOSONS.names) {
         let id = BOSONS.names[x]
-        tmp.el[id+"_amt"].setTxt(format(player.supernova.bosons[id])+" "+formatGain(player.supernova.bosons[id],tmp.bosons.gain[id]))
-        if (tmp.bosons.effect[id]) for (let y in tmp.bosons.effect[id]) tmp.el[id+"_eff"+y].setTxt(format(tmp.bosons.effect[id][y]))
+        elm[id+"_amt"].setTxt(format(player.supernova.bosons[id])+" "+formatGain(player.supernova.bosons[id],tmp.bosons.gain[id]))
+        if (tmp.bosons.effect[id]) for (let y in tmp.bosons.effect[id]) elm[id+"_eff"+y].setTxt(format(tmp.bosons.effect[id][y]))
 
         if (BOSONS.upgs.ids.includes(id)) for (let y in BOSONS.upgs[id]) {
             let id2 = id+"_upg"+y
-            tmp.el[id2+"_div"].setClasses({btn: true, full: true, b_btn: true, locked: !tmp.bosons.upgs[id][y].can})
-            tmp.el[id2+"_desc"].setTxt(BOSONS.upgs[id][y].desc())
-            tmp.el[id2+"_lvl"].setTxt(format(player.supernova.b_upgs[id][y],0,"sc"))
-            tmp.el[id2+"_eff"].setHTML(BOSONS.upgs[id][y].effDesc(tmp.bosons.upgs[id][y].effect))
-            tmp.el[id2+"_cost"].setTxt(format(tmp.bosons.upgs[id][y].cost))
+            elm[id2+"_div"].setClasses({btn: true, full: true, b_btn: true, locked: !tmp.bosons.upgs[id][y].can})
+            elm[id2+"_desc"].setTxt(BOSONS.upgs[id][y].desc())
+            elm[id2+"_lvl"].setTxt(format(player.supernova.b_upgs[id][y],0,"sc"))
+            elm[id2+"_eff"].setHTML(BOSONS.upgs[id][y].effDesc(tmp.bosons.upgs[id][y].effect))
+            elm[id2+"_cost"].setTxt(format(tmp.bosons.upgs[id][y].cost))
         }
     }
 }

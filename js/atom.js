@@ -189,6 +189,44 @@ const ATOM = {
 const RATIO_MODE = [null, 0.25, 1]
 const RATIO_ID = ["+1", '25%', '100%']
 
+function calcAtoms(dt, dt_offline) {
+	if (hasElement(14)) player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain.mul(dt*tmp.atom.quarkGainSec))
+	if (hasElement(24)) player.atom.points = player.atom.points.add(tmp.atom.gain.mul(dt))
+	if (player.atom.unl && tmp.pass) {
+		player.atom.atomic = player.atom.atomic.add(tmp.atom.atomicGain.mul(dt))
+		for (let x = 0; x < 3; x++) player.atom.powers[x] = player.atom.powers[x].add(tmp.atom.particles[x].powerGain.mul(dt))
+	}
+	if (hasElement(30) && !ATOM.particles.disabled()) for (let x = 0; x < 3; x++) player.atom.particles[x] = player.atom.particles[x].add(player.atom.quarks.mul(dt/10))
+    if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
+
+	//ELEMENTS
+	if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
+
+	//MASS DILATION
+	if (hasElement(43)) {
+		for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
+		player.md.mass = player.md.mass.add(tmp.md.mass_gain.mul(dt))
+		if (hasTree("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(dt) : tmp.md.passive_rp_gain.mul(dt))
+	}
+	if (player.bh.unl && tmp.pass) {
+		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
+		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
+			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
+			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
+			var ss = tmp.bh.rad_ss
+			var logProd = tmp.bh.mass_gain.max(10).softcap(ss,0.5,2).log10()
+
+			var newMass = player.bh.mass.log10().div(logProd).root(log)
+			newMass = newMass.add(pow.mul(dt))
+			newMass = E(10).pow(newMass.pow(log).mul(logProd))
+			if (newMass.gt(player.bh.mass)) player.bh.mass = newMass
+		}
+	}
+
+	//STARS
+	calcStars(dt, dt_offline)
+}
+
 function updateAtomTemp() {
     if (!tmp.atom) tmp.atom = {}
     if (!tmp.atom.particles) tmp.atom.particles = {}
@@ -242,31 +280,31 @@ function setupAtomHTML() {
 }
 
 function updateAtomicHTML() {
-    tmp.el.atomicAmt.setHTML(format(player.atom.atomic)+" "+formatGain(player.atom.atomic, tmp.atom.atomicGain))
-	tmp.el.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+getSoftcapHTML(tmp.atom.atomicEff,ATOM.atomic.softcap(),ATOM.atomic.softcap().mul(800)))
-	tmp.el.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):""))
-	tmp.el.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
-	tmp.el.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
-	tmp.el.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
-	tmp.el.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x"+getSoftcapHTML(tmp.atom.gamma_ray_eff.pow,tmp.atom.gamma_ray_ss))
-	tmp.el.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
-    tmp.el.gamma_ray_auto.setDisplay(hasElement(18))
-	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
+    elm.atomicAmt.setHTML(format(player.atom.atomic)+" "+formatGain(player.atom.atomic, tmp.atom.atomicGain))
+	elm.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+getSoftcapHTML(tmp.atom.atomicEff,ATOM.atomic.softcap(),ATOM.atomic.softcap().mul(800)))
+	elm.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):""))
+	elm.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
+	elm.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
+	elm.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
+	elm.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x"+getSoftcapHTML(tmp.atom.gamma_ray_eff.pow,tmp.atom.gamma_ray_ss))
+	elm.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
+    elm.gamma_ray_auto.setDisplay(hasElement(18))
+	elm.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
 
 	updateExtraBuildingHTML("ag", 2)
 	updateExtraBuildingHTML("ag", 3)
 }
 
 function updateAtomHTML() {
-    tmp.el.particles_assign.setDisplay(!EXT.unl())
-    tmp.el.atom_ratio.setTxt(RATIO_ID[player.atom.ratio])
-    tmp.el.unassignQuarkAmt.setTxt(format(player.atom.quarks,0))
+    elm.particles_assign.setDisplay(!EXT.unl())
+    elm.atom_ratio.setTxt(RATIO_ID[player.atom.ratio])
+    elm.unassignQuarkAmt.setTxt(format(player.atom.quarks,0))
     for (let x = 0; x < ATOM.particles.names.length; x++) {
-        tmp.el["particle_"+x+"_assign"].setDisplay(!EXT.unl())
-        tmp.el["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
-        tmp.el["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
-        tmp.el["particle_"+x+"_sc"].setHTML(hasTree("ext_u3") ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
-        tmp.el["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain))
-        tmp.el["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
+        elm["particle_"+x+"_assign"].setDisplay(!EXT.unl())
+        elm["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
+        elm["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
+        elm["particle_"+x+"_sc"].setHTML(hasTree("ext_u3") ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
+        elm["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain))
+        elm["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
     }
 }
