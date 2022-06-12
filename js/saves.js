@@ -60,7 +60,7 @@ function calc(dt, dt_offline) {
 	}
 
 	calcAtoms(dt, dt_offline)
-	calcSupernova(dt)
+	calcSupernova(dt, dt_offline)
 	EXT.calc(dt)
 
 	player.offline.time = Math.max(player.offline.time-tmp.offlineMult*dt_offline,0)
@@ -425,7 +425,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/11/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/12/22 BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

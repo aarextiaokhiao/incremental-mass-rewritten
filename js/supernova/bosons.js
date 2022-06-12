@@ -80,7 +80,7 @@ const BOSONS = {
         },
         photon: [
             {
-                desc: () => bosonsMastered() ? "Mass multiplies its own softcaps." : "Gain more Dark Matters & Mass from Black Hole based on Photon.",
+                desc: () => bosonsMastered() ? "Mass multiplies its softcaps." : "Photons multiply Dark Matter and BH Mass.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
@@ -124,7 +124,7 @@ const BOSONS = {
         ],
         gluon: [
             {
-                desc: () => bosonsMastered() ? "Charm softcap starts later." : "Gain more Atoms & Atomic Powers based on Gluon.",
+                desc: () => bosonsMastered() ? "Charm softcap scales later." : "Gain more Atoms & Atomic Powers based on Gluon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
@@ -134,7 +134,7 @@ const BOSONS = {
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: () => bosonsMastered() ? "Cosmic Ray Power softcap starts later." : "Boost Cosmic Ray Power.",
+                desc: () => bosonsMastered() ? "Cosmic Ray Power softcap scales later." : "Boost Cosmic Ray Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {

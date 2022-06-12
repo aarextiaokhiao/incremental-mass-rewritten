@@ -132,8 +132,8 @@ function updateScreensHTML() {
 }
 
 function updateStarsHTML() {
-    elm.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
-	elm.starSoftStart1.setTxt(format(tmp.stars.softGain))
+    elm.starSoft.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
+	elm.starSoftStart.setTxt(format(tmp.stars.softGain))
     elm.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
     elm.stars_eff.setTxt(format(tmp.stars.effect.eff))
     elm.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)" + getSoftcapHTML(tmp.stars.effect.exp, 1e12))

@@ -1,3 +1,7 @@
+function gameStarted() {
+	return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl
+}
+
 function addNotify(text, duration=3) {
     tmp.notify.push({text: text, duration: duration});
     if (tmp.notify.length == 1) updateNotify()

@@ -71,7 +71,7 @@ const TREE_UPGS = {
         },
         sn1: {
             branch: ["c"],
-            desc: `Tickspeed affects Neutron Star gain at a reduced rate.`,
+            desc: `Tickspeed boosts Neutron Stars, at a reduced rate.`,
             cost: E(10),
             effect() {
                 let x = player.tickspeed.add(1).pow(0.25)
@@ -81,7 +81,7 @@ const TREE_UPGS = {
         },
         sn2: {
             branch: ["sn1"],
-            desc: `Supernova boosts Neutron Star gain.`,
+            desc: `Supernovae boost Neutron Stars.`,
             cost: E(350),
             effect() {
                 let x = E(2).add(hasTree("sn4")?treeEff("sn4"):0).pow(player.supernova.times.softcap(15,0.8,0).softcap(25,0.5,0))
@@ -91,7 +91,7 @@ const TREE_UPGS = {
         },
         sn3: {
             branch: ["sn2"],
-            desc: `Blue star boost Neutron star gain at a reduced rate.`,
+            desc: `Blue Stars boost Neutron Stars, at a reduced rate.`,
             req() { return player.supernova.times.gte(6) },
             reqDesc: `6 Supernovae.`,
             cost: E(50000),
@@ -116,7 +116,7 @@ const TREE_UPGS = {
         },
         m1: {
             branch: ["c"],
-            desc: `Neutron star multiplies Mass gain.`,
+            desc: `Neutron Stars boost Mass.`,
             cost: E(100),
             effect() {
                 let x = E(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -126,13 +126,13 @@ const TREE_UPGS = {
         },
         m2: {
             branch: ["m1"],
-            desc: `Multiplies the Mass requirement for softcap^2 by 1.5`,
+            desc: `Mass softcap^2 starts ^1.5 later.`,
             cost: E(800),
         },
         m3: {
             branch: ["m2"],
             unl() { return player.supernova.fermions.unl && hasTree("fn1") },
-            desc: `Mass gain softcap^2-3 starts later based on Supernovae.`,
+            desc: `Mass softcaps^2-3 scales later based on Supernovae.`,
             cost: E(1e46),
             effect() {
                 let x = player.supernova.times.mul(0.0125).add(1)
@@ -147,12 +147,12 @@ const TREE_UPGS = {
 				return player.supernova.chal.noTick && player.mass.gte(E("1.5e1.650056e6").pow(hasTree('bh2')?1.46:1))
 			},
             reqDesc() {return `Reach ${formatMass(E("1.5e1.650056e6").pow(hasTree('bh2')?1.46:1))} without buying Tickspeed in Supernova run. You can still obtain Tickspeed from Cosmic Rays.`},
-            desc: `Tickspeed Power is raised to the 1.15th.`,
+            desc: `Raise Tickspeed Power by ^1.15.`,
             cost: E(1500),
         },
         rp1: {
             branch: ["c"],
-            desc: `Neutron Stars multiplies Rage Powers gain`,
+            desc: `Neutron Stars boost Rage Power.`,
             cost: E(200),
             effect() {
                 let x = E(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -162,7 +162,7 @@ const TREE_UPGS = {
         },
         bh1: {
             branch: ["c"],
-            desc: `Neutron Star multiplies Dark Matters gain.`,
+            desc: `Neutron Stars boost Dark Matter.`,
             cost: E(400),
             effect() {
                 let x = E(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -177,12 +177,12 @@ const TREE_UPGS = {
 				return player.supernova.chal.noBHC && player.bh.mass.gte("1.5e1.7556e4")
 			},
             reqDesc() {return `Reach ${format("e1.75e4")} uni of black hole without buying any BH Condenser in Supernova run.`},
-            desc: `BH Condenser power is raised to the 1.15th.`,
+            desc: `Raise BH Condenser Power by ^1.15.`,
             cost: E(1500),
         },
         s1: {
             branch: ["c"],
-            desc: `Neutron Star boosts last star gain.`,
+            desc: `Neutron Stars boost last-unlocked Stars.`,
             cost: E(400),
             effect() {
                 let x = player.supernova.stars.add(1).pow(1.4)
@@ -194,14 +194,14 @@ const TREE_UPGS = {
             branch: ["s1"],
             req() { return player.supernova.times.gte(3) },
             reqDesc: `3 Supernovae.`,
-            desc: `Star boost's Tetr's softcap is 50% weaker.`,
+            desc: `Weaken Tetr to Stars' softcap by 50%.`,
             cost: E(2500),
         },
         s3: {
             branch: ["s2"],
             req() { return player.supernova.times.gte(4) },
             reqDesc: `4 Supernovae.`,
-            desc: `Star generators are stronger based on Supernova.`,
+            desc: `Supernovae strengthen Star Generators.`,
             cost: E(10000),
             effect() {
                 let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
@@ -248,7 +248,7 @@ const TREE_UPGS = {
             branch: ["qol4"],
             req() { return player.supernova.times.gte(16) },
             reqDesc: `16 Supernovae.`,
-            desc: `Tetrs no longer resets anything.`,
+            desc: `Tetrs no longer reset anything.`,
             cost: E(1e13),
         },
         qol6: {
@@ -312,7 +312,7 @@ const TREE_UPGS = {
         },
         gr1: {
             branch: ["bh1"],
-            desc: `BH Condensers power boost Cosmic Rays power.`,
+            desc: `BH Condenser Power synergizes Cosmic Ray Power.`,
             req() { return player.supernova.times.gte(7) },
             reqDesc: `7 Supernovae.`,
             cost: E(1e6),
@@ -325,7 +325,7 @@ const TREE_UPGS = {
         gr2: {
             unl() { return player.supernova.fermions.unl },
             branch: ["gr1"],
-            desc: `Cosmic Rays Power is raised to 1.25th power.`,
+            desc: `Raise Cosmic Ray Power by ^1.25.`,
             cost: E(1e20),
         },
         bs1: {
@@ -581,11 +581,11 @@ const TREE_UPGS = {
 		ext_l5: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_l4"],
-			req() { return player.ext.amt.gte(EXT.amt("ee3")) },
-			reqDesc() { return "Get " + format(EXT.amt("ee3")) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt("e2e3")) },
+			reqDesc() { return "Get " + format(EXT.amt("e2e3")) + " Exotic Matter." },
 			desc: `Exotic Matter weakens Axion Upgrades.`,
             effect() {
-                return EXT.eff().add(1).log10().div(1e3).add(1).log10().div(6).add(1).min(1.5)
+                return EXT.eff().add(1).log10().div(5e3).add(1).log10().div(6).add(1).min(2)
             },
             effDesc(x) { return format(x)+"x" },
 			cost: E("1e4500"),
@@ -601,16 +601,16 @@ const TREE_UPGS = {
 		ext_b2: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "ee3" : 1e150)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "ee3" : 1e150)) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "e700" : 1e150)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "e700" : 1e150)) + " Exotic Matter." },
 			desc: `X Axion Upgrades multiply levels.`,
 			cost: E(0),
 		},
 		ext_b3: {
 			unl() { return CHROMA.unl() },
 			branch: ["ext_b1"],
-			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "ee3" : 1e150)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "ee3" : 1e150)) + " Exotic Matter." },
+			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "e700" : 1e150)) },
+			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "e700" : 1e150)) + " Exotic Matter." },
 			desc: `Y Axion Upgrades multiply levels.`,
 			cost: E(0),
 		},
@@ -645,7 +645,7 @@ const TREE_UPGS = {
 			branch: ["ext_u2"],
 			req() { return player.ext.amt.gte(EXT.amt("e500")) },
 			reqDesc() { return "Get " + format(EXT.amt("e500")) + " Exotic Matter." },
-			desc: `Bring Particle Powers back to glory. [Nullify boosts and softcaps]`,
+			desc: `Remove Mg-12, but rebalance Particles. [Bring Particle Powers back to glory]`,
 			cost: E(0),
 			perm: 2,
 		},

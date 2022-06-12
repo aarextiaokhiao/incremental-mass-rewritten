@@ -70,7 +70,7 @@ let CHROMA = {
 			desc: (x) => "Strengthen Exotic Matter by ^"+format(x)+".",
 			color: "#7f0000",
 			eff(x) {
-				return E(3).sub(E(2).div(x.div(3).add(1)))
+				return x.div(4).add(1).min(1.5)
 			},
 		},
 		p2_1: {
@@ -163,7 +163,7 @@ let CHROMA = {
 			desc: (x) => "Rank boosts Mass by "+format(x)+"x.",
 			color: "#00bfbf",
 			eff(x) {
-				return E(1.05).pow(player.ranks.rank.pow(3))
+				return E(1.01).pow(player.ranks.rank.pow(3))
 			},
 		},
 		s3_2: {

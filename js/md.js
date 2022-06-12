@@ -48,7 +48,7 @@ const MASS_DILATION = {
 	},
 	undercapacity() {
 		if (future) return EINF
-		return player.mass.pow(1e-5).max("ee11")
+		return player.mass.pow(1e-6).max("ee10")
 	},
     massGain() {
         if (CHALS.inChal(11)) return E(0)
@@ -175,7 +175,7 @@ const MASS_DILATION = {
                 effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,0.2) },
             },{
                 unl() { return player.supernova.post_10 && !hasTree("ext_u1") },
-                desc: `First 3 Mass Dilation upgrades are stronger.`,
+                desc: `Strengthen first 3 upgrades.`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {
@@ -235,7 +235,7 @@ function updateMDHTML() {
     elm.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
     elm.md_eff.setTxt(exp.gt(1)?"^"+format(exp,3):tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
     elm.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
-    elm.md_undercapacity.setHTML(MASS_DILATION.RPmassgain().gt(MASS_DILATION.undercapacity())?"To prevent temporal anomalies, base RP has been undercapacitied to "+format(MASS_DILATION.undercapacity())+"!<br>":"")
+    elm.md_undercapacity.setHTML(MASS_DILATION.RPmassgain().gt(MASS_DILATION.undercapacity())?"Base RP is undercapacitied at "+format(MASS_DILATION.undercapacity())+" to prevent temporal anomalies!<br>":"")
     elm.md_btn.setTxt(player.md.active
         ?(tmp.md.rp_gain.gte(1)?`Cancel for ${format(tmp.md.rp_gain,0)} Relativistic particles`:`Reach ${formatMass(tmp.md.mass_req)} to gain Relativistic particles, or cancel dilation`)
         :"Dilate Mass"

@@ -81,8 +81,8 @@ function resetTemp() {
 resetTemp()
 
 function updateMassTemp() {
-    tmp.massSoftPower = FORMS.massSoftPower()
-    tmp.massSoftGain = FORMS.massSoftGain()
+    tmp.massSoftPower1 = FORMS.massSoftPower()
+    tmp.massSoftGain1 = FORMS.massSoftGain()
     tmp.massSoftPower2 = FORMS.massSoftPower2()
     tmp.massSoftGain2 = FORMS.massSoftGain2()
     tmp.massSoftPower3 = FORMS.massSoftPower3()

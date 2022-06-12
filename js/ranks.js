@@ -55,23 +55,23 @@ const RANKS = {
     },
     desc: {
         rank: {
-            '1': "unlock mass upgrade 1.",
-            '2': "unlock mass upgrade 2, reduce mass upgrade 1 cost scaled by 20%.",
-            '3': "unlock mass upgrade 3, reduce mass upgrade 2 cost scaled by 20%, mass upgrade 1 boosts itself.",
-            '4': "reduce mass upgrade 3 cost scale by 20%.",
+            '1': "unlock Mass Upgrades.",
+            '2': "unlock Mass Upgrade 2 and weaken Mass Upgrade 1 by 20%.",
+            '3': "unlock Mass Upgrade 3, weaken Mass Upgrade 2 by 20%, and Mass Upgrade 1 boosts itself.",
+            '4': "weaken Mass Upgrade 3 by 20%.",
             '5': "mass upgrade 2 boosts itself.",
-            '6': "make mass gain is boosted by (x+1)^2, where x is rank.",
-            '13': "triple mass gain.",
-            '14': "double Rage Powers gain.",
-            '17': "make rank 6 reward effect is better. [(x+1)^2 -> (x+1)^x^1/3]",
-            '34': "make mass upgrade 3 softcap start 1.2x later.",
-            '40': "adds tickspeed power based on ranks.",
-            '45': "ranks boosts Rage Powers gain.",
-            '90': "rank 40 reward is stronger.",
-            '180': "mass gain is raised by 1.025.",
-            '220': "rank 40 reward is overpowered.",
-            '300': "rank multiplie quark gain.",
-            '380': "rank multiplie mass gain.",
+            '6': "Ranks boost mass gain.",
+            '13': "triple mass.",
+            '14': "double Rage Power.",
+            '17': "strengthen Rank 6.",
+            '34': "mass upgrade 3 softcap scales 1.2x later.",
+            '40': "Rank adds Tickspeed Power.",
+            '45': "Rank boosts Rage Power.",
+            '90': "strengthen Rank 40.",
+            '180': "raise mass by ^1.025.",
+            '220': "Rank 40 is overpowered.",
+            '300': "Rank boosts Quarks.",
+            '380': "Rank boosts mass.",
             '800': "make mass gain softcap 0.25% weaker based on rank.",
         },
         tier: {
@@ -79,8 +79,8 @@ const RANKS = {
             '2': "raise mass gain by 1.15",
             '3': "reduce all mass upgrades cost scale by 20%.",
             '4': "adds +5% tickspeed power for every tier you have, softcaps at +40%.",
-            '6': "make rage powers boosted by tiers.",
-            '8': "make tier 6's reward effect stronger by dark matters.",
+            '6': "make Rage Power boosted by tiers.",
+            '8': "make tier 6's reward effect stronger by Dark Matter.",
             '12': "make tier 4's reward effect twice effective and remove softcap.",
             '30': "stronger effect's softcap is 10% weaker.",
             '55': "make rank 380's effect stronger based on tier.",
@@ -91,13 +91,13 @@ const RANKS = {
             '2': "mass upgrade 3 boosts itself.",
             '3': "raise tickspeed effect by 1.05.",
             '4': "Super Rank scale weaker based on Tier, Super Tier scale 20% weaker.",
-            '5': "Hyper/Ultra Tickspeed starts later based on tetr.",
+            '5': "Hyper/Ultra Tickspeed scales later based on tetr.",
             '8': "Mass gain softcap^2 starts ^1.5 later.",
-            '18': "Meta-Tickspeed starts later based on Tiers.",
+            '18': "Meta-Tickspeed scales later based on Tiers.",
         },
         pent: {
             '1': "Pent raises star effect.",
-            '2': "Supernovae makes Super Tetr starts later.",
+            '2': "Supernovae makes Super Tetr scales later.",
             '4': "Pent weakens Meta-Rank and Super Tier.",
             '5': "weaken Meta-Tickspeed based on its start.",
             '6': "double Pent 5.",
@@ -121,8 +121,8 @@ const RANKS = {
                 return ret
             },
             '6'() {
-                let ret = player.ranks.rank.add(1).pow(hasRank("rank", 17)?player.ranks.rank.add(1).root(3):2)
-                return ret
+                let r = player.ranks.rank.add(1)
+                return r.pow(hasRank("rank", 17) ? r.root(3) : 2)
             },
             '40'() {
                 let ret = player.ranks.rank.root(2).div(100)
@@ -222,11 +222,11 @@ const RANKS = {
 				return ts.add(1)
 			},
 			'200'() {
-				return player.ranks.pent.div(400).log10().div(2).min(2)
+				return player.ranks.pent.div(200).log10().div(3).min(1)
 			},
 			'300'() {
 				if (!tmp.tickspeedEffect) return E(1)
-				return tmp.tickspeedEffect.step.log10().div(3e3).add(1).pow(27/20)
+				return tmp.tickspeedEffect.step.log10().div(1e5).add(1).pow(27/20)
 			},
 		},
     },
@@ -268,6 +268,7 @@ const RANKS = {
     fp: {
         rank() {
             let f = E(1)
+            if (scalingToned("rank")) f = f.mul(2)
             if (hasRank("tier", 1)) f = f.mul(1/0.8)
             f = f.mul(tmp.chal.eff[5].pow(-1))
             return f

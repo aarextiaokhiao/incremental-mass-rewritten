@@ -344,6 +344,7 @@ function getScalingStart(type, name) {
 		if (FERMIONS.onActive(14)) return EINF
 		if (name=="rank") {
 			if (tmp.fermions) start = start.mul(tmp.fermions.effs[1][4])
+			start = start.min(3e6)
 		}
 		if (name=="tickspeed") {
 			if (hasElement(68)) start = start.mul(2)
@@ -464,5 +465,5 @@ function getSoftcapHTML(x, sc1, sc2, sc3) {
 	let lvl = 1
 	if (sc2 && x.gt(sc2)) lvl = 2
 	if (sc3 && x.gt(sc3)) lvl = 3
-	return " <span class='soft"+(lvl>1?lvl:"")+"'>(softcapped"+(lvl>1?"^"+lvl:"")+")</span>"
+	return " <span class='soft"+lvl+"'>(softcapped"+(lvl>1?"<sup>"+lvl+"</sup>":"")+")</span>"
 }

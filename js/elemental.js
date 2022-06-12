@@ -41,7 +41,7 @@ const ELEMENTS = {
     upgs: [
         null,
         {
-            desc: `Improves quark gain formula is better.`,
+            desc: `Improve quarks more.`,
             cost: E(5e8),
         },
         {
@@ -49,7 +49,7 @@ const ELEMENTS = {
             cost: E(2.5e12),
         },
         {
-            desc: `Electron Power boost Atomic Powers gain.`,
+            desc: `Electron Power boosts Atomic Powers.`,
             cost: E(1e15),
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
@@ -116,7 +116,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `For every C7 completion, add 2 c5 & 6 completion.`,
+            desc: `C7 completions add C5 - 6 completions.`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
@@ -125,7 +125,7 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x) },
         },
         {
-            desc: `Passively gain 5% of the quarks you would get from resetting each second.`,
+            desc: `Passively gain Quarks.`,
             cost: E(1e33),
         },
         {
@@ -146,7 +146,7 @@ const ELEMENTS = {
             cost: E(1e40),
         },
         {
-            desc: `You can now automatically buy Cosmic Rays. Cosmic Ray raise tickspeed effect at an extremely reduced rate.`,
+            desc: `You can automatically buy Cosmic Rays. Cosmic Ray raise Tickspeed.`,
             cost: E(1e44),
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
@@ -181,7 +181,7 @@ const ELEMENTS = {
             cost: E(1e65),
         },
         {
-            desc: `Passively gain 100% of the atoms you would get from resetting each second. Atomic Power boost Relativistic particles gain at a reduced rate.`,
+            desc: `Passively gain Atoms. Atomic Power boosts Relativistic Particles.`,
             cost: E(1e75),
             effect() {
                 let x = player.atom.atomic.max(1).log10().add(1).pow(0.4)
@@ -466,12 +466,12 @@ const ELEMENTS = {
 				let [m1, m2] = [player.mass.max(10).log10().log10().times(4), player.mass.max(1).log10().pow(1/5).div(3)]
 				let exp = E(0.5)
 				if (hasElement(73)) exp = exp.mul(tmp.elements.effect[73]||1)
-                return m1.max(m2).pow(exp).softcap(50,0.5,0).softcap(100,5/21,0)
+                return m1.max(m2).pow(exp).softcap(50,0.5,0).softcap(100,16/105,0)
             },
             effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50,100) },
         },
         {
-            desc: `Ranks make Meta-Tickspeed starts later.`,
+            desc: `Ranks make Meta-Tickspeed scales later.`,
             cost: E('e4e7'),
             effect() {
                 let x = player.ranks.rank
@@ -518,7 +518,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Pent multiplies all Axion productions.`,
+            desc: `Pent boosts all Axion productions.`,
             cost: E('e2e9'),
             effect() {
 				return player.ranks.pent.add(1)

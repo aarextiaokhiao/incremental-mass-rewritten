@@ -138,10 +138,9 @@ const ATOM = {
         effect(i) {
             let p = player.atom.particles[i]
             let x = p.pow(2)
-            if (hasTree("ext_u3")) return x
-            if (hasElement(12)) x = p.pow(this.mg12(p))
+            if (hasElement(12) && !hasTree("ext_u3")) x = p.pow(this.mg12(p))
 			if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
-            x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
+            if (!hasTree("ext_u3")) x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
             return x
         },
         gain(i) {
@@ -175,7 +174,7 @@ const ATOM = {
             ` },
             x=>{ return `
                 Multiplies Rage Power gain by ${format(x.eff1)}<br><br>
-                Makes Mass gain boosted by Rage Powers - ${format(x.eff2)}x<br><br>
+                Makes Mass gain boosted by Rage Power - ${format(x.eff2)}x<br><br>
             ` },
             x=>{ return `
                 Multiplies Dark Matter gain by ${format(x.eff1)}<br><br>
@@ -197,30 +196,18 @@ function calcAtoms(dt, dt_offline) {
 		for (let x = 0; x < 3; x++) player.atom.powers[x] = player.atom.powers[x].add(tmp.atom.particles[x].powerGain.mul(dt))
 	}
 	if (hasElement(30) && !ATOM.particles.disabled()) for (let x = 0; x < 3; x++) player.atom.particles[x] = player.atom.particles[x].add(player.atom.quarks.mul(dt/10))
-    if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
+	if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
 
 	//ELEMENTS
 	if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
 
 	//MASS DILATION
-	if (hasElement(43)) {
-		for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
+	if (hasElement(21)) {
 		player.md.mass = player.md.mass.add(tmp.md.mass_gain.mul(dt))
 		if (hasTree("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(dt) : tmp.md.passive_rp_gain.mul(dt))
 	}
-	if (player.bh.unl && tmp.pass) {
-		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
-		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
-			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : E(0.001)
-			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : E(.1)
-			var ss = tmp.bh.rad_ss
-			var logProd = tmp.bh.mass_gain.max(10).softcap(ss,0.5,2).log10()
-
-			var newMass = player.bh.mass.log10().div(logProd).root(log)
-			newMass = newMass.add(pow.mul(dt))
-			newMass = E(10).pow(newMass.pow(log).mul(logProd))
-			if (newMass.gt(player.bh.mass)) player.bh.mass = newMass
-		}
+	if (hasElement(43)) {
+		for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) if ((hasTree("qol3") || player.md.upgs[x].gte(1)) && (MASS_DILATION.upgs.ids[x].unl?MASS_DILATION.upgs.ids[x].unl():true)) MASS_DILATION.upgs.buy(x)
 	}
 
 	//STARS

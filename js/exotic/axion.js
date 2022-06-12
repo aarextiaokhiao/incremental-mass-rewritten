@@ -137,7 +137,7 @@ let AXION = {
 		var r = E(0)
 
 		if (y > 0 && y < 4) r = axUpg(y+3).sub((x+4)*(y+1)).div(y+2).max(0)
-		if (hasTree("ext_l2")) {
+		if (hasTree("ext_l2") && y<4) {
 			r = r.add(axUpg(x+4).div(1.5))
 			r = r.add(axUpg(y-4).div(6))
 		}
@@ -173,7 +173,7 @@ let AXION = {
 		},
 		1: {
 			title: "Cosmic Burst",
-			desc: "Cosmic Ray softcap starts later.",
+			desc: "Cosmic Ray softcap scales later.",
 			req: E(0),
 			eff(x) {
 				if (x.gte(100)) return EINF
@@ -211,7 +211,9 @@ let AXION = {
 			desc: "Raise the base Atomic Power gains.",
 			req: E(1),
 			eff(x) {
-				return x.div(3).add(1).log(3).add(1)
+				x = x.div(3).add(1).log(3).add(1)
+				if (hasTree("ext_u3")) x = E(1.75).sub(E(0.75).div(x.div(5).add(1)))
+				return x
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -253,7 +255,7 @@ let AXION = {
 
 		8: {
 			title: "Supermassive",
-			desc: "Evaporation softcap starts later.",
+			desc: "Evaporation softcap scales later.",
 			unl: () => CHROMA.unl(),
 			req: E(18),
 			eff(x) {
@@ -278,12 +280,12 @@ let AXION = {
 			title: "Quark Condenser",
 			desc: "Raise Neutron Condensers until evaporation.",
 			unl: () => CHROMA.unl(),
-			req: E(100),
+			req: E(80),
 			eff(x) {
-				return x.add(1).sqrt().softcap(4,4,3).min(8)
+				return x.add(1).log10().add(1).sqrt().min(3)
 			},
 			effDesc(x) {
-				return "^" + format(x) + getSoftcapHTML(x,4)
+				return "^" + format(x)
 			}
 		},
 		11: {
@@ -375,9 +377,9 @@ let AXION = {
 			title: "Temporal Dimensionality",
 			desc: "Dilated Mass pushes evaporation softcap farther.",
 			unl: () => CHROMA.unl(),
-			req: EINF,
+			req: E(100),
 			eff(x) {
-				return x.sqrt().div(24000).min(.05).toNumber()
+				return x.div(100).add(1).log(2).div(200).min(.05)
 			},
 			effDesc(x) {
 				return "+^"+format(x,4)
@@ -386,13 +388,13 @@ let AXION = {
 		19: {
 			title: "General Relativity",
 			desc: "Dilated Mass raises Tickspeed power.",
-			req: EINF,
+			req: E(50),
 			unl: () => CHROMA.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
-				let r = player.md.mass.add(1).log10().add(1).log10().div(75).add(1) // log^2(Dilated mass)
-				r = r.pow(x.sqrt().div(3)) // Levels
-				return r.min(3)
+				let r = player.md.mass.add(1).log10().add(1).log10().div(100).add(1) // log^2(Dilated mass)
+				r = r.pow(x.div(50).sqrt()) // Levels
+				return r
 			},
 			effDesc(x) {
 				return "^"+format(x)
@@ -421,7 +423,7 @@ let AXION = {
 			title: "Shortcut Mastery",
 			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
 			unl: () => CHROMA.unl(),
-			req: E(100)
+			req: E(50)
 		},
 	}
 }

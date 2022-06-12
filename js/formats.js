@@ -370,6 +370,8 @@ function colorize(x, color, id = 'red') {
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
     ex = E(ex)
+    if (player.options.pure) return f(ex)
+
     if (ex.gte(EINF)) return f(ex)
     //if (ex.gte(meg(1))) return f(ex.div(1.5e56).log10().div(1e9).log10().div(1e9), 3) + ' ' + colorize('meg', color, "ch_color")
     if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
@@ -387,13 +389,13 @@ function formatMultiply(a) {
 	if (a.gte(2)) return "x"+format(a)
 	return "+"+format(a.sub(1).mul(100))+"%"
 }
-	
+
 function formatGain(amt, gain, isMass=false, main=false) {
 	let [al, gl] = [amt.max(1).log10(), gain.max(1).log10()]
 	let f = isMass?formatMass:format
 
 	if (!main && amt.gte("ee4")) return ""
-	if (main && amt.max(gain).gte(mlt(1))) {
+	if (main && !player.options.pure && amt.max(gain).gte(mlt(1))) {
 		amt = amt.max(1).log10().div(1e9)
 		gain = gain.max(1).log10().div(1e9).sub(amt).mul(20)
 		f = (x) => format(x) + ' ' + colorize('mlt', true)

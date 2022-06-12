@@ -12,7 +12,7 @@ const TABS = {
     },
     1: [
         { id: "Main" },
-        { id: "Stats", unl() { return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl } },
+        { id: "Stats", unl() { return player.rp.unl } },
         { id: "Upgrades", unl() { return player.rp.unl && !zeta() } },
         { id: "Challenges", unl() { return player.chal.unl } },
         { id: "Atom", unl() { return player.atom.unl && !zeta() }, style: "atom" },
@@ -23,7 +23,7 @@ const TABS = {
     ],
     2: {
         0: [
-            { id: "Mass" },
+            { id: "Mass", unl() { return player.bh.unl } },
             { id: "Black Hole", unl() { return player.bh.unl && !zeta() }, style: "bh" },
             { id: "Atomic Generator", unl() { return player.atom.unl && !zeta() }, style: "atom" },
             { id: "Stars", unl() { return STARS.unlocked() && !zeta() }, style: "star" },

@@ -131,7 +131,8 @@ function setupHTML() {
 }
 
 function updateTabsHTML() {
-	elm["tabs"].setDisplay(player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl)
+	elm.tabs.setDisplay(gameStarted())
+	elm.tab_header.setDisplay(gameStarted())
 	for (let x = 0; x < TABS[1].length; x++) {
 		if (x != 5 && tmp.tab == 5) continue
 		let tab = TABS[1][x]
@@ -152,7 +153,7 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
-    let hideSome = EXT.unl()
+	let hideSome = EXT.unl()
 	elm.reset_desc.setHTML(player.reset_msg)
 	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
 
@@ -199,10 +200,10 @@ function updateUpperHTML() {
 	} else if (chal) {
 		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
 		elm.chal_upper.setHTML(
-			`You are in [${CHALS[chal].title}] Challenge!` +
-			(player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
-				` Go over ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.` +
-				`<br>+${tmp.chal.gain} Completions (+1 at ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})`
+			`You are in [${CHALS[chal].title}] Challenge!<br>` + (
+				player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
+				tmp.chal.gain.gt(0) ? `+${tmp.chal.gain} (Next: ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})` :
+				`Get ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.`
 			)
 		)
 	}
@@ -237,17 +238,19 @@ function updateUpperHTML() {
 
 function updateRanksHTML() {
 	for (let x = 0; x < RANKS.names.length; x++) {
-        let rn = RANKS.names[x]
+		let rn = RANKS.names[x]
 		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
 		if (x == 0) unl = unl&&!RANKS.unl.pent()
 		elm["ranks_div_"+x].setDisplay(unl)
 		if (unl) {
 			let keys = Object.keys(RANKS.desc[rn])
 			let desc = ""
-			for (let i = 0; i < keys.length; i++) {
-				if (player.ranks[rn].lt(keys[i])) {
-					desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
-					break
+			if (gameStarted()) {
+				for (let i = 0; i < keys.length; i++) {
+					if (player.ranks[rn].lt(keys[i])) {
+						desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+						break
+					}
 				}
 			}
 
@@ -256,11 +259,11 @@ function updateRanksHTML() {
 			elm["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
 			elm["ranks_desc_"+x].setTxt(desc)
 			elm["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
-			elm["ranks_reset_"+x].setDisplay(RANKS.mustReset(rn))
+			elm["ranks_reset_"+x].setDisplay(RANKS.mustReset(rn) && gameStarted())
 			elm["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
 			elm["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
 		}
-    }
+	}
 }
 
 function updateMassUpgradesHTML() {
@@ -355,10 +358,9 @@ function updateMainUpgradesHTML() {
 }
 
 function updateBlackHoleHTML() {
-	elm.bhMass2.setHTML(formatMass(player.bh.mass)+" "+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
+	elm.bhMass2.setHTML(formatMass(player.bh.mass))
+	elm.bhMassGain.setHTML(formatGain(player.bh.mass, tmp.bh.mass_gain, true))
 	elm.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
-	elm.massSoft2.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
-	elm.massSoftStart2.setTxt(formatMass(tmp.bh.massSoftGain))
 	elm.bhEffect.setTxt(format(tmp.bh.effect))
 
 	elm.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bonus.gte(1)?" + "+format(tmp.bh.condenser_bonus,0):""))
@@ -370,11 +372,13 @@ function updateBlackHoleHTML() {
 	elm.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
 	elm.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
 
+	elm.bhSoft.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
+	elm.bhSoftStart.setTxt(formatMass(tmp.bh.massSoftGain))
+	elm.bhRad.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(tmp.bh.rad_ss))
+	elm.bhRadStart.setTxt(formatMass(tmp.bh.rad_ss))
+
 	updateExtraBuildingHTML("bh", 2)
 	updateExtraBuildingHTML("bh", 3)
-
-	elm.massRadSoft.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(tmp.bh.rad_ss))
-	elm.massRadSoftStart.setTxt(formatMass(tmp.bh.rad_ss))
 }
 
 function updateOptionsHTML() {
@@ -383,8 +387,10 @@ function updateOptionsHTML() {
 		elm["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
+	elm.pure.setTxt(player.options.pure?"ON":"OFF")
+	elm.help.setDisplay(!player.options.pure)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
-	elm.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
+	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
 	elm.chroma_bg_btn.setDisplay(CHROMA.unl())
 	elm.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
 }
@@ -409,19 +415,23 @@ function updateHTML() {
 	updateExoticHTML()
 	updateTabsHTML()
 	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 5) {
+		elm.beginning.setDisplay(!gameStarted())
 		updateUpperHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
 				updateRanksHTML()
 				updateMassUpgradesHTML()
 				updateTickspeedHTML()
-				
-				elm.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain))
-				elm.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
-				elm.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2))
-				elm.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
-				elm.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
-				elm.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
+
+				let lvl = 0
+				for (var i = 1; i <= 3; i++) if (tmp.massGain.gte(tmp["massSoftGain"+i])) lvl = i
+				elm.massSoft.setDisplay(lvl)
+				if (lvl) {
+					elm.massSoft.setClasses({["soft"+lvl+"_desc"]: true})
+					elm.massSoftStart.setTxt(formatMass(tmp["massSoftGain"+lvl]))
+					elm.massSoftLvl.setClasses({["soft"+lvl]: true})
+					elm.massSoftLvl.setHTML("(softcapped"+(lvl>1?"<sup>"+lvl+"</sup>":"")+")")
+				}
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
