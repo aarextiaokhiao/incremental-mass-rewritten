@@ -99,8 +99,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.add(1).log10().add(1).sqrt().min(3),
-					desc: (x) => "Axion Multiplication is "+formatMultiply(x)+" stronger."
+					eff: (x) => E(1),
+					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -134,8 +134,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(20),
-					desc: (x) => "Add Axion Strength by "+format(x.mul(100))+"%."
+					eff: (x) => E(1),
+					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -167,8 +167,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.add(1).log10().add(1).sqrt().min(3),
-					desc: (x) => "Mass softcaps start later by ^"+format(x)+"."
+					eff: (x) => E(1),
+					desc: (x) => "Placeholder."
 				}
 			]
 		}

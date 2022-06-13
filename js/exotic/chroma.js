@@ -198,24 +198,24 @@ let CHROMA = {
 			},
 		},
 		t4_1: {
-			desc: (x) => "“rad2” and “Os-73” synergize at "+format(x.mul(100))+"% power.",
+			desc: (x) => "Placeholder.",
 			color: "#003f7f",
 			eff(x) {
-				return x.div(40).min(1)
+				return E(1)
 			},
 		},
 		t5_1: {
-			desc: (x) => "Raise 4th Photon Upgrade by ^"+format(x)+".",
+			desc: (x) => "Placeholder.",
 			color: "#3f007f",
 			eff(x) {
-				return x.div(10).add(1).min(2)
+				return E(1)
 			},
 		},
 		t6_1: {
-			desc: (x) => "Multiply Axion Boosts by "+format(x)+"x.",
+			desc: (x) => "Placeholder.",
 			color: "#7f003f",
 			eff(x) {
-				return x.div(4).add(1)
+				return E(1)
 			},
 		},
 	},

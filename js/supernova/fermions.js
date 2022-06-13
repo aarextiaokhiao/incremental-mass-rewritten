@@ -131,18 +131,11 @@ const FERMIONS = {
                 },
 				eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-					let s = this.softcapMult()
-					let x = i.add(1).log10().pow(1.75).mul(t.pow(0.8)).div(100).add(1).softcap(s.mul(5),0.75,0).softcap(s.mul(100),4,3)
-					return x
-				},
-				softcapMult() {
-					let x = E(1)
-					if (tmp.bosons && bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+					let x = i.add(1).log10().pow(1.75).mul(t.pow(0.8)).div(100).add(1).softcap(5,0.75,0).softcap(100,4,3)
 					return x
 				},
 				desc(x) {
-					let s = this.softcapMult()
-					return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+getSoftcapHTML(x,s.mul(5),s.mul(100))
+					return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+getSoftcapHTML(x,5,100)
 				},
                 inc: "Mass",
                 res: () => player.mass,

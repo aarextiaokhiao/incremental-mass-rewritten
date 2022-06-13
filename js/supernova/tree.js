@@ -443,10 +443,8 @@ const TREE_UPGS = {
             cost: E(1e72),
             effect() {
 				let sn = player.supernova.times
-
 				let b = sn.div(300).add(1)
 				let e = sn.sub(40).max(0)
-				if (CHROMA.got("t4_1")) e = e.mul(player.supernova.fermions.tiers[1][4].pow(CHROMA.eff("t4_1").mul(2)))
                 return b.pow(e).sub(1).div(10).add(1)
             },
             effDesc(x) { return format(x)+"x" },

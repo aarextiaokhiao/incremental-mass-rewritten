@@ -379,11 +379,9 @@ let SHORTCUT_EDIT = {
 WHEN CHOOSED, YOU WILL BRING INTO A RESPECTIVE SCREEN.
 CLICKING A KIND WILL COMPLETE THE PROCESS. */
 
-//TECHNICAL
-future = false
-future_ax = false
-
 //FUTURE
+future = false
+
 function zeta() {
 	return future
 }

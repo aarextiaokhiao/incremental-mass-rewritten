@@ -147,13 +147,13 @@ let AXION = {
 	},
 	getMultLvl(p) {
 		let str = E(1)
-		if (hasPrim("p1_0")) str = str.mul(tmp.pr.eff["p1_0"])
+		//if (hasPrim("p1_0")) str = str.mul(tmp.pr.eff["p1_0"]) - POSTPONED
 
 		let r = E(1)
 		if (hasTree("ext_b2") && p < 16) r = E(1.02).pow(this.getXLvl(p).mul(str)).mul(r)
 		if (hasTree("ext_b3") && p < 16) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3)).mul(str)).mul(r)
 		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6)).mul(str)).mul(r)
-		return r.mul(str)
+		return r
 	},
 	getEff(p, l) {
 		return AXION.ids[p].eff(l)
@@ -247,7 +247,7 @@ let AXION = {
 			desc: "Multiply Meta Boosts based on radiation types.",
 			req: E(7),
 			eff(x) {
-				return x.add(1).cbrt().div(10).add(1)
+				return x.add(1).cbrt().div(10).add(1).min(3)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -307,7 +307,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(35),
 			eff(x) {
-				return x.div(15).add(2).log(2)
+				return x.div(10).add(3).log(3).min(5)
 			},
 			effDesc(x) {
 				return "^1/"+format(x)
@@ -464,8 +464,8 @@ function updateAxionTemp() {
 
 	//BOOSTS
 	d.str = E(1)
-	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
-	if (hasPrim("p4_0")) d.str = d.str.add(tmp.pr.eff["p4_0"])
+	//if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1")) - POSTPONED
+	//if (hasPrim("p4_0")) d.str = d.str.add(tmp.pr.eff["p4_0"]) - POSTPONED
 
 	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)

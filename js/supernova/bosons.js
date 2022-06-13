@@ -80,22 +80,22 @@ const BOSONS = {
         },
         photon: [
             {
-                desc: () => bosonsMastered() ? "Mass multiplies its softcaps." : "Photons multiply Dark Matter and BH Mass.",
+                desc: () => bosonsMastered() ? "Placeholder." : "Photons multiply Dark Matter and BH Mass.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return x.add(1).log10().div(1e3)
+					if (bosonsMastered()) return E(1)
 					return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
                 effDesc(x) { return bosonsMastered() ? "^"+format(x,4) : format(x)+"x" },
             },{
-                desc: () => bosonsMastered() ? "Multiply Pent 50." : "Boost BH Condenser Power.",
+                desc: () => bosonsMastered() ? "Placeholder." : "Boost BH Condenser Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return x.add(1).log10().div(5).add(1).cbrt()
+					if (bosonsMastered()) return E(1)
 					let a = x.add(1).pow(0.75)
 					if (hasTree("fn4")) a = a.pow(2)
 					return a
@@ -124,12 +124,12 @@ const BOSONS = {
         ],
         gluon: [
             {
-                desc: () => bosonsMastered() ? "Charm softcap scales later." : "Gain more Atoms & Atomic Powers based on Gluon.",
+                desc: () => bosonsMastered() ? "Placeholder." : "Gain more Atoms & Atomic Powers based on Gluon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return x.add(1).log10().div(4).add(1)
+					if (bosonsMastered()) return E(1)
 					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
                 effDesc(x) { return format(x)+"x" },
@@ -164,7 +164,6 @@ const BOSONS = {
 					let exp = E(1/3)
 					exp = exp.mul(tmp.fermions.effs[0][3])
 					if (scalingToned("supernova")) exp = exp.mul(1/9)
-					if (CHROMA.got("t5_1")) exp = exp.mul(CHROMA.eff("t5_1"))
 					return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(exp)).div(10).add(1)
 				},
                 effDesc(x) { return "/"+format(x) },

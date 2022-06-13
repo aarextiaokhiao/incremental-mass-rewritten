@@ -61,8 +61,6 @@ const FORMS = {
 		if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e100)
 		if (hasUpgrade('bh',7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:E(1))
 		if (hasUpgrade('rp',13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:E(1))
-		if (bosonsMastered()) s = s.mul(player.mass.max(1).pow(tmp.bosons.upgs.photon[0].effect))
-		if (hasPrim("p7_0")) s = s.pow(tmp.pr.eff["p7_0"])
 		return s.min(tmp.massSoftGain2||1/0)
 	},
 	massSoftPower() {
@@ -79,8 +77,6 @@ const FORMS = {
 		if (hasTree("m2")) s = s.pow(treeEff("m3"))
 		if (hasRank("tetr", 8)) s = s.pow(1.5)
 		s = s.pow(tmp.bosons.effect.neg_w[0])
-		if (bosonsMastered()) s = s.mul(player.mass.max(1).pow(tmp.bosons.upgs.photon[0].effect))
-		if (hasPrim("p7_0")) s = s.pow(tmp.pr.eff["p7_0"])
 		return s.min(tmp.massSoftGain3||1/0)
 	},
 	massSoftPower2() {
@@ -92,8 +88,6 @@ const FORMS = {
 		let s = uni("ee8")
 		if (hasTree("m3")) s = s.pow(treeEff("m3"))
 		s = s.pow(tmp.radiation.bs.eff[2])
-		if (bosonsMastered()) s = s.mul(player.mass.max(1).pow(tmp.bosons.upgs.photon[0].effect))
-		if (hasPrim("p7_0")) s = s.pow(tmp.pr.eff["p7_0"])
 		return s
 	},
 	massSoftPower3() {

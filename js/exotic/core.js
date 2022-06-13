@@ -221,7 +221,6 @@ let EXTRA_BUILDINGS = {
 
 			let r = x.add(1).log10().add(5).div(25)
 			if (CHROMA.got("p3_2")) r = r.add(CHROMA.eff("p3_2"))
-			if (future) r = r.add(1)
 			return r
 		}
 	},

@@ -218,7 +218,6 @@ const RANKS = {
 			'50'() {
 				if (!tmp.tickspeedEffect) return E(1)
 				let ts = tmp.tickspeedEffect.step.log10().div(1e3)
-				if (bosonsMastered()) ts = ts.mul(tmp.bosons.upgs.photon[1].effect)
 				return ts.add(1)
 			},
 			'200'() {

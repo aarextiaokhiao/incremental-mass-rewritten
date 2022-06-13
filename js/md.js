@@ -47,7 +47,6 @@ const MASS_DILATION = {
 		return x.sub(player.md.particles).max(0).floor()
 	},
 	undercapacity() {
-		if (future) return EINF
 		return player.mass.pow(1e-6).max("ee10")
 	},
     massGain() {
