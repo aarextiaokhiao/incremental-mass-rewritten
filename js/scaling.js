@@ -175,15 +175,15 @@ const SCALE_FLOORS = {
 }
 
 const SCALE_TONE = {
-	massUpg() { return player.ext.ch.tones[0] },
-	tickspeed() { return player.ext.ch.tones[0] },
-	rank() { return player.ext.ch.tones[3] },
-	tier() { return player.ext.ch.tones[3] },
-	tetr() { return player.ext.ch.tones[3] },
-	bh_condenser() { return player.ext.ch.tones[1] },
-	gamma_ray() { return player.ext.ch.tones[2] },
-	supernova() { return player.ext.ch.tones[4] },
-	fTier() { return player.ext.ch.tones[4] },
+	massUpg() { return toned() >= 1 },
+	tickspeed() { return toned() >= 1 },
+	rank() { return toned() >= 4 },
+	tier() { return toned() >= 4 },
+	tetr() { return toned() >= 4 },
+	bh_condenser() { return toned() >= 2 },
+	gamma_ray() { return toned() >= 3 },
+	supernova() { return toned() >= 5 },
+	fTier() { return toned() >= 5 },
 }
 
 const SCALE_RES = {

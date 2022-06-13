@@ -160,6 +160,10 @@
 			<img src="images/ext.png" onclick="EXOTIC.reset()" style="cursor: pointer;  background: rgba(0, 0, 0, 0.9)">
 			<span style="margin-left: 5px; text-align: left;" id="extAmt2">X</span>
 		</div>
+		<div class="resources sml" style="position: absolute; left: 5px; top: 105px; height: 2px; width: 50%">
+			<img src="images/chroma.png" onclick="tone()" style="cursor: pointer; background: rgba(0, 0, 0, 0.9)">
+			<span style="margin-left: 5px; text-align: left;" id="extTone">0</span>
+		</div>
 		<div style="position: absolute; left: 25%; top: 24px; height: 2px; width: 50%; background: #ff3f00">
 			<div id="ext_stabs" style="position: absolute; left: 0; top: -10px; width: 100%; min-height: 40px;"></div>
 		</div>
@@ -177,17 +181,6 @@
                 </div><table id="ax_table"></table>
 			</div>
 			<div id="stab_frame6_1">
-				<span>Toning the reality will rise <b class="scarlet">Exotic</b> in transfer of scalings.</span>
-				<br>
-				<div class="table_center">
-					<button class="btn btn_ch" id="ch_tone_0_btn" onclick="CHROMA.tones.toggle(0)"><b class='red' id="ch_tone_0">Red</b><br><span id="ch_eff_0"></span></button>
-					<button class="btn btn_ch" id="ch_tone_1_btn" onclick="CHROMA.tones.toggle(1)"><b class='green' id="ch_tone_1">Green</b><br><span id="ch_eff_1"></span></button>
-					<button class="btn btn_ch" id="ch_tone_2_btn" onclick="CHROMA.tones.toggle(2)"><b class='sky' id="ch_tone_2">Blue</b><br><span id="ch_eff_2"></span></button>
-					<button class="btn btn_ch" id="ch_tone_3_btn" onclick="CHROMA.tones.toggle(3)"><b class='purple' id="ch_tone_3">Violet</b><br><span id="ch_eff_3"></span></button>
-					<button class="btn btn_ch" id="ch_tone_4_btn" onclick="CHROMA.tones.toggle(4)"><b class='magenta' id="ch_tone_4">Ultraviolet</b><br><span id="ch_eff_4"></span></button>
-				</div>
-				<span id="ch_req"></span>
-				<br><br>
 				<button class="btn btn_cs" id="ch_rs" onclick="CHROMA.respec()">Respec</button><br>
 				<span class="ch_color" id="ch_bp"></span>
 				<span class="purple" id="ch_nxt"></span><br>

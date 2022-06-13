@@ -116,7 +116,7 @@ let AXION = {
 	getXLvl(p) {
 		var x = p % 4
 		var y = Math.floor(p / 4)
-		return y < 4 ? axUpg(x).sub(y*4).div(y+1) : E(0)
+		return y < 4 ? axUpg(x).sub(y*4).div(y+1).max(0) : E(0)
 	},
 	getYLvl(p) {
 		var x = p % 4
@@ -129,7 +129,7 @@ let AXION = {
 		else return axUpg(y+8)
 	},
 	getBaseLvl(p) {
-		if (p > 16) return this.getZLvl(p)
+		if (p >= 16) return this.getZLvl(p)
 		return this.getXLvl(p).add(this.getYLvl(p))
 	},
 	getBonusLvl(p) {

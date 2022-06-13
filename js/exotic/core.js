@@ -3,7 +3,8 @@ let EXOTIC = {
 		return {
 			unl: false,
 			amt: E(0),
-			chal: { },
+			chal: {},
+			toned: 0,
 			ec: 0,
 			ax: AXION.setup(),
 			ch: CHROMA.setup(),
@@ -173,10 +174,78 @@ function updateExoticHTML() {
 	elm.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
 		elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
+		elm.extTone.setHTML(format(player.ext.toned,0)+(canTone() ? "<br>(+" + format(1,0) + ")" : ""))
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateChromaHTML()
 		if (tmp.stab[6] == 2) updatePrimHTML()
 	}
+}
+
+function setupExtHTML() {
+	//AXIONS
+	var html = ""
+	for (var y = -1; y < AXION.maxRows; y++) {
+		html += "</tr><tr>"
+		for (var x = -1; x < 5; x++) {
+			var x_empty = x == -1 || x == 4
+			var y_empty = y == -1
+			if (x_empty && y_empty) html += "<td class='ax'></td>"
+			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
+			if (x_empty && !y_empty && y < 4) {
+				var type = x == 4 ? 2 : 1
+				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
+			}
+			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
+		}
+	}
+	new Element("ax_table").setHTML(html)
+
+	//CHROMA
+	var html = ""
+	var sData = CHROMA.spices
+	for (var y = 0; y < sData.rows.length; y++) {
+		var sp = sData.rows[y]
+		html += `<div class="table_center">`
+		for (var x = 0; x < 4; x++) {
+			if (x == 0) html += `<button id="cs_${sp}_a" onclick="CHROMA.get('${sp}')"></button>`
+			else if (sData.all.includes(sp+"_"+x)) html += `<div class="boost_cs" id="cs_${sp}_${x}" style='border-color: ${sData[sp+"_"+x].color}'></div>`
+			else html += `<div class="boost_cs"></div>`
+		}
+		html += `</div>`
+	}
+	new Element("ch_table").setHTML(html)
+
+	//PRIM
+	var html = ""
+	for (var y = 0; y < 4; y++) {
+		var conv = PRIM.conv[y]
+		html += `</tr><tr id='pr_cr${y}'>`
+		for (var x = 0; x < 4; x++) {
+			var ratio = conv.ratios[x]
+			var div = PRIM.disp(ratio[0], conv.res[0], true) + " -> "
+			var l = 0
+			for (var i = 1; i < conv.ratios[0].length; i++) {
+				if (ratio[i] == 0) continue
+				if (l) div += ", "
+				div += PRIM.disp(ratio[i], conv.res[i])
+				l++
+			}
+			html += `<td class='pr'><button class='btn' id='pr_c${y*10+x}' style='width: 150px; height: 48px' onclick='PRIM.toggle(${y}, ${x})'>${div}</button></td>`
+		}
+	}
+	new Element("pr_cloud").setHTML(html)
+
+	var html = ""
+	for (var x = 0; x < 8; x++) {
+		html += `
+		<div class="primordium table_center">
+			<div style="width: 240px; height: 54px;">
+				<h2>${PRIM.prim[x].name} Particles [${PRIM.prim[x].sym}]</h2><br>[<span id="pr_${x}"></span>]
+			</div><div style="width: 240px; height: 54px; background: transparent; box-shadow: 0 0 6px #ffdf00; color: white" id="pr_eff${x}"></div>
+		</div>
+		`
+	}
+	new Element("pr_table").setHTML(html)
 }
 
 
@@ -301,69 +370,23 @@ function buyExtraBuildings(type, x) {
 	EXTRA_BUILDINGS.saves[type]()["eb"+x] = tmp.eb[type+x].gain
 }
 
-function setupExtHTML() {
-	//AXIONS
-	var html = ""
-	for (var y = -1; y < AXION.maxRows; y++) {
-		html += "</tr><tr>"
-		for (var x = -1; x < 5; x++) {
-			var x_empty = x == -1 || x == 4
-			var y_empty = y == -1
-			if (x_empty && y_empty) html += "<td class='ax'></td>"
-			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
-			if (x_empty && !y_empty && y < 4) {
-				var type = x == 4 ? 2 : 1
-				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
-			}
-			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
-		}
-	}
-	new Element("ax_table").setHTML(html)
 
-	//CHROMA
-	var html = ""
-	var sData = CHROMA.spices
-	for (var y = 0; y < sData.rows.length; y++) {
-		var sp = sData.rows[y]
-		html += `<div class="table_center">`
-		for (var x = 0; x < 4; x++) {
-			if (x == 0) html += `<button id="cs_${sp}_a" onclick="CHROMA.get('${sp}')"></button>`
-			else if (sData.all.includes(sp+"_"+x)) html += `<div class="boost_cs" id="cs_${sp}_${x}" style='border-color: ${sData[sp+"_"+x].color}'></div>`
-			else html += `<div class="boost_cs"></div>`
-		}
-		html += `</div>`
-	}
-	new Element("ch_table").setHTML(html)
+//TONES
+function canTone() {
+	let reqs = [E(1e20), E(1e70), E("1e600"), E("1e125000"), E("1e10000000"), EINF]
+	return player.ext.amt.gte(EXT.amt(reqs[player.ext.toned]))
+}
 
-	//PRIM
-	var html = ""
-	for (var y = 0; y < 4; y++) {
-		var conv = PRIM.conv[y]
-		html += `</tr><tr id='pr_cr${y}'>`
-		for (var x = 0; x < 4; x++) {
-			var ratio = conv.ratios[x]
-			var div = PRIM.disp(ratio[0], conv.res[0], true) + " -> "
-			var l = 0
-			for (var i = 1; i < conv.ratios[0].length; i++) {
-				if (ratio[i] == 0) continue
-				if (l) div += ", "
-				div += PRIM.disp(ratio[i], conv.res[i])
-				l++
-			}
-			html += `<td class='pr'><button class='btn' id='pr_c${y*10+x}' style='width: 150px; height: 48px' onclick='PRIM.toggle(${y}, ${x})'>${div}</button></td>`
-		}
-	}
-	new Element("pr_cloud").setHTML(html)
+function tone() {
+	let colors = ["Red", "Green", "Blue", "Violet", "Ultraviolet"]
+	let res = ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Ranks", "Supernovae and Fermions"]
 
-	var html = ""
-	for (var x = 0; x < 8; x++) {
-		html += `
-		<div class="primordium table_center">
-			<div style="width: 240px; height: 54px;">
-				<h2>${PRIM.prim[x].name} Particles [${PRIM.prim[x].sym}]</h2><br>[<span id="pr_${x}"></span>]
-			</div><div style="width: 240px; height: 54px; background: transparent; box-shadow: 0 0 6px #ffdf00; color: white" id="pr_eff${x}"></div>
-		</div>
-		`
-	}
-	new Element("pr_table").setHTML(html)
+	if (!canTone()) return
+	if (!confirm("[" + colors[player.ext.toned] + " Tone] This will perform a Supernova reset to change " + res[player.ext.toned] + ". Colors await...")) return
+	player.ext.toned++
+	SUPERNOVA.doReset()
+}
+
+function toned() {
+	return player.ext.toned
 }

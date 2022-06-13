@@ -208,7 +208,7 @@ function getPlayerData() {
             current: Date.now(),
             time: 0,
         },
-		ap_ver: 1.001,
+		ap_ver: 1.002,
         time: 0,
     }
     for (let x = 1; x <= UPGS.main.cols; x++) {
@@ -425,7 +425,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/13/22a BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/13/22b BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

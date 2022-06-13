@@ -4,28 +4,12 @@ let CHROMA = {
 	setup() {
 		return {
 			unl: false,
-			tones: [false, false, false, false, false],
 			bp: E(0),
 			upg: [],
 		}
 	},
 	calc(dt) {
-		if (tmp.ch.toned && tmp.ch.bp_bulk.gt(player.ext.ch.bp)) player.ext.ch.bp = tmp.ch.bp_bulk
-	},
-
-	tones: {
-		colors: ["Red", "Green", "Blue", "Violet", "Ultraviolet"],
-		effs: ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Rank - Tetr", "Supernovae - Fermions"],
-		reqs: [E(0), E(1e70), E("1e600"), E("1e125000"), E("1e10000000")],
-		reqs_toggle: [E(0), E(1e100), E("1e3000"), E("1e1000000"), E("1e10000000")],
-		toggle(x) {
-			if (!player.ext.ch.tones[x] && !this.can(x)) return
-			player.ext.ch.tones[x] = !player.ext.ch.tones[x]
-			EXOTIC.reset(true)
-		},
-		can(x) {
-			return player.ext.amt.gte(tmp.ch.req) && player.ext.amt.gte(EXT.amt(this.reqs[x]))
-		}
+		if (player.ext.toned && tmp.ch.bp_bulk.gt(player.ext.ch.bp)) player.ext.ch.bp = tmp.ch.bp_bulk
 	},
 
 	spices: {
@@ -261,10 +245,6 @@ function updateChromaTemp() {
 	tmp.ch = data
 	if (!save.unl) return
 
-	data.toned = 0
-	for (var i = 0; i < save.tones.length; i++) if (save.tones[i]) data.toned++
-	data.req = EXT.amt(CHROMA.tones.reqs_toggle[data.toned])
-
 	let em_log = EXT.eff().max(10).log10()
 	let extra = E(0)
 	let fP = E(1)
@@ -291,18 +271,8 @@ function updateChromaTemp() {
 
 function updateChromaHTML() {
 	let save = player.ext.ch
-	elm.ch_req.setTxt(tmp.ch.toned ? "(Your next tone requires " + format(tmp.ch.req) + " EM!)" : "")
 	elm.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments")
-	elm.ch_nxt.setTxt(tmp.ch.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
-
-	for (var i = 0; i < save.tones.length; i++) {
-		let choosed = save.tones[i]
-		let unl = player.ext.amt.gte(EXT.amt(CHROMA.tones.reqs[i]))
-		let unavailable = !CHROMA.tones.can(i) && !choosed
-		elm["ch_tone_" + i + "_btn"].setClasses({btn: true, btn_ch: true, locked: unavailable, choosed: choosed})
-		elm["ch_tone_" + i].setTxt(unl ? CHROMA.tones.colors[i] + (save.tones[i] ? ": ON" : ": OFF") : "Locked")
-		elm["ch_eff_" + i].setTxt(unl ? CHROMA.tones.effs[i] : "Req: " + format(EXT.amt(CHROMA.tones.reqs[i])) + " EM")
-	}
+	elm.ch_nxt.setTxt(player.ext.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
 
 	let s = CHROMA.spices
 	let all = s.all

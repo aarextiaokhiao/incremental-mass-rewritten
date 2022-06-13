@@ -270,11 +270,31 @@ function checkAPVers() {
 	else {
 		if (player.ap_ver < 1) addPopup(POPUP_GROUPS.ap_chroma)
 	}
-	if (player.ap_var < 1.001) {
+	if (player.ap_ver < 1.001) {
 		player.ext.ax.res[2] = E(0)
-		for (var i = 8; i < 12; i++) player.ext.ax.upg[i] = E(0)
+		for (var i = 8; i < 12; i++) player.ext.ax.upgs[i] = E(0)
 	}
-	player.ap_ver = 1.001
+	if (player.ap_ver < 1.002) {
+		if (player.ext.ch.tones) {
+			if (player.ext.ch.tones[0]) player.ext.toned = 1
+			if (player.ext.ch.tones[1]) player.ext.toned = 2
+			if (player.ext.ch.tones[2]) {
+				alert("Due to reworks of toning, you need to rise Exotic! ~ Aarex")
+				EXT.reset(true)
+
+				player.chal.comps[13] = E(20)
+				player.chal.comps[14] = E(4)
+
+				player.ext.amt = player.ext.amt.min(EXT.amt("e3e4"))
+				for (var i = 0; i < 2; i++) player.ext.ax.res[i] = E(0)
+				for (var i = 0; i < 12; i++) player.ext.ax.upgs[i] = E(3)
+				player.ext.ch.bp = E(0)
+				player.ext.toned = 3
+			}
+			delete player.ext.ch.tones
+		}
+	}
+	player.ap_ver = 1.002
 }
 
 let beta = true
