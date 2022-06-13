@@ -243,16 +243,40 @@ const RANKS = {
 }
 
 const PRESTIGES = {
-    fullNames: ["Prestige Level", "Honor"],
-    base() {
-        let x = E(1)
-
-        for (let i = 0; i < RANKS.names.length; i++) x = x.mul(player.ranks[RANKS.names[i]].add(1))
-
-        return x.sub(1)
+    fullNames: {
+        0: "Prestige Level",
+        "0_1": "Ripped Prestige",
+        "0_2": "Broken Prestige", 
+        "0_3": "Slurp Prestige",
+        1: "Honor",
+    },
+    get(i) {
+        switch (i) {
+            case 0:
+                if (player.qu.rip.active && !player.md.break.active) return "0_3"
+                if (!player.md.break.active) return "0_2"
+                if (player.qu.rip.active) return "0_1"
+                return 0
+            default:
+                return i
+        }
+    },
+    base(i) {
+        switch (i) {
+            case 0:
+                let x = E(1)
+                for (let i = 0; i < RANKS.names.length; i++) x = x.mul(player.ranks[RANKS.names[i]].add(1))
+                return x.sub(1)
+            /*case 1:
+                let x = player.pres[0]
+                for (let s = 1; s <= 3; s++) x = x.add(player.pres["0_"+s])
+                return x.round()*/
+            default:
+                return player.pres[i-1]
+        }
     },
     req(i) {
-        let x = EINF, y = player.prestiges[i]
+        let x = EINF, y = player.pres[PRESTIGES.get(i)]
         switch (i) {
             case 0:
                 x = Decimal.pow(1.1,y.pow(1.1)).mul(2e13)
@@ -267,7 +291,7 @@ const PRESTIGES = {
         return x.ceil()
     },
     bulk(i) {
-        let x = E(0), y = i==0?tmp.prestiges.base:player.prestiges[i-1]
+        let x = E(0), y = tmp.prestiges.base[i]
         switch (i) {
             case 0:
                 if (y.gte(2e13)) x = y.div(2e13).max(1).log(1.1).max(0).root(1.1).add(1)
@@ -292,9 +316,17 @@ const PRESTIGES = {
             "3": `Quadruple Quantum Foam and Death Shard gain.`,
             "5": `Pre-Quantum Global Speed is raised by ^2 (before division).`,
             "6": `Tickspeed Power softcap starts ^100 later.`,
+            "12": `Gain 10 free levels of Rank tiers up to Pent.`,
+            "15": `Tetr 2 is overpowered.`,
+            "18": `Gain 100% more Ranks.`,
+            "22": `Prestige Base strengthens Pent 5.`,
+            "25": `Honor speeds up Pre-Quantum.`,
         },
         {
             "1": `All-Star resources are raised by ^2.`,
+            "3": `Prestige Base boosts Bosons.`,
+            "4": `Gain 5 levels of each Primordium.`,
+            "5": `Neutron Upgrade [c] is overpowered.`,
         },
     ],
     rewardEff: [
@@ -314,10 +346,11 @@ const PRESTIGES = {
         },
     ],
     reset(i) {
-        if (i==0?tmp.prestiges.base.gte(tmp.prestiges.req[i]):player.prestiges[i-1].gte(tmp.prestiges.req[i])) {
-            player.prestiges[i] = player.prestiges[i].add(1)
+        if (tmp.prestiges.base[i].gte(tmp.prestiges.req[i])) {
+            let g = PRESTIGES.get(i)
+            player.pres[g] = player.pres[g].add(1)
             for (let j = i-1; j >= 0; j--) {
-                player.prestiges[j] = E(0)
+                player.pres[j] = E(0)
             }
             QUANTUM.enter(false,true,false,true)
             updateRanksTemp()
@@ -325,9 +358,9 @@ const PRESTIGES = {
     },
 }
 
-const PRES_LEN = PRESTIGES.fullNames.length
+const PRES_LEN = 2
 
-function hasPrestige(x,y) { return player.prestiges[x].gte(y) }
+function hasPrestige(x,y) { return player.pres[x].gte(y) }
 
 function prestigeEff(x,y,def=E(1)) { return tmp.prestiges.eff[x][y] || def }
 
@@ -368,8 +401,8 @@ function updateRanksTemp() {
 
     // Prestige
 
-    tmp.prestiges.base = PRESTIGES.base()
     for (let x = 0; x < PRES_LEN; x++) {
+        tmp.prestiges.base[x] = PRESTIGES.base(x)
         tmp.prestiges.req[x] = PRESTIGES.req(x)
         for (let y in PRESTIGES.rewardEff[x]) {
             if (PRESTIGES.rewardEff[x][y]) tmp.prestiges.eff[x][y] = PRESTIGES.rewardEff[x][y][0]()
@@ -409,29 +442,32 @@ function updateRanksHTML() {
         }
     }
     if (tmp.rank_tab == 1) {
-        tmp.el.pres_base.setTxt(tmp.prestiges.base.format(0))
-
         for (let x = 0; x < PRES_LEN; x++) {
             let unl = PRESTIGES.unl[x]?PRESTIGES.unl[x]():true
 
             tmp.el["pres_div_"+x].setDisplay(unl)
 
             if (unl) {
-                let p = player.prestiges[x] || E(0)
-                let keys = Object.keys(PRESTIGES.rewards[x])
+                let g = PRESTIGES.get(x)
+                let p = player.pres[g] || E(0)
                 let desc = ""
-                for (let i = 0; i < keys.length; i++) {
-                    if (p.lt(keys[i])) {
-                        desc = ` At ${PRESTIGES.fullNames[x]} ${format(keys[i],0)}, ${PRESTIGES.rewards[x][keys[i]]}`
-                        break
+                if (g == x) {
+                    let keys = Object.keys(PRESTIGES.rewards[x])
+                    for (let i = 0; i < keys.length; i++) {
+                        if (p.lt(keys[i])) {
+                            desc = ` At ${PRESTIGES.fullNames[x]} ${format(keys[i],0)}, ${PRESTIGES.rewards[x][keys[i]]}`
+                            break
+                        }
                     }
                 }
 
-                //tmp.el["pres_scale_"+x].setTxt(getScalingName(rn))
+                tmp.el["pres_name_"+x].setTxt(PRESTIGES.fullNames[g])
+                tmp.el["pres_up_"+x].setTxt(PRESTIGES.fullNames[g])
                 tmp.el["pres_amt_"+x].setTxt(format(p,0))
-                tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.prestiges.base.lt(tmp.prestiges.req[x]):player.prestiges[x-1].lt(tmp.prestiges.req[x])})
+                tmp.el["pres_base_"+x].setTxt(format(tmp.prestiges.base[x],0))
+                tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: tmp.prestiges.base[x].lt(tmp.prestiges.req[x])})
                 tmp.el["pres_desc_"+x].setTxt(desc)
-                tmp.el["pres_req_"+x].setTxt(x==0?format(tmp.prestiges.req[x],0)+" of Prestige Base":PRESTIGES.fullNames[x-1]+" "+format(tmp.prestiges.req[x],0))
+                tmp.el["pres_req_"+x].setTxt(format(tmp.prestiges.req[x],0)+" of "+PRESTIGES.fullNames[x]+" Base")
                 tmp.el["pres_auto_"+x].setDisplay(false)
                 tmp.el["pres_auto_"+x].setTxt(false?"ON":"OFF")
             }

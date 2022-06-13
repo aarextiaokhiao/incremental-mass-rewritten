@@ -21,6 +21,7 @@ function resetTemp() {
         rank_tab: 0,
 
         prestiges: {
+            base: [],
             req: [],
             bulk: [],
             eff: [],

@@ -146,7 +146,7 @@ function getPlayerData() {
             rank: false,
             tier: false,
         },
-        prestiges: [],
+        pres: {0: E(0), "0_1": E(0), "0_2": E(0), "0_3": E(0), 1: E(0)},
         auto_mainUpg: {
             
         },
@@ -258,7 +258,6 @@ function getPlayerData() {
         },
         time: 0,
     }
-    for (let x = 0; x < PRES_LEN; x++) s.prestiges.push(E(0))
     for (let x = 1; x <= UPGS.main.cols; x++) {
         s.auto_mainUpg[UPGS.main.ids[x]] = false
         s.mainUpg[UPGS.main.ids[x]] = []
@@ -292,6 +291,11 @@ function loadPlayer(load) {
     player = deepUndefinedAndDecimal(player, DATA)
     convertStringToDecimal()
     player.qu.qc.presets = player.qu.qc.presets.slice(0,5)
+    if (player.prestiges) {
+        player.pres[0] = E(player.prestiges[0])
+        player.pres[1] = E(player.prestiges[1])
+        delete player.prestiges
+    }
     player.reset_msg = ""
     player.main_upg_msg = [0,0]
     player.chal.choosed = 0

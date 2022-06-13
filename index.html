@@ -211,7 +211,6 @@
                 <div id="rank_tab0">
                     <div id="ranks_table" class="table_center" style="min-height: 180px;"></div>
                 </div><div id="rank_tab1">
-                    Your Prestige base is <span id="pres_base"></span> (based on products of Rank tiers)<br><br>
                     <div id="pres_table" class="table_center" style="min-height: 180px;"></div>
                 </div>
                 <br><br>
@@ -307,7 +306,7 @@
                 <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
                 <div id="scaling_table"></div>
             </div><div id="stab_frame1_2">
-                <button onclick="player.pres_reward = Math.max(player.pres_reward-1,0)" class="btn"><--</button><span id="pres_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.pres_reward = Math.min(player.pres_reward+1,Math.max(...PRESTIGES.fullNames.map((v, i) => i==0 ? i : (PRESTIGES.unl[i]() && i))))" class="btn">--></button><br><br>
+                <button onclick="player.pres_reward = Math.max(player.pres_reward-1,0)" class="btn"><--</button><span id="pres_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.pres_reward = Math.min(player.pres_reward+1,PRES_LEN-1)" class="btn">--></button><br><br>
                 <div id="pres_rewards_table"></div>
             </div>
         </div><div id="tab_frame2">
@@ -428,7 +427,6 @@
             <button class="btn" onclick="exporty()">Export</button>
             <button class="btn" onclick="export_copy()">Export to clipboard</button>
             <button class="btn" onclick="importy()">Import</button>
-            <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">Join Discord</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.help)">Help</button><br>
             <button class="btn" onclick="turnOffline()">Offline Production: <span id="offline_active">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">Fonts</button>
@@ -438,13 +436,8 @@
             <h2>Confirmation Settings</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            Incremental Mass Rewritten v0.5.4.1 - made by MrRedShark77<br>
-            The game is inspired by Distance Incremental & Synergism<br><br><br>
             Hint 1: Hover top image above tabs to show description...<br><br>
             Total time played: <span id="total_time">X</span><br><br>
-            <a href="https://www.easycounter.com/">
-            <img src="https://www.easycounter.com/counter.php?mrredshark77"
-            border="0" alt="статистика посещения интернет"></a>
 
             <div style="position: absolute; bottom: 35px; right: 35px;">
                 <img id="omega_badge" src="images/omega.png">
