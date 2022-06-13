@@ -213,7 +213,7 @@ let AXION = {
 			req: E(1),
 			eff(x) {
 				x = x.div(3).add(1).log(3).add(1)
-				if (hasTree("ext_u3")) x = E(1.75).sub(E(1).div(x.div(5).add(1))).max(1)
+				if (hasTree("ext_u3")) x = E(1.75).sub(E(1).div(x.div(5).add(1))).max(1).min(1.5)
 				return x
 			},
 			effDesc(x) {
