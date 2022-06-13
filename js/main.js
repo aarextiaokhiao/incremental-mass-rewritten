@@ -47,7 +47,7 @@ const FORMS = {
 		if (hasRank("rank", 180)) exp = exp.mul(1.025)
 		if (!CHALS.inChal(3)) exp = exp.mul(tmp.chal.eff[3])
 		if (tmp.md.active && hasElement(28)) exp = exp.mul(1.5)
-		if (!tmp.md.active && CHROMA.got("p2_1")) exp = exp.mul(CHROMA.eff("p2_1"))
+		if (CHROMA.got("p2_1")) exp = exp.mul(CHROMA.eff("p2_1"))
 
 		let x = this.baseMassGain().pow(exp)
 		if (tmp.md.active) x = MASS_DILATION.applyDil(x)

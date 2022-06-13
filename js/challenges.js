@@ -452,7 +452,7 @@ const CHALS = {
 			let mul = E(0.01)
 			if (player.chal.comps[14].gte(0)) {
 				let c14 = CHALS[14].effect(player.chal.comps[14])
-				exp = exp.mul(c14)
+				exp = exp.mul(c14.c10)
 			}
 			let ret = x.pow(exp).mul(mul).add(1)
 			return ret
@@ -507,28 +507,30 @@ const CHALS = {
 		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
-		reward: `Raise Challenge 10.`,
+		reward: `Raise Challenge 10 and add Beauty Pigments`,
 		max: E(20),
 		inc: E(1.5),
 		pow: E(1.5),
 		start: mlt(1e3),
 		effect(x) {
-			return E(1.75).sub(E(0.75).div(x.div(10).add(1)))
+			return {
+				c10: E(1.75).sub(E(0.75).div(x.div(10).add(1))),
+				bp: x,
+			}
 		},
-        effDesc(x) { return "^"+format(x) },
+        effDesc(x) { return "C10: ^"+format(x.c10)+", BP: +"+format(x.bp) },
 	},
 	15: {
 		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
 		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
-		reward: `Multiply Beauty Pigments.`,
+		reward: `Placeholder.`,
 		max: E(100),
 		inc: E(2),
 		pow: E(3),
 		start: meg(1),
 		effect(x) {
-			let ret = E(1)
-			return x.add(1).log10().add(1)
+			return E(1)
 		},
 		effDesc(x) { return format(x)+"x" },
 	},

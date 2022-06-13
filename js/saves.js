@@ -425,7 +425,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/12/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/12/22b BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

@@ -53,7 +53,7 @@ let CHROMA = {
 			return log.log10().div(2).add(1).pow(.6).sub(1)
 		},
 		cost(x) {
-			return tmp.ch.mlt.add(player.ext.ch.upg.length).floor()
+			return tmp.ch.mlt.mul(player.ext.ch.upg.length).floor()
 		},
 		next(x) {
 			if (CHROMA.got(x+"_2")) return x+"_3"
@@ -70,14 +70,14 @@ let CHROMA = {
 			desc: (x) => "Strengthen Exotic Matter by ^"+format(x)+".",
 			color: "#7f0000",
 			eff(x) {
-				return x.div(4).add(1).min(1.5)
+				return x.div(4).add(1).pow(1.4).min(1.7)
 			},
 		},
 		p2_1: {
-			desc: (x) => "Raise mass outside of MD, by ^"+format(x)+".",
+			desc: (x) => "Raise mass by ^"+format(x)+". [reduced in MD]",
 			color: "#007f00",
 			eff(x) {
-				return x.div(2).add(1).cbrt().min(1.5)
+				return x.div(tmp.md && tmp.md.active ? 10 : 2).add(1).cbrt().min(1.5)
 			},
 		},
 		p3_1: {
@@ -91,7 +91,7 @@ let CHROMA = {
 			desc: (x) => "C12 raises Exotic Matter by ^"+format(x)+".",
 			color: "#bf0000",
 			eff(x) {
-				return E(1).add(x.div(100)).min(1.05).pow(player.chal.comps[12])
+				return E(1).add(x.div(75)).min(1.1).pow(player.chal.comps[12])
 			},
 		},
 		p2_2: {
@@ -142,7 +142,7 @@ let CHROMA = {
 			desc: (x) => "Strengthen Star Boosters by "+format(x)+"x.",
 			color: "#007f7f",
 			eff(x) {
-				return x.div(3.5).add(1)
+				return x.div(2).add(1)
 			},
 		},
 		s3_1: {
@@ -265,12 +265,13 @@ function updateChromaTemp() {
 	for (var i = 0; i < save.tones.length; i++) if (save.tones[i]) data.toned++
 	data.req = EXT.amt(CHROMA.tones.reqs_toggle[data.toned])
 
-	let em_log = EXT.eff().add(1).log10().add(1).sqrt()
-	let fP = E(data.toned).sqrt()
-	if (tmp.chal) fP = tmp.chal.eff[15]
+	let em_log = EXT.eff().max(10).log10()
+	let extra = E(0)
+	let fP = E(1)
+	if (tmp.chal) extra = tmp.chal.eff[14].bp
 
-	data.bp_next = E(10).pow(E(1.75).pow(save.bp.div(fP)).mul(1e15).div(em_log))
-	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).floor().add(1)
+	data.bp_next = E(10).pow(E(1.75).pow(save.bp.sub(extra).div(fP)).mul(1e15).div(em_log))
+	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).add(extra).floor().add(1).min(33)
 
 	let s = CHROMA.spices
 	data.pwr = s.power()
@@ -281,8 +282,8 @@ function updateChromaTemp() {
 		data.eff[id] = s[id].eff(data.pwr)
 		if (CHROMA.got(id)) {
 			if (id[3] != "1") data.mlt = data.mlt.mul(0.8)
-			else if (id[0] == "p") data.mlt = data.mlt.mul(2)
-			else if (id[0] == "s") data.mlt = data.mlt.mul(2)
+			else if (id[0] == "p") data.mlt = data.mlt.mul(1.2)
+			else if (id[0] == "s") data.mlt = data.mlt.mul(1.5)
 			else if (id[0] == "t") data.mlt = data.mlt.mul(1.5)
 		}
 	}

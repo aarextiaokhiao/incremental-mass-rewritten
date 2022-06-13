@@ -432,7 +432,7 @@ function getScalingPower(type, name) {
 			if (hasElement(55)) power = power.mul(0.75)
 		}
 		if (name=='supernova') {
-			if (tmp.radiation) power = power.mul(tmp.radiation.bs.eff[20])
+			if (tmp.radiation) power = power.mul(tmp.radiation.bs.eff[20].eff)
 		}
 	}
 	if (type=="meta") {

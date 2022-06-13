@@ -99,7 +99,7 @@ let AXION = {
 			.mul(em.mul(2).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
 			.mul(em.add(1))
-		if (x == 2 && hasTree("ext_e1")) r = em.sqrt()
+		if (x == 2 && hasTree("ext_e1")) r = em.pow(.75)
 
 		//Multipliers
 		if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
@@ -129,6 +129,7 @@ let AXION = {
 		else return axUpg(y+8)
 	},
 	getBaseLvl(p) {
+		if (p > 16) return this.getZLvl(p)
 		return this.getXLvl(p).add(this.getYLvl(p))
 	},
 	getBonusLvl(p) {
@@ -137,7 +138,7 @@ let AXION = {
 		var r = E(0)
 
 		if (y > 0 && y < 4) r = axUpg(y+3).sub((x+4)*(y+1)).div(y+2).max(0)
-		if (hasTree("ext_l2") && y<4) {
+		if (hasTree("ext_l2") && y < 4) {
 			r = r.add(axUpg(x+4).div(1.5))
 			r = r.add(axUpg(y-4).div(6))
 		}
@@ -149,10 +150,10 @@ let AXION = {
 		if (hasPrim("p1_0")) str = str.mul(tmp.pr.eff["p1_0"])
 
 		let r = E(1)
-		if (hasTree("ext_b2")) r = E(1.02).pow(this.getXLvl(p).mul(str)).mul(r)
-		if (hasTree("ext_b3")) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3)).mul(str)).mul(r)
+		if (hasTree("ext_b2") && p < 16) r = E(1.02).pow(this.getXLvl(p).mul(str)).mul(r)
+		if (hasTree("ext_b3") && p < 16) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3)).mul(str)).mul(r)
 		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6)).mul(str)).mul(r)
-		return r
+		return r.mul(str)
 	},
 	getEff(p, l) {
 		return AXION.ids[p].eff(l)
@@ -212,7 +213,7 @@ let AXION = {
 			req: E(1),
 			eff(x) {
 				x = x.div(3).add(1).log(3).add(1)
-				if (hasTree("ext_u3")) x = E(1.75).sub(E(0.75).div(x.div(5).add(1)))
+				if (hasTree("ext_u3")) x = E(1.75).sub(E(1).div(x.div(5).add(1))).max(1)
 				return x
 			},
 			effDesc(x) {
@@ -304,9 +305,9 @@ let AXION = {
 			title: "Supernovae",
 			desc: "Cheapen Supernovae.",
 			unl: () => CHROMA.unl(),
-			req: E(50),
+			req: E(35),
 			eff(x) {
-				return x.div(10).add(2).log(2)
+				return x.div(15).add(2).log(2)
 			},
 			effDesc(x) {
 				return "^1/"+format(x)
@@ -367,7 +368,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(8),
 			eff(x) {
-				return x.add(1).cbrt().sub(1).mul(100)
+				return x.add(1).cbrt().sub(1).mul(200)
 			},
 			effDesc(x) {
 				return "+"+format(x)
@@ -377,9 +378,9 @@ let AXION = {
 			title: "Temporal Dimensionality",
 			desc: "Dilated Mass pushes evaporation softcap farther.",
 			unl: () => CHROMA.unl(),
-			req: E(100),
+			req: E(40),
 			eff(x) {
-				return x.div(100).add(1).log(2).div(200).min(.05)
+				return x.div(4).add(1).log(2).div(200).min(.05)
 			},
 			effDesc(x) {
 				return "+^"+format(x,4)
@@ -388,12 +389,12 @@ let AXION = {
 		19: {
 			title: "General Relativity",
 			desc: "Dilated Mass raises Tickspeed power.",
-			req: E(50),
+			req: E(25),
 			unl: () => CHROMA.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
-				let r = player.md.mass.add(1).log10().add(1).log10().div(100).add(1) // log^2(Dilated mass)
-				r = r.pow(x.div(50).sqrt()) // Levels
+				let r = player.md.mass.add(1).log10().add(1).log10().div(50).add(1) // log^2(Dilated mass)
+				r = r.pow(x.div(5).add(1).sqrt().sub(1)) // Levels
 				return r
 			},
 			effDesc(x) {
@@ -411,7 +412,7 @@ let AXION = {
 			title: "Monochromacy Challenge",
 			desc: "Unlock Challenges 14 - 15.",
 			unl: () => CHROMA.unl(),
-			req: E(15)
+			req: E(14)
 		},
 		22: {
 			title: "Primordial Lookback",
@@ -423,7 +424,7 @@ let AXION = {
 			title: "Shortcut Mastery",
 			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
 			unl: () => CHROMA.unl(),
-			req: E(50)
+			req: E(20)
 		},
 	}
 }
