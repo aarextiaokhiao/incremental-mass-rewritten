@@ -484,7 +484,7 @@ const CHALS = {
 		pow: E(1),
 		start: uni("e47250"),
 		effect(x) {
-			if (hasPrim("p5_0")) x = x.add(tmp.pr.eff["p5_0"])
+			if (hasPrim("p7_0")) x = x.add(tmp.pr.eff["p7_0"])
             return E(1/0.985).pow(x)
 		},
 		effDesc(x) { return formatMultiply(x)+" slower" },
@@ -493,15 +493,15 @@ const CHALS = {
 		unl() { return hasTree("chal8") },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks.",
-		reward: `Weaken the Axion Upgrade penalties.<br><span class="ch_color">On 13th completion, unlock Chroma!</span>`,
+		reward: `Weaken Axion penalties.<br><span class="ch_color">On 13th completion, unlock Chroma!</span>`,
 		max: E(100),
 		inc: E(11/9),
 		pow: E(1.2),
 		start: uni("e4.5e5"),
 		effect(x) {
-            return E(1).div(x.div(8).add(1))
+            return x.div(8).add(1)
 		},
-		effDesc(x) { return format(E(1).sub(x).mul(100))+"% slower" },
+		effDesc(x) { return formatMultiply(x)+"% slower" },
 	},
 	14: {
 		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },

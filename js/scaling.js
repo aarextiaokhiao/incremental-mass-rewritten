@@ -54,9 +54,6 @@ const SCALE_INIT_POWERS = {
 		normal: 1.15,
 		toned: 3
 	},
-	pent: {
-		normal: 1.25
-	},
 	supernova: {
 		normal: 1.25,
 		toned: 6
@@ -265,7 +262,19 @@ function scalingToned(name) {
 }
 
 function scalingInitPower(name) {
-	if (name == "pent" && AXION.unl()) return tmp.ax.eff[15].exp
+	if (name == "tier") {
+		if (CHROMA.got("t5_1")) return 1
+		return 2
+	}
+	if (name == "tetr") {
+		if (hasPrim("p5_0")) return tmp.pr.eff.p5_0
+		if (hasElement(44)) return 1.75
+		return 2
+	}
+	if (name == "pent") {
+		if (AXION.unl()) tmp.ax.eff[15].exp
+		return 1.25
+	}
 	return SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]
 }
 

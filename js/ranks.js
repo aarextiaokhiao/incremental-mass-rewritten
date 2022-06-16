@@ -274,7 +274,7 @@ const RANKS = {
         },
         tier() {
             let f = E(1)
-            f = f.mul(tmp.fermions.effs[1][3])
+            if (!CHROMA.got("t5_1")) f = f.mul(tmp.fermions.effs[1][3])
             if (hasRank("tetr", 1)) f = f.mul(1/0.75)
             if (hasUpgrade('atom',10)) f = f.mul(2)
             return f
@@ -306,20 +306,20 @@ function updateRanksTemp() {
     for (let x = 0; x < u.names.length; x++) if (!tmp.ranks[u.names[x]]) tmp.ranks[u.names[x]] = {}
 
     let fp = u.fp.rank()
-	let scale = scalingInitPower("rank")
-    d.rank.req = E(10).pow(s.rank.scaleEvery("rank").div(fp).pow(scale)).mul(10)
-    d.rank.bulk = player.mass.div(10).max(1).log10().root(scale).mul(fp).scaleEvery("rank", 1).add(1).floor();
+    let pow = scalingInitPower("rank")
+    d.rank.req = E(10).pow(s.rank.scaleEvery("rank").div(fp).pow(pow)).mul(10)
+    d.rank.bulk = player.mass.div(10).max(1).log10().root(pow).mul(fp).scaleEvery("rank", 1).add(1).floor();
     if (FERMIONS.onActive(14)) d.rank.bulk = E(2e4).min(d.rank.bulk)
     if (player.mass.lt(10)) d.rank.bulk = 0
     d.rank.can = player.mass.gte(d.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
 
     fp = u.fp.tier()
-    d.tier.req = s.tier.scaleEvery("tier").div(fp).add(2).pow(2).floor()
-    d.tier.bulk = s.rank.max(0).root(2).sub(2).mul(fp).scaleEvery("tier", 1).add(1).floor();
+    pow = scalingInitPower("tier")
+    d.tier.req = s.tier.scaleEvery("tier").div(fp).add(2).pow(pow).floor()
+    d.tier.bulk = s.rank.max(0).root(pow).sub(2).mul(fp).scaleEvery("tier", 1).add(1).floor();
 
     fp = u.fp.tetr()
-    let pow = 2
-    if (hasElement(44)) pow = 1.75
+    pow = scalingInitPower("tetr")
     d.tetr.req = s.tetr.scaleEvery("tetr").div(fp).pow(pow).mul(3).add(10).floor()
     d.tetr.bulk = s.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery("tetr", 1).add(1).floor();
 

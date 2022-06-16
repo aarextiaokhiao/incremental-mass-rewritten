@@ -18,13 +18,9 @@ TO-DO LIST:
 	2e. Muonic
 3: Upgrades
 	3a. [1/2] Add Neutron Condensers.
-	3b. [W]   Luminosity starts earlier.
-	3c. [W]   Ar-18 softcap starts later.
-	3d. [M]   Primordiums boost itself.
-	3e. [S]   Weaken Ar-18 softcap.
-	3f. [S]
-		i:    Raise Neutron Stars.
-		ii:   Multiply Neutron Stars by 10^10^(k*log^2(x)^0.6).
+	3b. [M]   Primordiums boost itself.
+	3c. [S]   Weaken Ar-18 softcap.
+	3d. [S]   Multiply Neutron Stars by 10^10^(k*log^2(x)^0.6).
 4: A formula which gives a bit of linear inflation, but decays in a logarithmically rate.
 	(b^(x/log(x/n+1)) or x^(k/log(log(x)/n+1)+1), where n is a upgrade factor)
 5:

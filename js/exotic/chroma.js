@@ -100,7 +100,7 @@ let CHROMA = {
 			},
 		},
 		p2_3: {
-			desc: (x) => "Placeholder.",
+			desc: (x) => "MD Upgrade 2 boosts General Relativity.",
 			color: "#00ff00",
 			eff(x) {
 				return E(0)
@@ -182,24 +182,24 @@ let CHROMA = {
 			},
 		},
 		t4_1: {
-			desc: (x) => "Placeholder.",
+			desc: (x) => "Raise Tickspeed Effect by ^"+format(x)+".",
 			color: "#003f7f",
 			eff(x) {
-				return E(1)
+				return x.div(10).add(1).min(2)
 			},
 		},
 		t5_1: {
-			desc: (x) => "Placeholder.",
+			desc: (x) => "Tier scales linearly, but nullify Neutrino.",
 			color: "#3f007f",
 			eff(x) {
-				return E(1)
+				return x.div(4).add(1)
 			},
 		},
 		t6_1: {
-			desc: (x) => "Placeholder.",
+			desc: (x) => "Add Axion Strength by "+formatMultiply(x)+".",
 			color: "#7f003f",
 			eff(x) {
-				return E(1)
+				return x.div(20).add(1)
 			},
 		},
 	},

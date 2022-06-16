@@ -135,6 +135,7 @@ const FORMS = {
 			let eff = step.pow(t.add(bonus))
 			if (!hasTree("ext_u2") && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
+			if (CHROMA.got("t4_1")) eff = eff.pow(tmp.ch.eff.t4_1)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
 		},
 		autoUnl() { return hasUpgrade('bh',5) },

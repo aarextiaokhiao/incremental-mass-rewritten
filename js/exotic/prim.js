@@ -99,8 +99,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1),
-					desc: (x) => "Placeholder."
+					eff: (x) => E(1).add(x.div(10)),
+					desc: (x) => "Ar-18 softcap starts "+format(x)+"x later."
 				}
 			]
 		},
@@ -134,8 +134,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1),
-					desc: (x) => "Placeholder."
+					eff: (x) => x.mul(20).add(1).min(500),
+					desc: (x) => "Raise Neutron Stars by ^"+format(x)+"."
 				}
 			]
 		},
@@ -145,8 +145,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x,
-					desc: (x) => "Add "+format(x)+" C12 completions."
+					eff: (x) => future ? 1 : E(1.75).sub(x.div(100)).max(1).toNumber(),
+					desc: (x) => "Tetr scales at ^"+format(x,3)+" rate."
 				}
 			]
 		},
@@ -157,7 +157,7 @@ let PRIM = {
 				{
 					unl: () => true,
 					eff: (x) => E(1),
-					desc: (x) => "Placeholder."
+					desc: (x) => "Weaken Axion penalties by "+formatMultiply(x)+"."
 				}
 			]
 		},
@@ -167,8 +167,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1),
-					desc: (x) => "Placeholder."
+					eff: (x) => x,
+					desc: (x) => "Add "+format(x)+" C12 completions."
 				}
 			]
 		}
@@ -200,7 +200,6 @@ function updatePrimTemp() {
 			}
 		}
 	}
-	if (future) for (var v = 0; v < 8; v++) data.ratio[v] = 0.2
 
 	let b = {}
 	for (var i = 0; i < 8; i++) {

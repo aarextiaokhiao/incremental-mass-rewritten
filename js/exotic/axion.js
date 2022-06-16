@@ -43,7 +43,8 @@ let AXION = {
 		}
 
 		var inc = E(1)
-		if (tmp.chal) inc = inc.mul(tmp.chal.eff[13])
+		if (tmp.chal) inc = inc.div(tmp.chal.eff[13])
+		if (hasPrim("p6_0")) inc = inc.div(tmp.pr.eff.p6_0)
 
 		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
 		var r = E([2,3,1.6][type])
@@ -146,14 +147,11 @@ let AXION = {
 		return r
 	},
 	getMultLvl(p) {
-		let str = E(1)
-		//if (hasPrim("p1_0")) str = str.mul(tmp.pr.eff["p1_0"]) - POSTPONED
-
 		let r = E(1)
-		if (hasTree("ext_b2") && p < 16) r = E(1.02).pow(this.getXLvl(p).mul(str)).mul(r)
-		if (hasTree("ext_b3") && p < 16) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3)).mul(str)).mul(r)
-		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6)).mul(str)).mul(r)
-		return r
+		if (hasTree("ext_b2") && p < 16) r = E(1.02).pow(this.getXLvl(p)).mul(r)
+		if (hasTree("ext_b3") && p < 16) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3))).mul(r)
+		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6))).mul(r)
+		return r.pow(tmp.ax.str)
 	},
 	getEff(p, l) {
 		return AXION.ids[p].eff(l)
@@ -283,7 +281,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(80),
 			eff(x) {
-				return x.add(1).log10().add(1).sqrt().min(3)
+				return x.add(1).log10().div(10).add(1).min(4/3)
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -464,8 +462,7 @@ function updateAxionTemp() {
 
 	//BOOSTS
 	d.str = E(1)
-	//if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1")) - POSTPONED
-	//if (hasPrim("p4_0")) d.str = d.str.add(tmp.pr.eff["p4_0"]) - POSTPONED
+	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
 
 	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)
