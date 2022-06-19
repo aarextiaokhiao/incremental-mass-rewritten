@@ -407,6 +407,12 @@ function setupFermionsHTML() {
     }
 }
 
+function gainFermionTiers(x) {
+	let maxTier = tmp.fermions.maxTier[x[0]][x[1]]
+	player.supernova.fermions.tiers[x[0]][x[1]] = player.supernova.fermions.tiers[x[0]][x[1]]
+	.max(tmp.fermions.tiers[x[0]][x[1]]).min(maxTier)
+}
+
 function updateFermionsTemp() {
 	let tf = tmp.fermions
     tf.ch = player.supernova.fermions.choosed == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed[0]),Number(player.supernova.fermions.choosed[1])]
@@ -434,7 +440,7 @@ function updateFermionsHTML() {
     elm.f_sweep.setDisplay(!player.supernova.fermions.choosed && !shrt && hasTree("qol10"))
 	elm.f_dual.setDisplay(!player.supernova.fermions.choosed && !shrt && hasTree("qol9"))
 	elm.f_dual.setTxt("Dual: " + (player.supernova.fermions.dual ? "ON" : "OFF"))
-    for (i = 0; i < 2; i++) {
+    for (let i = 0; i < 2; i++) {
         elm["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i]))
         let unls = FERMIONS.getUnlLength(i)
         for (let x = 0; x < FERMIONS.types[i].length; x++) {
@@ -448,7 +454,7 @@ function updateFermionsHTML() {
             elm[id+"_div"].setDisplay(unl)
 
             if (unl) {
-                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : FERMIONS.names[i]]: true, choosed: active})
+                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasTree("qol_ext9") ? "auto" : FERMIONS.names[i]]: true, choosed: active})
                 elm[id+"_nextTier"].setHTML(max ? "" : "Next at: " + fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])) + `<br>(Increased by ${f.inc})<br><br>`)
                 elm[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x))
                 elm[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(tmp.fermions.maxTier[i][x] < Infinity && !max ? " / " + format(tmp.fermions.maxTier[i][x],0) : ""))

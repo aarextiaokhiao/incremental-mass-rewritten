@@ -38,7 +38,7 @@ const TREE_IDS = [
 		[],
 	],[
 		['s4','sn5','sn4'],
-		['qol_ext6','qol_ext7','qol_ext8','','qol_ext10'],
+		['qol_ext6','qol_ext7','qol_ext8','qol_ext9','qol_ext10'],
 		[],
 		[],
 		["ext_l4","ext_l5"],
@@ -704,6 +704,12 @@ const TREE_UPGS = {
 			branch: ["qol_ext1"],
 			desc: `Automatically gain C1 - 8 completions without entering.`,
 			cost: E("1e800"),
+			icon: "qol_ext"
+		},
+		qol_ext9: {
+			branch: ["qol_ext8"],
+			desc: `Automatically gain C9 - 11 completions and Up - Top Quark tiers.`,
+			cost: E("e1e7"),
 			icon: "qol_ext"
 		},
 		qol_ext10: {

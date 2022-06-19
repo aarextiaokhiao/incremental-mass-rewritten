@@ -373,8 +373,8 @@ function buyExtraBuildings(type, x) {
 
 //TONES
 function canTone() {
-	let reqs = [E(1e20), E(1e70), E("1e600"), E("1e125000"), E("1e10000000"), EINF]
-	return player.ext.amt.gte(EXT.amt(reqs[player.ext.toned]))
+	let reqs = [E(1e20), E(1e70), E("1e600"), E("e1e6"), E("e1e8")]
+	return player.ext.amt.gte(EXT.amt(reqs[player.ext.toned])) && player.ext.toned < 5
 }
 
 function tone() {

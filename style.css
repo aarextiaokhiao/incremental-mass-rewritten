@@ -580,6 +580,18 @@ h2 {
 	cursor: default;
 }
 
+.fermion_btn.auto {
+	background: #bfcfbf;
+	border-color: #7fbf7f;
+	color: #3f3f3f
+}
+.fermion_btn.auto.choosed {
+	background: repeating-linear-gradient(45deg, #0005 0%, #0005 1%, #bfff7f 5%, #0005 9%, #0005 10%);
+	color: white;
+	animation: f_spin 2s linear infinite;
+	cursor: default;
+}
+
 .radiation {
 	background-color: hsl(0, 0%, 6%);
 	font-size: 14px;

@@ -120,16 +120,10 @@ function calcSupernova(dt, dt_offline) {
         if (player.ext.amt.lt(1e10) && !CHROMA.unl()) addPopup(POPUP_GROUPS.fermions)
     }
     if (player.supernova.fermions.unl) {
-        if (tmp.fermions.ch[0] >= 0) {
-            let maxTier = tmp.fermions.maxTier[tmp.fermions.ch[0]][tmp.fermions.ch[1]]
-            player.supernova.fermions.tiers[tmp.fermions.ch[0]][tmp.fermions.ch[1]] = player.supernova.fermions.tiers[tmp.fermions.ch[0]][tmp.fermions.ch[1]]
-            .max(tmp.fermions.tiers[tmp.fermions.ch[0]][tmp.fermions.ch[1]]).min(maxTier)
-        }
-        if (tmp.fermions.ch2[0] >= 0) {
-            let maxTier = tmp.fermions.maxTier[tmp.fermions.ch2[0]][tmp.fermions.ch2[1]]
-            player.supernova.fermions.tiers[tmp.fermions.ch2[0]][tmp.fermions.ch2[1]] = player.supernova.fermions.tiers[tmp.fermions.ch2[0]][tmp.fermions.ch2[1]]
-            .max(tmp.fermions.tiers[tmp.fermions.ch2[0]][tmp.fermions.ch2[1]]).min(maxTier)
-        }
+        if (tmp.fermions.ch[0] >= 0) gainFermionTiers(tmp.fermions.ch)
+        if (tmp.fermions.ch2[0] >= 0) gainFermionTiers(tmp.fermions.ch2)
+        if (hasTree("qol_ext9")) for (let x = 0; x < 5; x++) gainFermionTiers([0, x])
+		
         for (let x = 0; x < 2; x++) player.supernova.fermions.points[x] = player.supernova.fermions.points[x].add(tmp.fermions.gains[x].mul(dt))
     }
 
@@ -253,7 +247,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (hasTree("qol_ext2")) c_thres = 10
 	if (hasTree("feat4")) c_thres = 7
 	if (mode == "all" || mode == "chal") {
-		for (var x = (hasTree("qol_ext8") ? 9 : 1); x <= 12; x++) {
+		for (var x = (hasTree("qol_ext9") ? 11 : hasTree("qol_ext8") ? 8 : 0) + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
 			if (tier.gte(c_thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
 			else if (x == 12 && hasTree("qol_ext2")) ret.push(x)
@@ -266,6 +260,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (mode == "all" || mode == "ferm") {
 		for (var y = 0; y < 2; y++) {
 			for (var x = 0; x < 6; x++) {
+				if (x < 5 && y == 0 && hasTree("qol_ext9")) continue
 				let tier = player.supernova.fermions.tiers[y][x]
 				if (tier.gte(f_thres) && tier.lt(FERMIONS.maxTier(y, x))) ret.push(-(y*10+x+1))
 			}
