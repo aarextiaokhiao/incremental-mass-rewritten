@@ -147,6 +147,7 @@ function getPlayerData() {
             tier: false,
         },
         pres: {0: E(0), "0_1": E(0), "0_2": E(0), "0_3": E(0), 1: E(0)},
+        honorPower: E(0),
         auto_mainUpg: {
             
         },

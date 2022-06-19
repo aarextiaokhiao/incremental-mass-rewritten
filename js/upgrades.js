@@ -164,8 +164,8 @@ const UPGS = {
                 }
             }
         },
-        ids: [null, 'rp', 'bh', 'atom', 'br'],
-        cols: 4,
+        ids: [null, 'rp', 'bh', 'atom', 'br', 'hp'],
+        cols: 5,
         over(x,y) { player.main_upg_msg = [x,y] },
         reset() { player.main_upg_msg = [0,0] },
         1: {
@@ -620,6 +620,57 @@ const UPGS = {
             10: {
                 desc: `Chromas are 10% stronger.`,
                 cost: E(2.5e8),
+            },
+        },
+        5: {
+            title: "Honor Upgrades",
+            res: "Honor Power",
+            getRes() { return player.honorPower },
+            unl() { return hasUpgrade("br", 10) },
+            can(x) { return player.honorPower.gte(this[x].cost) && !player.mainUpg.hp.includes(x) },
+            buy(x) {
+                if (this.can(x)) {
+                    player.honorPower = player.honorPower.sub(this[x].cost)
+                    player.mainUpg.hp.push(x)
+                }
+            },
+            auto_unl() { return false },
+            lens: 9,
+            1: {
+                desc: `Unlock Ripped Prestige. [Secondary Prestige Level in Big Rips]`,
+                cost: EINF,
+            },
+            2: {
+                desc: `Prestiging doesn't reset Challenges.`,
+                cost: EINF,
+            },
+            3: {
+                desc: `qu_qol8 works inside Quantum Challenges.`,
+                cost: EINF,
+            },
+            4: {
+                desc: `Automatically complete Challenge 9.`,
+                cost: EINF,
+            },
+            5: {
+                desc: `Gain 10x more Chroma until 24 hours of worth.`,
+                cost: EINF,
+            },
+            6: {
+                desc: `8th QC modifier doesn't affect Fermion requirements.`,
+                cost: EINF,
+            },
+            7: {
+                desc: `Best Prestige Base boosts Entropy Gain and Cap.`,
+                cost: EINF,
+            },
+            8: {
+                desc: `All Fermion Tier scalings scale later based on best Prestige Base.`,
+                cost: EINF,
+            },
+            9: {
+                desc: `Always gain at least 1 Relativistic Particle per second.`,
+                cost: EINF,
             },
         },
     },

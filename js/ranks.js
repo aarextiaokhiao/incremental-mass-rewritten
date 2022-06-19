@@ -400,7 +400,6 @@ function updateRanksTemp() {
     }
 
     // Prestige
-
     for (let x = 0; x < PRES_LEN; x++) {
         tmp.prestiges.base[x] = PRESTIGES.base(x)
         tmp.prestiges.req[x] = PRESTIGES.req(x)
@@ -408,6 +407,7 @@ function updateRanksTemp() {
             if (PRESTIGES.rewardEff[x][y]) tmp.prestiges.eff[x][y] = PRESTIGES.rewardEff[x][y][0]()
         }
     }
+    tmp.prestiges.hpGain = player.pres[1].eq(0) ? E(0) : expMult(tmp.prestiges.base[0],1/1.1/1.25).mul(E(3).pow(player.pres[1])).div(1e8)
 }
 
 function updateRanksHTML() {
@@ -472,5 +472,7 @@ function updateRanksHTML() {
                 tmp.el["pres_auto_"+x].setTxt(false?"ON":"OFF")
             }
         }
+        tmp.el["hpAmt2"].setTxt(player.honorPower.format(1))
+        tmp.el["hpGain"].setTxt(formatGain(player.honorPower, tmp.prestiges.hpGain))
     }
 }

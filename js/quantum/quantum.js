@@ -251,6 +251,8 @@ function calcQuantum(dt, dt_offline) {
         player.md.break.mass = player.md.break.mass.add(tmp.bd.massGain.mul(dt))
     }
 
+	player.honorPower = player.honorPower.add(tmp.prestiges.hpGain.mul(dt))
+
     if (hasTree("qu_qol1")) for (let x = 0; x < tmp.supernova.auto_tree.length; x++) TREE_UPGS.buy(tmp.supernova.auto_tree[x], true)
 
     calcEntropy(dt, dt_offline)
@@ -297,6 +299,10 @@ function updateQuantumHTML() {
     unl = hasTree("unl4")
     tmp.el.br_div.setDisplay(unl)
     if (unl) tmp.el.brAmt.setHTML(player.qu.rip.amt.format(0)+"<br>"+(player.qu.rip.active?gain2?player.qu.rip.amt.formatGain(tmp.rip.gain.div(10)):`(+${tmp.rip.gain.format(0)})`:"(inactive)"))
+
+    unl = hasUpgrade('br', 9)
+    tmp.el.hp_div.setDisplay(unl)
+    if (unl) tmp.el.hpAmt.setHTML(player.honorPower.format(1)+"<br>"+formatGain(player.honorPower, tmp.prestiges.hpGain))
 
     if (tmp.tab == 0 && tmp.stab[0] == 4) {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain))
