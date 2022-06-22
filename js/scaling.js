@@ -56,7 +56,7 @@ const SCALE_INIT_POWERS = {
 	},
 	supernova: {
 		normal: 1.25,
-		toned: 5.4
+		toned: 5
 	}
 }
 

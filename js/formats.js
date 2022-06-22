@@ -32,7 +32,7 @@ const FORMATS = {
             const orderStr = omegaOrder.lt(100)
             ? omegaOrder.toFixed(0)
             : this.format(omegaOrder.floor());
-            return `ω[${orderStr}]`+(omegaOrder.lt(100)?`(${this.format(val)})`:``);
+            return `ω[${orderStr}]`+(omegaOrder.lt(8000)?`(${this.format(val)})`:``);
         },
     },
     omega_short: {
@@ -64,7 +64,7 @@ const FORMATS = {
             const orderStr = omegaOrder.lt(100)
             ? omegaOrder.toFixed(0)
             : this.format(omegaOrder.floor());
-            return `ω[${orderStr}]`+(omegaOrder.lt(100)?`(${this.format(val)})`:``);
+            return `ω[${orderStr}]`+(omegaOrder.lt(8000)?`(${this.format(val)})`:``);
         }
     },
     elemental: {
@@ -223,13 +223,8 @@ const FORMATS = {
     mixed_sc: {
       format(ex, acc) {
         ex = E(ex)
-        let e = ex.log10().floor()
-        if (e.lt(6)) return format(ex,acc,"sc")
-        else if (e.lt(63)) return format(ex,acc,"st")
-        else {
-          let m = ex.div(E(10).pow(e))
-          return (e.gte(1e4) ? 'e' + format(e, Math.max(acc, 3)) : m.toFixed(Math.max(acc, 2)) + 'e' + format(e, 0))
-        }
+        if (ex.lt(1e63)) return format(ex,acc,"st")
+        else return format(ex,acc,"sc")
       }
     },
     layer: {
@@ -373,16 +368,29 @@ function formatMass(ex, color) {
     if (player.options.pure) return f(ex)
 
     if (ex.gte(EINF)) return f(ex)
-    //if (ex.gte(meg(1))) return f(ex.div(1.5e56).log10().div(1e9).log10().div(1e9), 3) + ' ' + colorize('meg', color, "ch_color")
-    if (ex.gte(mlt(1))) return f(ex.div(1.5e56).log10().div(1e9), 3) + ' ' + colorize('mlt', color)
-    if (ex.gte(uni(1))) return f(ex.div(1.5e56)) + ' uni'
+    if (ex.gte(mlt(1))) return formatMltMass(ex.div(1.5e56).log10().div(1e9), color)
+    if (ex.gte(uni(1))) return f(ex.div(uni(1))) + ' uni'
     if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'
     if (ex.gte(1.989e33)) return f(ex.div(1.989e33)) + ' M☉'
     if (ex.gte(5.972e27)) return f(ex.div(5.972e27)) + ' M⊕'
     if (ex.gte(1.619e20)) return f(ex.div(1.619e20)) + ' MME'
+    if (ex.gte(5.2e10)) return f(ex.div(5.2e10)) + ' MTI'
     if (ex.gte(1e6)) return f(ex.div(1e6)) + ' tonne'
     if (ex.gte(1e3)) return f(ex.div(1e3)) + ' kg'
     return f(ex) + ' g'
+}
+
+function formatMltMass(ex, color) {
+	ex = E(ex)
+	if (ex.gte("ee3")) return format(ex.log10().div(1e3),3) + " omni"
+
+	let f = color ? formatColored : format
+	let e15 = ex.log10().div(15).floor()
+	let suffix = ""
+	if (e15.gt(9)) suffix = "arv-"+f(e15.add(1),0)
+	else suffix = ["mlt", "meg", "gig", "tvr", "pev", "exv", "zev", "ytv", "xvr", "wkv"][e15.toNumber()]
+
+	return f(ex.div(E(10).pow(e15.mul(15))),3) + " " + colorize(suffix, color)
 }
 
 function formatMultiply(a) {
@@ -398,7 +406,7 @@ function formatGain(amt, gain, isMass=false, main=false) {
 	if (main && !player.options.pure && amt.max(gain).gte(mlt(1))) {
 		amt = amt.max(1).log10().div(1e9)
 		gain = gain.max(1).log10().div(1e9).sub(amt).mul(20)
-		f = (x) => format(x) + ' ' + colorize('mlt', true)
+		f = (x) => formatMltMass(x, true)
 	}
 
 	if (amt.gte("e100") && gain.log(amt).gte(1.1)) return "(^"+format(gain.log(amt), 3)+"/s)"

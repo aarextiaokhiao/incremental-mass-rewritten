@@ -14,7 +14,7 @@ function setupHTML() {
 		if (TABS[2][x]) {
 			let a = `<div id="stabs${x}" class="table_center">`
 			for (let y = 0; y < TABS[2][x].length; y++) {
-				a += `<div style="width: 130px">
+				a += `<div style="width: 130px" id="stab${x}_${y}_div">
 					<button onclick="TABS.choose(${y}, true)" class="btn_tab" id="stab${x}_${y}">${TABS[2][x][y].id}</button>
 				</div>`
 			}
@@ -141,13 +141,16 @@ function updateTabsHTML() {
 
 		if (elm["tab_frame"+x]) elm["tab_frame"+x].setDisplay(x == tmp.tab)
 		if (TABS[2][x]) {
-			elm["stabs"+x].setDisplay(x == tmp.tab)
+			let unls = 0
 			if (x == tmp.tab) for (let y = 0; y < TABS[2][x].length; y++)  {
 				let stab = TABS[2][x][y]
-				elm["stab"+x+"_"+y].setDisplay(stab.unl ? stab.unl() : true)
+				let unl = stab.unl ? stab.unl() : true
+				elm["stab"+x+"_"+y+"_div"].setDisplay(unl)
 				elm["stab"+x+"_"+y].setClasses({btn_tab: true, [stab.style ? stab.style : "normal"]: true, choosed: y == tmp.stab[x]})
 				if (elm["stab_frame"+x+"_"+y]) elm["stab_frame"+x+"_"+y].setDisplay(y == tmp.stab[x])
+				if (unl) unls++
 			}
+			elm["stabs"+x].setDisplay(x == tmp.tab && unls > 1)
 		}
 	}
 }
@@ -213,14 +216,16 @@ function updateUpperHTML() {
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
 	let scut = hasTree("qol_shrt")
-	elm.scut_div.setDisplay(scut)
-	elm.md_div.setDisplay(!scut)
-	if (scut) {
-		updateShortcuts()
-	} else {
-		unl = MASS_DILATION.unlocked()
-		elm.md_div.setDisplay(unl)
-		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+	let zet = zeta()
+	elm.scut_div.setDisplay(scut && !zet)
+	elm.md_div.setDisplay(!scut && !zet)
+	if (zet) {
+		if (scut) updateShortcuts()
+		else {
+			unl = MASS_DILATION.unlocked()
+			elm.md_div.setDisplay(unl)
+			if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+		}
 	}
 
 	unl = player.supernova.post_10
@@ -230,7 +235,7 @@ function updateUpperHTML() {
 	unl = EXT.unl(true)
 	elm.ext_div.setDisplay(unl)
 	elm.res_col2.setDisplay(!unl)
-	if (unl) elm.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
+	if (unl) elm.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
 
 	unl = zeta()
 	elm.zt_div.setDisplay(unl)

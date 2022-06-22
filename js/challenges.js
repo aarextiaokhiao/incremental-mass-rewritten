@@ -13,6 +13,7 @@ function updateChalHTML() {
         let chal = CHALS[x]
         let unl = chal.unl ? chal.unl() : true
         if (x <= 8 && hasTree("qol_ext8")) unl = false
+        if (x <= 11 && hasQolExt9()) unl = false
         elm["chal_div_"+x].setDisplay(unl)
         elm["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: max})
         if (unl) {
@@ -501,7 +502,7 @@ const CHALS = {
 		effect(x) {
             return x.div(8).add(1)
 		},
-		effDesc(x) { return formatMultiply(x)+"% slower" },
+		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	14: {
 		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },

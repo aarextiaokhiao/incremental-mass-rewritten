@@ -201,7 +201,7 @@ const UPGS = {
                 cost: E(25),
             },
             4: {
-                desc: "Ranks no longer reset anything.",
+                desc: "Ranks no longer reset.",
                 cost: E(50),
             },
             5: {
@@ -339,7 +339,7 @@ const UPGS = {
                 },
             },
             4: {
-                desc: "Tiers no longer reset anything.",
+                desc: "Tiers no longer reset.",
                 cost: E(1e4),
             },
             5: {
@@ -566,6 +566,16 @@ const UPGS = {
     },
 },
 */
+
+function updateUpgradesTemp() {
+	tmp.upgs.fp = E(future ? 5 : 1)
+	if (CHROMA.got("s3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("s3_1"))
+	if (CHROMA.got("t3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t3_1"))
+	if (hasPrim("p3_0")) tmp.upgs.fp = tmp.upgs.fp.mul(tmp.pr.eff["p3_0"])
+
+	UPGS.main.temp()
+	UPGS.mass.temp()
+}
 
 function hasUpgrade(id,x) { return player.mainUpg[id].includes(x) }
 function hasUpgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]||def }

@@ -117,7 +117,7 @@ const BOSONS = {
                 bulk(x=player.supernova.bosons.photon) { return x.gte(1e5) ? x.div(1e5).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					return player.supernova.bosons.photon.add(1).log10().add(1).pow(x.pow(tmp.fermions.effs[0][3]).mul(0.5))
+					return player.supernova.bosons.photon.add(1).log10().add(1).pow(x.pow(tmp.fermions.effs[0][3]).mul(0.5)).min("ee14")
 				},
                 effDesc(x) { return format(x)+"x" },
             },
@@ -163,7 +163,6 @@ const BOSONS = {
 
 					let exp = E(1/3)
 					exp = exp.mul(tmp.fermions.effs[0][3])
-					if (scalingToned("supernova")) return E(1)
 					return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(exp)).div(10).add(1)
 				},
                 effDesc(x) { return "/"+format(x) },
@@ -228,6 +227,7 @@ function updateBosonsHTML() {
 
         if (BOSONS.upgs.ids.includes(id)) for (let y in BOSONS.upgs[id]) {
             let id2 = id+"_upg"+y
+            elm[id2+"_div"].setDisplay(y < 3 || !scalingToned("supernova"))
             elm[id2+"_div"].setClasses({btn: true, full: true, b_btn: true, locked: !tmp.bosons.upgs[id][y].can})
             elm[id2+"_desc"].setTxt(BOSONS.upgs[id][y].desc())
             elm[id2+"_lvl"].setTxt(format(player.supernova.b_upgs[id][y],0,"sc"))

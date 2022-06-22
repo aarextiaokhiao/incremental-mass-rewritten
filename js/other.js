@@ -36,12 +36,26 @@ const POPUP_GROUPS = {
         g (gram): 1 g<br>
         kg (kilogram): 1,000 g<br>
         tonne (tonne): 1,000 kg = 1,000,000 g<br>
-        MME (mass of Mount Everest): 1.619e14 tonne = 1.619e20 g<br>
+        MTI (mass of RMS Titanic): 52,000 tonne = 5.2e10 g<br>
+        MME (mass of Mount Everest): 3,113,461,538 MTI = 1.619e20 g<br>
         M⊕ (mass of Earth): 36,886,967 MME = 5.972e27 g<br>
         M☉ (mass of Sun): 333,054 M⊕ = 1.989e33 g<br>
         MMWG (mass of Milky Way Galaxy): 1.5e12 M☉ = 2.9835e45 g<br>
-        uni (mass of Universe): 50,276,520,864 MMWG = 1.5e56 g<br>
+        uni (mass of Universe): 50,276,520,864 MMWG = 1.5e56 g<br><br>
+
         mlt (mass of Multiverse): 1e1e9 uni<br>
+        meg (mass of Megaverse): 1e15 mlt = 1e1e24 uni<br>
+        gig (mass of Gigaverse): 1e15 meg = 1e1e39 uni<br>
+        tvr (mass of Teraverse): 1e15 gig = 1e1e54 uni<br>
+        pev (mass of Petaverse): 1e15 tvr = 1e1e69 uni<br>
+        exv (mass of Exaverse): 1e15 pev = 1e1e84 uni<br>
+        zev (mass of Zettaverse): 1e15 exv = 1e1e99 uni<br>
+        ytv (mass of Yottaverse): 1e15 zev = 1e1e114 uni<br>
+        xvr (mass of Xennaverse): 1e15 ytv = 1e1e129 uni<br>
+        wkv (mass of Wekaverse): 1e15 xvr = 1e1e144 uni<br><br>
+        arv-11 (mass of 11th Archverse): 1e15 wkv = 1e1e159 uni<br><br>
+
+        omni (mass of Omniverse): 1e1,000 mlt = 1e1e1,009 uni<br>
         `,
     },
     fonts: {
@@ -403,7 +417,7 @@ CLICKING A KIND WILL COMPLETE THE PROCESS. */
 future = false
 
 function zeta() {
-	return future
+	return false
 }
 
 function zeta_story() {

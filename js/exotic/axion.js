@@ -64,7 +64,7 @@ let AXION = {
 		if (player.ext.ax.res[type].lt(cost)) return E(0)
 		var bulk = player.ext.ax.res[type]
 			.div(cost)
-			.log([2,3,1.5][type])
+			.log([2,3,1.6][type])
 			.div(tmp.ax.fp)
 			.add(1).floor()
 		bulk = bulk.min(tmp.ax.max[type].sub(axUpg(p)))
@@ -100,7 +100,7 @@ let AXION = {
 			.mul(em.mul(2).add(1).pow(2))
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
 			.mul(em.add(1))
-		if (x == 2 && hasTree("ext_e1")) r = em.pow(.75)
+		if (x == 2 && hasTree("ext_e1")) r = em.pow(.8)
 
 		//Multipliers
 		if (hasElement(77)) r = r.mul(tmp.elements && tmp.elements.effect[77])
@@ -269,7 +269,7 @@ let AXION = {
 			desc: "Multiply Hawking Radiation.",
 			req: E(10),
 			eff(x) {
-				return x.div(3).add(1).pow(.75).softcap(4,8,3)
+				return x.div(3).add(1).pow(.75).softcap(4,4,3)
 			},
 			effDesc(x) {
 				return format(x) + "x" + getSoftcapHTML(x,4)
@@ -281,7 +281,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(80),
 			eff(x) {
-				return x.add(1).log10().div(10).add(1).min(4/3)
+				return x.add(1).log10().div(30).add(1).min(4/3)
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -305,7 +305,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(35),
 			eff(x) {
-				return x.div(10).add(3).log(3).min(5)
+				return x.div(10).add(3).log(3).div(scalingToned("supernova") ? 10 : 1).min(5)
 			},
 			effDesc(x) {
 				return "^1/"+format(x)
@@ -378,7 +378,7 @@ let AXION = {
 			unl: () => CHROMA.unl(),
 			req: E(40),
 			eff(x) {
-				return x.div(4).add(1).log(2).div(200).min(.05)
+				return x.div(4).add(1).log(2).div(150).min(.05)
 			},
 			effDesc(x) {
 				return "+^"+format(x,4)
@@ -413,8 +413,8 @@ let AXION = {
 			req: E(14)
 		},
 		22: {
-			title: "Primordial Lookback",
-			desc: "Unlock Primordiums. [Coming soon!]",
+			title: "Primordia Lookback",
+			desc: "Unlock Primordiums.",
 			unl: () => CHROMA.unl(),
 			req: EINF
 		},

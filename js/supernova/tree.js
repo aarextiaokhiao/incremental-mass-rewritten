@@ -103,7 +103,7 @@ const TREE_UPGS = {
         },
         sn4: {
             branch: ["sn3"],
-            desc: `Tree “sn2”'s effect base is increased by Supernova.`,
+            desc: `Supernovae adds “sn2”'s base.`,
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(15) },
             reqDesc: `15 Supernovae.`,
@@ -201,10 +201,10 @@ const TREE_UPGS = {
             branch: ["s2"],
             req() { return player.supernova.times.gte(4) },
             reqDesc: `4 Supernovae.`,
-            desc: `Supernovae strengthen Star Generators.`,
+            desc: `Supernovae raise Star Generators.`,
             cost: E(10000),
             effect() {
-                let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
+                let x = player.supernova.times.max(0).root(10).mul(0.1).add(1).min(1.5)
                 return x
             },
             effDesc(x) { return "^"+format(x) },
@@ -241,14 +241,14 @@ const TREE_UPGS = {
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(12) },
             reqDesc: `12 Supernovae.`,
-            desc: `You can now automatically buy Star unlockers & boosters.`,
+            desc: `Automatically buy Star Unlockers & Boosters.`,
             cost: E(1e8),
         },
         qol5: {
             branch: ["qol4"],
             req() { return player.supernova.times.gte(16) },
             reqDesc: `16 Supernovae.`,
-            desc: `Tetrs no longer reset anything.`,
+            desc: `Tetrs no longer reset.`,
             cost: E(1e13),
         },
         qol6: {
@@ -332,7 +332,7 @@ const TREE_UPGS = {
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(15) },
             reqDesc: `15 Supernovae`,
-            desc: `Tickspeed affect Higgs Bosons gain at a reduced rate.`,
+            desc: `Tickspeed boosts Higgs Bosons.`,
             cost: E(1e13),
             effect() {
                 let x = player.tickspeed.add(1).pow(0.6)
@@ -342,7 +342,7 @@ const TREE_UPGS = {
         },
         bs2: {
             branch: ["bs1"],
-            desc: `Photon, Gluon powers up each other.`,
+            desc: `Photons and Gluons power-up each other.`,
             cost: E(1e14),
             effect() {
                 let x = expMult(player.supernova.bosons.photon.max(1),1/2,2)
@@ -370,7 +370,7 @@ const TREE_UPGS = {
         fn1: {
             unl() { return player.supernova.fermions.unl },
             branch: ["bs1"],
-            desc: `Tickspeed affect each Fermions gain at a reduced rate.`,
+            desc: `Tickspeed boost Fermions at a reduced rate.`,
             cost: E(1e27),
             effect() {
                 let x = E(1.25).pow(player.tickspeed.pow(0.4))
@@ -389,7 +389,7 @@ const TREE_UPGS = {
             branch: ["fn1"],
             req() { return player.supernova.fermions.points[0].gte(1e7) || player.supernova.fermions.points[1].gte(1e7) },
             reqDesc() { return `Reach ${format(1e7)} of any Fermions` },
-            desc: `Super Fermion's Tier scaling is 7.5% weaker.`,
+            desc: `Super Fermions scale 7.5% weaker.`,
             cost: E(1e30),
         },
         fn4: {
@@ -649,7 +649,7 @@ const TREE_UPGS = {
 		},
 		qol_ext1: {
 			branch: ["qol1"],
-			unl() { return EXOTIC.unl() },
+			unl() { return EXT.unl() },
 			req() { return player.supernova.times.gte(4) },
 			reqDesc() { return `${format(4,0)} Supernovae` },
 			desc: `You don't need to do requirements before buying several Supernova upgrades.`,
@@ -708,7 +708,7 @@ const TREE_UPGS = {
 		},
 		qol_ext9: {
 			branch: ["qol_ext8"],
-			desc: `Automatically gain C9 - 11 completions and Up - Top Quark tiers.`,
+			desc: `If not in C14 - 16, automatically gain C9 - 11 completions and Up - Top Quark tiers.`,
 			cost: E("e1e7"),
 			icon: "qol_ext"
 		},
@@ -818,7 +818,7 @@ const TREE_UPGS = {
 			reqDesc() { return `Get ${formatMass(mlt(1e4))} mass, but in any U-Lepton.` + failedHTML(player.ext.chal.f9) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			cost: E(0),
-			onBuy: () => player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
+			onBuy: () => EXT.reduceAmt()
 		},
 		feat10: {
 			unl() { return CHROMA.unl() },
@@ -826,7 +826,7 @@ const TREE_UPGS = {
 			reqDesc() { return `Gain 10% more Supernovae after 100 in Dual Fermions.` + failedHTML(player.ext.chal.f10, true) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
 			cost: E(0),
-			onBuy: () => player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
+			onBuy: () => EXT.reduceAmt()
 		},
 		feat11: {
 			unl() { return CHROMA.unl() },

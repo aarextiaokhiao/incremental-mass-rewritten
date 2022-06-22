@@ -3,6 +3,7 @@ let EXOTIC = {
 		return {
 			unl: false,
 			amt: E(0),
+			gain: E(1),
 			chal: {},
 			toned: 0,
 			ec: 0,
@@ -16,8 +17,6 @@ let EXOTIC = {
 		return (disp && player.chal.comps[12].gte(1)) || player.ext.unl
 	},
 	gain() {
-		if (player.chal.comps[12].eq(0)) return E(0)
-
 		let s = player.supernova.times
 			.mul(player.chal.comps[12].add(1))
 			.div(500)
@@ -26,7 +25,7 @@ let EXOTIC = {
 		if (CHROMA.got("p1_3")) s = s.mul(CHROMA.eff("p1_3"))
 		if (CHROMA.got("p1_2")) s = s.mul(CHROMA.eff("p1_2"))
 
-		let r = player.mass.add(1).log10().div(1e9).add(1).pow(s)
+		let r = player.mass.max(1).log10().div(1e9).add(1).pow(s)
 		return this.amt(r)
 	},
 	extLvl() {
@@ -42,9 +41,13 @@ let EXOTIC = {
 		return r
 	},
 	reduce(t, x) {
-		if (t == 1) return x.eq(0) ? E(0) : x.mul(10).log10().max(0).pow(5).mul(10)
+		if (t == 1) return x.max(1).mul(10).log10().pow(5).mul(10)
 		if (t == 2) return expMult(x, 0.8)
 		return x
+	},
+	reduceAmt() {
+		player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
+		player.ext.gain = EXT.reduce(EXT.extLvl(), player.ext.gain)
 	},
 	eff(r) {
 		if (!r) r = player.ext.amt
@@ -57,7 +60,7 @@ let EXOTIC = {
 	reset(force) {
 		let can = player.chal.comps[12].gt(0)
 		if (!force && player.confirms.ext && !confirm("Are you sure?")) return false
-		if (can) player.ext.amt = player.ext.amt.add(EXT.gain())
+		if (can) player.ext.amt = player.ext.amt.add(player.ext.gain)
 		EXT.doReset()
 		return true
 	},
@@ -126,6 +129,7 @@ let EXOTIC = {
 			t: 0
 		}
 
+		player.ext.gain = E(1)
 		player.ext.pr.bp = E(0)
 		player.ext.pr.pt = E(0)
 		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = E(0)
@@ -143,6 +147,7 @@ let EXOTIC = {
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
 		if (player.supernova.fermions.choosed == "") player.ext.chal.f9 = false
+		player.ext.gain = player.ext.gain.max(this.gain())
 
 		//AXIONS
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
@@ -173,7 +178,7 @@ let EXT = EXOTIC
 function updateExoticHTML() {
 	elm.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
-		elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, EXT.gain()))
+		elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
 		elm.extTone.setHTML(format(player.ext.toned,0)+(canTone() ? "<br>(+" + format(1,0) + ")" : ""))
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateChromaHTML()
@@ -389,4 +394,10 @@ function tone() {
 
 function toned() {
 	return player.ext.toned
+}
+
+
+//TECHNICAL
+function hasQolExt9() {
+	return hasTree("qol_ext9") && player.ext.ec < 14
 }

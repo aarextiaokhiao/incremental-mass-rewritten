@@ -102,16 +102,6 @@ function updateTickspeedTemp() {
 
 }
 
-function updateUpgradesTemp() {
-	tmp.upgs.fp = E(1)
-	if (CHROMA.got("s3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("s3_1"))
-	if (CHROMA.got("t3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t3_1"))
-	if (hasPrim("p3_0")) tmp.upgs.fp = tmp.upgs.fp.mul(tmp.pr.eff["p3_0"])
-
-	UPGS.main.temp()
-	UPGS.mass.temp()
-}
-
 function updateRagePowerTemp() {
     if (!tmp.rp) tmp.rp = {}
     tmp.rp.gain = FORMS.rp.gain()
@@ -141,26 +131,40 @@ function updateBlackHoleTemp() {
 }
 
 function updateTemp() {
-    tmp.offlineActive = player.offline.time > 1
-    tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
+	//Offline
+	tmp.offlineActive = player.offline.time > 1
+	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
+
+	//Tab Forcing
+	if (zeta() && tmp.stab[0] < 4) tmp.stab[0] = 4
+	if (!zeta() && tmp.stab[0] == 4) tmp.stab[0] = 0
+	if (player.ext.toned == 5) tmp.stab[1] = 0
+
+	//Exotic
 	updatePrimTemp()
 	updateChromaTemp()
-    updateAxionTemp()
+	updateAxionTemp()
 	updateExtraBuildingTemp()
-    updateRadiationTemp()
-    updateFermionsTemp()
-    updateBosonsTemp()
-    updateSupernovaTemp()
-    updateElementsTemp()
-    updateMDTemp()
-    updateStarsTemp()
-    updateUpgradesTemp()
-    updateScalingTemp()
-    updateChalTemp()
-    updateAtomTemp()
-    updateRagePowerTemp()
-    updateBlackHoleTemp()
-    updateTickspeedTemp()
-    updateRanksTemp()
-    updateMassTemp()
+
+	//Supernova
+	updateRadiationTemp()
+	updateFermionsTemp()
+	updateBosonsTemp()
+	updateSupernovaTemp()
+
+	//Atoms
+	updateElementsTemp()
+	updateMDTemp()
+	updateStarsTemp()
+	updateUpgradesTemp()
+	updateScalingTemp()
+	updateChalTemp()
+	updateAtomTemp()
+
+	//Pre-Atom
+	updateRagePowerTemp()
+	updateBlackHoleTemp()
+	updateTickspeedTemp()
+	updateRanksTemp()
+	updateMassTemp()
 }

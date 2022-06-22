@@ -55,7 +55,7 @@ function calc(dt, dt_offline) {
 	if (player.mass.gte(1.5e136)) player.chal.unl = true
 	if (hasTree("qol6")) CHALS.exit(true)
 	if (hasTree("qol_ext8")) {
-		let max = hasTree("qol_ext9") ? 11 : 8
+		let max = hasQolExt9() ? 11 : 8
 		for (var c = 1; c <= max; c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
 	}
 
@@ -425,7 +425,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/19/22a BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/21/22 BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

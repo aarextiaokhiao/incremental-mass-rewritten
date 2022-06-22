@@ -54,7 +54,7 @@ let CHROMA = {
 			desc: (x) => "Strengthen Exotic Matter by ^"+format(x)+".",
 			color: "#7f0000",
 			eff(x) {
-				return x.div(4).add(1).pow(1.4).min(1.7)
+				return x.div(3).add(1).pow(1.5).min(2)
 			},
 		},
 		p2_1: {
@@ -75,7 +75,7 @@ let CHROMA = {
 			desc: (x) => "C12 raises Exotic Matter by ^"+format(x)+".",
 			color: "#bf0000",
 			eff(x) {
-				return E(1).add(x.div(75)).min(1.1).pow(player.chal.comps[12])
+				return E(1.03).pow(player.chal.comps[12])
 			},
 		},
 		p2_2: {
@@ -234,8 +234,8 @@ let CHROMA = {
 	},
 	respec() {
 		if (!confirm("Are you sure do you want to respec your Chroma?")) return
-		player.ext.ch.upg = []
 		EXT.reset(true)
+		player.ext.ch.upg = []
 	}
 }
 
