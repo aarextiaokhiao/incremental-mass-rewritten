@@ -272,7 +272,7 @@ function scalingInitPower(name) {
 		return 2
 	}
 	if (name == "pent") {
-		if (AXION.unl()) tmp.ax.eff[15].exp
+		if (AXION.unl()) return tmp.ax.eff[15].exp
 		return 1.25
 	}
 	return SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]

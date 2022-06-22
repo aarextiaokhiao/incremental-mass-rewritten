@@ -144,6 +144,7 @@ function updateTemp() {
 	updatePrimTemp()
 	updateChromaTemp()
 	updateAxionTemp()
+	updatePolarizeTemp()
 	updateExtraBuildingTemp()
 
 	//Supernova

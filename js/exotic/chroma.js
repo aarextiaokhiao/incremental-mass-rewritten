@@ -30,7 +30,7 @@ let CHROMA = {
 		],
 		power() {
 			let start = mlt(1e4)
-			if (hasPrim("p0_0")) start = start.root(tmp.pr.eff["p0_0"])
+			if (hasPrim("p0_0")) start = start.root(tmp.pr.eff.p0_0)
 
 			let log = player.mass.max(1).log(start)
 			if (log.lt(1)) return E(0)
@@ -130,10 +130,12 @@ let CHROMA = {
 			},
 		},
 		s3_1: {
-			desc: (x) => "Weaken Pre-Atom buildings by "+format(x)+"x.",
+			desc: (x) => "Unlock Polarizer. ("+format(x)+"x to Pre-Atom)",
 			color: "#7f007f",
 			eff(x) {
-				return E(1.2).pow(x)
+				let b = E(1.5)
+				if (hasPrim("p4_0")) b = b.mul(tmp.pr.eff.p4_0)
+				return b.pow(x)
 			},
 		},
 		s1_2: {
@@ -151,10 +153,10 @@ let CHROMA = {
 			},
 		},
 		s3_2: {
-			desc: (x) => "Weaken Cosmic Rays by "+format(x)+"x.",
+			desc: (x) => "Polarizer weakens Cosmic Rays by "+format(x)+"x.",
 			color: "#bf00bf",
 			eff(x) {
-				return E(1.2).pow(x.sub(1)).max(1)
+				return tmp.polarize ? tmp.polarize.div(2).max(1) : E(1)
 			},
 		},
 
@@ -174,18 +176,17 @@ let CHROMA = {
 			},
 		},
 		t3_1: {
-			desc: (x) => "Cosmic Ray Power weakens pre-Atom Buildings.",
+			desc: (x) => "Add +^"+format(x,3)+" to Neutron Condensers.",
 			color: "#007f3f",
 			eff(x) {
-				if (!tmp.atom) return E(1)
-				return tmp.atom.gamma_ray_eff.pow.log(1e20).max(1)
+				return x.div(10)
 			},
 		},
 		t4_1: {
-			desc: (x) => "Raise Tickspeed Effect by ^"+format(x)+".",
+			desc: (x) => "Raise Neutron Stars by ^"+format(x)+".",
 			color: "#003f7f",
 			eff(x) {
-				return x.div(10).add(1).min(2)
+				return x.min(10).mul(50).add(1)
 			},
 		},
 		t5_1: {

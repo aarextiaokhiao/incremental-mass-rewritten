@@ -180,6 +180,8 @@ function updateExoticHTML() {
 	if (tmp.tab == 6) {
 		elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
 		elm.extTone.setHTML(format(player.ext.toned,0)+(canTone() ? "<br>(+" + format(1,0) + ")" : ""))
+		elm.polarEff.setDisplay(CHROMA.got("s3_1"))
+		elm.polarEff.setHTML(format(tmp.polarize)+"x")
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateChromaHTML()
 		if (tmp.stab[6] == 2) updatePrimHTML()
@@ -281,7 +283,7 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			let r = x.times(5).add(1).log(2).div(500)
 			if (AXION.unl()) r = r.mul(tmp.ax.eff[9])
-			if (hasPrim("p2_0")) r = r.add(tmp.pr.eff["p2_0"])
+			if (hasPrim("p3_0")) r = r.mul(tmp.pr.eff.p3_0)
 			return r
 		}
 	},
@@ -304,8 +306,9 @@ let EXTRA_BUILDINGS = {
 		pow: E(2.5),
 		eff(x) {
 			//1.4 * 0.75 = 1.05
-			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3)
-		}
+			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3).softcap(1e11,5/6*1/1.05,0)
+		},
+		softcapHTML: (x) => getSoftcapHTML(x, 1e11)
 	},
 	ag3: {
 		start: E("e7.5e9"),
@@ -375,6 +378,12 @@ function buyExtraBuildings(type, x) {
 	EXTRA_BUILDINGS.saves[type]()["eb"+x] = tmp.eb[type+x].gain
 }
 
+
+//POLARIZER
+function updatePolarizeTemp() {
+	tmp.polarize = E(1)
+	if (CHROMA.got("s3_1")) tmp.polarize = tmp.polarize.mul(CHROMA.eff("s3_1"))
+}
 
 //TONES
 function canTone() {

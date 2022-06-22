@@ -41,6 +41,11 @@
     width: 320px;
 }
 
+[tooltip][t-align^='left'][t-size^='small']:before {
+	margin-left: -12px;
+    width: 120px;
+}
+
 [tooltip][t-size^='small']:before {
 	margin-left: -60px;
     width: 120px;

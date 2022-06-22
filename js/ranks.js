@@ -105,9 +105,9 @@ const RANKS = {
             '13': "Pent raises Pent 1.",
             '50': "Tickspeed Power raises BH Condenser Power.",
             '75': "reduce MD Upgrade 6 softcap.",
-            '100': "Mass reduces Stronger softcap.",
-            '200': "Mass upgrade 1-2 self-boosts multiply themselves.",
-            '300': "Tickspeed Power multiplies Stronger.",
+            '200': "Mass reduces Stronger softcap.",
+            '1000': "Mass upgrade 1-2 self-boosts multiply themselves.",
+            '2000': "Tickspeed Power multiplies Stronger.",
         },
     },
     effect: {
@@ -220,12 +220,12 @@ const RANKS = {
 				let ts = tmp.tickspeedEffect.step.log10().div(1e3)
 				return ts.add(1)
 			},
-			'200'() {
-				return player.ranks.pent.div(200).log10().div(3).min(1)
+			'1000'() {
+				return player.ranks.pent.div(1e3).log10().div(4).min(1)
 			},
-			'300'() {
+			'2000'() {
 				if (!tmp.tickspeedEffect) return E(1)
-				return tmp.tickspeedEffect.step.log10().div(1e5).add(1).pow(27/20)
+				return tmp.tickspeedEffect.step.log10().div(2e5).add(1).pow(27/20)
 			},
 		},
     },
@@ -260,8 +260,8 @@ const RANKS = {
             10(x) { return "^"+format(x) },
             13(x) { return "^"+format(x,3) },
             50(x) { return "^"+format(x) },
-            200(x) { return "^"+format(x,3)+" from Pent" },
-            300(x) { return format(x)+"x" },
+            1000(x) { return "^"+format(x,3)+" from Pent" },
+            2000(x) { return format(x)+"x" },
         },
     },
     fp: {
@@ -324,8 +324,9 @@ function updateRanksTemp() {
     d.tetr.bulk = s.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery("tetr", 1).add(1).floor();
 
 	fp = u.fp.pent()
-	d.pent.req = s.pent.div(fp).pow(1.25).add(15).floor()
-	d.pent.bulk = s.tetr.sub(15).max(0).root(1.25).mul(fp).add(1).floor();
+    pow = scalingInitPower("pent")
+	d.pent.req = s.pent.div(fp).pow(pow).add(15).floor()
+	d.pent.bulk = s.tetr.sub(15).max(0).root(pow).mul(fp).add(1).floor();
 
     for (let x = 0; x < u.names.length; x++) {
         let rn = u.names[x]

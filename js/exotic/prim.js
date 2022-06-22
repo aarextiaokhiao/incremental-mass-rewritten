@@ -14,11 +14,10 @@ let PRIM = {
 		player.ext.pr.bp = player.ext.pr.bp.add(tmp.pr.bp.mul(dt))
 
 		let pt = player.ext.pr.bp.add(1).log(1.1)
+		let pr_exp = 1
 		player.ext.pr.pt = pt.mul(tmp.pr.pt_ratio)
 		for (var i = 0; i < 8; i++) {
 			let pr = pt.mul(tmp.pr.ratio[i])
-			let pr_exp = 1.5
-			if (future) pr_exp = 2
 			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.div(100).add(1).pow(pr_exp-1):1)
 		}
 	},
@@ -88,7 +87,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1.5).pow(x).min(1e6),
+					eff: (x) => E(1.2).pow(x).min(1e6),
 					desc: (x) => "Reduce Luminosity start by ^"+format(x)+"."
 				}
 			]
@@ -99,7 +98,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1).add(x.div(10)),
+					eff: (x) => E(1).add(x.div(100)),
 					desc: (x) => "Ar-18 softcap starts "+format(x)+"x later."
 				}
 			]
@@ -110,8 +109,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(10),
-					desc: (x) => "Add Hawking Radiation by "+format(x)+"x."
+					eff: (x) => x.div(20).add(1).min(10),
+					desc: (x) => "Raise Tickspeed Effect by ^"+format(x,2)+"."
 				}
 			]
 		},
@@ -121,8 +120,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1.3).pow(x),
-					desc: (x) => "Weaken Buildings by "+format(x)+"x."
+					eff: (x) => x.div(100).add(1),
+					desc: (x) => "Multiply Hawking Radiation by "+formatMultiply(x)+"."
 				}
 			]
 		},
@@ -134,8 +133,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.mul(20).add(1).min(500),
-					desc: (x) => "Raise Neutron Stars by ^"+format(x)+"."
+					eff: (x) => x.div(1e3).add(1),
+					desc: (x) => "Increase Polarizer's base by "+formatMultiply(x)+"."
 				}
 			]
 		},
@@ -156,7 +155,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1),
+					eff: (x) => x.div(100).add(1),
 					desc: (x) => "Weaken Axion penalties by "+formatMultiply(x)+"."
 				}
 			]
@@ -203,6 +202,8 @@ function updatePrimTemp() {
 
 	let b = {}
 	for (var i = 0; i < 8; i++) {
+		if (future) data.ratio[i] = 1
+
 		let p = PRIM.prim[i].eff
 		for (var j = 0; j < p.length; j++) if (p[j].unl()) b["p"+i+"_"+j] = p[j].eff(save.prim[i])
 	}

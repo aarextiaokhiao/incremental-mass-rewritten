@@ -68,7 +68,7 @@ const SUPERNOVA = {
         if (hasTree("bs3")) x = x.mul(treeEff("bs3"))
         if (hasElement(74)) x = x.mul(tmp.elements && tmp.elements.effect[74])
         x = x.mul(tmp.radiation.bs.eff[11])
-        if (hasPrim("p4_0")) x = x.pow(tmp.pr.eff.p4_0)
+        if (CHROMA.got("t4_1")) x = x.pow(CHROMA.eff("t4_1"))
         x = x.mul(tmp.supernova.timeMult)
         return x
     },
@@ -139,7 +139,7 @@ function calcSupernova(dt, dt_offline) {
     }
 
 	//Exotic
-	if (hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
+	if (false && hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
 		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
 		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
 	}

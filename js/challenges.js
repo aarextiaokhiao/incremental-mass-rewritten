@@ -485,7 +485,7 @@ const CHALS = {
 		pow: E(1),
 		start: uni("e47250"),
 		effect(x) {
-			if (hasPrim("p7_0")) x = x.add(tmp.pr.eff["p7_0"])
+			if (hasPrim("p7_0")) x = x.add(tmp.pr.eff.p7_0)
             return E(1/0.985).pow(x)
 		},
 		effDesc(x) { return formatMultiply(x)+" slower" },
@@ -525,11 +525,11 @@ const CHALS = {
 		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
 		title: "Chernobyl Exclusion",
 		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
-		reward: `Placeholder.`,
+		reward: `Multiply Polarizer.`,
 		max: E(100),
 		inc: E(2),
 		pow: E(3),
-		start: meg(1),
+		start: mlt(1e300),
 		effect(x) {
 			return E(1)
 		},

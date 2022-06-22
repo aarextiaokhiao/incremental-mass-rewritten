@@ -204,7 +204,8 @@ const TREE_UPGS = {
             desc: `Supernovae raise Star Generators.`,
             cost: E(10000),
             effect() {
-                let x = player.supernova.times.max(0).root(10).mul(0.1).add(1).min(1.5)
+                let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
+                if (future) x = x.pow(5) //Max: ^10 (Inflation)
                 return x
             },
             effDesc(x) { return "^"+format(x) },

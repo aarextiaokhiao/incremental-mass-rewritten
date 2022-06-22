@@ -58,7 +58,7 @@ const UPGS = {
                 if (hasRank("rank", 3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
-                if (hasRank("pent", 200)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[200]()))
+                if (hasRank("pent", 1000)) total = total.mul(RANKS.effect.rank[3]().pow(RANKS.effect.pent[1000]()))
                 if (hasRank("pent", 10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
@@ -86,7 +86,7 @@ const UPGS = {
                 if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
-                if (hasRank("pent", 200)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[200]()))
+                if (hasRank("pent", 1000)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[1000]()))
                 if (hasRank("pent", 10)) total = total.pow(RANKS.effect.pent[10]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
@@ -115,7 +115,7 @@ const UPGS = {
 				if (hasUpgrade('rp',12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (hasRank("pent", 300)) step = step.mul(RANKS.effect.pent[300]())
+				if (hasRank("pent", 2000)) step = step.mul(RANKS.effect.pent[1000]())
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
@@ -127,7 +127,7 @@ const UPGS = {
 				if (hasUpgrade('bh',9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
 				if (hasUpgrade('atom',9)) sp *= 1.15
 				if (hasRank("tier", 30)) sp *= 1.1
-				if (hasRank("pent", 100)) sp *= Math.min(Math.max(player.mass.max(10).log10().log10().div(500).add(1).toNumber(), 1), (2/3) / 0.55 / 1.15)
+				if (hasRank("pent", 200)) sp *= Math.min(Math.max(player.mass.max(10).log10().log10().div(600).add(1).toNumber(), 1), (2/3) / 0.55 / 1.15)
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
@@ -568,10 +568,7 @@ const UPGS = {
 */
 
 function updateUpgradesTemp() {
-	tmp.upgs.fp = E(future ? 5 : 1)
-	if (CHROMA.got("s3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("s3_1"))
-	if (CHROMA.got("t3_1")) tmp.upgs.fp = tmp.upgs.fp.mul(CHROMA.eff("t3_1"))
-	if (hasPrim("p3_0")) tmp.upgs.fp = tmp.upgs.fp.mul(tmp.pr.eff["p3_0"])
+	tmp.upgs.fp = E(tmp.polarize)
 
 	UPGS.main.temp()
 	UPGS.mass.temp()

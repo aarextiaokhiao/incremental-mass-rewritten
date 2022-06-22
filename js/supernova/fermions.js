@@ -87,7 +87,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(0)
-                    let x = i.max(1).log(1.1).mul(t.pow(0.75))
+                    let x = i.max(1).log(1.1).mul(t.pow(0.75)).min(1e11)
                     return x
                 },
                 desc(x) {

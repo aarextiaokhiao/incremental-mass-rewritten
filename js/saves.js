@@ -4,7 +4,6 @@ const EINF = Decimal.dInf
 
 function uni(x) { return E(1.5e56).mul(x) }
 function mlt(x) { return uni(E(10).pow(E(1e9).mul(x))) }
-function meg(x) { return mlt(E(10).pow(E(1e9).mul(x))) }
 
 Decimal.prototype.modular=Decimal.prototype.mod=function (other){
     other=E(other);
@@ -425,7 +424,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/21/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[6/22/22a BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

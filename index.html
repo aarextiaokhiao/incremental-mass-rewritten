@@ -156,14 +156,18 @@
 	<div id="app_ext" style="z-index: 5">
 		<button class="btn" onclick="EXOTIC.reset(true)" style="position: absolute; top: 5px; right: 5px">Restart</button>
 		<button class="btn" onclick="TABS.choose(0)" style="position: absolute; top: 5px; left: 5px">Close</button>
+
 		<div class="resources sml yellow" style="position: absolute; left: 5px; top: 65px; height: 2px; width: 50%">
 			<img src="images/ext.png" onclick="EXOTIC.reset()" style="cursor: pointer;  background: rgba(0, 0, 0, 0.9)">
 			<span style="margin-left: 5px; text-align: left;" id="extAmt2">X</span>
-		</div>
-		<div class="resources sml" style="position: absolute; left: 5px; top: 105px; height: 2px; width: 50%">
-			<img src="images/chroma.png" onclick="tone()" style="cursor: pointer; background: rgba(0, 0, 0, 0.9)">
+		</div><div class="resources sml" style="position: absolute; left: 5px; top: 105px; height: 2px; width: 50%">
+			<div tooltip="Toning: Adjusts scalings" t-size="small" t-align="left"><img src="images/chroma.png" onclick="tone()" style="cursor: pointer; background: rgba(0, 0, 0, 0.9)"></div>
 			<span style="margin-left: 5px; text-align: left;" id="extTone">0</span>
+		</div><div class="resources sml" id="polarDiv" style="position: absolute; left: 5px; top: 145px; height: 2px; width: 50%">
+			<div tooltip="Polarizer: Weakens scalings" t-size="small" t-align="left"><img src="images/mass_polarize.png" style="background: rgba(0, 0, 0, 0.9)"></div>
+			<span style="margin-left: 5px; text-align: left;" id="polarEff">1x</span>
 		</div>
+
 		<div style="position: absolute; left: 25%; top: 24px; height: 2px; width: 50%; background: #ff3f00">
 			<div id="ext_stabs" style="position: absolute; left: 0; top: -10px; width: 100%; min-height: 40px;"></div>
 		</div>

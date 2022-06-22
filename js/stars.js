@@ -77,7 +77,6 @@ function updateStarsTemp() {
 	if (hasElement(57)) ts.generator_boost_base = ts.generator_boost_base.mul(tmp.elements.effect[57])
 	if (tmp.chal) ts.generator_boost_base = ts.generator_boost_base.pow(tmp.chal.eff[11])
 	if (CHROMA.got("s2_1")) ts.generator_boost_base = ts.generator_boost_base.pow(CHROMA.eff("s2_1"))
-	if (future && tmp.tickspeedEffect) ts.generator_boost_base = ts.generator_boost_base.mul(expMult(tmp.tickspeedEffect.step,0.6).root(32))
 
 	ts.generator_boost_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
 	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus))
