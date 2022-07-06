@@ -431,8 +431,10 @@ function loadGame(start=true, save) {
 		setInterval(loop, 50)
 		setInterval(updateScreensHTML, 50)
 		treeCanvas()
+		updateShortcuts()
 		setInterval(drawTreeHTML, 10)
-		setInterval(checkNaN,1000)
+		setInterval(checkNaN, 1000)
+		setInterval(updateShortcuts, 1000)
 	}
 
 	elm.popup.setDisplay(0)
