@@ -226,7 +226,7 @@ function updateAtomTemp() {
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
 	let fp = scalingToned("gamma_ray") ? E(30) : E(1)
-	if (CHROMA.got("s3_2")) fp = fp.div(CHROMA.eff("s3_2"))
+	if (GLUBALL.got("s3_2")) fp = fp.div(GLUBALL.eff("s3_2"))
 	if (hasPrim("p3_0")) fp = fp.div(tmp.pr.eff["p3_0"])
 
 	let scale = scalingInitPower("gamma_ray")

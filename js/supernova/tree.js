@@ -578,7 +578,7 @@ const TREE_UPGS = {
 			icon: "ext_l",
 		},
 		ext_l5: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			branch: ["ext_l4"],
 			req() { return player.ext.amt.gte(EXT.amt("e2e3")) },
 			reqDesc() { return "Get " + format(EXT.amt("e2e3")) + " Exotic Matter." },
@@ -598,7 +598,7 @@ const TREE_UPGS = {
 			cost: E(0),
 		},
 		ext_b2: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			branch: ["ext_b1"],
 			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b3") ? "e600" : 1e150)) },
 			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "e600" : 1e150)) + " Exotic Matter." },
@@ -606,7 +606,7 @@ const TREE_UPGS = {
 			cost: E(0),
 		},
 		ext_b3: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			branch: ["ext_b1"],
 			req() { return player.ext.amt.gte(EXT.amt(hasTree("ext_b2") ? "e600" : 1e150)) },
 			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "e600" : 1e150)) + " Exotic Matter." },
@@ -614,7 +614,7 @@ const TREE_UPGS = {
 			cost: E(0),
 		},
 		ext_e1: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			branch: ["ext_c"],
 			req() { return player.ext.amt.gte(EXT.amt(1e65)) },
 			reqDesc() { return "Get " + format(EXT.amt(1e65)) + " Exotic Matter." },
@@ -805,7 +805,7 @@ const TREE_UPGS = {
 			cost: E(0),
 		},
 		feat8: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			req() { return player.mass.gte(mlt(100)) & player.ext.chal.f8 },
 			failed() { return !player.ext.chal.f8 },
 			reqDesc() { return `Get ${formatMass(mlt(100))} mass, but can only gain >= 5 Supernovae after 20.` + failedHTML(player.ext.chal.f8) },
@@ -813,7 +813,7 @@ const TREE_UPGS = {
 			cost: E(0),
 		},
 		feat9: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			req() { return player.mass.gte(mlt(1e4)) & player.ext.chal.f9 },
 			failed() { return !player.ext.chal.f9 },
 			reqDesc() { return `Get ${formatMass(mlt(1e4))} mass, but in any U-Lepton.` + failedHTML(player.ext.chal.f9) },
@@ -822,7 +822,7 @@ const TREE_UPGS = {
 			onBuy: () => EXT.reduceAmt()
 		},
 		feat10: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			req() { return player.ext.chal.f10 },
 			reqDesc() { return `Gain 10% more Supernovae after 100 in Dual Fermions.` + failedHTML(player.ext.chal.f10, true) },
 			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
@@ -830,7 +830,7 @@ const TREE_UPGS = {
 			onBuy: () => EXT.reduceAmt()
 		},
 		feat11: {
-			unl() { return CHROMA.unl() },
+			unl() { return GLUBALL.unl() },
 			req() { return player.ext.chal.f11 },
 			reqDesc() { return `Raise best mass in Mass Dilation.` },
 			desc: `Raise Exotic Matter by ^1.2.`,

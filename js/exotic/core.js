@@ -8,7 +8,7 @@ let EXOTIC = {
 			toned: 0,
 			ec: 0,
 			ax: AXION.setup(),
-			ch: CHROMA.setup(),
+			ch: GLUBALL.setup(),
 			pr: PRIM.setup()
 		}
 	},
@@ -22,8 +22,8 @@ let EXOTIC = {
 			.div(500)
 		if (hasTree("feat11")) s = s.mul(1.2)
 		if (hasTree("ext_u1")) s = s.mul(E(1.01).pow(player.chal.comps[12].add(1)))
-		if (CHROMA.got("p1_3")) s = s.mul(CHROMA.eff("p1_3"))
-		if (CHROMA.got("p1_2")) s = s.mul(CHROMA.eff("p1_2"))
+		if (GLUBALL.got("p1_3")) s = s.mul(GLUBALL.eff("p1_3"))
+		if (GLUBALL.got("p1_2")) s = s.mul(GLUBALL.eff("p1_2"))
 
 		let r = player.mass.max(1).log10().div(1e9).add(1).pow(s)
 		return this.amt(r)
@@ -53,7 +53,7 @@ let EXOTIC = {
 		if (!r) r = player.ext.amt
 		if (this.extLvl() >= 2) r = expMult(r, 1/0.8)
 		if (this.extLvl() >= 1) r = E(10).pow(r.div(10).root(5)).div(10)
-		if (CHROMA.got("p1_1")) r = expMult(r,CHROMA.eff("p1_1"))
+		if (GLUBALL.got("p1_1")) r = expMult(r,GLUBALL.eff("p1_1"))
 		return r
 	},
 
@@ -160,11 +160,11 @@ let EXOTIC = {
 			if (needUpdate) updateAxionLevelTemp()
 		}
 
-		//CHROMA
+		//GLUEBALLS
 		if (!player.ext.ch.unl && player.chal.comps[13].gte(13)) {
 			addPopup(POPUP_GROUPS.chroma)
 			player.ext.ch.unl = true
-		} else if (player.ext.ch.unl) CHROMA.calc(dt)
+		} else if (player.ext.ch.unl) GLUBALL.calc(dt)
 
 		//PRIMORDIUMS
 		if (!player.ext.pr.unl && AXION.unl() && E(tmp.ax.lvl[22]).gt(0)) {
@@ -178,14 +178,21 @@ let EXT = EXOTIC
 function updateExoticHTML() {
 	elm.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
-		elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
-		elm.extTone.setHTML(format(player.ext.toned,0)+(canTone() ? "<br>(+" + format(1,0) + ")" : ""))
-		elm.polarEff.setDisplay(CHROMA.got("s3_1"))
-		elm.polarEff.setHTML(format(tmp.polarize)+"x")
+		updateExoticHeader()
 		if (tmp.stab[6] == 0) updateAxionHTML()
-		if (tmp.stab[6] == 1) updateChromaHTML()
+		if (tmp.stab[6] == 1) updateGlueballHTML()
 		if (tmp.stab[6] == 2) updatePrimHTML()
 	}
+}
+
+function updateExoticHeader() {
+	elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
+
+	elm.toneDiv.setDisplay(GLUBALL.unl())
+	elm.extTone.setHTML(format(player.ext.toned,0)+(canTone() ? "<br>(+" + format(1,0) + ")" : ""))
+
+	elm.polarDiv.setDisplay(GLUBALL.got("s3_1"))
+	elm.polarEff.setHTML(format(tmp.polarize)+"x")
 }
 
 function setupExtHTML() {
@@ -207,14 +214,14 @@ function setupExtHTML() {
 	}
 	new Element("ax_table").setHTML(html)
 
-	//CHROMA
+	//GLUEBALLS
 	var html = ""
-	var sData = CHROMA.spices
+	var sData = GLUBALL.spices
 	for (var y = 0; y < sData.rows.length; y++) {
 		var sp = sData.rows[y]
 		html += `<div class="table_center">`
 		for (var x = 0; x < 4; x++) {
-			if (x == 0) html += `<button id="cs_${sp}_a" onclick="CHROMA.get('${sp}')"></button>`
+			if (x == 0) html += `<button id="cs_${sp}_a" onclick="GLUBALL.get('${sp}')"></button>`
 			else if (sData.all.includes(sp+"_"+x)) html += `<div class="boost_cs" id="cs_${sp}_${x}" style='border-color: ${sData[sp+"_"+x].color}'></div>`
 			else html += `<div class="boost_cs"></div>`
 		}
@@ -296,7 +303,7 @@ let EXTRA_BUILDINGS = {
 			if (AXION.unl() && tmp.bh && player.bh.mass.lt(tmp.bh.rad_ss)) x = x.pow(tmp.ax.eff[10])
 
 			let r = x.add(1).log10().add(5).div(25)
-			if (CHROMA.got("p3_2")) r = r.add(CHROMA.eff("p3_2"))
+			if (GLUBALL.got("p3_2")) r = r.add(GLUBALL.eff("p3_2"))
 			return r
 		}
 	},
@@ -367,7 +374,7 @@ function getExtraBuildings(type, x) {
 function resetExtraBuildings(type) {
 	let s = EXTRA_BUILDINGS.saves[type]()
 	for (let b = EXTRA_BUILDINGS.start[type]; b <= EXTRA_BUILDINGS.max; b++) {
-		if (type == "bh" && b == 2 && CHROMA.got("t2_1")) s["eb"+b] = s["eb"+b].pow(CHROMA.eff("t2_1"))
+		if (type == "bh" && b == 2 && GLUBALL.got("t2_1")) s["eb"+b] = s["eb"+b].pow(GLUBALL.eff("t2_1"))
 		else delete s["eb"+b]
 	}
 }
@@ -382,7 +389,7 @@ function buyExtraBuildings(type, x) {
 //POLARIZER
 function updatePolarizeTemp() {
 	tmp.polarize = E(1)
-	if (CHROMA.got("s3_1")) tmp.polarize = tmp.polarize.mul(CHROMA.eff("s3_1"))
+	if (GLUBALL.got("s3_1")) tmp.polarize = tmp.polarize.mul(GLUBALL.eff("s3_1"))
 }
 
 //TONES

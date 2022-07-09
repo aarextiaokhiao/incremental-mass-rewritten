@@ -24,7 +24,7 @@
 
     <script src="js/exotic/core.js"></script>
     <script src="js/exotic/axion.js"></script>
-    <script src="js/exotic/chroma.js"></script>
+    <script src="js/exotic/glueball.js"></script>
     <script src="js/exotic/prim.js"></script>
 
     <script src="js/supernova/radiation.js"></script>
@@ -154,24 +154,28 @@
         </div>
     </div>
 	<div id="app_ext" style="z-index: 5">
-		<button class="btn" onclick="EXOTIC.reset(true)" style="position: absolute; top: 5px; right: 5px">Restart</button>
-		<button class="btn" onclick="TABS.choose(0)" style="position: absolute; top: 5px; left: 5px">Close</button>
-
-		<div class="resources sml yellow" style="position: absolute; left: 5px; top: 65px; height: 2px; width: 50%">
-			<img src="images/ext.png" onclick="EXOTIC.reset()" style="cursor: pointer;  background: rgba(0, 0, 0, 0.9)">
-			<span style="margin-left: 5px; text-align: left;" id="extAmt2">X</span>
-		</div><div class="resources sml" style="position: absolute; left: 5px; top: 105px; height: 2px; width: 50%">
-			<div tooltip="Toning: Adjusts scalings" t-size="small" t-align="left"><img src="images/chroma.png" onclick="tone()" style="cursor: pointer; background: rgba(0, 0, 0, 0.9)"></div>
-			<span style="margin-left: 5px; text-align: left;" id="extTone">0</span>
-		</div><div class="resources sml" id="polarDiv" style="position: absolute; left: 5px; top: 145px; height: 2px; width: 50%">
-			<div tooltip="Polarizer: Weakens scalings" t-size="small" t-align="left"><img src="images/mass_polarize.png" style="background: rgba(0, 0, 0, 0.9)"></div>
-			<span style="margin-left: 5px; text-align: left;" id="polarEff">1x</span>
+		<div style="position: absolute; top: 5px; left: 5px">
+			<button class="btn" onclick="TABS.choose(0)">Close</button>
+			<button class="btn" onclick="EXOTIC.reset(true)">Restart</button>
 		</div>
 
-		<div style="position: absolute; left: 25%; top: 24px; height: 2px; width: 50%; background: #ff3f00">
+		<div style="position: absolute; left: 5px; top: 45px; width: 100%">
+			<div class="resources sml yellow">
+				<img src="images/ext.png" onclick="EXOTIC.reset()" style="cursor: pointer;  background: rgba(0, 0, 0, 0.9)">
+				<span style="margin-left: 5px; text-align: left;" id="extAmt2">X</span>
+			</div><div class="resources sml" id="toneDiv">
+				<div tooltip="Toning: Adjusts scalings" t-size="small" t-align="left"><img src="images/chroma.png" onclick="tone()" style="cursor: pointer; background: rgba(0, 0, 0, 0.9)"></div>
+				<span style="margin-left: 5px; text-align: left;" id="extTone">0</span>
+			</div><div class="resources sml" id="polarDiv">
+				<div tooltip="Polarizer: Weakens scalings" t-size="small" t-align="left"><img src="images/mass_polarize.png" style="background: rgba(0, 0, 0, 0.9)"></div>
+				<span style="margin-left: 5px; text-align: left;" id="polarEff">1x</span>
+			</div>
+		</div>
+
+		<div style="position: absolute; right: 6px; top: 18px; height: 2px; width: calc(100% - 200px); background: #ff7f3f">
 			<div id="ext_stabs" style="position: absolute; left: 0; top: -10px; width: 100%; min-height: 40px;"></div>
 		</div>
-		<div style="position: absolute; height: 80%; width: 80%; top: 10%; left: 10%; border: 3px solid #ff3f00; background: rgba(0, 0, 0, 0.9); overflow-y: auto">
+		<div style="position: absolute; height: calc(100% - 54px); width: calc(100% - 200px); bottom: 6px; right: 6px; border: 3px solid #ff3f00; background: rgba(0, 0, 0, 0.9); overflow-y: auto">
 			<div id="stab_frame6_0">
 				<span id="st_res0"></span> X Axions <span id="st_gain0"></span><br>
 				<span id="st_res1"></span> Y Axions <span id="st_gain1"></span><br>
@@ -185,7 +189,7 @@
                 </div><table id="ax_table"></table>
 			</div>
 			<div id="stab_frame6_1">
-				<button class="btn btn_cs" id="ch_rs" onclick="CHROMA.respec()">Respec</button><br>
+				<button class="btn btn_cs" id="ch_rs" onclick="GLUBALL.respec()">Respec</button><br>
 				<span class="ch_color" id="ch_bp"></span>
 				<span class="purple" id="ch_nxt"></span><br>
 

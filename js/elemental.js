@@ -212,19 +212,19 @@ const ELEMENTS = {
             cost: E(1e90),
         },
         {
-            desc: `Mass gain is raised to the power of 1.5th if you dilated mass.`,
+            desc: `Raise Mass gain by ^1.5 if dilated.`,
             cost: E(1e97),
         },
         {
-            desc: `Proton powers effect is better.`,
+            desc: `Protons are better.`,
             cost: E(1e100),
         },
         {
-            desc: `Electron powers effect is better. Passively gain 10% of each particle you would assign quarks.`,
+            desc: `Electrons are better. Passively produce Particles you would assign with Quarks.`,
             cost: E(1e107),
         },
         {
-            desc: `Dilated mass boost Relativistic particles gain.`,
+            desc: `Dilated mass boosts Relativistic Particles.`,
             cost: E(1e130),
             effect() {
                 let x = player.md.mass.add(1).pow(0.0125)
@@ -233,7 +233,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Increase dilated mass gain exponent by 5%.`,
+            desc: `Raise base RP formula by ^1.05.`,
             cost: E(1e140),
         },
         {
@@ -241,7 +241,7 @@ const ELEMENTS = {
             cost: E(1e155),
         },
         {
-            desc: `Rage power boost Relativistic particles gain.`,
+            desc: `Rage Power boosts Relativistic Particles.`,
             cost: E(1e175),
             effect() {
                 let x = player.rp.points.max(1).log10().add(1).pow(0.75)
@@ -250,7 +250,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Mass from Black Hole boost dilated mass gain.`,
+            desc: `Black Hole mass boosts dilated mass.`,
             cost: E(1e210),
             effect() {
                 let x = player.bh.mass.max(1).log10().add(1).pow(0.8)
@@ -263,7 +263,7 @@ const ELEMENTS = {
             cost: E(1e225),
         },
         {
-            desc: `Tier scalings are weaker based on Tetr.`,
+            desc: `Tetr weakens Tier scalings.`,
             cost: E(1e245),
             effect() {
                 let x = E(0.9).pow(player.ranks.tetr.softcap(6,0.5,0))
@@ -272,20 +272,20 @@ const ELEMENTS = {
             effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(player.ranks.tetr,6) },
         },
         {
-            desc: `Cosmic Ray's free tickspeeds now adds to RU7.`,
+            desc: `Cosmic Ray's extra Tickspeed adds to Rage Power Upgrade 7.`,
             cost: E(1e260),
             effect() {
                 let x = tmp.atom?tmp.atom.atomicEff:E(0)
                 return x.div(6).floor()
             },
-            effDesc(x) { return "+"+format(x,0)+" to Rage Power Upgrade 7" },
+            effDesc(x) { return "+"+format(x,0) },
         },
         {
             desc: `Remove softcap from C2 & C6 effects.`,
             cost: E(1e285),
         },
         {
-            desc: `Stars boost dilated mass gain.`,
+            desc: `Stars boost dilated mass.`,
             cost: E(1e303),
             effect() {
                 let x = player.stars.points.add(1).pow(0.5)
@@ -311,7 +311,7 @@ const ELEMENTS = {
             cost: E('e360'),
         },
         {
-            desc: `The Tetr requirement is broken.`,
+            desc: `Break the scaling of Tetr. [Reduce the exponent]`,
             cost: E('e380'),
         },
         {
@@ -324,7 +324,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Collapsed star's effect boost mass gain from the black hole at a reduced rate.`,
+            desc: `Collapsed star's effect boosts black hole mass.`,
             cost: E('e510'),
             effect() {
                 let x = tmp.stars?tmp.stars.effect.eff.add(1).pow(0.02):E(1)
@@ -333,15 +333,15 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Quarks gain is raised to the 1.05th power.`,
+            desc: `Raise Quarks by ^1.05.`,
             cost: E('e610'),
         },
         {
-            desc: `Collapsed stars effect is 10% stronger.`,
+            desc: `Collapsed star's effect is 10% stronger.`,
             cost: E('e800'),
         },
         {
-            desc: `Collapsed star boost last type of stars.`,
+            desc: `Collapsed stars boost last type of stars.`,
             cost: E('e1000'),
             effect() {
                 let x = player.stars.points.add(1).log10().add(1).pow(1.1)
@@ -388,7 +388,7 @@ const ELEMENTS = {
             cost: E('e2.2e4'),
         },
         {
-            desc: `Tickspeed power boost base from Star Booster at a reduced rate.`,
+            desc: `Tickspeed Power multiplies Star Booster base.`,
             cost: E('e3.6e4'),
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
@@ -541,7 +541,7 @@ const ELEMENTS = {
             cost: E('e1.6e10')
         },
         {
-            desc: `[Final Element] Pent requirement is reduced by 15%.`,
+            desc: `<b id="final_81">[Final Element]</b> Pent requirement is reduced by 15%.`,
             cost: E('e3.2e10'),
         },
     ],
@@ -604,7 +604,7 @@ function updateElementsHTML() {
     let ch = tmp.elements.choosed
     elm.elem_ch_div.setVisible(ch>0)
     if (ch) {
-        elm.elem_desc.setTxt("["+ELEMENTS.fullNames[ch]+"] "+ELEMENTS.upgs[ch].desc)
+        elm.elem_desc.setHTML("["+ELEMENTS.fullNames[ch]+"] "+ELEMENTS.upgs[ch].desc)
         elm.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0))
         elm.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"Currently: "+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
     }
@@ -617,7 +617,7 @@ function updateElementsHTML() {
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {
-                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x)})
+                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), final: hasElement(81) && x == 81})
             }
         }
     }

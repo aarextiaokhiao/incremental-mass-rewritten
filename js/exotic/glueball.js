@@ -1,4 +1,4 @@
-let CHROMA = {
+let GLUBALL = {
 	unl: () => player.ext.ch.unl,
 
 	setup() {
@@ -40,8 +40,8 @@ let CHROMA = {
 			return tmp.ch.mlt.mul(player.ext.ch.upg.length).floor()
 		},
 		next(x) {
-			if (CHROMA.got(x+"_2")) return x+"_3"
-			if (CHROMA.got(x+"_1")) return x+"_2"
+			if (GLUBALL.got(x+"_2")) return x+"_3"
+			if (GLUBALL.got(x+"_1")) return x+"_2"
 			return x+"_1"
 		},
 		unl(x) {
@@ -209,38 +209,38 @@ let CHROMA = {
 		return tmp.ch.eff[i]
 	},
 	can(x) {
-		if (player.ext.ch.bp.lt(CHROMA.spices.cost())) return false
+		if (player.ext.ch.bp.lt(GLUBALL.spices.cost())) return false
 
-		let next = CHROMA.spices.next(x)
-		if (CHROMA.got(next)) return false
-		if (!CHROMA.spices.all.includes(next)) return false
+		let next = GLUBALL.spices.next(x)
+		if (GLUBALL.got(next)) return false
+		if (!GLUBALL.spices.all.includes(next)) return false
 
 		if (next[0] == "p") {
-			if (next[3] != "1") return CHROMA.got("s" + next[1] + "_" + (next[3] - 1)) && CHROMA.got("s" + (next[1] == "1" ? 3 : next[1] - 1) + "_" + (next[3] - 1))
+			if (next[3] != "1") return GLUBALL.got("s" + next[1] + "_" + (next[3] - 1)) && GLUBALL.got("s" + (next[1] == "1" ? 3 : next[1] - 1) + "_" + (next[3] - 1))
 			return true
 		}
 		if (next[0] == "s") {
-			if (next[3] != "1") return CHROMA.got("t" + (next[1] * 2) + "_" + (next[3] - 1)) && CHROMA.got("t" + (next[1] * 2 - 1) + "_" + (next[3] - 1))
-			return CHROMA.got("p" + next[1] + "_" + next[3]) && CHROMA.got("p" + (next[1] % 3 + 1) + "_" + next[3])
+			if (next[3] != "1") return GLUBALL.got("t" + (next[1] * 2) + "_" + (next[3] - 1)) && GLUBALL.got("t" + (next[1] * 2 - 1) + "_" + (next[3] - 1))
+			return GLUBALL.got("p" + next[1] + "_" + next[3]) && GLUBALL.got("p" + (next[1] % 3 + 1) + "_" + next[3])
 		}
-		if (next[0] == "t") return CHROMA.got("s" + Math.ceil(next[1] / 2) + "_" + next[3]) && CHROMA.got("s" + (Math.ceil(next[1] / 2) % 3 + 1) + "_" + next[3])
+		if (next[0] == "t") return GLUBALL.got("s" + Math.ceil(next[1] / 2) + "_" + next[3]) && GLUBALL.got("s" + (Math.ceil(next[1] / 2) % 3 + 1) + "_" + next[3])
 		return false
 	},
 	get(x) {
-		if (!CHROMA.can(x)) return
-		player.ext.ch.upg.push(CHROMA.spices.next(x))
+		if (!GLUBALL.can(x)) return
+		player.ext.ch.upg.push(GLUBALL.spices.next(x))
 	},
 	got(i) {
 		return tmp.ch.eff && player.ext.ch.upg.includes(i)
 	},
 	respec() {
-		if (!confirm("Are you sure do you want to respec your Chroma?")) return
+		if (!confirm("Are you sure do you want to respec your Glueball?")) return
 		EXT.reset(true)
 		player.ext.ch.upg = []
 	}
 }
 
-function updateChromaTemp() {
+function updateGlueballTemp() {
 	let data = {}
 	let save = player.ext.ch
 	tmp.ch = data
@@ -254,14 +254,14 @@ function updateChromaTemp() {
 	data.bp_next = E(10).pow(E(1.75).pow(save.bp.sub(extra).div(fP)).mul(1e15).div(em_log))
 	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).add(extra).floor().add(1).min(33)
 
-	let s = CHROMA.spices
+	let s = GLUBALL.spices
 	data.pwr = s.power()
 	data.mlt = E(1)
 	data.eff = {}
 	for (var i = 0; i < s.all.length; i++) {
 		let id = s.all[i]
 		data.eff[id] = s[id].eff(data.pwr)
-		if (CHROMA.got(id)) {
+		if (GLUBALL.got(id)) {
 			if (id[3] != "1") data.mlt = data.mlt.mul(0.8)
 			else if (id[0] == "p") data.mlt = data.mlt.mul(1.2)
 			else if (id[0] == "s") data.mlt = data.mlt.mul(1.5)
@@ -270,40 +270,39 @@ function updateChromaTemp() {
 	}
 }
 
-function updateChromaHTML() {
+function updateGlueballHTML() {
 	let save = player.ext.ch
-	elm.ch_bp.setTxt(format(save.bp, 0) + " Beauty Pigments")
+	elm.ch_bp.setTxt(format(save.bp, 0) + " Free Gluons")
 	elm.ch_nxt.setTxt(player.ext.toned ? "(next at " + formatMass(tmp.ch.bp_next) + ")" : "")
 
-	let s = CHROMA.spices
+	let s = GLUBALL.spices
 	let all = s.all
 	for (var i = 0; i < all.length; i++) {
 		let id = all[i]
 		elm["cs_"+id].setTxt(s[id].desc(tmp.ch.eff[id]))
-		elm["cs_"+id].setOpacity(CHROMA.got(id) ? 1 : 0.25)
+		elm["cs_"+id].setOpacity(GLUBALL.got(id) ? 1 : 0.25)
 		elm["cs_"+id].setDisplay(s.unl(id))
 	}
 	let rows = s.rows
 	for (var i = 0; i < rows.length; i++) {
 		let id = rows[i]
-		elm["cs_"+id+"_a"].setClasses({btn: true, locked: !CHROMA.can(id), btn_cs: true})
-		elm["cs_"+id+"_a"].setTxt(CHROMA.got(id+"_1") ? "Extend" : id[0] == "p" ? "Assign" : "Spread")
+		elm["cs_"+id+"_a"].setClasses({btn: true, locked: !GLUBALL.can(id), btn_cs: true})
+		elm["cs_"+id+"_a"].setTxt(GLUBALL.got(id+"_1") ? "Extend" : id[0] == "p" ? "Assign" : "Spread")
 		elm["cs_"+id+"_a"].setDisplay(s.unl(id+"_1"))
 	}
 
 	elm.ch_rs.setVisible(save.upg.length > 0)
-	elm.ch_pwr.setTxt("Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%")
 	elm.ch_pwr.setTxt(save.upg.length > 0 ? "Luminosity: " + format(tmp.ch.pwr.mul(100)) + "%" : "")
-	elm.ch_nxt_assign.setTxt(save.upg.length > 0 && save.upg.length < 21 ? "Next: " + format(CHROMA.spices.cost(),0) + " Beauty Pigments" : "")
+	elm.ch_nxt_assign.setTxt(save.upg.length > 0 && save.upg.length < 21 ? "Next: " + format(GLUBALL.spices.cost(),0) + " Free Gluons" : "")
 }
 
-function toggleChromaBG() {
+function toggleGlueballBG() {
 	if (player.options.noChroma && !confirm("Warning! This will cause high performance for your PC / phone! Are you sure about that?!")) return
 	player.options.noChroma = !player.options.noChroma
 }
 
 function updateChromaScreen() {
-	let unl = CHROMA.unl() && !player.options.noChroma
+	let unl = GLUBALL.unl() && !player.options.noChroma
 	elm.chroma_bg.setDisplay(unl)
 	if (!unl) return
 

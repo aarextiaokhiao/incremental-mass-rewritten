@@ -65,6 +65,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: Bahnschrift;" onclick="changeFont('Bahnschrift')">Bahnschrift</button>
             <button class="btn" style="font-family: Courier;" onclick="changeFont('Courier')">Courier</button>
             <button class="btn" style="font-family: Cousine;" onclick="changeFont('Cousine')">Cousine</button>
+            <button class="btn" style="font-family: 'Fredoka One';" onclick="changeFont('Fredoka One')">Fredoka One</button>
             <button class="btn" style="font-family: 'Flexi IBM VGA False';" onclick="changeFont('Flexi IBM VGA False')">Flexi IBM VGA False</button>
             <button class="btn" style="font-family: Inconsolata;" onclick="changeFont('Inconsolata')">Inconsolata</button>
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="changeFont('Lucida Handwriting')">Lucida Handwriting</button>
@@ -117,7 +118,7 @@ const POPUP_GROUPS = {
 	chroma: {
         html: `
             Congratulations!<br><br><b class='ch_color'>You have unravelled the prism, and unleashed the colors!</b><br><br>
-            <b style='color:#3f00bf'>Chroma has been unlocked in Exotic tab!</b>
+            <b style='color:#3f00bf'>Glueballs have been unlocked in Exotic tab!</b>
         `,
         width: 400,
         height: 150,
@@ -196,8 +197,8 @@ const POPUP_GROUPS = {
             <br>
 			Introducing 2 new features:
             <br><br>
-			<span class='ch_color'>Chroma</span>, bringing out colors with a new buildable spectrum!<br>
-			You need to get 13 C13 completions to unlock Chroma.
+			<span class='ch_color'>Glueballs</span>, bringing out colors with buildable spectrums!<br>
+			You need to get 13 C13 completions to unlock Glueballs.
             <br><br>
 			And <span class='pr_color'>Primordiums</span>: the unseen, hyperspatial elements!<br>
 			<span class='pr_color'>Formulate the spacetime!</span>

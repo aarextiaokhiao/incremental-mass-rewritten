@@ -17,7 +17,7 @@ function calc(dt, dt_offline) {
 	//PRE-DARK MATTER
 	player.mass = player.mass.add(tmp.massGain.mul(dt))
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
-	if (CHROMA.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
+	if (GLUBALL.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
 
 	if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (hasRank("rank", x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
@@ -253,7 +253,7 @@ function loadPlayer(load) {
         let f = FERMIONS.types[i][x]
         player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
     }
-	if (player.ext.ch.sp) player.ext.ch = CHROMA.setup()
+	if (player.ext.ch.sp) player.ext.ch = GLUBALL.setup()
     let off_time = (Date.now() - player.offline.current)/1000
     if (off_time >= 60 && player.offline.active) player.offline.time += off_time
 }
@@ -424,7 +424,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[6/22/22a BETA BUILD]"
+			document.getElementById("ver").textContent = "[7/8/22a BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

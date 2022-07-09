@@ -21,6 +21,11 @@
 }
 
 @font-face {
+	font-family: 'Fredoka One', cursive;
+	src: url('fonts/FredokaOne-Regular.ttf');
+}
+
+@font-face {
 	font-family: 'Inconsolata';
 	src: url('fonts/Inconsolata-VariableFont_wdth\,wght.ttf');
 	size-adjust: 110%;

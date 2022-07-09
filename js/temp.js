@@ -142,7 +142,7 @@ function updateTemp() {
 
 	//Exotic
 	updatePrimTemp()
-	updateChromaTemp()
+	updateGlueballTemp()
 	updateAxionTemp()
 	updatePolarizeTemp()
 	updateExtraBuildingTemp()

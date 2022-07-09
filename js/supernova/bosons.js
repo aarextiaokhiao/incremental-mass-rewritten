@@ -238,5 +238,5 @@ function updateBosonsHTML() {
 }
 
 function bosonsMastered() {
-	return CHROMA.got("p3_3")
+	return GLUBALL.got("p3_3")
 }

@@ -396,7 +396,7 @@ function updateOptionsHTML() {
 	elm.help.setDisplay(!player.options.pure)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
-	elm.chroma_bg_btn.setDisplay(CHROMA.unl())
+	elm.chroma_bg_btn.setDisplay(GLUBALL.unl())
 	elm.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
 }
 
@@ -406,7 +406,7 @@ function updateHTML() {
 		elm.offlineSpeed.setTxt("(" + format(tmp.offlineMult) + "x speed, " + formatTime(player.offline.time) + " left)")
 		elm.offlineGainDiv.setHTML(
 			player.stats.maxMass.eq(player.offline.mass) || player.offline.mass.eq(0) ? "" :
-			(player.stats.maxMass.gte(uni("ee9")) ? "^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) + " mass gained!"
+			(player.stats.maxMass.gte(mlt(1)) ? "^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) + " mass gained!"
 			: format(player.stats.maxMass.div(player.offline.mass)) + "x mass gained!") + " " + formatGain(player.mass, tmp.massGain, true, true)
 		)
 	}

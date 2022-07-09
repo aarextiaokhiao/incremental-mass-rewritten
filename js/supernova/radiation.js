@@ -113,7 +113,7 @@ const RADIATION = {
 		else r = player.supernova.radiation.ds[x-1]
         r = r.add(1).log10().add(1)
 
-        if (CHROMA.got("p3_1")) r = r.pow(CHROMA.eff("p3_1"))
+        if (GLUBALL.got("p3_1")) r = r.pow(GLUBALL.eff("p3_1"))
 		return r.pow(b).softcap(1e30,0.5,0)
 	},
     boosts: [
@@ -137,7 +137,7 @@ const RADIATION = {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `Softcap^3 from mass gain start ^${format(x)} later` },
+            desc(x) { return `Mass softcap^3 scales ^${format(x)} later` },
         },{
             title: `Microwave Boost`,
             eff(b) {
@@ -150,14 +150,14 @@ const RADIATION = {
                 let x = b.root(2).div(100)
                 return x.min(0.35)
             },
-            desc(x) { return `Exponent from the mass of BH formula is increased by ${format(x)}` },
+            desc(x) { return `Increase black hole formula exponent by ^${format(x)}` },
         },{
             title: `BH-Condenser Boost`,
             eff(b) {
                 let x = b.add(1).pow(2)
                 return x.softcap(100,0.5,0)
             },
-            desc(x) { return `Non-bonus BH condenser is ${format(x)}x stronger`+getSoftcapHTML(x,100) },
+            desc(x) { return `Non-bonus BH Condenser is ${format(x)}x stronger`+getSoftcapHTML(x,100) },
         },{
             title: `Infrared Boost`,
             eff(b) {

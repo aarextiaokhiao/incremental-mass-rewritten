@@ -255,7 +255,7 @@ let AXION = {
 		8: {
 			title: "Supermassive",
 			desc: "Evaporation softcap scales later.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(18),
 			eff(x) {
 				return x.add(1).log(3).add(1)
@@ -278,7 +278,7 @@ let AXION = {
 		10: {
 			title: "Quark Condenser",
 			desc: "Raise Neutron Condensers until evaporation.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(80),
 			eff(x) {
 				return x.add(1).log10().div(30).add(1).min(4/3)
@@ -302,7 +302,7 @@ let AXION = {
 		12: {
 			title: "Supernovae",
 			desc: "Cheapen Supernovae.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(35),
 			eff(x) {
 				return x.div(10).add(3).log(3).div(scalingToned("supernova") ? 10 : 1).min(5)
@@ -351,7 +351,7 @@ let AXION = {
 		16: {
 			title: "Dyson Sphere",
 			desc: "Multiply BH Upgrade 15.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(1),
 			eff(x) {
 				return x.div(8).add(1).min(4)
@@ -363,7 +363,7 @@ let AXION = {
 		17: {
 			title: "Quasar",
 			desc: "Increase the cap of C8. [Post-600 doesn't affect BH Mass!]",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(8),
 			eff(x) {
 				return x.add(1).cbrt().sub(1).mul(200)
@@ -375,7 +375,7 @@ let AXION = {
 		18: {
 			title: "Temporal Dimensionality",
 			desc: "Dilated Mass pushes evaporation softcap farther.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(40),
 			eff(x) {
 				return x.div(4).add(1).log(2).div(150).min(.05)
@@ -388,7 +388,7 @@ let AXION = {
 			title: "General Relativity",
 			desc: "Dilated Mass raises Tickspeed power.",
 			req: E(25),
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
 				let r = player.md.mass.add(1).log10().add(1).log10().div(50).add(1) // log^2(Dilated mass)
@@ -403,25 +403,25 @@ let AXION = {
 		20: {
 			title: "AX-Automation",
 			desc: "Automate X/Y AXIONS.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(8)
 		},
 		21: {
 			title: "Monochromacy Challenge",
 			desc: "Unlock Challenges 14 - 15.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(14)
 		},
 		22: {
 			title: "Primordia Lookback",
 			desc: "Unlock Primordiums.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: EINF
 		},
 		23: {
 			title: "Shortcut Mastery",
 			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
-			unl: () => CHROMA.unl(),
+			unl: () => GLUBALL.unl(),
 			req: E(20)
 		},
 	}
@@ -462,7 +462,7 @@ function updateAxionTemp() {
 
 	//BOOSTS
 	d.str = E(1)
-	if (CHROMA.got("t6_1")) d.str = d.str.mul(CHROMA.eff("t6_1"))
+	if (GLUBALL.got("t6_1")) d.str = d.str.mul(GLUBALL.eff("t6_1"))
 
 	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)

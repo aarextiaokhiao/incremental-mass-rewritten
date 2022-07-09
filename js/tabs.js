@@ -33,6 +33,10 @@ const TABS = {
             { id: "Ranks Rewards" },
             { id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
         ],
+        /*3: [
+            { id: "Challenges" },
+            { id: "Vacuum Decay", unl() { return future } },
+        ],*/
         4: [
             { id: "Particles" },
             { id: "Elements", unl() { return player.chal.comps[7].gte(16) || player.supernova.unl } },
@@ -46,7 +50,7 @@ const TABS = {
         ],
         6: [
             { id: "Axions" },
-            { id: "Chroma", unl() { return player.ext.ch.unl || zeta() }, style: "ch" },
+            { id: "Glueballs", unl() { return player.ext.ch.unl || zeta() }, style: "ch" },
             { id: "Primordium", unl() { return PRIM.unl() || zeta() }, style: "pr" },
             { id: "Entropy", unl() { return zeta() } }
         ],

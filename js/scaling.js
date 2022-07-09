@@ -263,7 +263,7 @@ function scalingToned(name) {
 
 function scalingInitPower(name) {
 	if (name == "tier") {
-		if (CHROMA.got("t5_1")) return 1
+		if (GLUBALL.got("t5_1")) return 1
 		return 2
 	}
 	if (name == "tetr") {

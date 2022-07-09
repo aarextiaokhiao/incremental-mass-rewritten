@@ -76,7 +76,7 @@ function updateStarsTemp() {
 	ts.generator_boost_base = E(2)
 	if (hasElement(57)) ts.generator_boost_base = ts.generator_boost_base.mul(tmp.elements.effect[57])
 	if (tmp.chal) ts.generator_boost_base = ts.generator_boost_base.pow(tmp.chal.eff[11])
-	if (CHROMA.got("s2_1")) ts.generator_boost_base = ts.generator_boost_base.pow(CHROMA.eff("s2_1"))
+	if (GLUBALL.got("s2_1")) ts.generator_boost_base = ts.generator_boost_base.pow(GLUBALL.eff("s2_1"))
 
 	ts.generator_boost_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
 	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus))
@@ -105,7 +105,7 @@ function setupStarsHTML() {
 
 function updateScreensHTML() {
 	//STARS
-	let shown = (!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5 && !CHROMA.unl()
+	let shown = (!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5 && !GLUBALL.unl()
 	elm.star.setDisplay(shown)
 	if (shown) {
 		let g = tmp.supernova.bulk.sub(player.supernova.times).max(0)
@@ -127,7 +127,7 @@ function updateScreensHTML() {
 		elm.star.changeStyle('height',size+"px")
 	}
 
-	//CHROMA
+	//GLUEBALLS
 	updateChromaScreen()
 }
 

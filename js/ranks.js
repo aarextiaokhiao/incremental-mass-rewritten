@@ -274,7 +274,7 @@ const RANKS = {
         },
         tier() {
             let f = E(1)
-            if (!CHROMA.got("t5_1")) f = f.mul(tmp.fermions.effs[1][3])
+            if (!GLUBALL.got("t5_1")) f = f.mul(tmp.fermions.effs[1][3])
             if (hasRank("tetr", 1)) f = f.mul(1/0.75)
             if (hasUpgrade('atom',10)) f = f.mul(2)
             return f

@@ -47,7 +47,7 @@ const FERMIONS = {
 		}
     },
 	getTierScaling(t, bulk=false) {
-		let d = CHROMA.got("s1_1") && tmp.fermions.dual ? CHROMA.eff("s1_1") : E(0)
+		let d = GLUBALL.got("s1_1") && tmp.fermions.dual ? GLUBALL.eff("s1_1") : E(0)
 		if (!bulk) t = t.sub(d)
 
 		let r = t.scaleEvery("fTier", bulk)

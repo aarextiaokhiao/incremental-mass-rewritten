@@ -18,7 +18,7 @@ const CONFIRMS_UNL = {
 	atom: () => player.atom.unl && !EXT.unl(),
 	sn: () => player.supernova.unl,
 	ext: () => EXT.unl(),
-	ec: () => CHROMA.unl(),
+	ec: () => GLUBALL.unl(),
 	zeta: () => zeta()
 }
 
@@ -37,7 +37,7 @@ const FORMS = {
 		x = x.mul(tmp.stars.effect.eff)
 		if (hasTree("m1")) x = x.mul(treeEff("m1"))
 		x = x.mul(tmp.bosons.effect.pos_w[0])
-		if (CHROMA.got("s2_2")) x = x.mul(CHROMA.eff("s2_2"))
+		if (GLUBALL.got("s2_2")) x = x.mul(GLUBALL.eff("s2_2"))
 
 		return x
 	},
@@ -47,7 +47,7 @@ const FORMS = {
 		if (hasRank("rank", 180)) exp = exp.mul(1.025)
 		if (!CHALS.inChal(3)) exp = exp.mul(tmp.chal.eff[3])
 		if (tmp.md.active && hasElement(28)) exp = exp.mul(1.5)
-		if (CHROMA.got("p2_1")) exp = exp.mul(CHROMA.eff("p2_1"))
+		if (GLUBALL.got("p2_1")) exp = exp.mul(GLUBALL.eff("p2_1"))
 
 		let x = this.baseMassGain().pow(exp)
 		if (tmp.md.active) x = MASS_DILATION.applyDil(x)
@@ -226,7 +226,7 @@ const FORMS = {
 			player.mainUpg.rp = keep
 			player.rp.points = E(0)
 			player.tickspeed = E(0)
-			if (CHROMA.got("t1_1") && CHROMA.eff("t1_1").gt(0)) player.bh.mass = expMult(player.bh.mass,CHROMA.eff("t1_1"))
+			if (GLUBALL.got("t1_1") && GLUBALL.eff("t1_1").gt(0)) player.bh.mass = expMult(player.bh.mass,GLUBALL.eff("t1_1"))
 			else player.bh.mass = E(0)
 			FORMS.rp.doReset()
 		},

@@ -68,7 +68,7 @@ const SUPERNOVA = {
         if (hasTree("bs3")) x = x.mul(treeEff("bs3"))
         if (hasElement(74)) x = x.mul(tmp.elements && tmp.elements.effect[74])
         x = x.mul(tmp.radiation.bs.eff[11])
-        if (CHROMA.got("t4_1")) x = x.pow(CHROMA.eff("t4_1"))
+        if (GLUBALL.got("t4_1")) x = x.pow(GLUBALL.eff("t4_1"))
         x = x.mul(tmp.supernova.timeMult)
         return x
     },
@@ -117,7 +117,7 @@ function calcSupernova(dt, dt_offline) {
 
     if (player.chal.comps[10].gte(1) && !player.supernova.fermions.unl) {
         player.supernova.fermions.unl = true
-        if (player.ext.amt.lt(1e10) && !CHROMA.unl()) addPopup(POPUP_GROUPS.fermions)
+        if (player.ext.amt.lt(1e10) && !GLUBALL.unl()) addPopup(POPUP_GROUPS.fermions)
     }
     if (player.supernova.fermions.unl) {
         if (tmp.fermions.ch[0] >= 0) gainFermionTiers(tmp.fermions.ch)
