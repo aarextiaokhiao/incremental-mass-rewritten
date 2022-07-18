@@ -22,7 +22,7 @@ const FERMIONS = {
 		if (!a) {
 			if (SHORTCUT_EDIT.mode) {
 				player.shrt.order[SHORTCUT_EDIT.pos] = [2,i*10+x]
-				tmp.tab = tmp.sn_tab
+				TABS.back()
 				SHORTCUT_EDIT.mode = 0
 				return
 			}
@@ -95,7 +95,7 @@ const FERMIONS = {
                 },
                 inc: "Atomic Powers",
                 res: () => player.atom.atomic,
-                cons: "^0.6 to the exponent of Atomic Powers gain",
+                cons: "Dilate Atomic Powers by ^0.6",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -113,11 +113,11 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `x${format(x)} to Relativistic Particles gain`+getSoftcapHTML(x,'ee3')
+                    return `Gain ${format(x)}x more Relativistic Particles.`+getSoftcapHTML(x,'ee3')
                 },
                 inc: "Relativistic Particle",
                 res: () => player.md.particles,
-                cons: "The exponent of the RP formula is divided by 10",
+                cons: "Reduce Relativistic Particles by ^0.1.",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -135,11 +135,11 @@ const FERMIONS = {
 					return x
 				},
 				desc(x) {
-					return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+getSoftcapHTML(x,5,100)
+					return `Raise Z<sup>0</sup>'s first effect by ^${format(x)}.`+getSoftcapHTML(x,5,100)
 				},
                 inc: "Mass",
                 res: () => player.mass,
-                cons: "You are trapped in Mass Dilation, but they are twice effective",
+                cons: "You're trapped in Mass Dilation, but 2x effective.",
                 isMass: true,
             },{
                 maxTier: 18,
@@ -159,11 +159,11 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `4th Photon & Gluon upgrades are ${format(x)}x stronger`+getSoftcapHTML(x,1.5)
+                    return `Strengthen 4th Photon & Gluon Upgrades by ^${format(x)}.`+getSoftcapHTML(x,1.5)
                 },
                 inc: "Rage Power",
                 res: () => player.rp.points,
-                cons: "You are trapped in Mass Dilation and Challenges 3-5",
+                cons: "You're trapped in Mass Dilation and Challenges 3-5",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -184,7 +184,7 @@ const FERMIONS = {
                 },
                 inc: "Atoms",
                 res: () => player.atom.points,
-                cons: "All challenges are disabled.",
+                cons: "Disable all challenge rewards.",
             },
             {
                 nextTierAt(x) {
@@ -231,11 +231,11 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Star gain softcap starts ^${format(x)} later`+getSoftcapHTML(x,1.5)
+                    return `Star softcap starts ^${format(x)} later.`+getSoftcapHTML(x,1.5)
                 },
                 inc: "Quark",
                 res: () => player.atom.quarks,
-                cons: "^0.625 to the exponent of Atoms gain",
+                cons: "Dilate Atoms by ^0.625",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -253,12 +253,12 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `x${format(x)} to Higgs Bosons & Gravitons gain`+getSoftcapHTML(x,1e6)
+                    return `Gain ${format(x)}x more Higgs & Gravitons.`+getSoftcapHTML(x,1e6)
                 },
                 isMass: true,
                 inc: "Mass of Black Hole",
                 res: () => player.bh.mass,
-                cons: "The power from the mass of the BH formula is always -1",
+                cons: "BH Formula exponent is always -1.",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -277,11 +277,11 @@ const FERMIONS = {
                     return x.min(1e6)
                 },
                 desc(x) {
-                    return `Tickspeed is ${format(x)}x cheaper` + (scalingToned("tickspeed") ? "" : " (before Meta scaling)")
+                    return `Weaken Tickspeed by ${format(x)}x.` + (scalingToned("tickspeed") ? "" : " (before Meta scaling)")
                 },
                 inc: "Dark Matter",
                 res: () => player.bh.dm,
-                cons: "You are trapped in Challenges 8-9",
+                cons: "You're trapped in Challenges 8-9",
             },{
                 maxTier: 15,
                 nextTierAt(x) {
@@ -304,11 +304,11 @@ const FERMIONS = {
                 desc(x) {
 					let sc = E(0.25)
 					if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
-                    return `Tier requirement is ${format(x)}x cheaper`+getSoftcapHTML(x,1.5,sc)
+                    return `Cheapen Tiers by ${format(x)}x.`+getSoftcapHTML(x,1.5,sc)
                 },
                 inc: "Collapsed Star",
                 res: () => player.stars.points,
-                cons: "Star generators are decreased to ^0.5",
+                cons: "Reduce Stars by ^0.5.",
             },{
                 maxTier: 100,
                 nextTierAt(x) {
@@ -329,12 +329,12 @@ const FERMIONS = {
                     return t.add(1).times(i.div(1e30).add(1).log10()).div(400).add(1).softcap(2.5, sc, 0)
                 },
                 desc(x) {
-                    return `Meta-Rank scaling starts ${format(x)}x later.`+getSoftcapHTML(x,2.5)
+                    return `Meta-Rank scales ${format(x)}x later.`+getSoftcapHTML(x,2.5)
                 },
 				isMass: true,
                 inc: "Dilated mass",
                 res: () => player.md.mass,
-                cons: "There's no Meta Scalings, but U-Leptons do nothing and Rank is capped at 20,000.",
+                cons: "Cap Rank at 20,000 and U-Leptons do nothing. Additionally, there's no Meta scalings.",
             },
             {
                 nextTierAt(x) {
@@ -358,7 +358,7 @@ const FERMIONS = {
                 },
                 inc: "Tickspeed power",
                 res: () => tmp.tickspeedEffect.step,
-                cons: "Boson Upgrades and W Bosons are disabled.",
+                cons: "Disable Boson Upgrades and W Bosons.",
             },
 
             /*

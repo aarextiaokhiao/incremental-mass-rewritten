@@ -47,14 +47,14 @@
     <script src="js/main.js"></script>
 
 	<title id="title">IM: Altrascendum</title>
-	<meta name="IM: Altrascendum" content="An alternative path mod to Incremental Mass Rewritten. By Aarex." charset="utf-8"/>
+	<meta name="IM: Altrascendum" content="An alternative mod to Incremental Mass Rewritten. By Aarex." charset="utf-8"/>
 </head>
 <body onload="loadGame()">
     <input id="copy" style="position: absolute; top: 0; left: 0; user-select: all; visibility: hidden;">
     <div id="loading" class='table_center' style="align-items: center; height: 100%;">
         <div>
-            <h1>Loading game...</h1><br>
-            <h2>Loading Offline Progress... <span id='offlineSpeed'></span></h2>
+            <h1>Loading...</h1><br>
+            <h2><span id='offlineSpeed'></span></h2>
         </div>
         <span id="offlineGain" style="position: fixed; top: 75%; display: none">
             <span id="offlineGainDiv">1.00x mass gained!</span>
@@ -74,13 +74,13 @@
         <br>
         <div id="sns1" style='font-size: 25px;'>You have become SUPERNOVA!</div><br>
         <div id="sns2" style='font-size: 15px;'>You will reset everything...</div><br>
-        <div id="sns3" style='font-size: 15px;'>In order to restore the stars...</div><br>
-        <div id="sns4" style='font-size: 20px;'>... and to discover!</div><br>
-        <button class="btn" id="sns5" onclick="SUPERNOVA.reset()">Restore the order</button>
+        <div id="sns3" style='font-size: 15px;'>In order to restore stars...</div><br>
+        <div id="sns4" style='font-size: 20px;'>... and to discover cosmos!</div><br>
+        <button class="btn" id="sns5" onclick="SUPERNOVA.reset()">Restore the cosmos</button>
     </div>
     <div id='app_supernova' style='display: none'>
         <div style="position: absolute; top: 25px; left: 25px;">
-            <button class="btn" onclick="tmp.tab = tmp.sn_tab;">Back to Main</button>
+            <button class="btn" onclick="TABS.back()">Close</button>
             <button class="btn" id="supernova_restart" onclick="SUPERNOVA.reset(true)">Restart</button>
             <button class="btn" onclick="updateSupernovaSweep()" id="supernova_sweep">Auto-Sweep: ON</button>
         </div>
@@ -105,18 +105,18 @@
             <div class="bosons">
                 <div class="table_center">
                     <div class="graviton sub_b">
-                        You have <span id="graviton_amt">X</span> Graviton, which speeds Bosons production by <span id="graviton_eff0">Y</span>
+                        <span id="graviton_amt">X</span> Gravitons (<span id="graviton_eff0">Y</span>x Bosons)
                     </div>
                     <div class="higgs_boson sub_b">
-                        You have <span id="hb_amt">X</span> Higgs Boson, which raises Gravitons effect by <span id="hb_eff0">Y</span>
+                        <span id="hb_amt">X</span> Higgs Bosons (^<span id="hb_eff0">Y</span> effect)
                     </div>
                 </div><div class="table_center">
                     <div class="photon sub_b">
-                        You have <span id="photon_amt">X</span> Photon<br><br>
+                        <span id="photon_amt">X</span> Photons<br><br>
                         <div id="photon_upgs_table" class="table_center"></div>
                     </div>
                     <div class="gluon sub_b">
-                        You have <span id="gluon_amt">X</span> Gluon<br><br>
+                        <span id="gluon_amt">X</span> Gluons<br><br>
                         <div id="gluon_upgs_table" class="table_center"></div>
                     </div>
                 </div><div class="table_center">
@@ -131,7 +131,7 @@
                 </div>
             </div>
         </div><div id="stab_frame5_2">
-            <div id="f_hint">Note: Choosing any fermion will reset without being Supernova!</div>
+            <div id="f_hint">Note: Choosing any fermion will reset this run!</div>
             <div id="f_shrt">Note: Choosing a specific fermion will add a Shortcut!</div><br><br>
             <button class="btn" onclick="FERMIONS.backNormal()" id="f_normal">Back to Normal</button>
             <button class="btn" id="f_sweep" onclick="startSupernovaSweep('ferm')">Sweep</button>
@@ -147,15 +147,16 @@
                 </div>
             </div>
         </div><div id="stab_frame5_3">
-            Your frequency is <span id="frequency">0</span> Hz, which multiples any Fermions gain by <span id="frequency_eff">1</span>x<br>
-            <div id="radiation_unl">At <span id="next_radiation">0</span> of frequency, unlock <span id="unl_radiation">X</span></div><br><br>
+            Your frequency is <span id="frequency">0</span> Hz.
+			(<span id="frequency_eff">1</span>x Fermions)<br>
+            <div id="radiation_unl">(Unlock <span id="unl_radiation">X</span> at <span id="next_radiation">0</span>)</div><br><br>
             <button class="btn" onclick="RADIATION.max()">Max All</button>
             <div id="radiation_table"></div>
         </div>
     </div>
 	<div id="app_ext" style="z-index: 5">
 		<div style="position: absolute; top: 5px; left: 5px">
-			<button class="btn" onclick="TABS.choose(0)">Close</button>
+			<button class="btn" onclick="TABS.back()">Close</button>
 			<button class="btn" onclick="EXOTIC.reset(true)">Restart</button>
 		</div>
 
@@ -264,9 +265,9 @@
                     </div><div class="resources sml scarlet" id="ext_div">
                         <div tooltip="Exotic Matter" t-size="small"><img class="res_img" src="images/ext.png" tooltip="Exotic Matter" onclick="EXOTIC.reset()" onmousemove="FORMS.reset_msg.set('ext')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="extAmt">X</span>
-                    </div><div class="resources sml green" id="zt_div">
-                        <div tooltip="Primordial Chaos" t-size="small"><img class="res_img" src="images/zeta.png" tooltip="Zeta" onmousemove="FORMS.reset_msg.set('zeta')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
-                        <span style="margin-left: 5px; text-align: left;" id="ztAmt">0</span>
+                    </div><div class="resources sml purple" id="pres_div">
+                        <div tooltip="Prestige Tier" t-size="small"><img class="res_img" src="images/six.png" tooltip="Prestige Tier" onmousemove="FORMS.reset_msg.set('pres')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <span style="margin-left: 5px; text-align: left;" id="presAmt">0</span>
                     </div>
                 </div>
             </div><span id="reset_desc"></span>
@@ -449,7 +450,7 @@
             <button class="btn" onclick="if (confirm('Are you sure you want to RESET your progress to new game?')) {wipe(true)}">Hard Reset</button><br><br>
             <button class="btn" onclick="updateAarex(true)">Aarex's Theme: <span id="aarex_active">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">Notations</button>
-            <button class="btn" onclick="player.options.pure = !player.options.pure">Pure Numbers: <span id="pure">ON</span></button>
+            <button class="btn" onclick="player.options.pure = !player.options.pure">Mass: <span id="pure">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">Fonts</button>
             <button class="btn" id="tree_ani_btn" onclick="changeTreeAnimation()">Tree Animation: <span id="tree_ani">ON</span></button>
             <button class="btn" id="chroma_bg_btn" onclick="toggleChromaBG()">Chroma BG: <span id="chroma_bg">ON</span></button><br><br>
@@ -460,7 +461,7 @@
 			<span id="ver">(v1.0)</span> <span class="purple">Prismatic Recall</span>
 			<br>
             This mod is an alternative to MrRedShark77's <a href="https://mrredshark77.github.io/incremental-mass-rewritten/">Incremental Mass: Rewritten</a>.<br><br><br>
-            Hint 1: Hover top image above tabs to show description...
+            Hint 1: Hover a image to show description...
 			<div style="position: fixed; left: 3px; bottom: 3px; text-align: left">
 				<button class="btn" id="help" onclick="addPopup(POPUP_GROUPS.help)">Help</button><br>
 				<button class="btn locked">Discord (Soon)</button>
@@ -469,7 +470,7 @@
 				<button id="beta" class="btn" onclick="window.open('http://raw.githack.com/aarextiaokhiao/incremental-mass-rewritten/'+betaLink+'/')">Test Server</button>
 			</div>
         </div>
-        <b id="beginning" style="opacity: 0.05; font-size: 8px">At the very beginning, there's just mass. No nature, which leads us to a monotonic universe.<br>Altar awaits your recall, defying you from seeing nothing.<br><br>Rank up to proceed!</b>
+        <b id="beginning" style="opacity: 0.05; font-size: 8px">At the beginning, there's just mass. No nature, which leads to a monotonic universe.<br>Altar awaits your recall, defying you from nothing.<br><br>Rank up to proceed!</b>
     </div>
 </body>
 </html>

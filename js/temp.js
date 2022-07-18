@@ -136,8 +136,8 @@ function updateTemp() {
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
 	//Tab Forcing
-	if (zeta() && tmp.stab[0] < 4) tmp.stab[0] = 4
-	if (!zeta() && tmp.stab[0] == 4) tmp.stab[0] = 0
+	if (pres() && tmp.stab[0] < 4) tmp.stab[0] = 4
+	if (!pres() && tmp.stab[0] == 4) tmp.stab[0] = 0
 	if (player.ext.toned == 5) tmp.stab[1] = 0
 
 	//Exotic

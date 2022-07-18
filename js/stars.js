@@ -29,7 +29,7 @@ const STARS = {
     generators: {
         req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
         unl(auto=false) {
-            if (player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)) {
+            if (player.atom.quarks.gte(!hasTree("s4")||player.stars.unls<5?tmp.stars.generator_req:tmp.stars.generator_boost_req)) {
                 if(hasTree("s4")&&player.stars.unls > 4) player.stars.boost = auto?player.stars.boost.max(tmp.stars.generator_boost_bulk):player.stars.boost.add(1)
                 else player.stars.unls++
             }
@@ -43,7 +43,6 @@ const STARS = {
             }
 
             let x = E(player.stars.unls > i ? 1 : 0).add(player.stars.generators[i+1]||0).pow(pow)
-
             if (hasElement(49) && i==4) x = x.mul(tmp.elements.effect[49])
             if (hasTree("s1") && i==4) x = x.mul(treeEff("s1"))
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
@@ -75,6 +74,7 @@ function updateStarsTemp() {
 
 	ts.generator_boost_base = E(2)
 	if (hasElement(57)) ts.generator_boost_base = ts.generator_boost_base.mul(tmp.elements.effect[57])
+	if (future && tmp.tickspeedEffect) ts.generator_boost_base = ts.generator_boost_base.mul(expMult(tmp.tickspeedEffect.step,3/5).pow(1/250))
 	if (tmp.chal) ts.generator_boost_base = ts.generator_boost_base.pow(tmp.chal.eff[11])
 	if (GLUBALL.got("s2_1")) ts.generator_boost_base = ts.generator_boost_base.pow(GLUBALL.eff("s2_1"))
 
@@ -140,10 +140,10 @@ function updateStarsHTML() {
 
     elm.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
 	elm.star_btn.setHTML(
-		(player.stars.unls < 5 || !hasTree("s4")) ? `Unlock new type of Stars, require ${format(tmp.stars.generator_req)} Quark` :
-		`Boost all-Star resources gain, require ${format(tmp.stars.generator_boost_req)} Quark<br>`+
+		(player.stars.unls < 5 || !hasTree("s4")) ? `Unlock a new type of Stars. (${format(tmp.stars.generator_req)} Quarks)` :
+		`Boost Stars. (${format(tmp.stars.generator_boost_req)} Quarks)<br>`+
 		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.generator_boost_bonus.gt(0)?" + "+format(tmp.stars.generator_boost_bonus,0):"") +
-		`<br>Effect: ${format(tmp.stars.generator_boost_eff)}x (${format(tmp.stars.generator_boost_base,3)}x power)`
+		`<br>Effect: ${format(tmp.stars.generator_boost_eff)}x (${format(tmp.stars.generator_boost_base, 3)}x power)`
 	)
 
     elm.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})

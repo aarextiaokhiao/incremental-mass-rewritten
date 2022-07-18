@@ -122,7 +122,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(0,b)
             },
-            desc(x) { return `Radiowave is boosted by ${format(x)}x (based on Frequency)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x Radio. (based on Frequency)`+getSoftcapHTML(x,1e30) },
         },{
             title: `Tickspeed Boost`,
 			eff(b) {
@@ -143,7 +143,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(1,b)
             },
-            desc(x) { return `Microwave is boosted by ${format(x)}x (based on Radio)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x Microwave. (based on Radio)`+getSoftcapHTML(x,1e30) },
         },{
             title: `BH-Exponent Boost`,
             eff(b) {
@@ -163,7 +163,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(2,b)
             },
-            desc(x) { return `Infrared is boosted by ${format(x)}x (based on Microwave)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x Infrared. (based on Microwave)`+getSoftcapHTML(x,1e30) },
         },{
             title: `Photo-Gluon Boost`,
             eff(b) {
@@ -184,7 +184,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(3,b)
             },
-            desc(x) { return `Visible is boosted by ${format(x)}x (based on Infrared)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x Visible. (based on Infrared)`+getSoftcapHTML(x,1e30) },
         },{
             title: `Cosmic-Ray Boost`,
             eff(b) {
@@ -204,7 +204,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(4,b)
             },
-            desc(x) { return `Ultraviolet is boosted by ${format(x)}x (based on Visible)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x Ultraviolet. (based on Visible)`+getSoftcapHTML(x,1e30) },
         },{
             title: `Tickspeed-Cap Boost`,
 			eff(b) {
@@ -224,7 +224,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(5,b)
             },
-            desc(x) { return `X-Ray is boosted by ${format(x)}x (based on Ultraviolet)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x X-Rays. (based on Ultraviolet)`+getSoftcapHTML(x,1e30) },
         },{
             title: `U-Lepton Boost`,
             eff(b) {
@@ -246,7 +246,7 @@ const RADIATION = {
             eff(b) {
                 return RADIATION.selfBoost(6,b)
             },
-            desc(x) { return `Gamma is boosted by ${format(x)}x (based on X-Ray)`+getSoftcapHTML(x,1e30) },
+            desc(x) { return `Gain more ${format(x)}x Gamma. (based on X-Rays)`+getSoftcapHTML(x,1e30) },
         },
         {
             title: `Mass Exponent Boost`,
@@ -310,14 +310,16 @@ function setupRadiationHTML() {
         table += `
         <div id="${id}_div" class="table_center radiation">
             <div class="sub_rad" style="width: 450px">
-                Your distance of ${name}'s wave is <span id="${id}_distance">0</span> meter.<br>Which multiples ${x==0?"Frequency":"distance of "+RADIATION.names[x-1]} gain by <span id="${id}_disEff">1</span>x
+                ${name} wave is currently <span id="${id}_distance">0</span> m long.
+				<span id="${id}_disGain">0</span><br>
+				(<span id="${id}_disEff">1</span>x ${x==0?"Frequency":RADIATION.names[x-1]})
             </div><div class="table_center sub_rad" style="align-items: center">
                 <button id="${b1}_btn" class="btn rad" onclick="RADIATION.buyBoost(${2*x})">
                     Aplitude: <span id="${b1}_lvl1">0</span><br>
-                    Cost: <span id="${b1}_cost">0</span> meters
+                    Cost: <span id="${b1}_cost">0</span> m
                 </button><button id="${b2}_btn" class="btn rad" onclick="RADIATION.buyBoost(${2*x+1})">
                     Velocity: <span id="${b2}_lvl1">0</span><br>
-                    Cost: <span id="${b2}_cost">0</span> meters
+                    Cost: <span id="${b2}_cost">0</span> m
                 </button>
             </div><div class="sub_rad" style="width: 100%">
                 ${RADIATION.boosts[3*x].title} [<span id="rad_level_${3*x}">0</span>]: <span id="rad_level_${3*x}_desc">0</span><br>
@@ -351,7 +353,8 @@ function updateRadiationHTML() {
 
         elm[id+"_div"].setDisplay(unl)
         if (unl) {
-            elm[id+"_distance"].setTxt(format(player.supernova.radiation.ds[x],1)+" "+formatGain(player.supernova.radiation.ds[x],tmp.radiation.ds_gain[x]))
+            elm[id+"_distance"].setTxt(format(player.supernova.radiation.ds[x],1))
+            elm[id+"_disGain"].setTxt(formatGain(player.supernova.radiation.ds[x],tmp.radiation.ds_gain[x]))
             elm[id+"_disEff"].setTxt(format(tmp.radiation.ds_eff[x]))
 
             for (let y = 0; y < 2; y++) {

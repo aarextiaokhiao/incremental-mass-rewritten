@@ -79,7 +79,7 @@ const POPUP_GROUPS = {
     },
     notations: {
         html: `
-            <button class="btn" onclick="player.options.notation = 'mixed_sc'">Mixed Scientific</button>
+            <button class="btn" onclick="player.options.notation = 'mix'">Mixed Scientific</button>
             <button class="btn" onclick="player.options.notation = 'sc'">Scientific</button>
             <button class="btn" onclick="player.options.notation = 'log'">Logarithm</button>
             <button class="btn" onclick="player.options.notation = 'eng'">Engineering</button><br><br>
@@ -139,21 +139,20 @@ const POPUP_GROUPS = {
 	},
 
 
-    zeta_1: {
+    pres_1: {
         html: `
-            <img src="images/story/zeta_1.png"><br><br>
+            <img src="images/story/pres_1.png"><br><br>
             Spacetime has been imploded into unknown substances...
             The everyday life has been obliberated, but what cost?
-            Primordium Zeta seems to be remain mysterious.
         `,
         button: "Uh oh",
         otherStyle: {
             'font-size': "14px",
         },
     },
-    zeta_2: {
+    pres_2: {
         html: `
-            <img src="images/story/zeta_2.png"><br><br>
+            <img src="images/story/pres_2.png"><br><br>
             It is unknown whether it is good, chaos, prime, or not.
             You have come far enough, but unfortunately...
 			You are descended into a dimensionless entity.
@@ -163,9 +162,9 @@ const POPUP_GROUPS = {
             'font-size': "14px",
         },
     },
-    zeta_3: {
+    pres_3: {
         html: `
-            <img src="images/story/zeta_3.png"><br><br>
+            <img src="images/story/pres_3.png"><br><br>
             The dimensions bent beyond recogition, devoiding space.
             As you gain the sense of Primordials, you are proficient enough.
             Invisibly seeing the clouds, they give you a gift.
@@ -175,13 +174,13 @@ const POPUP_GROUPS = {
             'font-size': "14px",
         },
     },
-    zeta_4: {
+    pres_4: {
         html: `
-            <img src="images/story/zeta_4.png"><br><br>
-            The recipe of Primordium Zeta. The unknownness has come!
+            <img src="images/story/pres_4.png"><br><br>
+            You have been ascended. The unknownness has come!
             Let's reformulate the spatial and temporal axises!
 			<br><br>
-            Mass has been rebuilt based on Primordiums.
+            Mass has been rebuilt by Primordial Gods.
             <b style='font-size: 24px'>Good luck!</b>
         `,
         button: "Build em' all!",
@@ -384,12 +383,9 @@ function clickShortcut(x) {
 			player.shrt.order[SHORTCUT_EDIT.pos] = [x, -1]
 			SHORTCUT_EDIT.mode = 0
 		}
-		if (x == 1) {
-			tmp.tab = 3
-		}
+		if (x == 1) TABS.choose(3)
 		if (x == 2) {
-			tmp.sn_tab = tmp.tab
-			tmp.tab = 5
+			TABS.choose(5)
 			tmp.stab[5] = 2
 		}
 		return
@@ -417,13 +413,13 @@ CLICKING A KIND WILL COMPLETE THE PROCESS. */
 //FUTURE
 future = false
 
-function zeta() {
+function pres() {
 	return false
 }
 
-function zeta_story() {
-	addPopup(POPUP_GROUPS.zeta_1)
-	addPopup(POPUP_GROUPS.zeta_2)
-	addPopup(POPUP_GROUPS.zeta_3)
-	addPopup(POPUP_GROUPS.zeta_4)
+function pres_story() {
+	addPopup(POPUP_GROUPS.pres_1)
+	addPopup(POPUP_GROUPS.pres_2)
+	addPopup(POPUP_GROUPS.pres_3)
+	addPopup(POPUP_GROUPS.pres_4)
 }

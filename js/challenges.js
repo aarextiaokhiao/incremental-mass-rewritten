@@ -505,7 +505,7 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || pres() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and add Free Gluons`,
@@ -519,10 +519,10 @@ const CHALS = {
 				bp: x,
 			}
 		},
-        effDesc(x) { return "C10: ^"+format(x.c10)+", BP: +"+format(x.bp) },
+        effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.bp) },
 	},
 	15: {
-		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || zeta() },
+		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || pres() },
 		title: "Chernobyl Exclusion",
 		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
 		reward: `Multiply Polarizer.`,
@@ -536,7 +536,7 @@ const CHALS = {
 		effDesc(x) { return format(x)+"x" },
 	},
 	16: {
-		unl() { return zeta() },
+		unl() { return pres() },
 		title: "Subspatial Normalcy [Big Rip]",
 		desc: "Liquidate pre-Supernovae.",
 		reward: `Unlock Zeta Layer. <b style='color: red'>On completion, you are always stuck in this challenge permanently!</b>`,

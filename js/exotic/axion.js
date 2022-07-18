@@ -160,8 +160,8 @@ let AXION = {
 	maxRows: 6,
 	ids: {
 		0: {
-			title: "Supernova Time",
-			desc: "Speed up the Supernova productions.",
+			title: "Temporal Supernovae",
+			desc: "Speed up all Supernova productions.",
 			req: E(0),
 			eff(x) {
 				return x.mul(2).add(1).pow(2)
@@ -194,7 +194,7 @@ let AXION = {
 			}
 		},
 		3: {
-			title: "Radiation Scaling",
+			title: "Hyperradiant",
 			desc: "Radiation Boosters scale slower. [Max: ^1.25 for each tier]",
 			req: E(0.5),
 			eff(x) {
@@ -206,8 +206,8 @@ let AXION = {
 		},
 
 		4: {
-			title: "Excited Atomic",
-			desc: "Raise the base Atomic Power gains.",
+			title: "Nucleosynthesis",
+			desc: "Raise Particles.",
 			req: E(1),
 			eff(x) {
 				x = x.div(3).add(1).log(3).add(1)
@@ -220,7 +220,7 @@ let AXION = {
 		},
 		5: {
 			title: "Outrageous",
-			desc: "Multiply the cap increases to Rage Power.",
+			desc: "Multiply cap increments to Rage Power.",
 			req: E(0.5),
 			eff(x) {
 				return x.add(1).div(x.max(1).log(5).add(1))
@@ -241,7 +241,7 @@ let AXION = {
 			}
 		},
 		7: {
-			title: "Meta Zone",
+			title: "Radiant Overheat",
 			desc: "Multiply Meta Boosts based on radiation types.",
 			req: E(7),
 			eff(x) {
@@ -300,7 +300,7 @@ let AXION = {
 		},
 
 		12: {
-			title: "Supernovae",
+			title: "Hypernovae",
 			desc: "Cheapen Supernovae.",
 			unl: () => GLUBALL.unl(),
 			req: E(35),
@@ -312,7 +312,7 @@ let AXION = {
 			}
 		},
 		13: {
-			title: "Challenge",
+			title: "Deep Challenge",
 			desc: "Increase the cap of Challenges 7, 9 - 12.",
 			req: E(1),
 			eff(x) {
@@ -323,7 +323,7 @@ let AXION = {
 			}
 		},
 		14: {
-			title: "Insane",
+			title: "Insane Overcome",
 			desc: "Weaken Insane Challenge scaling.",
 			req: E(15),
 			eff(x) {
@@ -334,7 +334,7 @@ let AXION = {
 			}
 		},
 		15: {
-			title: "Pent",
+			title: "Pent Buildup",
 			desc: "Pent scales slower.",
 			req: E(1),
 			eff(x) {
@@ -373,8 +373,8 @@ let AXION = {
 			}
 		},
 		18: {
-			title: "Temporal Dimensionality",
-			desc: "Dilated Mass pushes evaporation softcap farther.",
+			title: "Hypermassive",
+			desc: "Dilated Mass pushes evaporation farther.",
 			unl: () => GLUBALL.unl(),
 			req: E(40),
 			eff(x) {
@@ -401,13 +401,13 @@ let AXION = {
 		},
 
 		20: {
-			title: "AX-Automation",
+			title: "AX-Auto",
 			desc: "Automate X/Y AXIONS.",
 			unl: () => GLUBALL.unl(),
 			req: E(8)
 		},
 		21: {
-			title: "Monochromacy Challenge",
+			title: "Monochromacy",
 			desc: "Unlock Challenges 14 - 15.",
 			unl: () => GLUBALL.unl(),
 			req: E(14)

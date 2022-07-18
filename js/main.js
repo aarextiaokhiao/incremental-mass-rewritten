@@ -2,7 +2,7 @@ var diff = 0;
 var date = Date.now();
 var player
 
-const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'zeta']
+const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'pres']
 const CONFIRMS_PNG = {
 	rp: "rp",
 	bh: "dm",
@@ -10,7 +10,7 @@ const CONFIRMS_PNG = {
 	sn: "sn",
 	ext: "ext",
 	ec: "chal_ext",
-	zeta: "zeta"
+	pres: "pres"
 }
 const CONFIRMS_UNL = {
 	rp: () => player.rp.unl && !EXT.unl(),
@@ -19,7 +19,7 @@ const CONFIRMS_UNL = {
 	sn: () => player.supernova.unl,
 	ext: () => EXT.unl(),
 	ec: () => GLUBALL.unl(),
-	zeta: () => zeta()
+	pres: () => pres()
 }
 
 const FORMS = {
@@ -296,7 +296,7 @@ const FORMS = {
 			atom: "Require over 1e100 uni of black hole to reset all previous features for gain Atoms & Quarks",
 			md: "Dilate mass, then cancel",
 			ext: "Require Challenge 12 to rise the exotic particles!",
-			zeta: "Prestige to embrace Primordial Gods!",
+			pres: "Prestige to embrace Primordial Gods!",
 		},
 		set(id) {
 			if (id=="sn") {

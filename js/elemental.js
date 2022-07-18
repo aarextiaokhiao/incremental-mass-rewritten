@@ -92,23 +92,23 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `C2's reward's softcap is 75% weaker.`,
+            desc: `C2's softcap scales 75% weaker.`,
             cost: E(1e21),
         },
         {
-            desc: `The Tetr requirement is 15% weaker.`,
+            desc: `Tetr scales 15% weaker.`,
             cost: E(6.5e21),
         },
         {
-            desc: `3rd & 4th challenges' scaling is weakened.`,
+            desc: `Weaken scalings for Challenges 3 & 4.`,
             cost: E(1e24),
         },
         {
-            desc: `Nitrogen's multiplier is squared.`,
+            desc: `Square Nitrogen-7.`,
             cost: E(1e27),
         },
         {
-            desc: `Power's gain from each particle formula is better.`,
+            desc: `Particles give more Particle Powers.`,
             cost: E(1e29),
             effect() {
                 return ATOM.particles.mg12()
@@ -116,7 +116,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `C7 completions add C5 - 6 completions.`,
+            desc: `C7 completions add C5 & 6 completions.`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
@@ -125,7 +125,7 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x) },
         },
         {
-            desc: `Passively gain Quarks.`,
+            desc: `Passively generate Quarks.`,
             cost: E(1e33),
         },
         {
@@ -133,7 +133,7 @@ const ELEMENTS = {
             cost: E(1e34),
         },
         {
-            desc: `Silicon now gets +2% for each element bought.`,
+            desc: `Elements produce more Quarks. (at a steady rate)`,
             cost: E(5e38),
             effect() {
                 let x = player.atom.elements.length*0.02
@@ -142,7 +142,7 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x*100)+"%" },
         },
         {
-            desc: `Raise Atom's gain by 1.1.`,
+            desc: `Raise Atoms by ^1.1.`,
             cost: E(1e40),
         },
         {
@@ -161,7 +161,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,this.softcap()) },
         },
         {
-            desc: `2nd Neutron's effect is better.`,
+            desc: `Neutron Power's 2nd effect is better.`,
             cost: E(1e50),
         },
         {
@@ -315,7 +315,7 @@ const ELEMENTS = {
             cost: E('e380'),
         },
         {
-            desc: `Stars boost relativistic particles.`,
+            desc: `Stars boost Relativistic Particles.`,
             cost: E('e420'),
             effect() {
                 let x = player.stars.points.add(1).pow(0.15).min(1e20)
@@ -324,7 +324,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Collapsed star's effect boosts black hole mass.`,
+            desc: `Star effect boosts Black Hole mass.`,
             cost: E('e510'),
             effect() {
                 let x = tmp.stars?tmp.stars.effect.eff.add(1).pow(0.02):E(1)
@@ -465,7 +465,7 @@ const ELEMENTS = {
             cost: E('e2e7'),
         },
         {
-            desc: `Mass makes Supernova scalings start later.`,
+            desc: `Mass scales Supernovae scalings later.`,
             cost: E('e3e7'),
             effect() {
 				let [m1, m2] = [player.mass.max(10).log10().log10().times(4), player.mass.max(1).log10().pow(1/5).div(3)]
@@ -476,7 +476,7 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50,100) },
         },
         {
-            desc: `Ranks make Meta-Tickspeed scales later.`,
+            desc: `Ranks scales Meta-Tickspeed later.`,
             cost: E('e4e7'),
             effect() {
                 let x = player.ranks.rank
@@ -486,7 +486,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Raise Lutetium-71 effect based on Neutron Stars.`,
+            desc: `Neutron Stars raise Lutetium-71.`,
             cost: E('e5e7'),
             effect() {
 				let r = player.supernova.stars.max(1).log10().div(75).max(1)
@@ -496,7 +496,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `Collapsed stars generate Neutron Stars faster.`,
+            desc: `Collapsed stars boost Neutron Stars.`,
             cost: E('e1e8'),
             effect() {
 				let log = player.stars.points.add(1).log10()
@@ -505,7 +505,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Increase the maximum completions of C5-6 by Supernovae.`,
+            desc: `Supernovae adds C5-6 completions.`,
             cost: E('e1.6e8'),
             effect() {
 				return player.supernova.times.times(3)
@@ -513,7 +513,7 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x) },
         },
         {
-            desc: `Gain more Frequency based on Tau and Neut-Muon.`,
+            desc: `Tau and Neut-Muon boost Frequency.`,
             cost: E('e3.5e8'),
 			effect() {
 				return player.supernova.fermions.tiers[1][2].div(40).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
@@ -521,7 +521,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Pent boosts all Axion productions.`,
+            desc: `Pent boosts Axions.`,
             cost: E('e2e9'),
             effect() {
 				return player.ranks.pent.add(1)
@@ -529,15 +529,15 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Velocity Upgrades scale 15% slower.`,
+            desc: `Velocity scales 15% slower.`,
             cost: E('e4e9'),
         },
         {
-            desc: `U-Lepton Boost is better.`,
+            desc: `Strengthen U-Lepton Boost.`,
             cost: E('e8e9'),
         },
         {
-            desc: `Hawking Radiation softcap starts ^2 later.`,
+            desc: `Hawking Radiation evaporates ^2 later.`,
             cost: E('e1.6e10')
         },
         {

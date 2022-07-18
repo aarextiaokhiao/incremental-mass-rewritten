@@ -194,7 +194,7 @@ function getPlayerData() {
         tickspeed: E(0),
         options: {
             font: 'Verdana',
-            notation: 'mixed_sc',
+            notation: 'mix',
             tree_animation: 0,
 			noChroma: true
         },
@@ -424,7 +424,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[7/8/22a BETA BUILD]"
+			document.getElementById("ver").textContent = "[7/17/22 BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}

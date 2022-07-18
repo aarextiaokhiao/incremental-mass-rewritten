@@ -216,7 +216,7 @@ function updateUpperHTML() {
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
 	let scut = hasTree("qol_shrt")
-	let zet = zeta()
+	let zet = pres()
 	elm.scut_div.setDisplay(scut && !zet)
 	elm.md_div.setDisplay(!scut && !zet)
 	if (zet) {
@@ -237,8 +237,8 @@ function updateUpperHTML() {
 	elm.res_col2.setDisplay(!unl)
 	if (unl) elm.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
 
-	unl = zeta()
-	elm.zt_div.setDisplay(unl)
+	unl = pres()
+	elm.pres_div.setDisplay(unl)
 }
 
 function updateRanksHTML() {
@@ -392,7 +392,7 @@ function updateOptionsHTML() {
 		elm["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
-	elm.pure.setTxt(player.options.pure?"ON":"OFF")
+	elm.pure.setTxt(player.options.pure?"OFF":"ON")
 	elm.help.setDisplay(!player.options.pure)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
@@ -403,7 +403,7 @@ function updateOptionsHTML() {
 function updateHTML() {
 	if (tmp.offlineActive) {
 		elm.offlineGain.setDisplay(tmp.offlineActive)
-		elm.offlineSpeed.setTxt("(" + format(tmp.offlineMult) + "x speed, " + formatTime(player.offline.time) + " left)")
+		elm.offlineSpeed.setTxt("(Offline: " + format(tmp.offlineMult) + "x, " + formatTime(player.offline.time) + " left)")
 		elm.offlineGainDiv.setHTML(
 			player.stats.maxMass.eq(player.offline.mass) || player.offline.mass.eq(0) ? "" :
 			(player.stats.maxMass.gte(mlt(1)) ? "^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) + " mass gained!"

@@ -1004,6 +1004,7 @@ function updateTreeHTML() {
 		<span class="green">${t_ch.effDesc?"Currently: "+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
 		`
 	)
+    tree_update = true
 
 	for (let i = 0; i < TREE_TAB.length; i++) {
 		elm["tree_tab"+i+"_btn"].setDisplay(TREE_TAB[i].unl?TREE_TAB[i].unl():true)

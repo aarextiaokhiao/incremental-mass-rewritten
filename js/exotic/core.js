@@ -64,7 +64,7 @@ let EXOTIC = {
 		EXT.doReset()
 		return true
 	},
-	doReset(zeta) {
+	doReset(pres) {
 		player.ext.time = 0
 		player.ext.chal.f7 = true
 		player.ext.chal.f8 = true
@@ -77,7 +77,7 @@ let EXOTIC = {
 		if (hasTree("qol_ext6")) list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6","fn7","fn8")
 		if (hasTree("qol_ext7")) list = list.concat("unl1","rad1","rad2","rad3","rad4","rad5")
 
-		let perm_lvl = zeta ? 2 : 1
+		let perm_lvl = pres ? 2 : 1
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
 			let it = player.supernova.tree[x]

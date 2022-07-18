@@ -102,7 +102,7 @@ const BOSONS = {
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: () => bosonsMastered() ? "Produce more Photons." : "Photons gain is boosted by Collapsed Star.",
+                desc: () => bosonsMastered() ? "Produce more Photons." : "Collapsed stars boost Photons.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
@@ -112,7 +112,7 @@ const BOSONS = {
 				},
                 effDesc(x) { return format(x)+"x"+(bosonsMastered()?"":getSoftcapHTML(x,1e15)) },
             },{
-                desc: () => "All-Star resources gain is boosted by Photon.",
+                desc: () => "Photons boost Stars.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(1e5) ? x.div(1e5).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
@@ -145,7 +145,7 @@ const BOSONS = {
                 },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: () => bosonsMastered() ? "Produce more Gluons." : "Gluons gain is boosted by Quark.",
+                desc: () => bosonsMastered() ? "Produce more Gluons." : "Quarks boost Gluons.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
@@ -155,7 +155,7 @@ const BOSONS = {
 				},
                 effDesc(x) { return format(x)+"x"+(bosonsMastered()?"":getSoftcapHTML(x,1e15)) },
             },{
-                desc: () => "Supernova requirement is decreased based on Gluon.",
+                desc: () => "Gluons weaken Supernovae scaling.",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
