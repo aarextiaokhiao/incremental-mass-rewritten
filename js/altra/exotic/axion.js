@@ -258,7 +258,7 @@ let AXION = {
 			unl: () => GLUBALL.unl(),
 			req: E(18),
 			eff(x) {
-				return x.add(1).log(3).add(1)
+				return x.add(1).log(3).add(1).pow(.75)
 			},
 			effDesc(x) {
 				return "^" + format(x)
@@ -378,7 +378,7 @@ let AXION = {
 			unl: () => GLUBALL.unl(),
 			req: E(40),
 			eff(x) {
-				return x.div(4).add(1).log(2).div(150).min(.05)
+				return x.div(4).add(1).log10().div(100).min(.05)
 			},
 			effDesc(x) {
 				return "+^"+format(x,4)
@@ -391,12 +391,14 @@ let AXION = {
 			unl: () => GLUBALL.unl(),
 			eff(x) {
 				if (x.lte(0)) return E(1)
-				let r = player.md.mass.add(1).log10().add(1).log10().div(50).add(1) // log^2(Dilated mass)
-				r = r.pow(x.div(5).add(1).sqrt().sub(1)) // Levels
-				return r
+
+				let dm = player.md.mass.max(1).log10().max(1).log10()
+				let exp = dm.div(50).pow(.6)
+				if (future) exp = exp.mul(x.pow(.2).div(3).max(1))
+				return x.div(100).add(1.5).pow(exp)
 			},
 			effDesc(x) {
-				return "^"+format(x)
+				return "^"+format(x,3)
 			}
 		},
 
@@ -416,7 +418,7 @@ let AXION = {
 			title: "Primordia Lookback",
 			desc: "Unlock Primordiums.",
 			unl: () => GLUBALL.unl(),
-			req: EINF
+			req: E(145)
 		},
 		23: {
 			title: "Shortcut Mastery",

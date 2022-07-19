@@ -437,7 +437,7 @@ function loadGame(start=true, save) {
 
 function checkNaN() {
 	if (findNaN(player)) {
-		if (false && new Date().getTime() - lastLoad < 60000) wipe(true)
+		if (new Date().getTime() - lastLoad < 60000) wipe(true)
 		else {
 			loadGame(false)
 			addNotify("Game Data got NaNed")

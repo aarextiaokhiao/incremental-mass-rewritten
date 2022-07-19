@@ -89,7 +89,7 @@ let GLUBALL = {
 			desc: (x) => "Add Neutron Condensers by +^"+format(x,3)+".",
 			color: "#0000bf",
 			eff(x) {
-				return x.div(30)
+				return x.div(15)
 			},
 		},
 		p1_3: {
@@ -100,10 +100,10 @@ let GLUBALL = {
 			},
 		},
 		p2_3: {
-			desc: (x) => "MD Upgrade 2 boosts General Relativity.",
+			desc: (x) => "Placeholder.",
 			color: "#00ff00",
 			eff(x) {
-				return E(0)
+				return 1
 			},
 		},
 		p3_3: {
@@ -149,7 +149,7 @@ let GLUBALL = {
 			desc: (x) => "Rank boosts Mass by "+format(x)+"x.",
 			color: "#00bfbf",
 			eff(x) {
-				return E(1.001).pow(player.ranks.rank.pow(3))
+				return E(10).pow(player.ranks.rank.mul(x.div(50).min(.08)).pow(3))
 			},
 		},
 		s3_2: {
@@ -193,7 +193,7 @@ let GLUBALL = {
 			desc: (x) => "Tier scales linearly, but nullify Neutrino.",
 			color: "#3f007f",
 			eff(x) {
-				return E(1)
+				return 1
 			},
 		},
 		t6_1: {

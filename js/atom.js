@@ -79,8 +79,8 @@ const ATOM = {
         buyMax() {
 			if (CHALS.inChal(14)) return
             if (tmp.atom.gamma_ray_can) {
-                if (!hasTree("qol_ext5")) player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
-                player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
+                if (!hasTree("qol_ext5")) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
             }
 			buyExtraBuildings("ag",2)
 			buyExtraBuildings("ag",3)
