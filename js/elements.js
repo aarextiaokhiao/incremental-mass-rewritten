@@ -113,12 +113,12 @@ function setupHTML() {
 	setupBosonsHTML()
 	setupFermionsHTML()
 	setupRadiationHTML()
-	setupExtHTML()
+	setupAltraHTML()
 
 	let confirm_table = new Element("confirm_table")
 	table = ""
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : x == 5 ? "chal_ext" : CONFIRMS[x]}.png" style='width: 40px; height: 40px'><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">OFF</button></div>`
+		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${CONFIRMS_PNG[CONFIRMS[x]]}.png" style='width: 40px; height: 40px'><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">OFF</button></div>`
 	}
 	confirm_table.setHTML(table)
 
@@ -151,6 +151,7 @@ function updateTabsHTML() {
 				if (unl) unls++
 			}
 			elm["stabs"+x].setDisplay(x == tmp.tab && unls > 1)
+			if (x ==6) elm["ext_bar"].setDisplay(x == tmp.tab && unls > 1)
 		}
 	}
 }
@@ -162,7 +163,7 @@ function updateUpperHTML() {
 
 	let unl = (player.stats.maxMass.gte(1e9) || player.rp.unl) && !hideSome
 	elm.rp_div.setDisplay(unl)
-	elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
+	if (unl) elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 
 	unl = FORMS.bh.see() && !hideSome
 	elm.dm_div.setDisplay(unl)
@@ -205,7 +206,7 @@ function updateUpperHTML() {
 		elm.chal_upper.setHTML(
 			`You are in [${CHALS[chal].title}] Challenge!<br>` + (
 				player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
-				tmp.chal.gain.gt(0) ? `+${tmp.chal.gain} (Next: ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})` :
+				tmp.chal.gain.gt(0) ? `+${format(tmp.chal.gain,0)} (Next: ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})` :
 				`Get ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.`
 			)
 		)
@@ -215,17 +216,14 @@ function updateUpperHTML() {
 	elm.quark_div.setDisplay(unl)
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
+	let pres = PRES.unl()
 	let scut = hasTree("qol_shrt")
-	let zet = pres()
-	elm.scut_div.setDisplay(scut && !zet)
-	elm.md_div.setDisplay(!scut && !zet)
-	if (zet) {
-		if (scut) updateShortcuts()
-		else {
-			unl = MASS_DILATION.unlocked()
-			elm.md_div.setDisplay(unl)
-			if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
-		}
+	elm.scut_div.setDisplay(scut && !pres)
+	elm.md_div.setDisplay()
+	if (scut) updateShortcuts()
+	else if (!pres) {
+		unl = MASS_DILATION.unlocked()
+		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
 	}
 
 	unl = player.supernova.post_10
@@ -235,9 +233,9 @@ function updateUpperHTML() {
 	unl = EXT.unl(true)
 	elm.ext_div.setDisplay(unl)
 	elm.res_col2.setDisplay(!unl)
-	if (unl) elm.extAmt.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
+	if (unl) elm.extAmt.setHTML(format(player.ext.amt,1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain):""))
 
-	unl = pres()
+	unl = PRES.unl()
 	elm.pres_div.setDisplay(unl)
 }
 
@@ -412,6 +410,7 @@ function updateHTML() {
 	}
 
 	elm.loading.setDisplay(tmp.offlineActive)
+	elm.offlineGainDiv.setDisplay(tmp.offlineActive)
     elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 5 && (!tmp.supernova.reached || player.supernova.unl))
 	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | IM: Altrascendum")
 	if (tmp.offlineActive) return

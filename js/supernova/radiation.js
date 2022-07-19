@@ -234,7 +234,7 @@ const RADIATION = {
             },
             desc(x) { return `U-Lepton boosts are ${format(x)}x stronger.` },
         },{
-            title: `Meta Boost II / Synergy Boost`,
+            title: `Velocital-Meta Boost`,
             eff(b) {
 				let r = b.mul(player.supernova.radiation.ds[5].add(1).log10().pow(5/6)).pow(2/5)
                 return [r.div(10).mul(hasTree("rad4")?1.5:1), r.div(100).min(0.05).toNumber()]

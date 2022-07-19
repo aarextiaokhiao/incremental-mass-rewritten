@@ -45,7 +45,7 @@ const ELEMENTS = {
             cost: E(5e8),
         },
         {
-            desc: `Hardened Challenge scale 25% weaker.`,
+            desc: `Hardened Challenges scale 25% weaker.`,
             cost: E(2.5e12),
         },
         {
@@ -67,7 +67,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x stronger" },
         },
         {
-            desc: `The 7th challenge's effect is twice as effective.`,
+            desc: `C7 reward is twice as effective.`,
             cost: E(1e18),
         },
         {
@@ -82,7 +82,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Carbon's effect is now multiplied by the number of elements bought.`,
+            desc: `Elements multiply Carbon-6.`,
             cost: E(1e20),
             effect() {
                 let x = E(player.atom.elements.length+1)
@@ -145,21 +145,25 @@ const ELEMENTS = {
             desc: `Raise Atoms by ^1.1.`,
             cost: E(1e40),
         },
-        {
-            desc: `You can automatically buy Cosmic Rays. Cosmic Ray raise Tickspeed.`,
-            cost: E(1e44),
-            softcap() {
-                let x = E(1.3)
-                if (hasPrim("p1_0")) x = x.mul(tmp.pr.eff.p1_0)
-                return x
-            },
-            effect() {
-                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
-                if (hasTree("ext_u2")) x = x.pow(2)
-                return x.softcap(this.softcap(),0.1,0)
-            },
-            effDesc(x) { return "^"+format(x)+getSoftcapHTML(x,this.softcap()) },
-        },
+		{
+			desc: `You can automatically buy Cosmic Rays. Cosmic Ray raise Tickspeed.`,
+			cost: E(1e44),
+			softcap() {
+				let x = E(1.3)
+				if (hasPrim("p1_0")) x = x.mul(tmp.pr.eff.p1_0)
+				return x
+			},
+			effect() {
+				let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
+				let sc = this.softcap()
+				if (hasTree("ext_u2")) x = x.pow(2)
+				return x.softcap(sc,0.1,0).softcap(sc.mul(100),1/5,0)
+			},
+			effDesc(x) {
+				let sc = this.softcap()
+				return "^"+format(x)+getSoftcapHTML(x,sc,sc.mul(100))
+			},
+		},
         {
             desc: `Neutron Power's 2nd effect is better.`,
             cost: E(1e50),
@@ -199,7 +203,7 @@ const ELEMENTS = {
             cost: E(1e80),
         },
         {
-            desc: `Hardened Challenge scaling weaker for each element bought.`,
+            desc: `Hardened Challenge scales weaker per Element.`,
             cost: E(1e85),
             effect() {
                 let x = E(0.99).pow(E(player.atom.elements.length).softcap(30,2/3,0)).max(0.5)
@@ -307,7 +311,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `You can now automatically buy mass dilation upgrades if you purchased any first. They no longer spent dilated mass.`,
+            desc: `You can now automatically buy mass dilation upgrades if you purchased any first. They no longer spend dilated mass.`,
             cost: E('e360'),
         },
         {
@@ -358,7 +362,7 @@ const ELEMENTS = {
             cost: E('e2400'),
         },
         {
-            desc: `Mass of black hole boost atomic powers gain at a reduced rate.`,
+            desc: `Black Hole mass boosts Atomic Powers.`,
             cost: E('e2800'),
             effect() {
                 let x = expMult(player.bh.mass.add(1),0.6)
@@ -432,19 +436,19 @@ const ELEMENTS = {
             cost: E('e3e5'),
         },
         {
-            desc: `Rewards from Challenges 3-4 & 8 are 50% effective.`,
+            desc: `Strengthen C3, 4, and 8 rewards by 50%.`,
             cost: E('e5e5'),
         },
         {
-            desc: `Add 200 more C7 & c8 maximum completions.`,
+            desc: `Add 200 more C7 & 8 maximum completions.`,
             cost: E('e8e5'),
         },
         {
-            desc: `Lanthanum's effect is twice stronger.`,
+            desc: `Square Lanthanum-57.`,
             cost: E('e1.1e6'),
         },
         {
-            desc: `Stars boost quarks. [Stacked with Mo-42]`,
+            desc: `Stars boost Quarks. [Stacked with Mo-42]`,
             cost: E('e1.7e6'),
             effect() {
                 let x = player.stars.points.add(1)
@@ -453,11 +457,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Meta-Tickspeed start 2x later.`,
+            desc: `Meta-Tickspeed scales 2x later.`,
             cost: E('e4.8e6'),
         },
         {
-            desc: `Gain 1 level to all Radiation boosts up to Visible.`,
+            desc: `Gain 1 level to Radiation boosts up to Visible.`,
             cost: E('e1.6e7'),
         },
         {
@@ -541,7 +545,7 @@ const ELEMENTS = {
             cost: E('e1.6e10')
         },
         {
-            desc: `<b id="final_81">[Final Element]</b> Pent requirement is reduced by 15%.`,
+            desc: `<b id="final_81">[Final Element]</b> Pent requires 15% less.`,
             cost: E('e3.2e10'),
         },
     ],

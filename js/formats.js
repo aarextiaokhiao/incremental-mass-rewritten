@@ -133,7 +133,7 @@ const FORMATS = {
 			return [abbreviation, value];
 		},
 		formatElementalPart(abbreviation, n) {
-			if (n.eq(1)) {
+			if (n.lte(1)) {
 			  return abbreviation;
 			}
 			return `${n} ${abbreviation}`;
@@ -270,16 +270,16 @@ const FORMATS = {
 			while (ill_2.gte(1e3)) {
 				ill_2 = ill_2.log10().div(3)
 				tier++
-				if (tier > 2) return formatDef(ex, acc, color)
+				if (tier > 3) return formatDef(ex, acc, color)
 			}
-			ill = E(10).pow(ill_2.sub(ill_2.floor()).mul(3))
+			ill = E(10).pow(ill_2.sub(ill_2.floor()).mul(3)).toNumber()
 			ill_2 = ill_2.floor().toNumber()
 
 			let final = ""
-			for (var i = 0; i < 2; i++) {
-				let d = Math.floor(ill.mul(Math.pow(1e3, i)).toNumber()) % 1e3
-				if (d && final) final += "-"
-				if (d > 1) final += this["tier"+(tier-1)](d, color)
+			for (var i = 0; i < (ill_2 < 100 ? 2 : 1); i++) {
+				let d = Math.floor(ill * Math.pow(10, i*3)) % 1e3
+				if (d && final) final += ST_CONNECTIONS[tier]
+				if (d > 1 || (ill_2 == 1 && i == 1)) final += this["tier"+(tier-1)](d, color, "mul")
 				if (d) final += this["tier"+tier](ill_2, color)
 				ill_2--
 				if (ill_2 < 0) break
@@ -311,7 +311,7 @@ const FORMATS = {
 			return colorize(r, color, "red")
 		},
 		tier3(x, color, mode) {
-			return colorize(ST_NAMES[3], color, "magenta")
+			return colorize(ST_NAMES[3][0][x], color, "magenta")
 		}
 	}
 }
@@ -323,17 +323,19 @@ const ST_NAMES = [
 		["","Ce","De","Te","Qae","Qte","Sxe","Spe","Oce","Noe"],
 	],[
 		["","Mi","Mc","Na","Pc","Fm","At","Zp","Yc","Xn"],
-		["","Me","Du","Tre","Te","Pe","He","Hp","Ot","En"],
-		["","","Is","Trc","Tec","Pec","Hec","Hpc","Otc","Enc"],
-		["","Hec","DHc","TrH","TeH","PeH","HeH","HpH","OtH","EnH"]
+		["","Me","Du","Tre","Te","Pe","Hx","Hp","Ot","En"],
+		["","","Is","Trc","Tec","Pec","Hxc","Hpc","Otc","Enc"],
+		["","Hec","DHc","TrH","TeH","PeH","HxH","HpH","OtH","EnH"]
 	],[
-		["","Ki","Mg"]
+		["","Kl","Mg","Gi","Tr","Pt","Ex","Zt","Yt","Xe"]
 	]
 ]
+const ST_CONNECTIONS = ["", "", "-", "a-"]
 
 const INFINITY_NUM = E(2).pow(1024);
 const SUBSCRIPT_NUMBERS = "₀₁₂₃₄₅₆₇₈₉";
 const SUPERSCRIPT_NUMBERS = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 function toSubscript(value) {
     return value.toFixed(0).split("")
@@ -356,9 +358,9 @@ function format(ex, acc=2, type=player.options.notation, color) {
 	ex = E(ex)
 
 	//Special Formatting
-	if (Number.isNaN(ex.mag)) return 'NaN'
-	if (ex.lt(0)) return "-" + format(ex.mul(-1), acc, type, color)
-	if (ex.eq(0)) return ex.toFixed(acc)
+	if (Number.isNaN(ex.mag) || Number.isNaN(ex.sign)) return 'NaN'
+	if (ex.mag == 0) return ex.toFixed(acc)
+	if (ex.sign == -1) return "-" + format(ex.neg(), acc, type, color)
 	if (ex.mag == 1/0) return '∞'
 
 	if (!FORMATS[type]) type = "mix"

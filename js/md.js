@@ -12,10 +12,10 @@ const MASS_DILATION = {
 	},
 	getPenalty() {
 		if (CHALS.inChal(12)) return 3/7
-		var x = FERMIONS.onActive("02") ? 0.64 : 0.8
-		if (tmp.fermions) x = Math.pow(x, 1 / tmp.fermions.effs[0][4])
-		if (GLUBALL.got("p2_2")) x /= GLUBALL.eff("p2_2")
-		return x
+		var exp = 1
+		if (tmp.fermions) exp /= tmp.fermions.effs[0][4]
+		if (GLUBALL.got("p2_2")) exp /= GLUBALL.eff("p2_2")
+		return Math.pow(FERMIONS.onActive("02") ? 0.64 : 0.8, exp)
 	},
 	applyDil(x) {
 		return expMult(x, tmp.md.penalty).min(x)

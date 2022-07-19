@@ -29,8 +29,8 @@ const STARS = {
     generators: {
         req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
         unl(auto=false) {
-            if (player.atom.quarks.gte(!hasTree("s4")||player.stars.unls<5?tmp.stars.generator_req:tmp.stars.generator_boost_req)) {
-                if(hasTree("s4")&&player.stars.unls > 4) player.stars.boost = auto?player.stars.boost.max(tmp.stars.generator_boost_bulk):player.stars.boost.add(1)
+            if (player.atom.quarks.gte(!hasTree("s4")||player.stars.unls<5?tmp.stars.gen_req:tmp.stars.gb_req)) {
+                if(hasTree("s4")&&player.stars.unls > 4) player.stars.boost = auto?player.stars.boost.max(tmp.stars.gb_bulk):player.stars.boost.add(1)
                 else player.stars.unls++
             }
         },
@@ -48,7 +48,7 @@ const STARS = {
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
             if (hasElement(54)) x = x.mul(tmp.elements.effect[54])
             if (!scalingToned("supernova")) x = x.mul(tmp.bosons.upgs.photon[3].effect)
-            return x.mul(tmp.stars.generator_boost_eff)
+            return x.mul(tmp.stars.gb_eff)
         },
     },
     colors: ["#0085FF","#BFE0FF","#FFD500","#FF5200","#990000"],
@@ -57,31 +57,31 @@ const STARS = {
 function calcStars(dt) {
     player.stars.points = player.stars.points.add(tmp.stars.gain.mul(dt))
     if (!player.supernova.post_10) player.stars.points = player.stars.points.min(tmp.supernova.maxlimit)
-    for (let x = 0; x < 5; x++) player.stars.generators[x] = player.stars.generators[x].add(tmp.stars.generators_gain[x].mul(dt))
+    for (let x = 0; x < 5; x++) player.stars.generators[x] = player.stars.generators[x].add(tmp.stars.gen_gains[x].mul(dt))
 
     if (hasTree("qol4")) STARS.generators.unl(true)
 }
 
 function updateStarsTemp() {
 	if (!tmp.stars) tmp.stars = {
-		generators_gain: [],
+		gen_gains: [],
 	}
 
 	let ts = tmp.stars
-	ts.generator_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
-	ts.generator_boost_req = E("e100").pow(player.stars.boost.pow(1.25)).mul('e8000')
-	ts.generator_boost_bulk = player.atom.quarks.gte("e8000")?player.atom.quarks.div("e8000").max(1).log("e100").root(1.25).add(1).floor():E(0)
+	ts.gen_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
+	ts.gb_req = E("e100").pow(player.stars.boost.pow(1.25)).mul('e8000')
+	ts.gb_bulk = player.atom.quarks.gte("e8000")?player.atom.quarks.div("e8000").max(1).log("e100").root(1.25).add(1).floor():E(0)
 
-	ts.generator_boost_base = E(2)
-	if (hasElement(57)) ts.generator_boost_base = ts.generator_boost_base.mul(tmp.elements.effect[57])
-	if (future && tmp.tickspeedEffect) ts.generator_boost_base = ts.generator_boost_base.mul(expMult(tmp.tickspeedEffect.step,3/5).pow(1/250))
-	if (tmp.chal) ts.generator_boost_base = ts.generator_boost_base.pow(tmp.chal.eff[11])
-	if (GLUBALL.got("s2_1")) ts.generator_boost_base = ts.generator_boost_base.pow(GLUBALL.eff("s2_1"))
+	ts.gb_base = E(2)
+	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
+	if (future) ts.gb_base = ts.gb_base.mul(expMult(tmp.tickspeedEffect.step,1/9).pow(.01))
+	if (tmp.chal) ts.gb_base = ts.gb_base.pow(tmp.chal.eff[11])
+	if (GLUBALL.got("s2_1")) ts.gb_base = ts.gb_base.pow(GLUBALL.eff("s2_1"))
 
-	ts.generator_boost_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
-	ts.generator_boost_eff = ts.generator_boost_base.pow(player.stars.boost.add(ts.generator_boost_bonus))
+	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
+	ts.gb_eff = ts.gb_base.pow(player.stars.boost.add(ts.gb_bonus))
 
-	for (let x = 0; x < 5; x++) ts.generators_gain[x] = STARS.generators.gain(x)
+	for (let x = 0; x < 5; x++) ts.gen_gains[x] = STARS.generators.gain(x)
 	ts.softPower = STARS.softPower()
 	ts.softGain = STARS.softGain()
 	ts.gain = STARS.gain()
@@ -140,18 +140,18 @@ function updateStarsHTML() {
 
     elm.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
 	elm.star_btn.setHTML(
-		(player.stars.unls < 5 || !hasTree("s4")) ? `Unlock a new type of Stars. (${format(tmp.stars.generator_req)} Quarks)` :
-		`Boost Stars. (${format(tmp.stars.generator_boost_req)} Quarks)<br>`+
-		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.generator_boost_bonus.gt(0)?" + "+format(tmp.stars.generator_boost_bonus,0):"") +
-		`<br>Effect: ${format(tmp.stars.generator_boost_eff)}x (${format(tmp.stars.generator_boost_base, 3)}x power)`
+		(player.stars.unls < 5 || !hasTree("s4")) ? `Unlock a new type of Stars. (${format(tmp.stars.gen_req)} Quarks)` :
+		`Boost Stars. (${format(tmp.stars.gb_req)} Quarks)<br>`+
+		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.gb_bonus.gt(0)?" + "+format(tmp.stars.gb_bonus,0):"") +
+		`<br>Effect: ${format(tmp.stars.gb_eff)}x (${format(tmp.stars.gb_base, 3)}x power)`
 	)
 
-    elm.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
+    elm.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.gen_req:tmp.stars.gb_req)})
 
     for (let x = 0; x < 5; x++) {
         let unl = player.stars.unls > x
         elm["star_gen_div_"+x].setDisplay(unl)
         if (elm["star_gen_arrow_"+x]) elm["star_gen_arrow_"+x].setDisplay(unl)
-        if (unl) elm["star_gen_"+x].setHTML(format(player.stars.generators[x],2)+"<br>"+formatGain(player.stars.generators[x],tmp.stars.generators_gain[x]))
+        if (unl) elm["star_gen_"+x].setHTML(format(player.stars.generators[x],2)+"<br>"+formatGain(player.stars.generators[x],tmp.stars.gen_gains[x]))
     }
 }

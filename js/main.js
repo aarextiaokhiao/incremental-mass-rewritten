@@ -10,7 +10,7 @@ const CONFIRMS_PNG = {
 	sn: "sn",
 	ext: "ext",
 	ec: "chal_ext",
-	pres: "pres"
+	pres: "six"
 }
 const CONFIRMS_UNL = {
 	rp: () => player.rp.unl && !EXT.unl(),
@@ -19,7 +19,7 @@ const CONFIRMS_UNL = {
 	sn: () => player.supernova.unl,
 	ext: () => EXT.unl(),
 	ec: () => GLUBALL.unl(),
-	pres: () => pres()
+	pres: () => PRES.unl()
 }
 
 const FORMS = {
@@ -99,13 +99,13 @@ const FORMS = {
 		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.inChal(2) && !CHALS.inChal(6) && !CHALS.inChal(10) },
 		buy() {
 			if (this.can()) {
-				if (!hasUpgrade('atom',2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasTree("qol_ext5")) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = player.tickspeed.add(1)
 			}
 		},
 		buyMax() { 
 			if (this.can()) {
-				if (!hasUpgrade('atom',2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasTree("qol_ext5")) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = tmp.tickspeedBulk
 			}
 		},
@@ -135,7 +135,6 @@ const FORMS = {
 			let eff = step.pow(t.add(bonus))
 			if (!hasTree("ext_u2") && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
-			if (hasPrim("p2_0")) eff = eff.pow(tmp.pr.eff.p2_0)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
 		},
 		autoUnl() { return hasUpgrade('bh',5) },
@@ -243,15 +242,15 @@ const FORMS = {
 			buy() {
 				if (CHALS.inChal(14)) return
 				if (this.can()) {
-					player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasTree("qol_ext5")) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
 				if (CHALS.inChal(14)) return
 				if (this.can()) {
+					if (!hasTree("qol_ext5")) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
-					player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 				}
 				buyExtraBuildings("bh",2)
 				buyExtraBuildings("bh",3)

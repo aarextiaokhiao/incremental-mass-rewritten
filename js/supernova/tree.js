@@ -65,7 +65,7 @@ const TREE_UPGS = {
     },
     ids: {
         c: {
-            desc: `Start generating 0.1 Neutron Star per second (not affected by offline production).`,
+            desc: `Start generating 0.1 Neutron Stars per second. (no offline)`,
 			perm: 2,
             cost: E(0),
         },
@@ -205,7 +205,6 @@ const TREE_UPGS = {
             cost: E(10000),
             effect() {
                 let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
-                if (future) x = x.pow(5) //Max: ^10 (Inflation)
                 return x
             },
             effDesc(x) { return "^"+format(x) },
@@ -365,7 +364,7 @@ const TREE_UPGS = {
         bs4: {
             unl() { return player.supernova.fermions.unl },
             branch: ["bs2"],
-            desc: `Raise Z Bosons gain to the 1.5th power.`,
+            desc: `Raise Z Bosons by ^1.5.`,
             cost: E(1e24),
         },
         fn1: {
@@ -653,7 +652,7 @@ const TREE_UPGS = {
 			unl() { return EXT.unl() },
 			req() { return player.supernova.times.gte(4) },
 			reqDesc() { return `${format(4,0)} Supernovae` },
-			desc: `You don't need to do requirements before buying several Supernova upgrades.`,
+			desc: `Skip requirements for several Supernova upgrades.`,
 			cost: E(2000),
 			icon: "qol_ext"
 		},
@@ -685,7 +684,7 @@ const TREE_UPGS = {
 		},
 		qol_ext5: {
 			branch: ["qol_ext1"],
-			desc: `Keep the core Supernova upgrades.`,
+			desc: `Keep the core Supernova upgrades. Buildings no longer spend anything.`,
 			cost: E(1e170),
 			icon: "qol_ext"
 		},

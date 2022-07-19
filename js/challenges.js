@@ -366,7 +366,7 @@ const CHALS = {
         pow: E(1.25),
         start: E(1.5e136),
         effect(x) {
-            let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0))
+            let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0)).max(.5)
             return ret
         },
         effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(x.log(0.97),5) },
@@ -491,7 +491,7 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	13: {
-		unl() { return hasTree("chal8") },
+		unl() { return hasTree("chal8") || PRES.unl() },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks.",
 		reward: `Weaken Axion penalties.<br><span class="ch_color">On 13th completion, unlock Glueballs!</span>`,
@@ -505,7 +505,7 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || pres() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || PRES.unl() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and add Free Gluons`,
@@ -522,7 +522,7 @@ const CHALS = {
         effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.bp) },
 	},
 	15: {
-		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || pres() },
+		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || PRES.unl() },
 		title: "Chernobyl Exclusion",
 		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
 		reward: `Multiply Polarizer.`,
@@ -536,7 +536,7 @@ const CHALS = {
 		effDesc(x) { return format(x)+"x" },
 	},
 	16: {
-		unl() { return pres() },
+		unl() { return PRES.unl() },
 		title: "Subspatial Normalcy [Big Rip]",
 		desc: "Liquidate pre-Supernovae.",
 		reward: `Unlock Zeta Layer. <b style='color: red'>On completion, you are always stuck in this challenge permanently!</b>`,

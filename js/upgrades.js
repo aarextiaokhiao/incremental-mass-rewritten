@@ -19,7 +19,7 @@ const UPGS = {
         buy(x, manual=false) {
             let cost = manual ? this.getData(x).cost : tmp.upgs.mass[x].cost
             if (player.mass.gte(cost)) {
-                if (!hasUpgrade('bh',1)) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh',1) && !hasTree("qol_ext5")) player.mass = player.mass.sub(cost)
                 if (!player.massUpg[x]) player.massUpg[x] = E(0)
                 player.massUpg[x] = player.massUpg[x].add(1)
             }
@@ -30,7 +30,7 @@ const UPGS = {
             if (player.mass.gte(cost)) {
                 if (!player.massUpg[x]) player.massUpg[x] = E(0)
                 player.massUpg[x] = player.massUpg[x].max(bulk.floor().max(player.massUpg[x].plus(1)))
-                if (!hasUpgrade('bh',1)) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh',1) && !hasTree("qol_ext5")) player.mass = player.mass.sub(cost)
             }
         },
         getData(i) {
@@ -84,7 +84,7 @@ const UPGS = {
             effect(x) {
                 let step = E(2)
                 if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
-                if (future && tmp.tickspeedEffect) step = step.mul(tmp.tickspeedEffect.step)
+                if (future) step = step.mul(tmp.tickspeedEffect.step)
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
                 if (hasRank("pent", 1000)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[1000]()))
@@ -117,7 +117,7 @@ const UPGS = {
 				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
 				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
 				if (hasRank("pent", 2000)) step = step.mul(RANKS.effect.pent[1000]())
-				if (future) step = E(.01)
+				if (future) step = E(.5)
 
 				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
 				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
@@ -132,7 +132,7 @@ const UPGS = {
 				if (hasRank("pent", 200)) sp *= Math.min(Math.max(player.mass.max(10).log10().log10().div(600).add(1).toNumber(), 1), (2/3) / 0.55 / 1.15)
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
-				let ret = step.mul(total).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+				let ret = step.mul(total).add(1)
 				if (!future) ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
 				return {step: step, eff: ret, ss: ss}
 			},

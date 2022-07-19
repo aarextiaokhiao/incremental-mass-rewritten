@@ -18,7 +18,7 @@ const RANKS = {
     },
     bulk(type) {
         if (tmp.ranks[type].can) {
-            player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk.max(player.ranks[type].add(1)))
+            player.ranks[type] = player.ranks[type].add(1).max(tmp.ranks[type].bulk)
             if (this.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
@@ -60,7 +60,7 @@ const RANKS = {
             '3': "unlock Mass Upgrade 3, weaken Mass Upgrade 2 by 20%, and Mass Upgrade 1 boosts itself.",
             '4': "weaken Mass Upgrade 3 by 20%.",
             '5': "mass upgrade 2 boosts itself.",
-            '6': "Ranks boost mass gain.",
+            '6': "Rank boosts mass.",
             '13': "triple mass.",
             '14': "double Rage Power.",
             '17': "strengthen Rank 6.",
@@ -75,11 +75,11 @@ const RANKS = {
             '800': "make mass gain softcap 0.25% weaker based on rank.",
         },
         tier: {
-            '1': "reduce rank reqirements by 20%.",
-            '2': "raise mass gain by 1.15",
-            '3': "reduce all mass upgrades cost scale by 20%.",
-            '4': "adds +5% tickspeed power for every tier you have, softcaps at +40%.",
-            '6': "make Rage Power boosted by tiers.",
+            '1': "Rank scales 20% weaker.",
+            '2': "raise mass by ^1.15.",
+            '3': "weaken Mass Upgrades scaling by 20%.",
+            '4': "adds +5% Tickspeed Power per Tier, softcaps at +40%.",
+            '6': "Tiers boost Rage Power.",
             '8': "make tier 6's reward effect stronger by Dark Matter.",
             '12': "make tier 4's reward effect twice effective and remove softcap.",
             '30': "stronger effect's softcap is 10% weaker.",
@@ -164,7 +164,7 @@ const RANKS = {
                 return ret
             },
             '55'() {
-                let ret = player.ranks.tier.max(1).log10().add(1).root(4)
+                let ret = player.ranks.tier.max(1).log10().add(1).root(4).min(3)
                 return ret
             },
         },
@@ -308,9 +308,9 @@ function updateRanksTemp() {
     let fp = u.fp.rank()
     let pow = scalingInitPower("rank")
     d.rank.req = E(10).pow(s.rank.scaleEvery("rank").div(fp).pow(pow)).mul(10)
-    d.rank.bulk = player.mass.div(10).max(1).log10().root(pow).mul(fp).scaleEvery("rank", 1).add(1).floor();
+    d.rank.bulk = player.mass.div(10).max(1).log10().root(pow).mul(fp).scaleEvery("rank", 1).add(1).floor()
     if (FERMIONS.onActive(14)) d.rank.bulk = E(2e4).min(d.rank.bulk)
-    if (player.mass.lt(10)) d.rank.bulk = 0
+    if (player.mass.lt(10)) d.rank.bulk = E(0)
     d.rank.can = player.mass.gte(d.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
 
     fp = u.fp.tier()

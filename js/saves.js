@@ -182,11 +182,6 @@ function getPlayerData() {
         },
         ext: EXT.setup(),
 		shrt: {
-			//[a, b]:
-			//a = 0: empty
-			//a = 1: mass dilation
-			//a = 2: challenge
-			//a = 3: fermion
 			order: [[0, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
 		},
         reset_msg: "",
@@ -424,7 +419,7 @@ function loadGame(start=true, save) {
 			})
 		}
 		if (beta) {
-			document.getElementById("ver").textContent = "[7/17/22 BETA BUILD]"
+			document.getElementById("ver").textContent = "[" + betaVer + " BETA BUILD]"
 			document.getElementById("ver").className = "red"
 			document.getElementById("beta").style.display = "none"
 		}
@@ -442,7 +437,7 @@ function loadGame(start=true, save) {
 
 function checkNaN() {
 	if (findNaN(player)) {
-		if (new Date().getTime() - lastLoad < 60000) wipe(true)
+		if (false && new Date().getTime() - lastLoad < 60000) wipe(true)
 		else {
 			loadGame(false)
 			addNotify("Game Data got NaNed")

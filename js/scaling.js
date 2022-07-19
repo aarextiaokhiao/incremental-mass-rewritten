@@ -35,20 +35,16 @@ Decimal.prototype.scaleEvery = function (id, rev=false) {
 //Technical
 const SCALE_INIT_POWERS = {
 	massUpg: {
-		normal: 1,
-		toned: 1.5
+		normal: 1
 	},
 	tickspeed: {
-		normal: 1,
-		toned: 1.5
+		normal: 1
 	},
 	bh_condenser: {
-		normal: 1,
-		toned: 1.5
+		normal: 1
 	},
 	gamma_ray: {
-		normal: 1,
-		toned: 1.5
+		normal: 1
 	},
 	rank: {
 		normal: 1.15,
@@ -275,6 +271,7 @@ function scalingInitPower(name) {
 		if (AXION.unl()) return tmp.ax.eff[15].exp
 		return 1.25
 	}
+	if (BUILDINGS.includes(name) && scalingToned(name)) return TONES.power(1)
 	return SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]
 }
 

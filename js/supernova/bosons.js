@@ -1,4 +1,6 @@
 const BOSONS = {
+    unl: () => player.supernova.times >= 10,
+
     names: ['pos_w','neg_w','z_boson','photon','gluon','graviton','hb'],
     gain: {
         pos_w() {
@@ -130,7 +132,7 @@ const BOSONS = {
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
 					if (bosonsMastered()) return E(1)
-					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
+					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)).min("e1e14")
 				},
                 effDesc(x) { return format(x)+"x" },
             },{

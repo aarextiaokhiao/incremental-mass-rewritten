@@ -4,81 +4,27 @@ let PRIM = {
 	setup() {
 		return {
 			unl: false,
+			strand: [],
+			len: 0,
+
 			bp: E(0),
 			pt: E(0),
 			prim: [ E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0) ],
-			f: {},
 		}
 	},
 	calc(dt) {
 		player.ext.pr.bp = player.ext.pr.bp.add(tmp.pr.bp.mul(dt))
 
 		let pt = player.ext.pr.bp.add(1).log(1.1)
+		player.ext.pr.pt = pt.mul(tmp.pr.mul)
+
 		let pr_exp = 1
-		player.ext.pr.pt = pt.mul(tmp.pr.pt_ratio)
 		for (var i = 0; i < 8; i++) {
 			let pr = pt.mul(tmp.pr.ratio[i])
 			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.div(100).add(1).pow(pr_exp-1):1)
 		}
 	},
 
-	getName(x) {
-		if (x == -1) return "PC"
-		return PRIM.prim[x].sym
-	},
-	disp(per, prim, res) {
-		if (prim == -1) return Math.round(100 - 100 / per) + "% " + PRIM.getName(prim)
-		if (prim >= -1 && !res) return Math.round(per * 100) + "% " + PRIM.getName(prim)
-		if (prim >= -1 && res) return Math.round(-per * 100) + "% " + PRIM.getName(prim)
-	},
-	can(y) {
-		return player.ext.pr.pt.gte(50) && player.ext.pr.f[y] == undefined
-	},
-	toggle(y, x) {
-		if (player.ext.pr.f[y] === x) {
-			delete player.ext.pr.f[y]
-			EXT.reset(true)
-		} else if (PRIM.can(y)) player.ext.pr.f[y] = x
-	},
-	conv: [
-		{
-			unl: () => true,
-			res: [-1, 0, 1, 2],
-			ratios: [
-				[1, 0.01, 0, 0],
-				[1.5, 0.02, 0, 0.01],
-				[2, 0.03, 0, 0.02],
-				[3, 0.04, 0.01, 0.03],
-			]
-		}, {
-			unl: () => false,
-			res: [-1, 0],
-			ratios: [
-				[1, 0],
-				[1, 0],
-				[1, 0],
-				[1, 0],
-			]
-		}, {
-			unl: () => false,
-			res: [-1, 0],
-			ratios: [
-				[1, 0],
-				[1, 0],
-				[1, 0],
-				[1, 0],
-			]
-		}, {
-			unl: () => false,
-			res: [3, 7],
-			ratios: [
-				[0, 0],
-				[0, 0],
-				[0, 0],
-				[0, 0],
-			]
-		}
-	],
 	prim: [
 		// COMMON PRIMORDIUMS
 		{
@@ -109,8 +55,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(20).add(1).min(10),
-					desc: (x) => "Raise Tickspeed Effect by ^"+format(x,2)+"."
+					eff: (x) => E(1),
+					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -144,7 +90,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => future ? 1 : E(1.75).sub(x.div(100)).max(1).toNumber(),
+					eff: (x) => E(1.75).sub(x.div(100)).max(1).toNumber(),
 					desc: (x) => "Tetr scales at ^"+format(x,3)+" rate."
 				}
 			]
@@ -185,42 +131,36 @@ function updatePrimTemp() {
 	if (!save.unl) return
 
 	data.bp = expMult(player.mass.max(1).log10(),0.2).div(50).pow(20)
-
-	data.pt_ratio = 1
+	data.mul = 1
 	data.ratio = [0, 0, 0, 0, 0, 0, 0, 0]
-	for (var y = 0; y < PRIM.conv.length; y++) {
-		var conv = PRIM.conv[y]
-		if (save.f[y] !== undefined) {
-			var ratio = conv.ratios[save.f[y]]
-			for (var i = 0; i < ratio.length; i++) {
-				var res = conv.res[i]
-				if (res == -1) data.pt_ratio /= ratio[i]
-				else data.ratio[res] += ratio[i]
-			}
-		}
-	}
 
 	let b = {}
 	for (var i = 0; i < 8; i++) {
-		if (future) data.ratio[i] = 1
-
 		let p = PRIM.prim[i].eff
 		for (var j = 0; j < p.length; j++) if (p[j].unl()) b["p"+i+"_"+j] = p[j].eff(save.prim[i])
 	}
 	data.eff = b
 }
 
+//HTML
+function setupPrimHTML() {
+	var html = ""
+	for (var x = 0; x < 8; x++) {
+		html += `
+		<div class="primordium table_center">
+			<div style="width: 240px; height: 54px;">
+				<h2>${PRIM.prim[x].name} Particles [${PRIM.prim[x].sym}]</h2><br>[<span id="pr_${x}"></span>]
+			</div><div style="width: 240px; height: 54px; background: transparent; box-shadow: 0 0 6px #ffdf00; color: white" id="pr_eff${x}"></div>
+		</div>
+		`
+	}
+	new Element("pr_table").setHTML(html)
+}
+
 function updatePrimHTML() {
 	elm.pr_bp.setTxt(format(player.ext.pr.bp,0))
 	elm.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
 	elm.pr_pt.setTxt(format(player.ext.pr.pt,0))
-
-	for (var y = 0; y < PRIM.conv.length; y++) {
-		elm["pr_cr"+y].setDisplay(PRIM.conv[y].unl())
-		for (var x = 0; x < 4; x++) {
-			elm["pr_c"+(y*10+x)].setClasses({btn: true, btn_pr: true, locked: !PRIM.can(y, x) & player.ext.pr.f[y] !== x, choosed: player.ext.pr.f[y] === x})
-		}
-	}
 	for (var i = 0; i < 8; i++) {
 		elm["pr_"+i].setTxt(format(player.ext.pr.prim[i],0))
 		elm["pr_eff"+i].setTxt(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))

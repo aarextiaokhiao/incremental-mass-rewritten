@@ -49,7 +49,7 @@ let AXION = {
 		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
 		var r = E([2,3,1.6][type])
 			.pow(sum.add(i - 4))
-			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (50 / (i + 5) * Math.pow(3, i)))
+			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (100 / (i + 5) * Math.pow(3, i)))
 		return r
 	},
 	costScale() {
@@ -96,8 +96,8 @@ let AXION = {
 		//Base
 		let r = E(0)
 		let em = EXT.eff().add(1).log10()
-		if (x == 0) r = player.mass.max(1).log10().pow(0.6)
-			.mul(em.mul(2).add(1).pow(2))
+		if (x == 0) r = player.mass.max(1).log10().pow(0.7)
+			.mul(em.add(1).pow(2)).div(200)
 		if (x == 1 && hasTree("ext_c")) r = player.supernova.times.div(20).max(1).pow(3)
 			.mul(em.add(1))
 		if (x == 2 && hasTree("ext_e1")) r = em.pow(.8)
@@ -164,7 +164,7 @@ let AXION = {
 			desc: "Speed up all Supernova productions.",
 			req: E(0),
 			eff(x) {
-				return x.mul(2).add(1).pow(2)
+				return x.mul(1.5).add(1)
 			},
 			effDesc(x) {
 				return format(x) + "x"
@@ -211,7 +211,7 @@ let AXION = {
 			req: E(1),
 			eff(x) {
 				x = x.div(3).add(1).log(3).add(1)
-				if (hasTree("ext_u3")) x = E(1.75).sub(E(1).div(x.div(5).add(1))).max(1).min(1.5)
+				if (hasTree("ext_u3")) x = E(1.75).sub(E(1).div(x.div(5).add(1))).max(1).min(1.3)
 				return x
 			},
 			effDesc(x) {
@@ -467,6 +467,26 @@ function updateAxionTemp() {
 	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)
 	for (var i = 0; i < 20; i++) d.eff[i] = AXION.getEff(i, d.lvl[i].mul(d.str))
+}
+
+//HTML
+function setupAxionHTML() {
+	var html = ""
+	for (var y = -1; y < AXION.maxRows; y++) {
+		html += "</tr><tr>"
+		for (var x = -1; x < 5; x++) {
+			var x_empty = x == -1 || x == 4
+			var y_empty = y == -1
+			if (x_empty && y_empty) html += "<td class='ax'></td>"
+			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
+			if (x_empty && !y_empty && y < 4) {
+				var type = x == 4 ? 2 : 1
+				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
+			}
+			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
+		}
+	}
+	new Element("ax_table").setHTML(html)
 }
 
 function updateAxionHTML() {

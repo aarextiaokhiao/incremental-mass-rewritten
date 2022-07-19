@@ -22,10 +22,12 @@
     <script src="js/upgrades.js"></script>
     <script src="js/challenges.js"></script>
 
-    <script src="js/exotic/core.js"></script>
-    <script src="js/exotic/axion.js"></script>
-    <script src="js/exotic/glueball.js"></script>
-    <script src="js/exotic/prim.js"></script>
+    <script src="js/altra/exotic/core.js"></script>
+    <script src="js/altra/exotic/axion.js"></script>
+    <script src="js/altra/exotic/glueball.js"></script>
+    <script src="js/altra/exotic/prim.js"></script>
+    <script src="js/altra/tones.js"></script>
+    <script src="js/altra/core.js"></script>
 
     <script src="js/supernova/radiation.js"></script>
     <script src="js/supernova/fermions.js"></script>
@@ -173,7 +175,7 @@
 			</div>
 		</div>
 
-		<div style="position: absolute; right: 6px; top: 18px; height: 2px; width: calc(100% - 200px); background: #ff7f3f">
+		<div id="ext_bar" style="position: absolute; right: 6px; top: 18px; height: 2px; width: calc(100% - 200px); background: #ff7f3f">
 			<div id="ext_stabs" style="position: absolute; left: 0; top: -10px; width: 100%; min-height: 40px;"></div>
 		</div>
 		<div style="position: absolute; height: calc(100% - 54px); width: calc(100% - 200px); bottom: 6px; right: 6px; border: 3px solid #ff3f00; background: rgba(0, 0, 0, 0.9); overflow-y: auto">
@@ -200,10 +202,6 @@
 			</div>
 			<div id="stab_frame6_2">
 				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
-				<br>
-				Disabling will rise <b class="scarlet">Exotic!</b>
-				<br>
-				<table id="pr_cloud"></table>
 				<br>
 				<div id="pr_table" class="table_center"></div>
 			</div>
@@ -316,7 +314,7 @@
                             <img src="images/hr.png">
                             <span style="margin-left: 5px; text-align: left;">Hawking Radiation [<span id="bh_b2_lvl">X</span>]</span>
                         </div>
-                    </div><button id="bh_b2_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('bh',2)">Cost: <span id="bh_b2_cost">X</span> Dark Matters</button>
+                    </div><button id="bh_b2_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('bh',2)">Req: <span id="bh_b2_cost">X</span> Dark Matters</button>
                     <button style="width: 200px; visibility: hidden"></button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         Exponent Power: <span id="bh_b2_pow">X</span>x<br>
@@ -327,7 +325,7 @@
                             <img src="images/ph.png">
                             <span style="margin-left: 5px; text-align: left;">Neutron Condensers [<span id="bh_b3_lvl">X</span>]</span>
                         </div>
-                    </div><button id="bh_b3_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('bh',3)">Cost: <span id="bh_b3_cost" >X</span> Dark Matters</button>
+                    </div><button id="bh_b3_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('bh',3)">Req: <span id="bh_b3_cost" >X</span> Dark Matters</button>
                     <button style="width: 200px; visibility: hidden"></button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         Exponent Gain Power: ^<span id="bh_b3_pow">X</span><br>
@@ -338,7 +336,7 @@
                 </div>
             </div><div id="stab_frame0_2">
                 You have <span id="atomicAmt">X</span> Atomic Power<br>
-                <span class="green">Which provides <span id="atomicEff">X</span> free Tickspeeds</span><br><br>
+                <span class="green">Which provides <span id="atomicEff">X</span> free Tickspeed</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                     <div style="width: 400px">
                         <div class="resources">
@@ -358,7 +356,7 @@
                             <img src="images/ph.png">
                             <span style="margin-left: 5px; text-align: left;">Stellar Bursts [<span id="ag_b2_lvl">X</span>]</span>
                         </div>
-                    </div><button id="ag_b2_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('ag',2)">Cost: <span id="ag_b2_cost">X</span> Atoms</button>
+                    </div><button id="ag_b2_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('ag',2)">Req: <span id="ag_b2_cost">X</span> Atoms</button>
                     <button style="width: 200px; visibility: hidden"></button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         Stellar Power: +<span id="ag_b2_pow">X</span> boosters<br>
@@ -369,7 +367,7 @@
                             <img src="images/ph.png">
                             <span style="margin-left: 5px; text-align: left;">Galactic Rays [<span id="ag_b3_lvl">X</span>]</span>
                         </div>
-                    </div><button id="ag_b3_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('ag',3)">Cost: <span id="ag_b3_cost">X</span> Atoms</button>
+                    </div><button id="ag_b3_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('ag',3)">Req: <span id="ag_b3_cost">X</span> Atoms</button>
                     <button style="width: 200px; visibility: hidden"></button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         Radiation Power: +<span id="ag_b3_pow">X</span> boosters<br>

@@ -3,11 +3,11 @@ TO-DO LIST:
 	1a. Primordiums boost itself
 	1b. Weaken Ar-18 softcap
 	1c. Polarizer weakens: Supernovae, Fermion Tiers, Radiation
-	1d. Primordiums have a minimum amount
-	1e. Bank a constant amount
-	1f. Tickspeed Power multiplies Star Booster Power
+	1d. Tickspeed Power multiplies Star Booster Power
+	1e. Weaken Building Scaling [2nd exponent]
 2: Decay Upgrades
 	[No Musculer]
 	2a. Booster adds Stronger
 	2b. Tickspeed Power multiplies Booster
 	2c. Retrieve Stars, which now cost Mass
+	2e. Weaken Chroma Scaling. [3rd exponent]

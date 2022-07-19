@@ -34,7 +34,7 @@ let GLUBALL = {
 
 			let log = player.mass.max(1).log(start)
 			if (log.lt(1)) return E(0)
-			return log.log10().div(2).add(1).pow(.6).sub(1)
+			return log.log10().div(2).add(1).root(TONES.power(2)).sub(1)
 		},
 		cost(x) {
 			return tmp.ch.mlt.mul(player.ext.ch.upg.length).floor()
@@ -149,7 +149,7 @@ let GLUBALL = {
 			desc: (x) => "Rank boosts Mass by "+format(x)+"x.",
 			color: "#00bfbf",
 			eff(x) {
-				return E(1.01).pow(player.ranks.rank.pow(3))
+				return E(1.001).pow(player.ranks.rank.pow(3))
 			},
 		},
 		s3_2: {
@@ -193,14 +193,14 @@ let GLUBALL = {
 			desc: (x) => "Tier scales linearly, but nullify Neutrino.",
 			color: "#3f007f",
 			eff(x) {
-				return x.div(4).add(1)
+				return E(1)
 			},
 		},
 		t6_1: {
 			desc: (x) => "Add Axion Strength by "+formatMultiply(x)+".",
 			color: "#7f003f",
 			eff(x) {
-				return x.div(20).add(1)
+				return x.div(30).add(1)
 			},
 		},
 	},
@@ -216,8 +216,18 @@ let GLUBALL = {
 		if (!GLUBALL.spices.all.includes(next)) return false
 
 		if (next[0] == "p") {
-			if (next[3] != "1") return GLUBALL.got("s" + next[1] + "_" + (next[3] - 1)) && GLUBALL.got("s" + (next[1] == "1" ? 3 : next[1] - 1) + "_" + (next[3] - 1))
-			return true
+			if (next[3] == "1") return true
+
+			let left = next[1] == 1 ? 3 : next[1] - 1
+			let right = next[1]
+			if (next[3] == "2") return GLUBALL.got("s" + left + "_1") && GLUBALL.got("s" + right + "_1")
+
+			let count = 0
+			if (GLUBALL.got("t" + (left * 2) + "_1")) count++
+			if (GLUBALL.got("t" + (left * 2 - 1) + "_1")) count++
+			if (GLUBALL.got("t" + (right * 2) + "_1")) count++
+			if (GLUBALL.got("t" + (right * 2 - 1) + "_1")) count++
+			return count >= 1 //2
 		}
 		if (next[0] == "s") {
 			if (next[3] != "1") return GLUBALL.got("t" + (next[1] * 2) + "_" + (next[3] - 1)) && GLUBALL.got("t" + (next[1] * 2 - 1) + "_" + (next[3] - 1))
@@ -252,7 +262,7 @@ function updateGlueballTemp() {
 	if (tmp.chal) extra = tmp.chal.eff[14].bp
 
 	data.bp_next = E(10).pow(E(1.75).pow(save.bp.sub(extra).div(fP)).mul(1e15).div(em_log))
-	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).add(extra).floor().add(1).min(33)
+	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).add(extra).floor().add(1)
 
 	let s = GLUBALL.spices
 	data.pwr = s.power()
@@ -268,6 +278,23 @@ function updateGlueballTemp() {
 			else if (id[0] == "t") data.mlt = data.mlt.mul(1.5)
 		}
 	}
+}
+
+//HTML
+function setupGlueballHTML() {
+	var html = ""
+	var sData = GLUBALL.spices
+	for (var y = 0; y < sData.rows.length; y++) {
+		var sp = sData.rows[y]
+		html += `<div class="table_center">`
+		for (var x = 0; x < 4; x++) {
+			if (x == 0) html += `<button id="cs_${sp}_a" onclick="GLUBALL.get('${sp}')"></button>`
+			else if (sData.all.includes(sp+"_"+x)) html += `<div class="boost_cs" id="cs_${sp}_${x}" style='border-color: ${sData[sp+"_"+x].color}'></div>`
+			else html += `<div class="boost_cs"></div>`
+		}
+		html += `</div>`
+	}
+	new Element("ch_table").setHTML(html)
 }
 
 function updateGlueballHTML() {
@@ -316,12 +343,3 @@ function updateChromaScreen() {
 	elm.chroma_bg3.setDisplay(high)
 	if (high) elm.chroma_bg3.setOpacity(progress)
 }
-
-/*
-Thinking about reworking the combination for Primary T3.
-
-   Candidates
-// 1 Secondary T2s + 0 Tertiary T1s
-// 2 Secondary T1s + 2 Tertiary T1s
-// 2 Secondary T1s + 1 Tertiary T1s
-*/

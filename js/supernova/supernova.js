@@ -101,8 +101,7 @@ function calcSupernova(dt, dt_offline) {
         player.supernova.post_10 = true
         addPopup(POPUP_GROUPS.supernova10)
     }
-
-    if (player.supernova.post_10) {
+    if (BOSONS.unl()) {
 		for (let x in BOSONS.names) {
 			let id = BOSONS.names[x]
 			player.supernova.bosons[id] = player.supernova.bosons[id].add(tmp.bosons.gain[id].mul(dt))
@@ -139,7 +138,7 @@ function calcSupernova(dt, dt_offline) {
     }
 
 	//Exotic
-	if (false && hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
+	if (!future && hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
 		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
 		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
 	}
@@ -238,7 +237,7 @@ function updateSupernovaEndingHTML() {
     }
 }
 
-//CHALLENGE AUTOMATION: Go through all unlocked challenges that have at least 15 completions / tiers.
+//CHALLENGE AUTOMATION
 function getSupernovaAutoTemp(mode = "all") {
 	let ret = []
 

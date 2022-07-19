@@ -14,7 +14,7 @@ let EXOTIC = {
 	},
 
 	unl(disp) {
-		return (disp && player.chal.comps[12].gte(1)) || player.ext.unl
+		return (disp && player.chal.comps[12].gte(1)) || player.ext.unl || PRES.unl()
 	},
 	gain() {
 		let s = player.supernova.times
@@ -59,34 +59,40 @@ let EXOTIC = {
 
 	reset(force) {
 		let can = player.chal.comps[12].gt(0)
-		if (!force && player.confirms.ext && !confirm("Are you sure?")) return false
-		if (can) player.ext.amt = player.ext.amt.add(player.ext.gain)
+		if (!force) {
+			if (!can) return
+			if (player.confirms.ext && !confirm("Are you sure?")) return false
+		}
+		player.ext.amt = player.ext.amt.add(player.ext.gain)
 		EXT.doReset()
 		return true
 	},
 	doReset(pres) {
 		player.ext.time = 0
+		player.ext.gain = E(1)
 		player.ext.chal.f7 = true
 		player.ext.chal.f8 = true
 		player.ext.chal.f9 = true
 		tmp.pass = true
 
-		let list = []
-		if (hasTree("qol_ext4")) list = list.concat("chal1","chal2","chal3","chal4","chal4a","chal5","chal6","chal7")
-		if (hasTree("qol_ext5")) list = list.concat("s1","s2","s3","s4","sn1","sn2","sn3","sn4","sn5","m1","m2","m3","rp1","bh1","bh2","t1","gr1","gr2","d1")
-		if (hasTree("qol_ext6")) list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6","fn7","fn8")
-		if (hasTree("qol_ext7")) list = list.concat("unl1","rad1","rad2","rad3","rad4","rad5")
+		if (!pres) {
+			let list = []
+			if (hasTree("qol_ext4")) list = list.concat("chal1","chal2","chal3","chal4","chal4a","chal5","chal6","chal7")
+			if (hasTree("qol_ext5")) list = list.concat("s1","s2","s3","s4","sn1","sn2","sn3","sn4","sn5","m1","m2","m3","rp1","bh1","bh2","t1","gr1","gr2","d1")
+			if (hasTree("qol_ext6")) list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6","fn7","fn8")
+			if (hasTree("qol_ext7")) list = list.concat("unl1","rad1","rad2","rad3","rad4","rad5")
 
-		let perm_lvl = pres ? 2 : 1
-		let list_keep = []
-		for (let x = 0; x < player.supernova.tree.length; x++) {
-			let it = player.supernova.tree[x]
-			if (list.includes(it)) list_keep.push(it)
-			else if (it.includes("qol") || it.includes("feat")) list_keep.push(it)
-			else if (it.includes("ext") && perm_lvl == 1) list_keep.push(it)
-			else if (TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm >= perm_lvl) list_keep.push(it)
+			let list_keep = []
+			for (let x = 0; x < player.supernova.tree.length; x++) {
+				let it = player.supernova.tree[x]
+				if (list.includes(it)) list_keep.push(it)
+				else if (it.includes("qol") || it.includes("feat")) list_keep.push(it)
+				else if (it.includes("ext")) list_keep.push(it)
+				else if (TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) list_keep.push(it)
+			}
+			player.supernova.tree = list_keep
 		}
-		player.supernova.tree = list_keep
+
 		player.supernova.times = E(0)
 		player.supernova.stars = E(0)
 
@@ -129,7 +135,6 @@ let EXOTIC = {
 			t: 0
 		}
 
-		player.ext.gain = E(1)
 		player.ext.pr.bp = E(0)
 		player.ext.pr.pt = E(0)
 		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = E(0)
@@ -175,6 +180,7 @@ let EXOTIC = {
 }
 let EXT = EXOTIC
 
+//HTML
 function updateExoticHTML() {
 	elm.app_ext.setDisplay(tmp.tab == 6)
 	if (tmp.tab == 6) {
@@ -186,84 +192,18 @@ function updateExoticHTML() {
 }
 
 function updateExoticHeader() {
-	elm.extAmt2.setHTML(format(player.ext.amt,2)+"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain))
+	elm.extAmt2.setHTML(format(player.ext.amt,1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain):""))
 
 	elm.toneDiv.setDisplay(GLUBALL.unl())
-	elm.extTone.setHTML(format(player.ext.toned,0)+(canTone() ? "<br>(+" + format(1,0) + ")" : ""))
+	elm.extTone.setHTML(toned()==TONES.max?"Maxed!":format(player.ext.toned,0)+"<br>"+(TONES.can() ? "(+" + format(1,0) + ")":"(requires " + format(TONES.req()) + ")"))
 
 	elm.polarDiv.setDisplay(GLUBALL.got("s3_1"))
 	elm.polarEff.setHTML(format(tmp.polarize)+"x")
 }
 
-function setupExtHTML() {
-	//AXIONS
-	var html = ""
-	for (var y = -1; y < AXION.maxRows; y++) {
-		html += "</tr><tr>"
-		for (var x = -1; x < 5; x++) {
-			var x_empty = x == -1 || x == 4
-			var y_empty = y == -1
-			if (x_empty && y_empty) html += "<td class='ax'></td>"
-			if (!x_empty && y_empty) html += `<td class='ax'><button class='btn_ax normal' id='ax_upg`+x+`' onmouseover='hoverAxion("u`+x+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+x+`)">X`+(x+1)+`</button></td>`
-			if (x_empty && !y_empty && y < 4) {
-				var type = x == 4 ? 2 : 1
-				html += `<td class='ax'><button class='btn_ax normal' id='ax_upg` +(y+4*type)+`' onmouseover='hoverAxion("u`+(y+4*type)+`")' onmouseleave='hoverAxion()' onclick="AXION.buy(`+(y+4*type)+`)">`+["","Y","Z"][type]+(y+1)+`</button></td>`
-			}
-			if (!x_empty && !y_empty) html += `<td class='ax'><button class='btn_ax' id='ax_boost`+(y*4+x)+`' onmouseover='hoverAxion("b`+(y*4+x)+`")' onmouseleave='hoverAxion()'><img src='images/axion/b`+(y*4+x)+`.png' style="position: relative"></img></button></td>`
-		}
-	}
-	new Element("ax_table").setHTML(html)
+/* [ EXOTIC ERA CONTENT ] */
 
-	//GLUEBALLS
-	var html = ""
-	var sData = GLUBALL.spices
-	for (var y = 0; y < sData.rows.length; y++) {
-		var sp = sData.rows[y]
-		html += `<div class="table_center">`
-		for (var x = 0; x < 4; x++) {
-			if (x == 0) html += `<button id="cs_${sp}_a" onclick="GLUBALL.get('${sp}')"></button>`
-			else if (sData.all.includes(sp+"_"+x)) html += `<div class="boost_cs" id="cs_${sp}_${x}" style='border-color: ${sData[sp+"_"+x].color}'></div>`
-			else html += `<div class="boost_cs"></div>`
-		}
-		html += `</div>`
-	}
-	new Element("ch_table").setHTML(html)
-
-	//PRIM
-	var html = ""
-	for (var y = 0; y < 4; y++) {
-		var conv = PRIM.conv[y]
-		html += `</tr><tr id='pr_cr${y}'>`
-		for (var x = 0; x < 4; x++) {
-			var ratio = conv.ratios[x]
-			var div = PRIM.disp(ratio[0], conv.res[0], true) + " -> "
-			var l = 0
-			for (var i = 1; i < conv.ratios[0].length; i++) {
-				if (ratio[i] == 0) continue
-				if (l) div += ", "
-				div += PRIM.disp(ratio[i], conv.res[i])
-				l++
-			}
-			html += `<td class='pr'><button class='btn' id='pr_c${y*10+x}' style='width: 150px; height: 48px' onclick='PRIM.toggle(${y}, ${x})'>${div}</button></td>`
-		}
-	}
-	new Element("pr_cloud").setHTML(html)
-
-	var html = ""
-	for (var x = 0; x < 8; x++) {
-		html += `
-		<div class="primordium table_center">
-			<div style="width: 240px; height: 54px;">
-				<h2>${PRIM.prim[x].name} Particles [${PRIM.prim[x].sym}]</h2><br>[<span id="pr_${x}"></span>]
-			</div><div style="width: 240px; height: 54px; background: transparent; box-shadow: 0 0 6px #ffdf00; color: white" id="pr_eff${x}"></div>
-		</div>
-		`
-	}
-	new Element("pr_table").setHTML(html)
-}
-
-
-//Extra Buildings
+// Extra Buildings
 let EXTRA_BUILDINGS = {
 	unls: {
 		2: () => hasTree("eb1"),
@@ -385,35 +325,103 @@ function buyExtraBuildings(type, x) {
 	EXTRA_BUILDINGS.saves[type]()["eb"+x] = tmp.eb[type+x].gain
 }
 
+// SHORTCUTS
+function updateShortcuts() {
+	let edit = SHORTCUT_EDIT.mode
+	let quick = player.md.active || CHALS.lastActive() || player.supernova.fermions.choosed
+	let data = []
+	if (edit == 0) data = player.shrt.order
+	else {
+		data = [[0],[1],[2]]
+		if (AXION.unl && tmp.ax.lvl[23].gt(0)) data.push([3])
+	}
 
-//POLARIZER
+	for (var i = 0; i < 7; i++) {
+		let unl = i < data.length
+		if (edit == 0) unl = unl && (i < 4 || (AXION.unl() && tmp.ax.lvl[23].gt(0)))
+		elm["shrt_"+i].setVisible(unl)
+		if (unl) {
+			let id = data[i]
+			let mode = id[0] + 1
+			let ix = id[1]
+			document.getElementById("shrt_"+i).setAttribute("src", "images/" + (!edit && mode == 3 ? "ferm-" + ["qua","lep"][Math.floor(ix / 10)] : ix > 0 && mode == 2 ? "chal_" + ["dm","atom","sn","ext"][Math.ceil(ix/4)-1] : ["empty", "md", "chal", "ferm", "exit"][mode]) + ".png")
+			document.getElementById("shrt_"+i+"_tooltip").setAttribute("tooltip", ix >= 0 && mode == 3 ? FERMIONS.sub_names[Math.floor(ix / 10)][ix % 10] : ix > 0 && mode == 2 ? CHALS[id[1]].title : ["Add Shortcut", "Mass Dilation", "Challenge (Proceed to Challenges tab)", "Fermion (Proceed to Fermions tab)", "Exit"][mode])
+		} else document.getElementById("shrt_"+i+"_tooltip").removeAttribute("tooltip")
+	}
+	document.getElementById("shrt_m").setAttribute("src", "images/" + (edit ? (quick ? "quick" : "cancel") : ["click", "edit", "remove"][SHORTCUT_EDIT.cur]) + ".png")
+	document.getElementById("shrt_m_tooltip").setAttribute("tooltip", (edit ? (quick ? "Quick Add" : "Cancel (discard your changes)") : ["Mode: Normal (click to switch)", "Mode: Edit", "Mode: Remove"][SHORTCUT_EDIT.cur]))
+}
+
+function doShortcut(a, b) {
+	if (a == 0) MASS_DILATION.onactive()
+	if (a == 1) {
+		if (b == -1) CHALS.exit()
+		else {
+			player.chal.choosed = b
+			CHALS.enter()
+		}
+	}
+	if (a == 2) FERMIONS.choose(Math.floor(b / 10), b % 10)
+	if (a == 3) {
+		if (player.md.active) MASS_DILATIOn.onactive()
+		else if (player.supernova.fermions.choosed) FERMIONS.backNormal()
+		else if (CHALS.lastActive()) CHALS.exit()
+	}
+}
+
+function editShortcut(x) {
+	SHORTCUT_EDIT.mode = 1
+	SHORTCUT_EDIT.pos = x
+}
+
+function switchShortcut() {
+	if (SHORTCUT_EDIT.mode) {
+		if (player.md.active) player.shrt.order[SHORTCUT_EDIT.pos] = [0, -1]
+		else if (player.supernova.fermions.choosed) player.shrt.order[SHORTCUT_EDIT.pos] = [2, parseInt(player.supernova.fermions.choosed)]
+		else if (CHALS.lastActive()) player.shrt.order[SHORTCUT_EDIT.pos] = [1, CHALS.lastActive()]
+		SHORTCUT_EDIT.mode = 0
+		return
+	}
+	SHORTCUT_EDIT.cur = (SHORTCUT_EDIT.cur + 1) % 3
+	updateShortcuts()
+}
+
+function clickShortcut(x) {
+	if (SHORTCUT_EDIT.mode) {
+		if (x == 0 || x == 3) {
+			player.shrt.order[SHORTCUT_EDIT.pos] = [x, -1]
+			SHORTCUT_EDIT.mode = 0
+		}
+		if (x == 1) TABS.choose(3)
+		if (x == 2) {
+			TABS.choose(5)
+			tmp.stab[5] = 2
+		}
+		return
+	}
+	let d = player.shrt.order[x]
+	let m = SHORTCUT_EDIT.cur
+	if (d[0] < 0 || m == 1) editShortcut(x)
+	else if (m == 2) {
+		if (!confirm("Are you sure do you want to delete this shortcut?")) return
+		player.shrt.order[x] = [-1, -1]
+		updateShortcuts()
+	} else doShortcut(d[0], d[1])
+}
+
+let SHORTCUT_EDIT = {
+	mode: 0,
+	pos: 0,
+	cur: 0
+}
+
+// POLARIZER
 function updatePolarizeTemp() {
 	tmp.polarize = E(1)
 	if (GLUBALL.got("s3_1")) tmp.polarize = tmp.polarize.mul(GLUBALL.eff("s3_1"))
 }
 
-//TONES
-function canTone() {
-	let reqs = [E(1e20), E(1e70), E("1e600"), E("e1e6"), E("e1e8")]
-	return player.ext.amt.gte(EXT.amt(reqs[player.ext.toned])) && player.ext.toned < 5
-}
-
-function tone() {
-	let colors = ["Red", "Green", "Blue", "Violet", "Ultraviolet"]
-	let res = ["Mass Upgrades", "BH Condensers", "Cosmic Rays", "Ranks", "Supernovae and Fermions"]
-
-	if (!canTone()) return
-	if (!confirm("[" + colors[player.ext.toned] + " Tone] This will perform a Supernova reset to change " + res[player.ext.toned] + ". Colors await...")) return
-	player.ext.toned++
-	SUPERNOVA.doReset()
-}
-
-function toned() {
-	return player.ext.toned
-}
-
-
-//TECHNICAL
+// TECHNICAL FUNCTIONS
 function hasQolExt9() {
 	return hasTree("qol_ext9") && player.ext.ec < 14
 }
