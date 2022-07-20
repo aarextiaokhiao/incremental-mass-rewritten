@@ -84,7 +84,7 @@ const UPGS = {
             effect(x) {
                 let step = E(2)
                 if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
-                if (future) step = step.mul(tmp.tickspeedEffect.step)
+                if (tmp.tickspeedEffect && hasRank("pent", 1e6)) step = step.mul(tmp.tickspeedEffect.step.root(7500))
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
                 if (hasRank("pent", 1000)) total = total.mul(RANKS.effect.rank[5]().pow(RANKS.effect.pent[1000]()))
@@ -111,35 +111,39 @@ const UPGS = {
             start: E(1000),
             inc: E(9),
 			effect(x) {
-				let step = E(1).add(RANKS.effect.tetr[2]())
-				if (hasUpgrade('rp',9)) step = step.add(0.25)
-				if (hasUpgrade('rp',12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
-				if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
-				if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
-				if (hasRank("pent", 2000)) step = step.mul(RANKS.effect.pent[1000]())
-				if (future) step = E(.5)
-
-				//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
-				//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
-				//Not included: 2/3 [Tetr 2], beaten by MU12
-
+				let step = E(1)
 				let ss = E(10)
 				let sp = 0.5
-				if (hasRank("rank", 34)) ss = ss.add(2)
-				if (hasUpgrade('bh',9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
-				if (hasUpgrade('atom',9)) sp *= 1.15
-				if (hasRank("tier", 30)) sp *= 1.1
-				if (hasRank("pent", 200)) sp *= Math.min(Math.max(player.mass.max(10).log10().log10().div(600).add(1).toNumber(), 1), (2/3) / 0.55 / 1.15)
+
+				if (hasRank("pent", 5000)) step = E(1e4)
+				else {
+					if (hasRank("tetr", 2)) step = step.add(RANKS.effect.tetr[2]())
+					if (hasUpgrade('rp',9)) step = step.add(0.25)
+					if (hasUpgrade('rp',12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
+					if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
+					if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
+					if (hasRank("pent", 2000)) step = step.mul(RANKS.effect.pent[1000]())
+
+					//2/3 [toned] + 0.75 [RU12] + 0.8 [Be-4] + 1/3 [MD4] = 2.55
+					//Tickspeed power: ^1/3 log * 27/20 = 9/20 [+0.45 -> 3]
+					//Not included: 2/3 [Tetr 2], beaten by MU12
+
+					if (hasRank("rank", 34)) ss = ss.add(2)
+					if (hasUpgrade('bh',9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
+					if (hasUpgrade('atom',9)) sp *= 1.15
+					if (hasRank("tier", 30)) sp *= 1.1
+					if (hasRank("pent", 200)) sp *= Math.min(Math.max(player.mass.max(10).log10().log10().div(600).add(1).toNumber(), 1), (2/3) / 0.55 / 1.15)
+				}
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1)
-				if (!future) ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+				if (!hasRank("pent", 5000)) ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
 				return {step: step, eff: ret, ss: ss}
 			},
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Booster Power"+(future?"":getSoftcapHTML(eff.eff,eff.ss,1.8e5))
+                    eff: "^"+format(eff.eff)+" to Booster Power"+(hasRank("pent", 5000)?"":getSoftcapHTML(eff.eff,eff.ss,1.8e5))
                 }
             },
             bonus() {

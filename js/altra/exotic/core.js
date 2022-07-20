@@ -4,9 +4,13 @@ let EXOTIC = {
 			unl: false,
 			amt: E(0),
 			gain: E(1),
+
 			chal: {},
-			toned: 0,
 			ec: 0,
+
+			toned: 0,
+			ar39: E(0),
+
 			ax: AXION.setup(),
 			ch: GLUBALL.setup(),
 			pr: PRIM.setup()
@@ -154,6 +158,8 @@ let EXOTIC = {
 		if (player.supernova.fermions.choosed == "") player.ext.chal.f9 = false
 		player.ext.gain = player.ext.gain.max(this.gain())
 
+		if (hasPrim("p1_0")) player.ext.ar39 = player.ext.ar39.add(tmp.pr.eff.p1_0.mul(dt))
+
 		//AXIONS
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
 		player.ext.ax.res[1] = player.ext.ax.res[1].add(AXION.prod(1).mul(dt))
@@ -161,7 +167,7 @@ let EXOTIC = {
 
 		if (AXION.unl()) {
 			let needUpdate = false
-			if (tmp.ax.lvl[20].gt(0)) for (var i = 0; i < 8; i++) if (AXION.buy(i,1)) needUpdate = true
+			if (tmp.ax.lvl[24].gt(0)) for (var i = 0; i < 8; i++) if (AXION.buy(i,1)) needUpdate = true
 			if (needUpdate) updateAxionLevelTemp()
 		}
 
@@ -172,7 +178,7 @@ let EXOTIC = {
 		} else if (player.ext.ch.unl) GLUBALL.calc(dt)
 
 		//PRIMORDIUMS
-		if (!player.ext.pr.unl && AXION.unl() && E(tmp.ax.lvl[22]).gt(0)) {
+		if (!player.ext.pr.unl && AXION.unl() && E(tmp.ax.lvl[26]).gt(0)) {
 			addPopup(POPUP_GROUPS.prim)
 			player.ext.pr.unl = true
 		} else if (player.ext.pr.unl) PRIM.calc(dt)
@@ -192,13 +198,17 @@ function updateExoticHTML() {
 }
 
 function updateExoticHeader() {
+	elm.extDiv2.setDisplay(tmp.stab[6] == 0)
 	elm.extAmt2.setHTML(format(player.ext.amt,1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain):""))
+
+	elm.polarDiv.setDisplay(tmp.stab[6] == 1)
+	elm.polarEff.setHTML(format(tmp.polarize)+"x Buildings")
+
+	elm.ar39Div.setDisplay(tmp.stab[6] == 2)
+	elm.ar39Eff.setHTML("+"+format(player.ext.ar39)+"x <sup>39</sup>Ar")
 
 	elm.toneDiv.setDisplay(GLUBALL.unl())
 	elm.extTone.setHTML(toned()==TONES.max?"Maxed!":format(player.ext.toned,0)+"<br>"+(TONES.can() ? "(+" + format(1,0) + ")":"(requires " + format(TONES.req()) + ")"))
-
-	elm.polarDiv.setDisplay(GLUBALL.got("s3_1"))
-	elm.polarEff.setHTML(format(tmp.polarize)+"x")
 }
 
 /* [ EXOTIC ERA CONTENT ] */
@@ -230,7 +240,6 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			let r = x.times(5).add(1).log(2).div(500)
 			if (AXION.unl()) r = r.mul(tmp.ax.eff[9])
-			if (hasPrim("p3_0")) r = r.mul(tmp.pr.eff.p3_0)
 			return r
 		}
 	},
@@ -333,12 +342,12 @@ function updateShortcuts() {
 	if (edit == 0) data = player.shrt.order
 	else {
 		data = [[0],[1],[2]]
-		if (AXION.unl && tmp.ax.lvl[23].gt(0)) data.push([3])
+		if (AXION.unl && tmp.ax.lvl[27].gt(0)) data.push([3])
 	}
 
 	for (var i = 0; i < 7; i++) {
 		let unl = i < data.length
-		if (edit == 0) unl = unl && (i < 4 || (AXION.unl() && tmp.ax.lvl[23].gt(0)))
+		if (edit == 0) unl = unl && (i < 4 || (AXION.unl() && tmp.ax.lvl[27].gt(0)))
 		elm["shrt_"+i].setVisible(unl)
 		if (unl) {
 			let id = data[i]
@@ -419,6 +428,13 @@ let SHORTCUT_EDIT = {
 function updatePolarizeTemp() {
 	tmp.polarize = E(1)
 	if (GLUBALL.got("s3_1")) tmp.polarize = tmp.polarize.mul(GLUBALL.eff("s3_1"))
+}
+
+// COSMIC ARGONS
+function getCosmicArgonProd() {
+	let r = E(0)
+	if (hasPrim("p2_0")) r = tmp.pr.eff.p2_0
+	if (AXION.unl()) r = r.mul(tmp.ax.eff[23])
 }
 
 // TECHNICAL FUNCTIONS

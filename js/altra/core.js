@@ -1,7 +1,7 @@
 //VERSIONING
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "7/19/22a"
+let betaVer = "7/19/22b"
 let betaSave = "testBeta"
 
 let saveId = beta ? betaSave : "testSave"

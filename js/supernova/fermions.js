@@ -87,11 +87,11 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(0)
-                    let x = i.max(1).log(1.1).mul(t.pow(0.75)).min(1e11)
+                    let x = i.max(1).log(1.1).mul(t.pow(0.75)).softcap(1e10,0.1,0)
                     return x
                 },
                 desc(x) {
-                    return `Adds ${format(x,0)} free Cosmic Rays`
+                    return `Adds ${format(x,0)} free Cosmic Rays`+getSoftcapHTML(x,1e10)
                 },
                 inc: "Atomic Powers",
                 res: () => player.atom.atomic,

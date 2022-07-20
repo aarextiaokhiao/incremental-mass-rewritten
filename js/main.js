@@ -134,6 +134,7 @@ const FORMS = {
 			
 			let eff = step.pow(t.add(bonus))
 			if (!hasTree("ext_u2") && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+            if (bosonsMastered()) eff = eff.pow(tmp.bosons.upgs.photon[0].effect)
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
 		},
@@ -233,6 +234,7 @@ const FORMS = {
 			let x = hasUpgrade('atom',12)
 			?player.bh.mass.add(1).pow(1.25)
 			:player.bh.mass.add(1).root(4)
+			if (AXION.unl()) x = x.pow(tmp.ax.eff[21])
 			return x
 		},
 		condenser: {

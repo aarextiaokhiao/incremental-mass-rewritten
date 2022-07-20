@@ -485,7 +485,8 @@ const CHALS = {
 		pow: E(1),
 		start: uni("e47250"),
 		effect(x) {
-			if (hasPrim("p7_0")) x = x.add(tmp.pr.eff.p7_0)
+			if (hasPrim("p5_0")) x = x.add(tmp.pr.eff.p5_0)
+			if (AXION.unl()) x = x.mul(tmp.ax.eff[20])
             return E(1/0.985).pow(x)
 		},
 		effDesc(x) { return formatMultiply(x)+" slower" },
@@ -493,7 +494,7 @@ const CHALS = {
 	13: {
 		unl() { return hasTree("chal8") || PRES.unl() },
 		title: "Decay of Atom",
-		desc: "You can't gain Atoms and Quarks.",
+		desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
 		reward: `Weaken Axion penalties.<br><span class="ch_color">On 13th completion, unlock Glueballs!</span>`,
 		max: E(100),
 		inc: E(11/9),
@@ -505,7 +506,7 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[21].gt(0)) || PRES.unl() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[25].gt(0)) || PRES.unl() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and add Free Gluons`,
@@ -522,7 +523,7 @@ const CHALS = {
         effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.bp) },
 	},
 	15: {
-		unl() { return (false && AXION.unl() && tmp.ax.lvl[21].gt(0)) || PRES.unl() },
+		unl() { return player.chal.comps[14].gt(0) || PRES.unl() },
 		title: "Chernobyl Exclusion",
 		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
 		reward: `Multiply Polarizer.`,

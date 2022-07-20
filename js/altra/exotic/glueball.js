@@ -100,7 +100,7 @@ let GLUBALL = {
 			},
 		},
 		p2_3: {
-			desc: (x) => "Placeholder.",
+			desc: (x) => "Mass Dilation doesn't affect Atomic Power.",
 			color: "#00ff00",
 			eff(x) {
 				return 1
@@ -134,7 +134,7 @@ let GLUBALL = {
 			color: "#7f007f",
 			eff(x) {
 				let b = E(1.5)
-				if (hasPrim("p4_0")) b = b.mul(tmp.pr.eff.p4_0)
+				if (hasPrim("p3_0")) b = b.mul(tmp.pr.eff.p3_0)
 				return b.pow(x)
 			},
 		},
@@ -259,7 +259,10 @@ function updateGlueballTemp() {
 	let em_log = EXT.eff().max(10).log10()
 	let extra = E(0)
 	let fP = E(1)
+
 	if (tmp.chal) extra = tmp.chal.eff[14].bp
+	if (hasPrim("p7_0")) extra = extra.add(tmp.pr.eff.p7_0)
+	if (AXION.unl()) fP = fP.mul(tmp.ax.eff[22])
 
 	data.bp_next = E(10).pow(E(1.75).pow(save.bp.sub(extra).div(fP)).mul(1e15).div(em_log))
 	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).add(extra).floor().add(1)
@@ -275,7 +278,7 @@ function updateGlueballTemp() {
 			if (id[3] != "1") data.mlt = data.mlt.mul(0.8)
 			else if (id[0] == "p") data.mlt = data.mlt.mul(1.2)
 			else if (id[0] == "s") data.mlt = data.mlt.mul(1.5)
-			else if (id[0] == "t") data.mlt = data.mlt.mul(1.5)
+			else if (id[0] == "t") data.mlt = data.mlt.mul(2)
 		}
 	}
 }

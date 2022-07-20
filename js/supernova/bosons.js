@@ -1,5 +1,5 @@
 const BOSONS = {
-    unl: () => player.supernova.times >= 10,
+    unl: () => player.supernova.times >= 10 || CHALS.inChal(13),
 
     names: ['pos_w','neg_w','z_boson','photon','gluon','graviton','hb'],
     gain: {
@@ -82,22 +82,22 @@ const BOSONS = {
         },
         photon: [
             {
-                desc: () => bosonsMastered() ? "Placeholder." : "Photons multiply Dark Matter and BH Mass.",
+                desc: () => bosonsMastered() ? "Raise Tickspeed Effect." : "Photons multiply Dark Matter and BH Mass.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1)
+					if (bosonsMastered()) return x.add(1).log10().div(20).add(1)
 					return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
-                effDesc(x) { return bosonsMastered() ? "^"+format(x,4) : format(x)+"x" },
+                effDesc(x) { return bosonsMastered() ? "^"+format(x) : format(x)+"x" },
             },{
-                desc: () => bosonsMastered() ? "Placeholder." : "Boost BH Condenser Power.",
+                desc: () => bosonsMastered() ? "Tickspeed Power multiplies Star Booster Power." : "Boost BH Condenser Power.",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1)
+					if (bosonsMastered()) return tmp.tickspeedEffect ? tmp.tickspeedEffect.step.pow(x.min(1e8).div(1e13)) : E(1)
 					let a = x.add(1).pow(0.75)
 					if (hasTree("fn4")) a = a.pow(2)
 					return a
@@ -126,13 +126,13 @@ const BOSONS = {
         ],
         gluon: [
             {
-                desc: () => bosonsMastered() ? "Placeholder." : "Gain more Atoms & Atomic Powers based on Gluon.",
+                desc: () => bosonsMastered() ? "Gain more bonus Cosmic Rays." : "Gain more Atoms & Atomic Powers based on Gluon.",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1)
-					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)).min("e1e14")
+					if (bosonsMastered()) return x.add(1).log10().div(10).add(1)
+					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)).min("e3e13")
 				},
                 effDesc(x) { return format(x)+"x" },
             },{

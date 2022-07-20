@@ -53,7 +53,7 @@ const ATOM = {
             if (hasElement(52)) x = x.mul(tmp.elements.effect[52])
             if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             if (FERMIONS.onActive("00")) x = expMult(x,0.6)
-            if (tmp.md.active) x = MASS_DILATION.applyDil(x)
+            if (tmp.md.active && !GLUBALL.got("p2_3")) x = MASS_DILATION.applyDil(x)
             return x
         },
 		softcap() {
@@ -64,7 +64,8 @@ const ATOM = {
 		effect() {
 			if (CHALS.inChal(14)) return E(0)
 			let sc = ATOM.atomic.softcap()
-			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75).softcap(sc,0.75,0).softcap(sc.mul(800),0.25,0)
+			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75)
+			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0).softcap(sc.mul(800),0.25,0)
 			return x.floor()
 		},
     },
@@ -101,6 +102,8 @@ const ATOM = {
         bonus() {
 			if (CHALS.inChal(14)) return E(0)
             let x = tmp.fermions.effs[0][0]||E(0)
+            if (hasPrim("p2_0")) x = x.mul(tmp.pr.eff.p2_0)
+            if (bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             return x
         },
     },
@@ -227,7 +230,6 @@ function updateAtomTemp() {
 
 	let fp = scalingToned("gamma_ray") ? E(30) : E(1)
 	if (GLUBALL.got("s3_2")) fp = fp.div(GLUBALL.eff("s3_2"))
-	if (hasPrim("p3_0")) fp = fp.div(tmp.pr.eff["p3_0"])
 
 	let scale = scalingInitPower("gamma_ray")
     tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()

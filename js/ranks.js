@@ -108,6 +108,8 @@ const RANKS = {
             '200': "Mass reduces Stronger softcap.",
             '1000': "Mass upgrade 1-2 self-boosts multiply themselves.",
             '2000': "Tickspeed Power multiplies Stronger.",
+            '5000': "reset Stronger with a constant power instead.",
+            '10000': "Tickspeed Power multiplies Booster Base.",
         },
     },
     effect: {
@@ -221,7 +223,7 @@ const RANKS = {
 				return ts.add(1)
 			},
 			'1000'() {
-				return player.ranks.pent.div(1e3).log10().div(4).min(1)
+				return player.ranks.pent.div(1e3).log10()
 			},
 			'2000'() {
 				if (!tmp.tickspeedEffect) return E(1)

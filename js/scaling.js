@@ -263,7 +263,7 @@ function scalingInitPower(name) {
 		return 2
 	}
 	if (name == "tetr") {
-		if (hasPrim("p5_0")) return tmp.pr.eff.p5_0
+		if (hasPrim("p4_0")) return tmp.pr.eff.p4_0
 		if (hasElement(44)) return 1.75
 		return 2
 	}

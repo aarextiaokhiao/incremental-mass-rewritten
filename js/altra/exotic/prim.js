@@ -44,8 +44,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1).add(x.div(100)),
-					desc: (x) => "Ar-18 softcap starts "+format(x)+"x later."
+					eff: (x) => x.div(100),
+					desc: (x) => "Produce Cosmic Argons that add Argon-18 base. [+"+format(x)+"x <sup>39</sup>Ar/s]"
 				}
 			]
 		},
@@ -55,8 +55,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1),
-					desc: (x) => "Placeholder."
+					eff: (x) => x.add(1),
+					desc: (x) => "Gain "+formatMultiply(x)+" bonus Cosmic Rays."
 				}
 			]
 		},
@@ -66,8 +66,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(100).add(1),
-					desc: (x) => "Multiply Hawking Radiation by "+formatMultiply(x)+"."
+					eff: (x) => x.div(1e3).add(1),
+					desc: (x) => "Increase Polarizer's base by "+formatMultiply(x)+"."
 				}
 			]
 		},
@@ -79,8 +79,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(1e3).add(1),
-					desc: (x) => "Increase Polarizer's base by "+formatMultiply(x)+"."
+					eff: (x) => E(1.75).sub(x.div(100)).max(1).toNumber(),
+					desc: (x) => "Tetr scales at ^"+format(x,3)+" rate."
 				}
 			]
 		},
@@ -90,8 +90,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1.75).sub(x.div(100)).max(1).toNumber(),
-					desc: (x) => "Tetr scales at ^"+format(x,3)+" rate."
+					eff: (x) => x,
+					desc: (x) => "Add "+format(x)+" C12 completions."
 				}
 			]
 		},
@@ -112,8 +112,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x,
-					desc: (x) => "Add "+format(x)+" C12 completions."
+					eff: (x) => x.div(5),
+					desc: (x) => "Gain " + format(x) + " more Free Gluons."
 				}
 			]
 		}
@@ -163,6 +163,6 @@ function updatePrimHTML() {
 	elm.pr_pt.setTxt(format(player.ext.pr.pt,0))
 	for (var i = 0; i < 8; i++) {
 		elm["pr_"+i].setTxt(format(player.ext.pr.prim[i],0))
-		elm["pr_eff"+i].setTxt(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))
+		elm["pr_eff"+i].setHTML(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))
 	}
 }

@@ -157,7 +157,7 @@ let AXION = {
 		return AXION.ids[p].eff(l)
 	},
 
-	maxRows: 6,
+	maxRows: 7,
 	ids: {
 		0: {
 			title: "Temporal Supernovae",
@@ -403,24 +403,73 @@ let AXION = {
 		},
 
 		20: {
+			title: "Wormhole",
+			desc: "Strengthen Challenge 12.",
+			unl: () => PRIM.unl(),
+			req: E(200),
+			eff(x) {
+				return x.div(200).add(1).min(2)
+			},
+			effDesc(x) {
+				return formatMultiply(x)
+			}
+		},
+		21: {
+			title: "Singular",
+			desc: "Raise Black Hole effect.",
+			unl: () => PRIM.unl(),
+			req: EINF,
+			eff(x) {
+				return E(1)
+			},
+			effDesc(x) {
+				return "^"+x
+			}
+		},
+		22: {
+			title: "Glueball",
+			desc: "Multiply Free Gluons.",
+			unl: () => PRIM.unl(),
+			req: EINF,
+			eff(x) {
+				return E(1)
+			},
+			effDesc(x) {
+				return format(x)
+			}
+		},
+		23: {
+			title: "Isotopic",
+			desc: "Cosmic Argon produces faster.",
+			unl: () => PRIM.unl(),
+			req: EINF,
+			eff(x) {
+				return E(1)
+			},
+			effDesc(x) {
+				return formatMultiply(x)
+			}
+		},
+
+		24: {
 			title: "AX-Auto",
 			desc: "Automate X/Y AXIONS.",
 			unl: () => GLUBALL.unl(),
 			req: E(8)
 		},
-		21: {
+		25: {
 			title: "Monochromacy",
-			desc: "Unlock Challenges 14 - 15.",
+			desc: "Unlock new Challenges.",
 			unl: () => GLUBALL.unl(),
 			req: E(14)
 		},
-		22: {
+		26: {
 			title: "Primordia Lookback",
 			desc: "Unlock Primordiums.",
 			unl: () => GLUBALL.unl(),
 			req: E(145)
 		},
-		23: {
+		27: {
 			title: "Shortcut Mastery",
 			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
 			unl: () => GLUBALL.unl(),
@@ -468,7 +517,7 @@ function updateAxionTemp() {
 
 	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)
-	for (var i = 0; i < 20; i++) d.eff[i] = AXION.getEff(i, d.lvl[i].mul(d.str))
+	for (var i = 0; i < 24; i++) d.eff[i] = AXION.getEff(i, d.lvl[i].mul(d.str))
 }
 
 //HTML
@@ -528,7 +577,7 @@ function updateAxionHTML() {
 		if (tmp.ax.hover.id[0] == "b") {
 			var id = Number(tmp.ax.hover.id.split("b")[1])
 			var locked = tmp.ax.lvl[id].eq(0)
-			var hasEff = !locked && id < 20
+			var hasEff = !locked && id < 24
 			elm.ax_title.setTxt(AXION.ids[id].title + " (ax-b" + (id + 1) + ")")
 			elm.ax_eff.setDisplay(hasEff)
 			if (hasEff) elm.ax_eff.setHTML("Currently: " + AXION.ids[id].effDesc(tmp.ax.eff[id]) + "<br>")

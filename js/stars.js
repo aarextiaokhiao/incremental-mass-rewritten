@@ -74,7 +74,7 @@ function updateStarsTemp() {
 
 	ts.gb_base = E(2)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
-	if (future) ts.gb_base = ts.gb_base.mul(expMult(tmp.tickspeedEffect.step,1/9).pow(.01))
+    if (bosonsMastered()) ts.gb_base = ts.gb_base.mul(tmp.bosons.upgs.photon[0].effect)
 	if (tmp.chal) ts.gb_base = ts.gb_base.pow(tmp.chal.eff[11])
 	if (GLUBALL.got("s2_1")) ts.gb_base = ts.gb_base.pow(GLUBALL.eff("s2_1"))
 

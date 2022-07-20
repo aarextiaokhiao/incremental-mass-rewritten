@@ -648,10 +648,9 @@ const TREE_UPGS = {
 			perm: 2,
 		},
 		qol_ext1: {
-			branch: ["qol1"],
 			unl() { return EXT.unl() },
-			req() { return player.supernova.times.gte(4) },
-			reqDesc() { return `${format(4,0)} Supernovae` },
+			req() { return player.supernova.times.gte(1) },
+			reqDesc() { return `${format(1,0)} Supernovae` },
 			desc: `Skip requirements for several Supernova upgrades.`,
 			cost: E(2000),
 			icon: "qol_ext"

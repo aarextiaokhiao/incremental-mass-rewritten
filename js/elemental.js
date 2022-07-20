@@ -148,20 +148,14 @@ const ELEMENTS = {
 		{
 			desc: `You can automatically buy Cosmic Rays. Cosmic Ray raise Tickspeed.`,
 			cost: E(1e44),
-			softcap() {
-				let x = E(1.3)
-				if (hasPrim("p1_0")) x = x.mul(tmp.pr.eff.p1_0)
-				return x
-			},
 			effect() {
 				let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
-				let sc = this.softcap()
+				if (hasPrim("p1_0")) x = x.add(player.ext.ar39)
 				if (hasTree("ext_u2")) x = x.pow(2)
-				return x.softcap(sc,0.1,0).softcap(sc.mul(100),1/5,0)
+				return x.softcap(1.3,0.1,0).softcap(100,0.1,0)
 			},
 			effDesc(x) {
-				let sc = this.softcap()
-				return "^"+format(x)+getSoftcapHTML(x,sc,sc.mul(100))
+				return "^"+format(x)+getSoftcapHTML(x,1.3,100)
 			},
 		},
         {
