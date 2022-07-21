@@ -786,18 +786,20 @@ td.ax {
 		2px 2px 2px #ff3f00
 }
 
-.primordium {
-	width: 500px;
-	align-items: center;
+.prim {
+	background: linear-gradient(#fb03, transparent);
+	box-shadow: 0 0 3px #fb0;
+	position: relative;
+	width: 240px;
+	height: 240px;
+	color: #fdb
 }
 
-.primordium > div {
+.prim_sym {
+	position: absolute;
+	top: 0;
+	left: 24px;
+	opacity: 0.1;
 	text-align: left;
-}
-
-.btn_pr.choosed {
-	background: #7f3f00;
-	border-color: #ffbf00;
-	color: #ffbf00;
-	box-shadow: 0 0 24px #ffbf00;
+	font-size: 120px
 }

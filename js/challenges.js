@@ -510,13 +510,13 @@ const CHALS = {
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and add Free Gluons`,
-		max: E(20),
+		max: E(100),
 		inc: E(1.5),
 		pow: E(1.5),
 		start: mlt(1e3),
 		effect(x) {
 			return {
-				c10: E(1.75).sub(E(0.75).div(x.div(10).add(1))),
+				c10: E(1).add(x.div(20).sqrt().min(.6)),
 				bp: x,
 			}
 		},

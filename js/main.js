@@ -160,6 +160,7 @@ const FORMS = {
 		reset() {
 			if (tmp.rp.can) if (player.confirms.rp?confirm("Are you sure to reset?"):true) {
 				player.rp.points = player.rp.points.add(tmp.rp.gain)
+				if (!player.rp.unl) addPopup(POPUP_GROUPS.layer_1)
 				player.rp.unl = true
 				this.doReset()
 			}
@@ -216,6 +217,7 @@ const FORMS = {
 		reset() {
 			if (tmp.bh.dm_can) if (player.confirms.bh?confirm("Are you sure to reset?"):true) {
 				player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain)
+				if (!player.bh.unl) addPopup(POPUP_GROUPS.layer_2)
 				player.bh.unl = true
 				this.doReset()
 			}

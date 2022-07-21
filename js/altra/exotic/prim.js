@@ -35,6 +35,10 @@ let PRIM = {
 					unl: () => true,
 					eff: (x) => E(1.2).pow(x).min(1e6),
 					desc: (x) => "Reduce Luminosity start by ^"+format(x)+"."
+				},{
+					unl: () => false,
+					eff: (x) => E(0),
+					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -146,11 +150,14 @@ function updatePrimTemp() {
 function setupPrimHTML() {
 	var html = ""
 	for (var x = 0; x < 8; x++) {
+		var row = ""
+		var effs = PRIM.prim[x].eff
+		for (var y = 0; y < effs.length; y++) row += `<span id="pr_eff${x}_${y}"></span><br>`
 		html += `
-		<div class="primordium table_center">
-			<div style="width: 240px; height: 54px;">
-				<h2>${PRIM.prim[x].name} Particles [${PRIM.prim[x].sym}]</h2><br>[<span id="pr_${x}"></span>]
-			</div><div style="width: 240px; height: 54px; background: transparent; box-shadow: 0 0 6px #ffdf00; color: white" id="pr_eff${x}"></div>
+		<div class="prim">
+			<b style='font-size: 24px'><span id="pr_${x}"></span> ${PRIM.prim[x].name} Particles</b><br>
+			<b class="prim_sym">${PRIM.prim[x].sym}</b><br>
+			` + row + `
 		</div>
 		`
 	}
@@ -161,8 +168,12 @@ function updatePrimHTML() {
 	elm.pr_bp.setTxt(format(player.ext.pr.bp,0))
 	elm.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
 	elm.pr_pt.setTxt(format(player.ext.pr.pt,0))
-	for (var i = 0; i < 8; i++) {
-		elm["pr_"+i].setTxt(format(player.ext.pr.prim[i],0))
-		elm["pr_eff"+i].setHTML(PRIM.prim[i].eff[0].desc(tmp.pr.eff["p"+i+"_0"]))
+	for (var x = 0; x < 8; x++) {
+		var effs = PRIM.prim[x].eff
+		elm["pr_"+x].setTxt(format(player.ext.pr.prim[x],0))
+		for (var y = 0; y < effs.length; y++) {
+			elm["pr_eff"+x+"_"+y].setHTML(effs[y].unl() ? effs[y].desc(tmp.pr.eff["p"+x+"_"+y]) : "(Locked)")
+			elm["pr_eff"+x+"_"+y].setOpacity(effs[y].unl() ? 1 : 0.5)
+		}
 	}
 }

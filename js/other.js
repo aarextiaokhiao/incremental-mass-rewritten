@@ -138,7 +138,48 @@ const POPUP_GROUPS = {
         },
 	},
 
-
+	layer_1: {
+        html: `
+            <b class='red'>Layer 1: Rage!</b><br><br>
+			After tiers, you decided to go farther...<br>
+			Doing the first of major resets as your advantages rage on!
+        `,
+        width: 400,
+        height: 150,
+        button: "Okay"
+	},
+	layer_2: {
+        html: `
+            <b class='yellow'>Layer 2: Black Hole!</b><br><br>
+			Eruptly, a black hole appears.<br>
+			The mass starts to suck up for power.<br>
+			Take this as your advantage.
+        `,
+        width: 400,
+        height: 150,
+        button: "Okay"
+	},
+	layer_3: {
+        html: `
+            <b>Layer 3: Atoms!</b><br><br>
+			You dive deeper and saw the subatomic scale.<br>
+			Colorful quarks and new challenges have been unlocked!
+        `,
+        width: 400,
+        height: 150,
+        button: "Okay"
+	},
+	layer_5: {
+        html: `
+            <b class='scarlet'>Layer 5: Exotic!</b><br><br>
+			While you were rising Exotic, mysterious particles emit out.<br>
+			The goal of this layer is to capture them!<br>
+			First, you've captured Axions!
+        `,
+        width: 400,
+        height: 180,
+        button: "Cool"
+	},
     pres_1: {
         html: `
             <img src="images/story/pres_1.png"><br><br>

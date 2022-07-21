@@ -47,7 +47,7 @@ const MASS_DILATION = {
 		return x.sub(player.md.particles).max(0).floor()
 	},
 	undercapacity() {
-		return player.mass.pow(1e-6).max("ee10")
+		return player.mass.pow(1e-3)
 	},
     massGain() {
         if (CHALS.inChal(11)) return E(0)
@@ -96,7 +96,7 @@ const MASS_DILATION = {
 					if (player.md.upgs[7].gte(1)) return x.root(1.5).mul(0.25).add(1)
 					return x.root(2).mul(0.15).add(1)
 				},
-                effDesc(x) { return (x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")+" stronger" },
+                effDesc(x) { return formatMultiply(x)+" stronger" },
             },{
                 desc: `Double relativistic particles gain.`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },

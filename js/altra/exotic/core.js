@@ -66,6 +66,9 @@ let EXOTIC = {
 		if (!force) {
 			if (!can) return
 			if (player.confirms.ext && !confirm("Are you sure?")) return false
+
+			if (!player.ext.unl) addPopup(POPUP_GROUPS.layer_5)
+			player.ext.unl = true
 		}
 		player.ext.amt = player.ext.amt.add(player.ext.gain)
 		EXT.doReset()

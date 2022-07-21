@@ -31,6 +31,7 @@ const ATOM = {
         if (tmp.atom.canReset) if (player.confirms.atom?confirm("Are you sure to reset?"):true) {
             player.atom.points = player.atom.points.add(tmp.atom.gain)
             player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain)
+			if (!player.atom.unl) addPopup(POPUP_GROUPS.layer_3)
             player.atom.unl = true
             this.doReset()
         }

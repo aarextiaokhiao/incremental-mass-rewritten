@@ -206,6 +206,7 @@
 			<div id="stab_frame6_2">
 				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
 				<br>
+				<br>
 				<div id="pr_table" class="table_center"></div>
 			</div>
 			<div id="stab_frame6_3">
@@ -384,14 +385,19 @@
                 <span id="starSoft" class="red">Stars are <b class="soft1">(softcapped)</b> at <b id="starSoftStart">X</b>!</span><br>
             </div>
         </div><div id="tab_frame1">
-            Total time played: <span id="total_time">X</span><br><br>
-            <div id="stab_frame1_0">
-                <button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn" id="ranks_left_arrow"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn" id="ranks_right_arrow">--></button><br><br>
-                <div id="ranks_rewards_table"></div>
-            </div><div id="stab_frame1_1">
-                <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn" id="scaling_left_arrow"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1)))" class="btn" id="scaling_right_arrow">--></button><br><br>
-                <div id="scaling_table"></div>
-            </div>
+			<div id="stab_frame1_0">
+				Time played: <span id="total_time">X</span><br>
+				Best mass: <span id="best_mass">X</span>
+				<br><br>
+				Layers: <span id="layers">X</span> / 5<br>
+				Features: <span id="features">X</span> / 14
+			</div><div id="stab_frame1_1">
+				<button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn" id="ranks_left_arrow"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn" id="ranks_right_arrow">--></button><br><br>
+				<div id="ranks_rewards_table"></div>
+			</div><div id="stab_frame1_2">
+				<button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn" id="scaling_left_arrow"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1)))" class="btn" id="scaling_right_arrow">--></button><br><br>
+				<div id="scaling_table"></div>
+			</div>
         </div><div id="tab_frame2">
             <div id="main_upg_msg" style="min-height: 100px;"></div>
             <div id="main_upgs_table" class="table_center"></div>

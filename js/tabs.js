@@ -30,7 +30,8 @@ const TABS = {
             { id: "Big Rip", unl() { return PRES.unl() } },
         ],
         1: [
-            { id: "Ranks Rewards" },
+            { id: "General" },
+            { id: "Rewards", unl() { return !PRES.unl() } },
             { id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
         ],
         3: [

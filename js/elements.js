@@ -72,7 +72,7 @@ function setupHTML() {
 		table += `<div id="ranks_reward_div_${x}">`
 		let keys = Object.keys(RANKS.desc[rn])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="ranks_reward_${rn}_${y}"><b>${RANKS.fullNames[x]} ${format(keys[y])}:</b> ${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
+			table += `<span id="ranks_reward_${rn}_${y}"><b>${RANKS.fullNames[x]} ${format(keys[y],0)}:</b> ${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
 		}
 		table += `</div>`
 	}
@@ -384,6 +384,34 @@ function updateBlackHoleHTML() {
 	updateExtraBuildingHTML("bh", 3)
 }
 
+function updateStatsHTML() {
+	elm.total_time.setTxt(formatTime(player.time))
+	elm.best_mass.setTxt(formatMass(player.stats.maxMass))
+	elm.features.setTxt(
+		PRIM.unl() ? 14 :
+		GLUBALL.unl() ? 13 :
+		AXION.unl() ? 12 :
+		hasTree("unl1") ? 11 :
+		player.chal.comps[10].gte(1) ? 10 :
+		player.supernova.post_10 ? 9 :
+		player.supernova.unl ? 8 :
+		STARS.unlocked() ? 7 :
+		MASS_DILATION.unlocked() ? 6 :
+		player.chal.comps[7].gte(16) ? 5 :
+		player.atom.unl ? 4 :
+		player.chal.unl ? 3 :
+		player.bh.unl ? 2 :
+		player.rp.unl ? 1 : 0
+	)
+	elm.layers.setTxt(
+		EXT.unl() ? 5 :
+		player.supernova.unl ? 4 :
+		player.atom.unl ? 3 :
+		player.bh.unl ? 2 :
+		player.rp.unl ? 1 : 0
+	)
+}
+
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
 		elm["confirm_div_"+x].setDisplay(CONFIRMS_UNL[CONFIRMS[x]]())
@@ -448,9 +476,9 @@ function updateHTML() {
 			}
 		}
 		if (tmp.tab == 1) {
-			elm.total_time.setTxt(formatTime(player.time))
-			if (tmp.stab[1] == 0) updateRanksRewardHTML()
-			if (tmp.stab[1] == 1) updateScalingHTML()
+			if (tmp.stab[1] == 0) updateStatsHTML()
+			if (tmp.stab[1] == 1) updateRanksRewardHTML()
+			if (tmp.stab[1] == 2) updateScalingHTML()
 		}
 		if (tmp.tab == 2) {
 			updateMainUpgradesHTML()

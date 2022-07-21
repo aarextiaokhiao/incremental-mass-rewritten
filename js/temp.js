@@ -138,7 +138,7 @@ function updateTemp() {
 	//Tab Forcing
 	if (PRES.unl() && tmp.stab[0] < 4) tmp.stab[0] = 4
 	if (!PRES.unl() && tmp.stab[0] == 4) tmp.stab[0] = 0
-	if (player.ext.toned == 5) tmp.stab[1] = 0
+	if (player.ext.toned == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
 
 	//Exotic
 	updatePrimTemp()
