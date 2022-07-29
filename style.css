@@ -229,6 +229,12 @@ button {
 	width: 120px;
 }
 
+.btn_tab.magic {
+	background: #102;
+	color: #bbf;
+	border-color: purple;
+}
+
 .btn_tab.bh {
 	color: gold;
 	border-color: gold;
@@ -780,19 +786,22 @@ td.ax {
 	}
 }
 
-.pr_color {
-	color: #ffbf00;
-	text-shadow: 0 0 4px #ff9f00,
-		2px 2px 2px #ff3f00
-}
-
 .prim {
 	background: linear-gradient(#fb03, transparent);
+	border: 1px solid #fb7;
 	box-shadow: 0 0 3px #fb0;
 	position: relative;
 	width: 240px;
-	height: 240px;
-	color: #fdb
+	height: 120px;
+	color: #fdb;
+	font-size: 13px
+}
+
+.prim.rare {
+	background: linear-gradient(#0bf3, transparent);
+	border: 1px solid #7bf;
+	box-shadow: 0 0 3px #0bf;
+	color: #bdf;
 }
 
 .prim_sym {
@@ -801,5 +810,27 @@ td.ax {
 	left: 24px;
 	opacity: 0.1;
 	text-align: left;
-	font-size: 120px
+	font-size: 60px
+}
+
+.prim_btn {
+	width: 60px
+}
+
+.prim_id {
+	font-size: 24px
+}
+
+.prim_gain {
+	background: rgba(255, 191, 0, 0.25);
+	border: 1px solid #fb0;
+	width: 48px;
+	height: 36px;
+	font-size: 24px;
+}
+
+.prim_gain.locked {
+	background: rgba(31, 31, 31, 0.25);
+	border: 1px solid #333;
+	color: rgba(255, 255, 255, 0.25)
 }

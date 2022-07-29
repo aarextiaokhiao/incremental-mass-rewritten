@@ -123,8 +123,9 @@ const RANKS = {
                 return ret
             },
             '6'() {
-                let r = player.ranks.rank.add(1)
-                return r.pow(hasRank("rank", 17) ? r.root(3) : 2)
+                let r = player.ranks.rank
+                if (inNGM()) r = r.sub(5).div(3)
+                return r.add(1).pow(hasRank("rank", 17) ? r.root(3) : 2)
             },
             '40'() {
                 let ret = player.ranks.rank.root(2).div(100)

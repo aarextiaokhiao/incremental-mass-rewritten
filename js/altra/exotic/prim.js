@@ -116,8 +116,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(5),
-					desc: (x) => "Gain " + format(x) + " more Free Gluons."
+					eff: (x) => x.div(5).add(1),
+					desc: (x) => "Gain " + formatMultiply(x) + " more Free Gluons."
 				}
 			]
 		}
@@ -152,12 +152,13 @@ function setupPrimHTML() {
 	for (var x = 0; x < 8; x++) {
 		var row = ""
 		var effs = PRIM.prim[x].eff
-		for (var y = 0; y < effs.length; y++) row += `<span id="pr_eff${x}_${y}"></span><br>`
+		for (var y = 0; y < effs.length; y++) row += `<li id="pr_eff${x}_${y}"></li>`
 		html += `
-		<div class="prim">
-			<b style='font-size: 24px'><span id="pr_${x}"></span> ${PRIM.prim[x].name} Particles</b><br>
-			<b class="prim_sym">${PRIM.prim[x].sym}</b><br>
-			` + row + `
+		<div class="prim` + (x >= 4 ? " rare" : "") + `">
+			<b class="prim_sym">${PRIM.prim[x].sym}</b>
+			<b style='font-size: 18px'><span id="pr_${x}"></span> ${PRIM.prim[x].name} Particles</b>
+			<span style='color: #fb0' id="pr_per${x}">0%</span>
+			<list>` + row + `</list>
 		</div>
 		`
 	}

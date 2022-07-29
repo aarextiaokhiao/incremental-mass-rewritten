@@ -24,7 +24,7 @@ const CONFIRMS_UNL = {
 
 const FORMS = {
 	baseMassGain() {
-		let x = E(1)
+		let x = E(inNGM() ? 2 : 1)
 		x = x.add(tmp.upgs.mass[1]?tmp.upgs.mass[1].eff.eff:1)
 		if (hasRank("rank", 6)) x = x.mul(RANKS.effect.rank[6]())
 		if (hasRank("rank", 13)) x = x.mul(3)
@@ -50,7 +50,10 @@ const FORMS = {
 		if (GLUBALL.got("p2_1")) exp = exp.mul(GLUBALL.eff("p2_1"))
 
 		let x = this.baseMassGain().pow(exp)
-		if (tmp.md.active) x = MASS_DILATION.applyDil(x)
+		if (tmp.md.active) {
+			x = MASS_DILATION.applyDil(x)
+			if (hasElement(28)) x = x.pow(1.5)
+		}
 		if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
 
 		return x.softcap(tmp.massSoftGain1,tmp.massSoftPower1,0).softcap(tmp.massSoftGain2,tmp.massSoftPower2,0).softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)

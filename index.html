@@ -28,6 +28,7 @@
     <script src="js/altra/exotic/prim.js"></script>
     <script src="js/altra/tones.js"></script>
     <script src="js/altra/core.js"></script>
+    <script src="js/altra/meta_save.js"></script>
 
     <script src="js/supernova/radiation.js"></script>
     <script src="js/supernova/fermions.js"></script>
@@ -206,6 +207,39 @@
 			<div id="stab_frame6_2">
 				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
 				<br>
+				<table class="table_center">
+					<tr>
+						<td><button class="btn prim_btn">A</button></td>
+						<td><button class="btn prim_btn">B</button></td>
+						<td><button class="btn prim_btn">C</button></td>
+						<td><button class="btn prim_btn">D</button></td>
+						<td><button class="btn prim_btn">E</button></td>
+					</tr><tr>
+						<td><div class="prim_gain">P<sub>A</sub></div></td>
+						<td><div class="prim_gain">P<sub>Ω</sub></div></td>
+						<td><div class="prim_gain">P<sub>B</sub></div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+					</tr><tr>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+					</tr><tr>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+					</tr><tr>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+						<td><div class="prim_gain locked">???</div></td>
+					</tr>
+				</table>
 				<br>
 				<div id="pr_table" class="table_center"></div>
 			</div>
@@ -453,7 +487,8 @@
             <button class="btn" onclick="exporty()">Export</button>
             <button class="btn" onclick="export_copy()">Export to clipboard</button>
             <button class="btn" onclick="importy()">Import</button>
-            <button class="btn" onclick="turnOffline()">Offline Production: <span id="offline_active">ON</span></button>
+            <button class="btn" onclick="turnOffline()">Offline Production: <span id="offline_active">ON</span></button><br><br>
+            <button class="btn" onclick="toggleMinus()">IM:A Minus: <span id="minus_active">ON</span></button>
             <button class="btn" onclick="if (confirm('Are you sure you want to RESET your progress to new game?')) {wipe(true)}">Hard Reset</button><br><br>
             <button class="btn" onclick="updateAarex(true)">Aarex's Theme: <span id="aarex_active">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">Notations</button>
@@ -478,6 +513,12 @@
 			</div>
         </div>
         <b id="beginning" style="opacity: 0.05; font-size: 8px">At the beginning, there's just mass. No nature, which leads to a monotonic universe.<br>Altar awaits your recall, defying you from nothing.<br><br>Rank up to proceed!</b>
+        <b id="beginning2" style="font-size: 8px">
+			<br><br>
+			If you played IM: Rewritten. You can either skip to the divergence point (Radiation) or start IM:A-. It's either your choices.<br>
+			<button class="btn" onclick="skipToRadiation()">Skip to Radiation</button>
+			<button class="btn" onclick="toggleMinus(true)">Start IM:A Minus</button>
+		</b>
     </div>
 </body>
 </html>

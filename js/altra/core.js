@@ -1,10 +1,12 @@
 //VERSIONING
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "7/20/22"
+let betaVer = "7/28/22"
 let betaSave = "testBeta"
 
-let saveId = beta ? betaSave : "testSave"
+let globalSaveId = beta ? betaSave : "testSave"
+let metaSaveId = btoa(globalSaveId + "_meta")
+saveId = ""
 
 function checkAPVers() {
 	if (player.ap_ver == 0) addPopup(POPUP_GROUPS.ap_chroma)
@@ -92,5 +94,57 @@ let PRES = {
 		addPopup(POPUP_GROUPS.pres_2)
 		addPopup(POPUP_GROUPS.pres_3)
 		addPopup(POPUP_GROUPS.pres_4)
+	}
+}
+
+function skipToRadiation() {
+	if (!confirm("Are you want to skip into Radiation?")) return
+
+	for (var i = 1; i <= 10; i++) player.mainUpg.atom.push(i)
+	player.autoMassUpg = [null, true, true, true]
+	player.auto_mainUpg.rp = true
+	player.auto_mainUpg.bh = true
+	player.auto_mainUpg.atom = true
+	player.autoTickspeed = true
+	player.auto_ranks.rank = true
+	player.auto_ranks.tier = true
+	player.auto_ranks.tetr = true
+	player.rp.unl = true
+	player.bh.unl = true
+	player.atom.unl = true
+	player.supernova.unl = true
+	player.supernova.post_10 = true
+	player.supernova.times = E(25)
+	player.chal.comps[9] = E(10)
+	player.chal.comps[10] = E(10)
+
+	let list = ["c"]
+	list = list.concat("chal1","chal2","chal3","chal4","chal4a","chal5")
+	list = list.concat("qol1","qol2","qol3","qol4","qol5","qol6")
+	list = list.concat("s1","s2","s3","s4","sn1","sn2","sn3","sn4","sn5","m1","m2","m3","rp1","bh1","bh2","t1","gr1","gr2","d1")
+	list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5")
+	list = list.concat("unl1")
+	player.supernova.tree = list
+
+	SUPERNOVA.doReset()
+}
+
+//MINUS
+function getSaveTitle() {
+	return inNGM() ? "IM:A Minus" : "IM: Altrascendum"
+}
+function inNGM() {
+	return metaSave.ngm == 1
+}
+function toggleMinus(start) {
+	if (!confirm("Do you wish the altar to switch? You'll be at: " + (metaSave.ngm ? "IM:A" : "IM:A-"))) return
+	if (!metaSave.ngm && !confirm("Warning! IM:A Minus is really work in progress, and has a little content balanced! Are you sure?")) return
+
+	metaSave.ngm = (metaSave.ngm + 1) % 2
+	if (start) RANKS.reset("rank")
+	else {
+		save()
+		setMetaSave()
+		loadGame(false)
 	}
 }

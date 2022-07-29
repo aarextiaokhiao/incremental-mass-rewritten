@@ -47,7 +47,7 @@ const MASS_DILATION = {
 		return x.sub(player.md.particles).max(0).floor()
 	},
 	undercapacity() {
-		return player.mass.pow(1e-3)
+		return player.mass.pow(1e-3).max("ee15")
 	},
     massGain() {
         if (CHALS.inChal(11)) return E(0)

@@ -7,7 +7,8 @@ function setupHTML() {
 	let table2 = ""
 	let table3 = ""
 	let table4 = ""
-	for (let x = 0; x < TABS[1].length; x++) {
+	for (let i = 0; i < TABS.order.length; i++) {
+		let x = TABS.order[i]
 		table += `<div style="width: 130px" id="tab${x}_div">
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
 		</div>`
@@ -418,6 +419,7 @@ function updateOptionsHTML() {
 		elm["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
+	elm.minus_active.setTxt(metaSave.ngm?"ON":"OFF")
 	elm.pure.setTxt(player.options.pure?"OFF":"ON")
 	elm.help.setDisplay(!player.options.pure)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
@@ -437,10 +439,12 @@ function updateHTML() {
 		)
 	}
 
+	document.body.style.backgroundColor = tmp.tab == 5 ? "#000" : inNGM() ? "#101" : "#111"
+	document.body.className = inNGM() ? "ngm" : ""
 	elm.loading.setDisplay(tmp.offlineActive)
 	elm.offlineGainDiv.setDisplay(tmp.offlineActive)
     elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 5 && (!tmp.supernova.reached || player.supernova.unl))
-	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | IM: Altrascendum")
+	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | " + getSaveTitle())
 	if (tmp.offlineActive) return
 
 	updateSupernovaEndingHTML()
@@ -448,6 +452,7 @@ function updateHTML() {
 	updateTabsHTML()
 	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 5) {
 		elm.beginning.setDisplay(!gameStarted())
+		elm.beginning2.setDisplay(!metaSave.started && player.mass.gt(15))
 		updateUpperHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {

@@ -82,7 +82,7 @@ const UPGS = {
             start: E(100),
             inc: E(4),
             effect(x) {
-                let step = E(2)
+                let step = E(inNGM() ? 1.25 : 2)
                 if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
                 if (tmp.tickspeedEffect && hasRank("pent", 1e6)) step = step.mul(tmp.tickspeedEffect.step.root(7500))
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
@@ -106,7 +106,7 @@ const UPGS = {
             },
         },
         3: {
-            unl() { return hasRank("rank", 3) || hasUpgrade('atom',1) },
+            unl() { return hasRank("rank", inNGM() ? 4 : 3) || hasUpgrade('atom',1) },
             title: "Stronger",
             start: E(1000),
             inc: E(9),
@@ -137,13 +137,14 @@ const UPGS = {
 
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1)
-				if (!hasRank("pent", 5000)) ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+				if (inNGM()) ret = ret.pow(2/3)
+				else if (!hasRank("pent", 5000)) ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
 				return {step: step, eff: ret, ss: ss}
 			},
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Booster Power"+(hasRank("pent", 5000)?"":getSoftcapHTML(eff.eff,eff.ss,1.8e5))
+                    eff: "^"+format(eff.eff)+" to Booster Power"+(hasRank("pent", 5000)||inNGM()?"":getSoftcapHTML(eff.eff,eff.ss,1.8e5))
                 }
             },
             bonus() {

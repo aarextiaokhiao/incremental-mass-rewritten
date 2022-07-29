@@ -69,6 +69,10 @@ function calc(dt, dt_offline) {
 	tmp.tree_time = (tmp.tree_time+dt_offline) % 3
 
 	tmp.pass = true
+	if (gameStarted() && !metaSave.started) {
+		metaSave.started = true
+		setMetaSave()
+	}
 }
 
 function getPlayerData() {
@@ -329,7 +333,7 @@ function exporty() {
     window.URL = window.URL || window.webkitURL;
     let a = document.createElement("a")
     a.href = window.URL.createObjectURL(file)
-    a.download = "IM Altrascendum - "+new Date().toGMTString()+".txt"
+    a.download = getSaveTitle() + " - " + new Date().toGMTString()+".txt"
     a.click()
 }
 
@@ -393,6 +397,12 @@ function importy() {
 
 let lastLoad = 0
 function loadGame(start=true, save) {
+	if (start) {
+		console.warn("// IM: Altrascendum - Created by Aarex //")
+		getMetaSave()
+	}
+	saveId = getSaveId()
+
 	wipe()
 	load(save || localStorage.getItem(saveId))
 	checkAPVers()

@@ -2,6 +2,10 @@ body {
 	background: linear-gradient(#001f3f, #00171f);
 	color: #bfdfff
 }
+body.ngm {
+	background: linear-gradient(#1f003f, #17001f);
+	color: #dfbfff
+}
 
 .btn, .btn_tab {
 	border: 0px solid;

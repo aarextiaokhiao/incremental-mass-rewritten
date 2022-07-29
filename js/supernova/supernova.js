@@ -213,7 +213,6 @@ function updateSupernovaEndingHTML() {
         elm.sns5.setVisible(tmp.supernova.time>4)
         elm.sns5.setOpacity(Math.max(Math.min(tmp.supernova.time-5,1),0))
     }
-    if (reached) document.body.style.backgroundColor = tmp.tab == 5 ? "#000" : "#111"
 
     elm.app_supernova.setDisplay(reached && tmp.tab == 5)
     if (tmp.tab == 5) {

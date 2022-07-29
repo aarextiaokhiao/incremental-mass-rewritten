@@ -10,6 +10,7 @@ const TABS = {
         tmp.tab = tmp.prev_tab
         tmp.prev_tab = tmp.tab
     },
+	order: [0,1,2,3,9,4,5,6,7,8],
     1: [
         { id: "Main" },
         { id: "Stats", unl() { return player.rp.unl && !PRES.unl() } },
@@ -20,6 +21,7 @@ const TABS = {
         { id: "Exotic", unl() { return EXT.unl() }, style: "ext" },
         { id: "Prestige", unl() { return PRES.unl() } },
         { id: "Options" },
+        { id: "Magic", unl() { return inNGM() && player.rp.unl }, style: "magic" },
     ],
     2: {
         0: [
