@@ -55,7 +55,7 @@ const FERMIONS = {
 		return r
 	},
 	getScalingExp(x) {
-		if (scalingToned("fTier")) x *= 7/3
+		if (scalingToned("fTier")) x *= 4
 		return x
 	},
 	maxTier(i, x) {
@@ -64,6 +64,7 @@ const FERMIONS = {
 	},
     getUnlLength(x) {
         let u = 2
+        if (player.chal.comps[10].lt(1)) return 0
         if (hasTree("fn2")) u++
         if (hasTree("fn6")) u++
         if (hasTree("fn7")) u++
@@ -199,10 +200,10 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    return E(1).div(i.add(1).log10().times(t.pow(2)).add(1).log10().div(30).add(1))
+                    return i.add(1).log10().times(t.pow(2)).add(1).log10().div(30).add(1)
                 },
                 desc(x) {
-                    return `Radiation boosts scale ${format(E(1).sub(x).mul(100))}% slower.`
+                    return `Radiation boosts scale ${formatMultiply(x)} slower.`
                 },
                 inc: "Tickspeed Effect",
                 res: () => tmp.tickspeedEffect.eff,

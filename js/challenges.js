@@ -372,7 +372,7 @@ const CHALS = {
         effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(x.log(0.97),5) },
     },
     6: {
-        unl() { return player.chal.comps[5].gte(1) || player.supernova.times.gte(1) },
+        unl() { return player.chal.comps[5].gte(1) || player.supernova.unl },
         title: "No Tickspeed & Condenser",
         desc: "You cannot buy Tickspeed & BH Condenser.",
         reward: `Add Tickspeed & BH Condenser Power.`,
@@ -387,7 +387,7 @@ const CHALS = {
         effDesc(x) { return "+"+format(x)+"x"+getSoftcapHTML(x,0.5) },
     },
     7: {
-        unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
+        unl() { return player.chal.comps[6].gte(1) || player.supernova.unl },
         title: "No Rage Power",
         desc: "You can't gain Rage Power, but gain Dark Matter by mass.<br>Additionally, strengthen mass softcap.",
         reward: `Add maximum completions to C1-4.<br><span class="yellow">At 16th completion, unlock Elements!</span>`,
@@ -403,7 +403,7 @@ const CHALS = {
         effDesc(x) { return "+"+format(x,0) },
     },
     8: {
-        unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) },
+        unl() { return player.chal.comps[7].gte(1) || player.supernova.unl },
         title: "White Hole",
         desc: "Reduce Dark Matter and Black Hole mass.",
         reward: `Raise Dark Matter and Black Hole mass.<br><span class="yellow">At first completion, unlock 3 rows of Elements!</span>`,
@@ -495,13 +495,13 @@ const CHALS = {
 		unl() { return hasTree("chal8") || PRES.unl() },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
-		reward: `Weaken Axion penalties.<br><span class="ch_color">On 13th completion, unlock Glueballs!</span>`,
+		reward: `Weaken Axion penalties.<br><span class="ch_color">On 9th completion, unlock Glueballs!</span>`,
 		max: E(100),
 		inc: E(11/9),
-		pow: E(1.2),
-		start: uni("e4.5e5"),
+		pow: E(1.15),
+		start: uni("e4e4"),
 		effect(x) {
-            return x.div(8).add(1)
+            return x.div(6).add(1)
 		},
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},

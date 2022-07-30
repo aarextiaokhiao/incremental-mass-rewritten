@@ -3,7 +3,7 @@ body {
 	color: #bfdfff
 }
 body.ngm {
-	background: linear-gradient(#1f003f, #17001f);
+	background: linear-gradient(#0f001f, black, #00001f);
 	color: #dfbfff
 }
 
@@ -13,7 +13,7 @@ body.ngm {
 	background: rgba(0, 191, 255, 0.75) !important;
 	box-shadow: 0 0 3px rgba(0, 255, 255, 0.75);
 
-	color: #7fefff;
+	color: #dfbfff;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)
 }
 

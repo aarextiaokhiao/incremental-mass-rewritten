@@ -64,7 +64,7 @@ const RANKS = {
             '3': "unlock Mass Upgrade 3, weaken Mass Upgrade 2 by 20%, and Mass Upgrade 1 boosts itself.",
             '3_m': "weaken Mass Upgrade 2 by 20% and Mass Upgrade 1 boosts itself.",
             '4': "weaken Mass Upgrade 3 by 20%.",
-            '4_m': "unlock Mass Upgrade 3 and weaken Mass Upgrade 3 by 20%.",
+            '4_m': "unlock Mass Upgrade 3.",
             '5': "mass upgrade 2 boosts itself.",
             '6': "Rank boosts mass.",
             '13': "triple mass.",

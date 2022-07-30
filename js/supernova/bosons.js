@@ -1,5 +1,5 @@
 const BOSONS = {
-    unl: () => player.supernova.times.gte(10) || CHALS.inChal(13),
+    unl: () => player.supernova.times.gte(10),
 
     names: ['pos_w','neg_w','z_boson','photon','gluon','graviton','hb'],
     gain: {

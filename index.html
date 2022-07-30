@@ -28,6 +28,7 @@
     <script src="js/altra/exotic/prim.js"></script>
     <script src="js/altra/tones.js"></script>
     <script src="js/altra/core.js"></script>
+    <script src="js/altra/ngm.js"></script>
     <script src="js/altra/meta_save.js"></script>
 
     <script src="js/supernova/radiation.js"></script>
@@ -71,7 +72,7 @@
         <div style="height: 365px; overflow-y: auto; margin-bottom: 5px;" id="popup_html">
             Hello, world!
         </div>
-        <button class="btn" id="popup_button" onclick="tmp.popup[0].callFunctions()">Okay</button>
+        <button class="btn" id="popup_button" onclick="popup[0].callFunctions()">Okay</button>
     </div>
     <div id="supernova_scene" style='display: none'>
         <br>
@@ -265,7 +266,7 @@
                         <div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="mass">X</span>
                     </div><div class="resources sml purple" id="mg_div">
-                        <div tooltip="Magic" t-size="small"><img class="res_img" src="images/empty.png" onclick="doMagicReset()" onmousemove="FORMS.reset_msg.set('mg')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div tooltip="Magic" t-size="small"><img class="res_img" src="images/ngm/magic.png" onclick="MAGIC.reset()" onmousemove="FORMS.reset_msg.set('mg')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="mgAmt">X</span>
                     </div><div class="resources sml red" id="rp_div">
                         <div tooltip="Rage Power" t-size="small"><img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
@@ -369,7 +370,7 @@
                     </div><button id="bh_b3_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('bh',3)">Req: <span id="bh_b3_cost" >X</span> Dark Matters</button>
                     <button style="width: 200px; visibility: hidden"></button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
-                        Exponent Gain Power: ^<span id="bh_b3_pow">X</span><br>
+                        Exponent Gain Power: <span id="bh_b3_pow">X</span><br>
                     </div>
                 </div><br><div>
                     <span id="bhSoft" class="red">Black Hole mass is <b class="soft1">(softcapped)</b> at <b id="bhSoftStart">X</b>!</span><br>

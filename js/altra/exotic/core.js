@@ -122,14 +122,9 @@ let EXOTIC = {
 			unl: false,
 			points: [E(0),E(0)],
 			tiers: [[E(0),E(0),E(0),E(0),E(0),E(0)],[E(0),E(0),E(0),E(0),E(0),E(0)]],
-			choosed: player.supernova.fermions.choosed,
-			choosed2: player.supernova.fermions.choosed2,
+			choosed: "",
+			choosed2: "",
 			dual: player.supernova.fermions.dual
-		}
-		if (hasTree("qol_ext4")) {
-			for (var i = 0; i < 2; i++) {
-				for (var t = 0; t < 6; t++) player.supernova.fermions.tiers[i][t] = E(10)
-			}
 		}
 		player.supernova.radiation = {
 			hz: E(0),
@@ -175,7 +170,7 @@ let EXOTIC = {
 		}
 
 		//GLUEBALLS
-		if (!player.ext.ch.unl && player.chal.comps[13].gte(13)) {
+		if (!player.ext.ch.unl && player.chal.comps[13].gte(9)) {
 			addPopup(POPUP_GROUPS.chroma)
 			player.ext.ch.unl = true
 		} else if (player.ext.ch.unl) GLUBALL.calc(dt)
@@ -258,7 +253,8 @@ let EXTRA_BUILDINGS = {
 			let r = x.add(1).log10().add(5).div(25)
 			if (GLUBALL.got("p3_2")) r = r.add(GLUBALL.eff("p3_2"))
 			return r
-		}
+		},
+		dispHTML: (x) => "^" + format(x,3)
 	},
 	ag2: {
 		start: E("ee6"),

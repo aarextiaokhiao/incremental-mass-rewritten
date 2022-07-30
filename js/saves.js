@@ -211,7 +211,7 @@ function getPlayerData() {
         s.mainUpg[UPGS.main.ids[x]] = []
     }
     for (let x = 1; x <= CHALS.cols; x++) s.chal.comps[x] = E(0)
-    for (let x = 0; x < CONFIRMS.length; x++) s.confirms[CONFIRMS[x]] = true
+    for (let x = 0; x < CONFIRMS.length; x++) if (CONFIRMS_MOD[CONFIRMS[x]]()) s.confirms[CONFIRMS[x]] = true
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) s.md.upgs[x] = E(0)
     for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) s.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = E(0)
     for (let x = 0; x < 7; x++) {
@@ -234,6 +234,7 @@ function wipe(reload=false) {
         loadGame(false, btoa(JSON.stringify(player)))
         save()
     } else player = getPlayerData()
+	popup = []
 }
 
 function loadPlayer(load) {
@@ -416,6 +417,7 @@ function loadGame(start=true, save) {
 
 	if (start) {
 		setupHTML()
+		updatePopup()
 
 		for (let x = 0; x < 3; x++) {
 			let r = document.getElementById('ratio_d'+x)
@@ -444,8 +446,6 @@ function loadGame(start=true, save) {
 		setInterval(checkNaN, 1000)
 		setInterval(updateShortcuts, 1000)
 	}
-
-	elm.popup.setDisplay(0)
 }
 
 function checkNaN() {

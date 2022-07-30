@@ -48,7 +48,7 @@ const RADIATION = {
     },
     getBoostScalingMul(i) {
 		let f4 = E(1)
-		if (tmp.fermions) f4 = f4.mul(tmp.fermions.effs[0][5]||1)
+		if (tmp.fermions) f4 = f4.div(tmp.fermions.effs[0][5]||1)
 		f4 = f4.div(tmp.chal?tmp.chal.eff[12]:1)
 		if (hasElement(78) && i % 2 == 1) f4 = f4.mul(0.85)
 		return f4

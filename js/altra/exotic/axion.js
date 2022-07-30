@@ -189,10 +189,10 @@ let AXION = {
 			desc: "Weaken Tickspeed inside Challenges.",
 			req: E(0),
 			eff(x) {
-				return x.add(1).log10().div(5).add(1).min(1.4)
+				return x.add(1).log10().div(5).add(1).softcap(1.4,0.5,0)
 			},
 			effDesc(x) {
-				return formatMultiply(x)
+				return formatMultiply(x)+getSoftcapHTML(x,1.4)
 			}
 		},
 		3: {
@@ -213,7 +213,7 @@ let AXION = {
 			req: E(1),
 			eff(x) {
 				x = x.div(3).add(1).log(3).add(1)
-				if (hasTree("ext_u3")) x = E(1.75).sub(E(1).div(x.div(5).add(1))).max(1).min(1.3)
+				if (hasTree("ext_u3")) x = x.div(10).add(.75).min(1.3)
 				return x
 			},
 			effDesc(x) {
@@ -234,12 +234,17 @@ let AXION = {
 		6: {
 			title: "Superranked",
 			desc: "Weaken Meta-Rank based on its start.",
+			unl: () => !scalingToned("rank"),
 			req: E(5),
 			eff(x) {
-				return getScalingStart("meta", "rank").div(8e4).mul(x.cbrt()).add(1)
+				let str = x.cbrt().div(8e4).min(.01)
+				return {
+					str: str,
+					eff: getScalingStart("meta", "rank").mul(str).add(1)
+				}
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return format(x.eff) + "x (" + format(x.str.mul(100),3) + "% power" + getSoftcapHTML(x.str, 0.01) + ")"
 			}
 		},
 		7: {
@@ -247,10 +252,10 @@ let AXION = {
 			desc: "Multiply Meta Boosts based on radiation types.",
 			req: E(7),
 			eff(x) {
-				return x.add(1).cbrt().div(10).add(1).min(3)
+				return x.add(1).cbrt().div(10).add(1).softcap(1e3,0.5,2)
 			},
 			effDesc(x) {
-				return format(x) + "x"
+				return format(x) + "x" + getSoftcapHTML(x, 1e3)
 			}
 		},
 

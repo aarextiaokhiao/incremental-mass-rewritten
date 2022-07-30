@@ -165,7 +165,7 @@ function updateUpperHTML() {
 
 	let unl = gameStarted() && inNGM() && !hideSome
 	elm.mg_div.setDisplay(unl)
-	if (unl) elm.mgAmt.setHTML(format(player.mg.points,0)+"<br>"+formatGainOrGet(player.mg.amt, E(player.mass.gte(2e4) ? 1 : 0), false))
+	if (unl) elm.mgAmt.setHTML(format(player.mg.amt,0)+"<br>"+formatGainOrGet(player.mg.amt, MAGIC.gain(), false))
 
 	unl = ((inNGM() ? player.mg.unl : player.stats.maxMass.gte(1e9)) || player.rp.unl) && !hideSome
 	elm.rp_div.setDisplay(unl)
@@ -426,7 +426,7 @@ function updateStatsHTML() {
 
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		elm["confirm_div_"+x].setDisplay(CONFIRMS_UNL[CONFIRMS[x]]())
+		elm["confirm_div_"+x].setDisplay(CONFIRMS_MOD[CONFIRMS[x]]() && CONFIRMS_UNL[CONFIRMS[x]]())
 		elm["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
 	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")

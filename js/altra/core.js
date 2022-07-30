@@ -1,7 +1,7 @@
 //VERSIONING
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "7/29/22"
+let betaVer = "7/30/22a"
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -99,33 +99,6 @@ function updateAarex(toggle) {
 	}
 
 	document.getElementById("aarex_active").textContent = player.aarex ? "ON" : "OFF"
-}
-
-//MINUS
-function getSaveTitle() {
-	return inNGM() ? "IM:A Minus" : "IM: Altrascendum"
-}
-function inNGM() {
-	return metaSave.ngm == 1
-}
-function toggleMinus(start) {
-	if (!confirm("Do you wish the altar to switch? You'll be at: " + (metaSave.ngm ? "IM:A" : "IM:A-"))) return
-	if (!metaSave.ngm && !confirm("Warning! IM:A Minus is really work in progress, and has a little content balanced! Are you sure?")) return
-
-	metaSave.ngm = (metaSave.ngm + 1) % 2
-	if (start) RANKS.reset("rank")
-	else {
-		save()
-		setMetaSave()
-		loadGame(false)
-	}
-}
-function doMagicReset() {
-	if (player.mass.gte(2e4)) if (confirm("Are you sure to reset?")) {
-		player.mg.amt = player.mg.amt.add(1)
-		player.mg.unl = true
-		RANKS.doReset.highest()
-	}
 }
 
 //TECHNICAL / FUTURE

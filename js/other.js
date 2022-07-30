@@ -29,6 +29,7 @@ function updateNotify() {
     }
 }
 
+let popup = []
 const POPUP_GROUPS = {
     help: {
         html: () => `
@@ -244,7 +245,7 @@ const POPUP_GROUPS = {
 			<span class='pr_color'>Formulate the spacetime!</span>
             <br><br>
 			Final Neutron upgrades and Axion Boosts have been also added.<br>
-			Have fun! End-game: `+formatMass(E("1e1e30"))+` - `+formatMass(E("1e1e48"))+`<br><br>
+			Have fun! End-game: `+formatMass(E("1e1e42"))+`<br><br>
 			
 			<b class='purple' style='font-size: 7px'>Oh, this is a part of Spectraglow series.</b>
 		` },
@@ -257,7 +258,7 @@ const POPUP_GROUPS = {
 }
 
 function addPopup(data) {
-    tmp.popup.push({
+    popup.push({
         html: (data.html&&(typeof(data.html)=="function"?data.html():data.html))||"",
         button: data.button||"Okay",
         callFunctions: data.callFunction?function() {removePopup();data.callFunctions()}:removePopup,
@@ -266,26 +267,26 @@ function addPopup(data) {
         height: data.height||400,
         otherStyle: data.otherStyle||{},
     })
-    updatePopup()
+    if (elm.popup) updatePopup()
 }
 
 function updatePopup() {
-    elm.popup.setDisplay(tmp.popup.length > 0)
-    if (tmp.popup.length > 0) {
-        elm.popup_html.setHTML(tmp.popup[0].html)
-        elm.popup_html.changeStyle("height", tmp.popup[0].height-35)
-        elm.popup_button.setHTML(tmp.popup[0].button)
-        elm.popup.changeStyle("width", tmp.popup[0].width)
-        elm.popup.changeStyle("height", tmp.popup[0].height)
-        for (let x in tmp.popup[0].otherStyle) elm.popup_html.changeStyle(x, tmp.popup[0].otherStyle[x])
+    elm.popup.setDisplay(popup.length > 0)
+    if (popup.length > 0) {
+        elm.popup_html.setHTML(popup[0].html)
+        elm.popup_html.changeStyle("height", popup[0].height-35)
+        elm.popup_button.setHTML(popup[0].button)
+        elm.popup.changeStyle("width", popup[0].width)
+        elm.popup.changeStyle("height", popup[0].height)
+        for (let x in popup[0].otherStyle) elm.popup_html.changeStyle(x, popup[0].otherStyle[x])
     }
 }
 
 function removePopup() {
-    if (tmp.popup.length <= 1) tmp.popup = []
+    if (popup.length <= 1) popup = []
     let x = []
-    for (let i = 1; i < tmp.popup.length; i++) x.push(tmp.popup[i])
-    tmp.popup = x
+    for (let i = 1; i < popup.length; i++) x.push(popup[i])
+    popup = x
     updatePopup()
 }
 

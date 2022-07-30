@@ -1,7 +1,7 @@
 const SUPERNOVA = {
     reset(force=false, chal=false, post=false, fermion=false, auto=false) {
         if (!chal && !post && !fermion && !auto) if ((force && player.confirms.sn)?!confirm("Are you sure to reset without being Supernova?"):false) return
-		if (tmp.supernova.reached && !force && !fermion && hasTree("qol8") && player.supernova.auto.toggle) startSupernovaSweep()
+		if (hasTree("qol8") && player.supernova.auto.toggle && player.supernova.auto.on == -2 && !force && !fermion) startSupernovaSweep()
         if (tmp.supernova.reached || force || fermion) {
             elm.supernova_scene.setDisplay(false)
             if (!force && !fermion) {
@@ -78,7 +78,7 @@ const SUPERNOVA = {
         exp = scalingInitPower("supernova")
         maxlimit = E(1e20).pow(x.scaleEvery("supernova").div(ml_fp).pow(exp)).mul(1e90).root(ml_fp2)
         bulk = player.stars.points.pow(ml_fp2).div(1e90).max(1).log(1e20).max(0).root(exp).mul(ml_fp).scaleEvery("supernova",1).add(1).floor()
-        if (bulk.lt(1)) bulk = E(0)
+        if (player.stars.points.lt(maxlimit)) bulk = E(0)
         return {maxlimit: maxlimit, bulk: bulk}
     },
 }
@@ -159,6 +159,7 @@ function calcSupernova(dt, dt_offline) {
 				if (id > 0) {
 					player.chal.active = id
 					CHALS.reset(id, true)
+					player.supernova.auto.t = 0
 				} else FERMIONS.choose(Math.floor(-id/10), (-id-1)%10, true)
 			}
 		}
@@ -248,7 +249,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (mode == "all" || mode == "chal") {
 		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
-			if (tier.gte(c_thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
+			if ((!CHALS[x].unl || CHALS[x].unl()) && tier.gte(c_thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
 			else if (x == 12 && hasTree("qol_ext2")) ret.push(x)
 		}
 	}
@@ -259,7 +260,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (hasTree("qol_ext4")) f_thres = 0
 	if (mode == "all" || mode == "ferm") {
 		for (var y = 0; y < 2; y++) {
-			for (var x = 0; x < 6; x++) {
+			for (var x = 0; x < FERMIONS.getUnlLength(); x++) {
 				if (x < 5 && y == 0 && hasQolExt9()) continue
 				let tier = player.supernova.fermions.tiers[y][x]
 				if (tier.gte(f_thres) && tier.lt(FERMIONS.maxTier(y, x))) ret.push(-(y*10+x+1))

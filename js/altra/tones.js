@@ -2,7 +2,7 @@ let TONES = {
 	amt: () => player.ext.toned,
 	max: 30,
 
-	base_reqs: [],
+	base_reqs: [E(1e33), E(1e70), E("1e600"), E("e1e6"), E("e1e8")],
 	req(x = toned()) {
 		let c = EINF
 		if (x < 5) c = this.base_reqs[x]

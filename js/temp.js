@@ -10,7 +10,6 @@ function resetTemp() {
         stab: [],
         pass: true,
         notify: [],
-        popup: [],
         saving: 0,
 
         upgs: {

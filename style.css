@@ -235,6 +235,11 @@ button {
 	border-color: purple;
 }
 
+.btn_tab.magic.choosed {
+	background: purple;
+	color: #ddf;
+}
+
 .btn_tab.bh {
 	color: gold;
 	border-color: gold;

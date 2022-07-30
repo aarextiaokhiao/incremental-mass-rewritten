@@ -2,8 +2,9 @@ var diff = 0;
 var date = Date.now();
 var player
 
-const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'pres']
+const CONFIRMS = ['mg', 'rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'pres']
 const CONFIRMS_PNG = {
+	mg: "ngm/magic",
 	rp: "rp",
 	bh: "dm",
 	atom: "atom",
@@ -13,6 +14,7 @@ const CONFIRMS_PNG = {
 	pres: "six"
 }
 const CONFIRMS_UNL = {
+	mg: () => player.mg.unl,
 	rp: () => player.rp.unl && !EXT.unl(),
 	bh: () => player.bh.unl && !EXT.unl(),
 	atom: () => player.atom.unl && !EXT.unl(),
@@ -20,6 +22,16 @@ const CONFIRMS_UNL = {
 	ext: () => EXT.unl(),
 	ec: () => GLUBALL.unl(),
 	pres: () => PRES.unl()
+}
+const CONFIRMS_MOD = {
+	mg: () => inNGM(),
+	rp: () => true,
+	bh: () => true,
+	atom: () => true,
+	sn: () => true,
+	ext: () => true,
+	ec: () => true,
+	pres: () => true
 }
 
 const FORMS = {

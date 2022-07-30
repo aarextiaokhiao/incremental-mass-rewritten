@@ -23,7 +23,7 @@ Decimal.prototype.scaleName = function (type, id, rev=false) {
 Decimal.prototype.scaleEvery = function (id, rev=false) {
     var x = this.clone()
 	var fp = SCALE_FP[id] ? SCALE_FP[id]() : [1,1,1,1]
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < (FERMIONS.onActive(14) ? 3 : 4); i++) {
         let s = rev?i:3-i
         let sc = SCALE_TYPE[s]
 
@@ -53,6 +53,10 @@ const SCALE_INIT_POWERS = {
 	supernova: {
 		normal: 1.25,
 		toned: 5
+	},
+	fTier: {
+		normal: 1,
+		toned: 2
 	}
 }
 
@@ -347,7 +351,6 @@ function getScalingStart(type, name) {
 		}
 	}
 	if (type=="meta") {
-		if (FERMIONS.onActive(14)) return EINF
 		if (name=="rank") {
 			if (tmp.fermions) start = start.mul(tmp.fermions.effs[1][4])
 			start = start.min(3e6)
@@ -444,7 +447,7 @@ function getScalingPower(type, name) {
 	if (type=="meta") {
 		if (name=="rank") {
 			if (hasRank("pent", 4)) power = power.mul(RANKS.effect.pent[4]())
-			if (AXION.unl()) power = power.div(tmp.ax.eff[6])
+			if (AXION.unl()) power = power.div(tmp.ax.eff[6].eff)
 		}
 		if (name=='tickspeed') {
 			if (hasRank("pent", 5)) power = power.mul(RANKS.effect.pent[5]())
