@@ -5,6 +5,7 @@ TO-DO LIST:
 	1c. Polarizer weakens: Supernovae, Fermion Tiers, Radiation
 	1d. Tickspeed Power multiplies Star Booster Power
 	1e. Weaken Building Scaling [2nd exponent]
+	1f. Multiply Axion Maximum Levels
 2: Decay Upgrades
 	[No Musculer]
 	2a. Booster adds Stronger

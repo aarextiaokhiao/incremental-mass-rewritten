@@ -1,7 +1,7 @@
 //VERSIONING
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "7/28/22"
+let betaVer = "7/29/22"
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -40,63 +40,6 @@ function checkAPVers() {
 	player.ap_ver = 1.002
 }
 
-//HTML
-function setupAltraHTML() {
-	//Exotic
-	setupAxionHTML()
-	setupGlueballHTML()
-	setupPrimHTML()
-}
-
-function updateAarex(toggle) {
-	document.querySelectorAll("link").forEach( function(e) {
-		if (e.href.includes("aarex.css")) e.remove();
-	});
-
-	if (toggle) player.aarex = !player.aarex
-
-	if (player.aarex) {
-		var head = document.head;
-		var link = document.createElement('link');
-		
-		link.type = 'text/css';
-		link.rel = 'stylesheet';
-		link.href = "aarex.css";
-
-		head.appendChild(link);
-	}
-
-	document.getElementById("aarex_active").textContent = player.aarex ? "ON" : "OFF"
-}
-
-//FUTURE
-future = false
-
-let PRES = {
-	unl() {
-		return future
-	},
-	doReset() {
-		player.ext.amt = E(0)
-		player.ext.toned = 0
-		for (var i = 0; i < 3; i++) player.ext.ax.res[i] = E(0)
-		for (var i = 0; i < 12; i++) player.ext.ax.upgs[i] = E(0)
-		player.ext.ch.bp = E(0)
-		player.ext.ch.upg = []
-		player.ext.pr.f = {}
-
-		player.supernova.tree = ["c", "eb1", "eb2"]
-		for (var i = 1; i <= 11; i++) player.supernova.tree.push("feat"+i)
-		EXT.doReset(true)
-	},
-	story() {
-		addPopup(POPUP_GROUPS.pres_1)
-		addPopup(POPUP_GROUPS.pres_2)
-		addPopup(POPUP_GROUPS.pres_3)
-		addPopup(POPUP_GROUPS.pres_4)
-	}
-}
-
 function skipToRadiation() {
 	if (!confirm("Are you want to skip into Radiation?")) return
 
@@ -129,6 +72,35 @@ function skipToRadiation() {
 	SUPERNOVA.doReset()
 }
 
+//HTML
+function setupAltraHTML() {
+	//Exotic
+	setupAxionHTML()
+	setupGlueballHTML()
+	setupPrimHTML()
+}
+
+function updateAarex(toggle) {
+	document.querySelectorAll("link").forEach( function(e) {
+		if (e.href.includes("aarex.css")) e.remove();
+	});
+
+	if (toggle) player.aarex = !player.aarex
+
+	if (player.aarex) {
+		var head = document.head;
+		var link = document.createElement('link');
+		
+		link.type = 'text/css';
+		link.rel = 'stylesheet';
+		link.href = "aarex.css";
+
+		head.appendChild(link);
+	}
+
+	document.getElementById("aarex_active").textContent = player.aarex ? "ON" : "OFF"
+}
+
 //MINUS
 function getSaveTitle() {
 	return inNGM() ? "IM:A Minus" : "IM: Altrascendum"
@@ -146,5 +118,41 @@ function toggleMinus(start) {
 		save()
 		setMetaSave()
 		loadGame(false)
+	}
+}
+function doMagicReset() {
+	if (player.mass.gte(2e4)) if (confirm("Are you sure to reset?")) {
+		player.mg.amt = player.mg.amt.add(1)
+		player.mg.unl = true
+		RANKS.doReset.highest()
+	}
+}
+
+//TECHNICAL / FUTURE
+paused = false
+future = false
+
+let PRES = {
+	unl() {
+		return false
+	},
+	doReset() {
+		player.ext.amt = E(0)
+		player.ext.toned = 0
+		for (var i = 0; i < 3; i++) player.ext.ax.res[i] = E(0)
+		for (var i = 0; i < 12; i++) player.ext.ax.upgs[i] = E(0)
+		player.ext.ch.bp = E(0)
+		player.ext.ch.upg = []
+		player.ext.pr.f = {}
+
+		player.supernova.tree = ["c", "eb1", "eb2"]
+		for (var i = 1; i <= 11; i++) player.supernova.tree.push("feat"+i)
+		EXT.doReset(true)
+	},
+	story() {
+		addPopup(POPUP_GROUPS.pres_1)
+		addPopup(POPUP_GROUPS.pres_2)
+		addPopup(POPUP_GROUPS.pres_3)
+		addPopup(POPUP_GROUPS.pres_4)
 	}
 }

@@ -73,7 +73,8 @@ function setupHTML() {
 		table += `<div id="ranks_reward_div_${x}">`
 		let keys = Object.keys(RANKS.desc[rn])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="ranks_reward_${rn}_${y}"><b>${RANKS.fullNames[x]} ${format(keys[y],0)}:</b> ${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
+			if (keys[y].includes("_")) break
+			table += `<span id="ranks_reward_${rn}_${y}"><b id="ranks_title_${rn}_${y}"></b>: <span id="ranks_desc_${rn}_${y}"></span>${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span>`:""}</span><br>`
 		}
 		table += `</div>`
 	}
@@ -162,7 +163,11 @@ function updateUpperHTML() {
 	elm.reset_desc.setHTML(player.reset_msg)
 	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
 
-	let unl = (player.stats.maxMass.gte(1e9) || player.rp.unl) && !hideSome
+	let unl = gameStarted() && inNGM() && !hideSome
+	elm.mg_div.setDisplay(unl)
+	if (unl) elm.mgAmt.setHTML(format(player.mg.points,0)+"<br>"+formatGainOrGet(player.mg.amt, E(player.mass.gte(2e4) ? 1 : 0), false))
+
+	unl = ((inNGM() ? player.mg.unl : player.stats.maxMass.gte(1e9)) || player.rp.unl) && !hideSome
 	elm.rp_div.setDisplay(unl)
 	if (unl) elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 
@@ -251,8 +256,9 @@ function updateRanksHTML() {
 			let desc = ""
 			if (gameStarted()) {
 				for (let i = 0; i < keys.length; i++) {
+					if (keys[i].includes("_")) break
 					if (player.ranks[rn].lt(keys[i])) {
-						desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+						desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.getDesc(rn,keys[i])}`
 						break
 					}
 				}
@@ -326,9 +332,14 @@ function updateRanksRewardHTML() {
 		if (player.ranks_reward == x) {
 			let keys = Object.keys(RANKS.desc[rn])
 			for (let y = 0; y < keys.length; y++) {
+				if (keys[y].includes("_")) break
 				let unl = player.ranks[rn].gte(keys[y])
 				elm["ranks_reward_"+rn+"_"+y].setDisplay(unl)
-				if (unl) if (elm["ranks_eff_"+rn+"_"+y]) elm["ranks_eff_"+rn+"_"+y].setTxt(RANKS.effDesc[rn][keys[y]](RANKS.effect[rn][keys[y]]()))
+				if (unl) {
+					elm["ranks_title_"+rn+"_"+y].setTxt(RANKS.fullNames[x] + " " + format(keys[y],0))
+					elm["ranks_desc_"+rn+"_"+y].setTxt(RANKS.getDesc(rn,keys[y]))
+					if (elm["ranks_eff_"+rn+"_"+y]) elm["ranks_eff_"+rn+"_"+y].setTxt(RANKS.effDesc[rn][keys[y]](RANKS.effect[rn][keys[y]]()))
+				}
 			}
 		}
 	}

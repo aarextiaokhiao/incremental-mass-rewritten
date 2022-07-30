@@ -677,7 +677,7 @@ const TREE_UPGS = {
 				return sum.round().gte(6e3)
 			},
 			reqDesc: `Get 6,000 challenge completions.`,
-			desc: `Keep the 'chal' upgrades except you start with 50 completions and 10 tiers for each Fermion.`,
+			desc: `Keep the 'chal' upgrades and decrease auto-Sweeper threshold to 0. [Exotic doesn't keep completions!]`,
 			cost: E(1e200),
 			icon: "qol_ext"
 		},
@@ -689,7 +689,7 @@ const TREE_UPGS = {
 		},
 		qol_ext6: {
 			branch: ["qol_ext1"],
-			desc: `Keep the Boson - Fermion upgrades, and start with 10 completions for C9 - 11.`,
+			desc: `Keep the Boson - Fermion upgrades.`,
 			cost: E(1e250),
 			icon: "qol_ext"
 		},
@@ -707,7 +707,7 @@ const TREE_UPGS = {
 		},
 		qol_ext9: {
 			branch: ["qol_ext8"],
-			desc: `If not in C14 - 16, automatically gain C9 - 11 completions and Up - Top Quark tiers.`,
+			desc: `Outside of Exotic Challenges, automatically complete Challenges and Up - Top Quarks.`,
 			cost: E("e1e7"),
 			icon: "qol_ext"
 		},

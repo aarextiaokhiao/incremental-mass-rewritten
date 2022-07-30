@@ -230,7 +230,7 @@ function updateSupernovaEndingHTML() {
         if (tmp.stab[5] == 1) updateBosonsHTML()
         if (tmp.stab[5] == 2) updateFermionsHTML()
         if (tmp.stab[5] == 3) updateRadiationHTML()
-		if (player.supernova.auto.on > -2 && player.supernova.auto.t < 1/0) {
+		if (player.supernova.auto.on > -2 && player.supernova.auto.t < Infinity) {
 			elm.supernova_next.setTxt("You are currently sweeping through challenges and fermions! Next in " + (1.5 - player.supernova.auto.t).toFixed(2) + " seconds, ending in " + (1.5 * player.supernova.auto.list.length - 1.5 * player.supernova.auto.on - player.supernova.auto.t).toFixed(2) + " seconds")
 		}
     }
@@ -244,8 +244,9 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (hasTree("chal6")) c_thres = 15
 	if (hasTree("qol_ext2")) c_thres = 10
 	if (hasTree("feat4")) c_thres = 7
+	if (hasTree("qol_ext4")) c_thres = 0
 	if (mode == "all" || mode == "chal") {
-		for (var x = (hasQolExt9() ? 11 : hasTree("qol_ext8") ? 8 : 0) + 1; x <= 12; x++) {
+		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
 			if (tier.gte(c_thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
 			else if (x == 12 && hasTree("qol_ext2")) ret.push(x)
@@ -255,6 +256,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	let f_thres = 15
 	if (hasTree("qol_ext2")) f_thres = 10
 	if (hasTree("feat4")) f_thres = 7
+	if (hasTree("qol_ext4")) f_thres = 0
 	if (mode == "all" || mode == "ferm") {
 		for (var y = 0; y < 2; y++) {
 			for (var x = 0; x < 6; x++) {
@@ -267,6 +269,10 @@ function getSupernovaAutoTemp(mode = "all") {
 	return ret
 }
 
+function leastManualChal() {
+	return hasQolExt9() ? 11 : hasTree("qol_ext8") ? 8 : 0
+}
+
 function updateSupernovaSweep() {
 	player.supernova.auto.toggle = !player.supernova.auto.toggle
 	if (!player.supernova.auto.toggle) player.supernova.auto.on = -2
@@ -275,5 +281,5 @@ function updateSupernovaSweep() {
 function startSupernovaSweep(mode) {
 	player.supernova.auto.on = -1
 	player.supernova.auto.list = getSupernovaAutoTemp(mode)
-	if (mode) player.supernova.auto.t = 1/0
+	if (mode) player.supernova.auto.t = Infinity
 }

@@ -487,7 +487,7 @@ h2 {
 	background-color: #171717;
 }
 
-.md.locked {
+.md.locked:not(.bought) {
 	border-color: #303030;
 	cursor: default;
 }
@@ -497,6 +497,13 @@ h2 {
 	background-color: #003a00;
 	box-shadow: 0 0 10px #00ce00;
 }
+
+.md.bought {
+	border-color: #7fce7f;
+	background-color: #00ce00;
+	cursor: default;
+}
+
 
 .btn.b_btn {
 	font-size: 11px;

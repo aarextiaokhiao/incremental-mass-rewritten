@@ -28,24 +28,28 @@ const RANKS = {
         tetr() { return hasUpgrade('atom',3) },
         pent() { return hasTree("sn5") },
     },
-    doReset: {
-        rank() {
-            player.mass = E(0)
-            for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x]) player.massUpg[x] = E(0)
-        },
-        tier() {
-            player.ranks.rank = E(0)
-            this.rank()
-        },
-        tetr() {
-            player.ranks.tier = E(0)
-            this.tier()
-        },
-        pent() {
-            player.ranks.tetr = E(0)
-            this.tetr()
-        },
-    },
+	doReset: {
+		rank() {
+			player.mass = E(0)
+			for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x]) player.massUpg[x] = E(0)
+		},
+		tier() {
+			player.ranks.rank = E(0)
+			this.rank()
+		},
+		tetr() {
+			player.ranks.tier = E(0)
+			this.tier()
+		},
+		pent() {
+			player.ranks.tetr = E(0)
+			this.tetr()
+		},
+		highest() {
+			player.ranks[RANKS.names[RANKS.names.length-1]] = E(0)
+			this[RANKS.names[RANKS.names.length-1]]()
+		},
+	},
     autoSwitch(rn) { player.auto_ranks[rn] = !player.auto_ranks[rn] },
     autoUnl: {
         rank() { return hasUpgrade('rp',5) },
@@ -58,7 +62,9 @@ const RANKS = {
             '1': "unlock Mass Upgrades.",
             '2': "unlock Mass Upgrade 2 and weaken Mass Upgrade 1 by 20%.",
             '3': "unlock Mass Upgrade 3, weaken Mass Upgrade 2 by 20%, and Mass Upgrade 1 boosts itself.",
+            '3_m': "weaken Mass Upgrade 2 by 20% and Mass Upgrade 1 boosts itself.",
             '4': "weaken Mass Upgrade 3 by 20%.",
+            '4_m': "unlock Mass Upgrade 3 and weaken Mass Upgrade 3 by 20%.",
             '5': "mass upgrade 2 boosts itself.",
             '6': "Rank boosts mass.",
             '13': "triple mass.",
@@ -112,6 +118,10 @@ const RANKS = {
             '10000': "Tickspeed Power multiplies Booster Base.",
         },
     },
+    getDesc(t, r) {
+    	let d = this.desc[t]
+    	return (inNGM() && d[r+"_m"]) || d[r]
+    },
     effect: {
         rank: {
             '3'() {
@@ -119,7 +129,7 @@ const RANKS = {
                 return ret
             },
             '5'() {
-                let ret = E(player.massUpg[2]||0).div(40)
+                let ret = E(player.massUpg[2]||0).div(inNGM() ? 100 : 40)
                 return ret
             },
             '6'() {
@@ -316,10 +326,11 @@ function updateRanksTemp() {
     if (player.mass.lt(10)) d.rank.bulk = E(0)
     d.rank.can = player.mass.gte(d.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
 
+	let start = inNGM() ? 2.5 : 2
     fp = u.fp.tier()
     pow = scalingInitPower("tier")
-    d.tier.req = s.tier.scaleEvery("tier").div(fp).add(2).pow(pow).floor()
-    d.tier.bulk = s.rank.max(0).root(pow).sub(2).mul(fp).scaleEvery("tier", 1).add(1).floor();
+    d.tier.req = s.tier.scaleEvery("tier").div(fp).add(start).pow(pow).floor()
+    d.tier.bulk = s.rank.max(0).root(pow).sub(start).mul(fp).scaleEvery("tier", 1).add(1).floor();
 
     fp = u.fp.tetr()
     pow = scalingInitPower("tetr")

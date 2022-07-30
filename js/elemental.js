@@ -626,7 +626,7 @@ function updateElementsTemp() {
         upg_length: ELEMENTS.upgs.length-1,
         choosed: 0,
     }
-    if (!tmp.elements.effect) tmp.elements.effect = [null]
+    if (!tmp.elements.effect) tmp.elements.effect = {}
     for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
         tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
     }

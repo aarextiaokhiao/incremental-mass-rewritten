@@ -264,6 +264,9 @@
                     <div class="resources sml">
                         <div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="mass">X</span>
+                    </div><div class="resources sml purple" id="mg_div">
+                        <div tooltip="Magic" t-size="small"><img class="res_img" src="images/empty.png" onclick="doMagicReset()" onmousemove="FORMS.reset_msg.set('mg')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <span style="margin-left: 5px; text-align: left;" id="mgAmt">X</span>
                     </div><div class="resources sml red" id="rp_div">
                         <div tooltip="Rage Power" t-size="small"><img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="rpAmt">X</span>
@@ -331,9 +334,9 @@
                 </div><br>
                 <span id="massSoft">Mass is <b id="massSoftLvl">(softcapped)</b> at <b id="massSoftStart"></b>!</span>
             </div><div id="stab_frame0_1">
-                Your Black Hole is <span id="bhMass2">X</span>. <span id="bhMassGain"></span>
-				<span class="green">(<span id="bhEffect">X</span>x mass)</span><br>
-                <span class="yellow">(Formula: <span id="bhCondenserEffect">X</span>*(x+1)<sup id="bhMassPower">0.33</sup>)</span><br><br>
+                <span class="yellow">(Formula: <span id="bhCondenserEffect">X</span>*(x+1)<sup id="bhMassPower">0.33</sup>)</span><br>
+                Your Black Hole is <span id="bhMass2">X</span>. <span id="bhMassGain"></span><br>
+				<span class="green">(<span id="bhEffect">X</span>x mass)</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                     <div style="width: 400px">
                         <div class="resources">
@@ -355,7 +358,7 @@
                     </div><button id="bh_b2_btn" class="btn" style="width: 200px;" onclick="buyExtraBuildings('bh',2)">Req: <span id="bh_b2_cost">X</span> Dark Matters</button>
                     <button style="width: 200px; visibility: hidden"></button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
-                        Exponent Power: <span id="bh_b2_pow">X</span>x<br>
+                        Exponent Power: <span id="bh_b2_pow">X</span><br>
                     </div>
                 </div><div style="width: 100%; margin-bottom: 5px;" class="table_center" id="bh_b3_div">
                     <div style="width: 400px">
@@ -374,7 +377,7 @@
                 </div>
             </div><div id="stab_frame0_2">
                 You have <span id="atomicAmt">X</span> Atomic Power<br>
-                <span class="green">Which provides <span id="atomicEff">X</span> free Tickspeed</span><br><br>
+                <span class="green">(+<span id="atomicEff">X</span> free Tickspeed)</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                     <div style="width: 400px">
                         <div class="resources">
@@ -473,7 +476,8 @@
                 </div><br><div id="elements_table"></div>
             </div><div id="stab_frame4_2">
                 You have <span id="md_particles">X</span> Relativistic particles<br>
-                You have <span id="md_mass">X</span> of dilated mass, which makes Tickspeed <span id="md_eff">X</span> stronger<br><br>
+                You have <span id="md_mass">X</span> of dilated mass<br>
+				<span class='green'>(<span id="md_eff">X</span> Tickspeed power)</span><br><br>
                 <b class="red" id="md_undercapacity">To prevent temporal anomalies, base RP has been undercapacitied to X!<br></b>
                 <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="When dilating mass, will reset for atom. While mass is dilated: all pre-atom resources, atomic power gains get multiplier's exponent raised to 0.8;">Dilate Mass</button><br><br>
                 <div class="table_center">

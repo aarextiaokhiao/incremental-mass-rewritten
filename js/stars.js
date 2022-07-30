@@ -22,17 +22,21 @@ const STARS = {
     effect() {
 		let p = STARS.rankStr()
 		let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
-		let b = s.max(1).log10().add(1).max(s.pow(1e-9))
+		let b = s.max(1).log10().add(1).max(s.root(1e9))
 		let e = r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)).softcap(1e12,1e3,3)
 		return { eff: b.pow(e), exp: e }
 	},
     generators: {
         req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
         unl(auto=false) {
-            if (player.atom.quarks.gte(!hasTree("s4")||player.stars.unls<5?tmp.stars.gen_req:tmp.stars.gb_req)) {
-                if(hasTree("s4")&&player.stars.unls > 4) player.stars.boost = auto?player.stars.boost.max(tmp.stars.gb_bulk):player.stars.boost.add(1)
+            let boost_unl = STARS.generators.booster_unl()
+            if (player.atom.quarks.gte(boost_unl ? tmp.stars.gb_req : tmp.stars.gen_req)) {
+                if (boost_unl) player.stars.boost = auto ? player.stars.boost.max(tmp.stars.gb_bulk) : player.stars.boost.add(1)
                 else player.stars.unls++
             }
+        },
+        booster_unl() {
+            return hasTree("s4") && player.stars.unls == 5
         },
         gain(i) {
             let pow = E(1.5)
@@ -70,7 +74,8 @@ function updateStarsTemp() {
 	let ts = tmp.stars
 	ts.gen_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
 	ts.gb_req = E("e100").pow(player.stars.boost.pow(1.25)).mul('e8000')
-	ts.gb_bulk = player.atom.quarks.gte("e8000")?player.atom.quarks.div("e8000").max(1).log("e100").root(1.25).add(1).floor():E(0)
+	ts.gb_bulk = player.atom.quarks.div("e8000").log10().div(100).root(1.25).floor().add(1)
+	if (player.atom.quarks.lt("e8000")) ts.gb_bulk = E(0)
 
 	ts.gb_base = E(2)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
@@ -138,9 +143,10 @@ function updateStarsHTML() {
     elm.stars_eff.setTxt(format(tmp.stars.effect.eff))
     elm.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)" + getSoftcapHTML(tmp.stars.effect.exp, 1e12))
 
-    elm.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
+	let boost_unl = STARS.generators.booster_unl()
+    elm.star_btn.setDisplay(player.stars.unls < 5 || boost_unl)
 	elm.star_btn.setHTML(
-		(player.stars.unls < 5 || !hasTree("s4")) ? `Unlock a new type of Stars. (${format(tmp.stars.gen_req)} Quarks)` :
+		!boost_unl ? `Unlock a new type of Stars. (${format(tmp.stars.gen_req)} Quarks)` :
 		`Boost Stars. (${format(tmp.stars.gb_req)} Quarks)<br>`+
 		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.gb_bonus.gt(0)?" + "+format(tmp.stars.gb_bonus,0):"") +
 		`<br>Effect: ${format(tmp.stars.gb_eff)}x (${format(tmp.stars.gb_base, 3)}x power)`

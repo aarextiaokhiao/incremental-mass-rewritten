@@ -15,7 +15,7 @@ const FERMIONS = {
             player.supernova.fermions.choosed = ""
             player.supernova.fermions.choosed2 = ""
             SUPERNOVA.reset(false,false,false,true)
-			player.supernova.auto.t = 1/0
+			player.supernova.auto.t = Infinity
         }
     },
     choose(i,x,a) {
@@ -60,7 +60,7 @@ const FERMIONS = {
 	},
 	maxTier(i, x) {
 		let f = FERMIONS.types[i][x]
-		return typeof f.maxTier == "function" ? f.maxTier() : f.maxTier || 1/0
+		return typeof f.maxTier == "function" ? f.maxTier() : f.maxTier || EINF
 	},
     getUnlLength(x) {
         let u = 2
@@ -337,6 +337,7 @@ const FERMIONS = {
                 cons: "Cap Rank at 20,000 and U-Leptons do nothing. Additionally, there's no Meta scalings.",
             },
             {
+                maxTier: 20,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E(10).pow(t.pow(FERMIONS.getScalingExp(1.5))).mul(1e20)
@@ -457,7 +458,7 @@ function updateFermionsHTML() {
                 elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasQolExt9() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
                 elm[id+"_nextTier"].setHTML(max ? "" : "Next at: " + fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])) + `<br>(Increased by ${f.inc})<br><br>`)
                 elm[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x))
-                elm[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(tmp.fermions.maxTier[i][x] < Infinity && !max ? " / " + format(tmp.fermions.maxTier[i][x],0) : ""))
+                elm[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(E(tmp.fermions.maxTier[i][x]).lt(EINF) && !max ? " / " + format(tmp.fermions.maxTier[i][x],0) : ""))
                 elm[id+"_desc"].setHTML(f.desc(tmp.fermions.effs[i][x]))
 
                 elm[id+"_cur"].setDisplay(active)

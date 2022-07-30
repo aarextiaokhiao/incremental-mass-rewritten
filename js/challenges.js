@@ -106,7 +106,7 @@ const CHALS = {
 				if (active <= 12) {
 					player.chal.active = 0
 					this.reset(active)
-					player.supernova.auto.t = 1/0
+					player.supernova.auto.t = Infinity
 				}
 				if (!noExt && active > 12) {
 					if (player.confirms.ec && !confirm("You'll not lose progress on exiting. Proceed?")) return
@@ -188,7 +188,7 @@ const CHALS = {
         return E(1)
     },
     getPower3Start(i) {
-        return i > 8 ? 1 / 0 : 1000
+        return i > 8 ? EINF : 1000
     },
     getChalData(x, r=E(-1), a) {
 		let res = CHALS.inChal(x)||a?this.getResource(x):E(0)

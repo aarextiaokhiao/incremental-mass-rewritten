@@ -63,7 +63,7 @@ const RADIATION = {
         let x = this.boosts[i].eff(FERMIONS.onActive(05)?E(0):tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i]))
         return x
     },
-    getbonusLevel(i) {
+    getBonusLevel(i) {
 		if (CHALS.inChal(14)) return E(0)
 
         let x = E(0)
@@ -287,7 +287,7 @@ function updateRadiationTemp() {
 		tr.bs.sum[x] = player.supernova.radiation.bs[2*x].add(player.supernova.radiation.bs[2*x+1])
 		for (let y = 0; y < 3; y++) {
 			tr.bs.lvl[3*x+y] = tr.bs.sum[x].add(2-y).div(3).floor()
-			tr.bs.bonus_lvl[3*x+y] = RADIATION.getbonusLevel(3*x+y)
+			tr.bs.bonus_lvl[3*x+y] = RADIATION.getBonusLevel(3*x+y)
 			tr.bs.eff[3*x+y] = RADIATION.getLevelEffect(3*x+y)
 		}
 		for (let y = 0; y < 2; y++) [tr.bs.cost[2*x+y],tr.bs.bulk[2*x+y]] = RADIATION.getBoostData(2*x+y)
@@ -338,13 +338,13 @@ function updateRadiationHTML() {
 
     let rad_id = 1
     for (let x = 1; x < RAD_LEN; x++) {
-        if (player.supernova.radiation.hz.lt(RADIATION.unls[x]||1/0)) break
+        if (player.supernova.radiation.hz.lt(RADIATION.unls[x]||EINF)) break
         rad_id++
     }
     elm.next_radiation.setTxt()
 
     elm.radiation_unl.setDisplay(rad_id < RAD_LEN)
-    elm.next_radiation.setTxt(format(RADIATION.unls[rad_id]||1/0))
+    elm.next_radiation.setTxt(format(RADIATION.unls[rad_id]||EINF))
     elm.unl_radiation.setTxt(RADIATION.names[rad_id])
 
     for (let x = 0; x < RAD_LEN; x++) {

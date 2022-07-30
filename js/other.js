@@ -1,5 +1,5 @@
 function gameStarted() {
-	return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || player.rp.unl
+	return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || (inNGM() ? player.mg.unl : player.rp.unl)
 }
 
 function addNotify(text, duration=3) {

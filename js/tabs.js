@@ -21,7 +21,7 @@ const TABS = {
         { id: "Exotic", unl() { return EXT.unl() }, style: "ext" },
         { id: "Prestige", unl() { return PRES.unl() } },
         { id: "Options" },
-        { id: "Magic", unl() { return inNGM() && player.rp.unl }, style: "magic" },
+        { id: "Magic", unl() { return inNGM() && player.mg.unl }, style: "magic" },
     ],
     2: {
         0: [
@@ -38,7 +38,7 @@ const TABS = {
         ],
         3: [
             { id: "Challenges" },
-            { id: "Vacuum Decay", unl() { return future } },
+            { id: "Entropic Grid", unl() { return false || PRES.unl() }, style: "exotic" },
         ],
         4: [
             { id: "Particles" },
@@ -55,7 +55,7 @@ const TABS = {
             { id: "Axions" },
             { id: "Glueballs", unl() { return player.ext.ch.unl || PRES.unl() }, style: "ch" },
             { id: "Primordium", unl() { return PRIM.unl() || PRES.unl() }, style: "pr" },
-            { id: "Entropy", unl() { return PRES.unl() } }
+            { id: "False Vacuum", unl() { return false || PRES.unl() } }
         ],
     },
 }

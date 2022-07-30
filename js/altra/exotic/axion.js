@@ -17,6 +17,7 @@ let AXION = {
 			sum = axUpg(i).add(sum)
 			min = axUpg(i).min(min)
 		}
+		if (future) return EINF
 		if (x == 0) return sum.add(1).div(15/4).min(min.mul(1.2).add(1)).floor().add(1)
 		if (x == 1) return sum.div(4).min(min.mul(1.5).add(1)).floor().add(2)
 		if (x == 2) return min.mul(2).add(1).round()
@@ -40,13 +41,14 @@ let AXION = {
 				if (i % 4 > 1) other = other.sub(axUpg(i-2).div(2))
 				if (i % 4 > 2) other = other.sub(axUpg(i-3).div(2.5))
 			}
+			other = other.max(0)
 		}
 
 		var inc = E(1)
 		if (tmp.chal) inc = inc.div(tmp.chal.eff[13])
 		if (hasPrim("p6_0")) inc = inc.div(tmp.pr.eff.p6_0)
 
-		var sum = normal.add(other.max(0).mul(inc)).mul(tmp.ax.fp)
+		var sum = normal.add(other.mul(inc)).mul(tmp.ax.fp)
 		var r = E([2,3,1.6][type])
 			.pow(sum.add(i - 4))
 			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (100 / (i + 5) * Math.pow(3, i)))

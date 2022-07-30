@@ -53,10 +53,7 @@ function calc(dt, dt_offline) {
 
 	if (player.mass.gte(1.5e136)) player.chal.unl = true
 	if (hasTree("qol6")) CHALS.exit(true)
-	if (hasTree("qol_ext8")) {
-		let max = hasQolExt9() ? 11 : 8
-		for (var c = 1; c <= max; c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
-	}
+	for (var c = 1; c <= leastManualChal(); c++) player.chal.comps[c] = CHALS.getChalData(c,E(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
 
 	calcAtoms(dt, dt_offline)
 	calcSupernova(dt, dt_offline)
@@ -221,6 +218,13 @@ function getPlayerData() {
         s.supernova.radiation.ds.push(E(0))
         s.supernova.radiation.bs.push(E(0),E(0))
     }
+
+	if (inNGM()) {
+		s.mg = {
+			unl: false,
+			amt: E(0)
+		}
+	}
     return s
 }
 
@@ -250,7 +254,7 @@ function loadPlayer(load) {
 	player.supernova.tree = removeDuplicates(player.supernova.tree)
     for (i = 0; i < 2; i++) for (let x = 0; x < FERMIONS.types[i].length; x++) {
         let f = FERMIONS.types[i][x]
-        player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
+        player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier || EINF)
     }
 	if (player.ext.ch.sp) player.ext.ch = GLUBALL.setup()
     let off_time = (Date.now() - player.offline.current)/1000
@@ -291,7 +295,7 @@ function convertStringToDecimal() {
     for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) player.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = E(player.supernova.b_upgs[BOSONS.upgs.ids[x]][y]||0)
 }
 
-function cannotSave() { return tmp.supernova.reached && player.supernova.times.lt(1) }
+function cannotSave() { return tmp.supernova.reached && player.supernova.times.lt(1) && !findNaN(player) }
 
 function encode(x) {
 	return btoa(JSON.stringify(x, function(k, v) { return v === Infinity ? "Infinity" : v; }))
@@ -302,8 +306,7 @@ function decode(x) {
 }
 
 function save(auto){
-    let str = encode(player)
-    if (cannotSave() || findNaN(str, true)) return
+    if (cannotSave()) return
     if (localStorage.getItem(saveId) == '') wipe()
     localStorage.setItem(saveId,encode(player))
     if (tmp.saving < 1 && !auto) {addNotify("Game Saved", 3); tmp.saving++}
@@ -322,12 +325,12 @@ function load(x){
 }
 
 function exporty() {
-    let str = encode(player)
-    if (findNaN(str, true)) {
+    if (findNaN(player)) {
         addNotify("Error Exporting, because it got NaNed")
         return
     }
 
+    let str = encode(player)
     save();
     let file = new Blob([btoa(JSON.stringify(player))], {type: "text/plain"})
     window.URL = window.URL || window.webkitURL;
@@ -338,12 +341,12 @@ function exporty() {
 }
 
 function export_copy() {
-    let str = encode(player)
-    if (findNaN(str, true)) {
+    if (findNaN(player)) {
         addNotify("Error Exporting, because it got NaNed")
         return
     }
 
+    let str = encode(player)
     let copyText = document.getElementById('copy')
     copyText.value = btoa(JSON.stringify(player))
     copyText.style.visibility = "visible"
@@ -446,7 +449,7 @@ function loadGame(start=true, save) {
 }
 
 function checkNaN() {
-	if (findNaN(player)) {
+	if (findNaN(player) || findNaN(tmp.massGain)) {
 		if (new Date().getTime() - lastLoad < 60000) wipe(true)
 		else {
 			loadGame(false)
@@ -455,17 +458,27 @@ function checkNaN() {
 	}
 }
 
+function isDecimalNaN(x) {
+	x = E(x)
+	return Number.isNaN(x.mag) || Number.isNaN(x.sign)
+}
+
 function findNaN(obj, str=false, data=getPlayerData()) {
     if (str ? typeof obj == "string" : false) obj = JSON.parse(atob(obj))
     for (let x = 0; x < Object.keys(obj).length; x++) {
         let k = Object.keys(obj)[x]
-        if (typeof obj[k] == "number") if (isNaN(obj[k])) return true
+        if (typeof obj[k] == "number") if (isNaN(obj[k]) || !isFinite(obj[k])) return reportNaN(obj, k, "number")
         if (str) {
-            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isDecimalNaN(obj[k])) return reportNaN(obj, k, "string")
         } else {
-            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isDecimalNaN(obj[k])) return reportNaN(obj, k, "decimal")
         }
         if (typeof obj[k] == "object") return findNaN(obj[k], str, data[k])
     }
     return false
+}
+
+function reportNaN(obj, k, t) {
+	console.error("// [ERROR: NAN!] (" + t + ", " + k + ") //")
+	return true
 }

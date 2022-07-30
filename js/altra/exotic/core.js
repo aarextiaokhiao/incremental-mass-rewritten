@@ -103,7 +103,7 @@ let EXOTIC = {
 		player.supernova.times = E(0)
 		player.supernova.stars = E(0)
 
-		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(hasTree("qol_ext4") && c <= 8 ? 50 : hasTree("qol_ext6") && c <= 11 ? 10 : 0)
+		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(0)
 
 		player.supernova.bosons = {
 			pos_w: E(0),
@@ -243,8 +243,9 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			let r = x.times(5).add(1).log(2).div(500)
 			if (AXION.unl()) r = r.mul(tmp.ax.eff[9])
-			return r
-		}
+			return r.softcap(1e12,2,3)
+		},
+		dispHTML: (x) => format(x,3) + "x" + getSoftcapHTML(x, 1e12)
 	},
 	bh3: {
 		start: E("e5e8"),
@@ -292,7 +293,7 @@ function updateExtraBuildingHTML(type, x) {
 	elm[id+"cost"].setHTML(format(data.cost,0))
 	elm[id+"btn"].setClasses({btn: true, locked: data.gain.lte(getExtraBuildings(type,x))})
 	elm[id+"lvl"].setHTML(format(getExtraBuildings(type,x),0))
-	elm[id+"pow"].setHTML(format(data.eff,type=="bh"&&x==3?3:2) + (data2.softcapHTML ? data2.softcapHTML(data.eff) : ""))
+	elm[id+"pow"].setHTML(data2.dispHTML ? data2.dispHTML(data.eff) : format(data.eff,type=="bh"&&x==3?3:2))
 }
 
 function updateExtraBuildingsHTML(type) {
@@ -442,5 +443,5 @@ function getCosmicArgonProd() {
 
 // TECHNICAL FUNCTIONS
 function hasQolExt9() {
-	return hasTree("qol_ext9") && player.ext.ec < 14
+	return hasTree("qol_ext9") && player.ext.ec == 0
 }

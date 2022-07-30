@@ -88,7 +88,7 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,'e1.2e4')) },
             },{
-                desc: `Make dilated mass effect stronger.`,
+                desc: `Multiply dilated mass effect.`,
                 cost(x) { return E(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
 				effect(x) {
@@ -98,7 +98,7 @@ const MASS_DILATION = {
 				},
                 effDesc(x) { return formatMultiply(x)+" stronger" },
             },{
-                desc: `Double relativistic particles gain.`,
+                desc: `Double Relativistic Particles.`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(E(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():E(0) },
 				effect(x) {
@@ -107,21 +107,21 @@ const MASS_DILATION = {
 				},
                 effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,1e25)) },
             },{
-                desc: `Dilated mass also boost Stronger's power.`,
+                desc: `Dilated mass strengthen Stronger.`,
                 maxLvl: 1,
                 cost(x) { return E(1.619e20).mul(25) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(25))?E(1):E(0) },
                 effect(x) { return player.md.mass.max(1).log(100).root(3).div(8).add(1) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: `Mass Dilation upgrade 3 scales 10% weaker.`,
+                desc: `Upgrade 3 scales 10% weaker.`,
                 maxLvl: 5,
                 cost(x) { return E(1e5).pow(x).mul(E(1.619e20).mul(1e4)) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(1e4))?player.md.mass.div(E(1.619e20).mul(1e4)).max(1).log(1e5).add(1).floor():E(0) },
                 effect(x) { return E(1).sub(x.mul(0.1)) },
                 effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
             },{
-                desc: `Increase the exponent of the RP formula.`,
+                desc: `Increase the RP formula exponent.`,
                 cost(x) { return E(1e3).pow(x.pow(1.5)).mul(1.5e73) },
                 bulk() { return player.md.mass.gte(1.5e73)?player.md.mass.div(1.5e73).max(1).log(1e3).max(0).root(1.5).add(1).floor():E(0) },
                 effect(i) {
@@ -133,14 +133,14 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return "+^"+format(x)+getSoftcapHTML(x,1e3) },
             },{
-                desc: `Dilated mass boost quarks gain.`,
+                desc: `Dilated mass boosts Quarks.`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e191) },
                 bulk() { return player.md.mass.gte(1.5e191)?E(1):E(0) },
                 effect(x) { return E(5).pow(player.md.mass.max(1).log10().root(2)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: `Mass Dilation upgrade 2 effect's formula is better.`,
+                desc: `Strengthen Upgrade 2.`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e246) },
                 bulk() { return player.md.mass.gte(1.5e246)?E(1):E(0) },
@@ -154,7 +154,7 @@ const MASS_DILATION = {
                 effDesc(x) { return format(x)+"x" },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
-                desc: `Double quarks gain.`,
+                desc: `Double Quarks.`,
                 cost(x) { return E(5).pow(x).mul('1.50001e536') },
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():E(0) },
 				effect(x) {
@@ -194,7 +194,7 @@ function setupMDHTML() {
         table += `
         <button onclick="MASS_DILATION.upgs.buy(${i})" class="btn full md" id="md_upg${i}_div" style="font-size: 11px;">
         <div style="min-height: 80px">
-            [Level <span id="md_upg${i}_lvl"></span>]<br>
+            <b id="md_upg${i}_lvl"></b><br>
             ${upg.desc}<br>
             ${upg.effDesc?`Currently: <span id="md_upg${i}_eff"></span>`:""}
         </div>
@@ -215,9 +215,10 @@ function updateMDTemp() {
     }
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) {
         let upg = MASS_DILATION.upgs.ids[x]
+        let max = upg.maxLvl || EINF
         tmp.md.upgs[x].cost = upg.cost(player.md.upgs[x])
-        tmp.md.upgs[x].bulk = upg.bulk().min(upg.maxLvl||1/0)
-        tmp.md.upgs[x].can = player.md.mass.gte(tmp.md.upgs[x].cost) && player.md.upgs[x].lt(upg.maxLvl||1/0)
+        tmp.md.upgs[x].bulk = upg.bulk().min(max)
+        tmp.md.upgs[x].can = player.md.mass.gte(tmp.md.upgs[x].cost) && player.md.upgs[x].lt(max)
         if (upg.effect) tmp.md.upgs[x].eff = upg.effect(player.md.upgs[x])
     }
     tmp.md.rp_exp_gain = MASS_DILATION.RPexpgain()
@@ -244,10 +245,10 @@ function updateMDHTML() {
         let unl = upg.unl?upg.unl():true
         elm["md_upg"+x+"_div"].setVisible(unl)
         if (unl) {
-            elm["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can})
-            elm["md_upg"+x+"_lvl"].setTxt(format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
+            elm["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can, bought: upg.maxLvl !== undefined && player.md.upgs[x].eq(upg.maxLvl)})
+            elm["md_upg"+x+"_lvl"].setTxt(E(upg.maxLvl).eq(1)?"":"[Level "+format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):"")+"]")
             if (upg.effDesc) elm["md_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.md.upgs[x].eff))
-            elm["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||1/0)?"Cost: "+formatMass(tmp.md.upgs[x].cost):"")
+            elm["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||EINF)?"Cost: "+formatMass(tmp.md.upgs[x].cost):"")
         }
     }
 }

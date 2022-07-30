@@ -64,7 +64,8 @@ const FORMS = {
 		if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e100)
 		if (hasUpgrade('bh',7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:E(1))
 		if (hasUpgrade('rp',13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:E(1))
-		return s.min(tmp.massSoftGain2||1/0)
+		if (tmp.massSoftGain2) s = s.min(tmp.massSoftGain2)
+		return s
 	},
 	massSoftPower() {
 		let p = E(1/3)
@@ -80,7 +81,8 @@ const FORMS = {
 		if (hasTree("m2")) s = s.pow(treeEff("m3"))
 		if (hasRank("tetr", 8)) s = s.pow(1.5)
 		s = s.pow(tmp.bosons.effect.neg_w[0])
-		return s.min(tmp.massSoftGain3||1/0)
+		if (tmp.massSoftGain3) s = s.min(tmp.massSoftGain3)
+		return s
 	},
 	massSoftPower2() {
 		let p = E(0.25)
@@ -169,8 +171,10 @@ const FORMS = {
 			}
 		},
 		doReset() {
-			player.ranks[RANKS.names[RANKS.names.length-1]] = E(0)
-			RANKS.doReset[RANKS.names[RANKS.names.length-1]]()
+			if (inNGM()) {
+				player.mg.amt = E(0)
+				doMagicReset()
+			} else RANKS.doReset.highest()
 		},
 	},
 	bh: {
@@ -297,9 +301,10 @@ const FORMS = {
 	},
 	reset_msg: {
 		msgs: {
-			rp: "Require over 1e9 tonne of mass to reset previous features for gain Rage Power",
-			dm: "Require over 1e20 Rage Power to reset all previous features for gain Dark Matter",
-			atom: "Require over 1e100 uni of black hole to reset all previous features for gain Atoms & Quarks",
+			mg: "Require over 20 kg of mass to reset previous features for Magic",
+			rp: "Require over 1e9 tonne of mass to reset previous features for Rage Power",
+			dm: "Require over 1e20 Rage Power to reset all previous features for Dark Matter",
+			atom: "Require over 1e100 uni of black hole to reset all previous features for Atoms & Quarks",
 			md: "Dilate mass, then cancel",
 			ext: "Require Challenge 12 to rise the exotic particles!",
 			pres: "Prestige to embrace Primordial Gods!",
@@ -319,7 +324,7 @@ function loop() {
 	diff = Date.now()-date;
 	updateTemp()
 	updateHTML()
-	calc(diff/1000*tmp.offlineMult,diff/1000);
+	if (!paused) calc(diff/1000*tmp.offlineMult,diff/1000);
 	date = Date.now();
 	player.offline.current = date
 }
