@@ -251,10 +251,10 @@ let AXION = {
 			desc: "Multiply Meta Boosts based on radiation types.",
 			req: E(7),
 			eff(x) {
-				return x.add(1).cbrt().div(10).add(1).softcap(1e3,0.5,2)
+				return x.add(1).cbrt().div(10).add(1).softcap(5,0.5,2)
 			},
 			effDesc(x) {
-				return format(x) + "x" + getSoftcapHTML(x, 1e3)
+				return format(x) + "x" + getSoftcapHTML(x, 5)
 			}
 		},
 
@@ -424,33 +424,33 @@ let AXION = {
 			title: "Singular",
 			desc: "Raise Black Hole effect.",
 			unl: () => PRIM.unl(),
-			req: EINF,
+			req: E(500),
 			eff(x) {
-				return E(1)
+				return x.div(500).add(1).pow(.1)
 			},
 			effDesc(x) {
-				return "^"+x
+				return "^"+format(x,3)
 			}
 		},
 		22: {
 			title: "Glueball",
 			desc: "Multiply Free Gluons.",
 			unl: () => PRIM.unl(),
-			req: EINF,
+			req: E(750),
 			eff(x) {
-				return E(1)
+				return x.div(750).add(1).sqrt()
 			},
 			effDesc(x) {
-				return format(x)
+				return formatMultiply(x)
 			}
 		},
 		23: {
 			title: "Isotopic",
 			desc: "Cosmic Argon produces faster.",
 			unl: () => PRIM.unl(),
-			req: EINF,
+			req: E(1e3),
 			eff(x) {
-				return E(1)
+				return x.div(1e3).add(1).pow(1.5)
 			},
 			effDesc(x) {
 				return formatMultiply(x)

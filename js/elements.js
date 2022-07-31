@@ -433,7 +433,7 @@ function updateOptionsHTML() {
 	elm.help.setDisplay(!player.options.pure)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
-	elm.chroma_bg_btn.setDisplay(GLUBALL.unl())
+	elm.chroma_bg_btn.setDisplay(GLUBALL.unl() && !PRES.unl())
 	elm.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
 }
 
@@ -505,7 +505,7 @@ function updateHTML() {
 			if (tmp.stab[4] == 1) updateElementsHTML()
 			if (tmp.stab[4] == 2) updateMDHTML()
 		}
-		if (tmp.tab == 8) {
+		if (tmp.tab == 7) {
 			updateOptionsHTML()
 		}
 	}

@@ -36,6 +36,13 @@ class Element {
 		new Element(id).setDisplay(bool);
 	}
 
+	setTooltip(name) {
+		this.el.setAttribute("tooltip", name)
+	}
+	static setTooltip(id, name) {
+		new Element(id).setTooltip(name);
+	}
+
 	addClass(name) {
 		this.el.classList.add(name);
 	}

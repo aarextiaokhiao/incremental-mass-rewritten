@@ -97,7 +97,7 @@ const BOSONS = {
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return tmp.tickspeedEffect ? tmp.tickspeedEffect.step.pow(x.min(1e8).div(1e13)) : E(1)
+					if (bosonsMastered()) return tmp.tickspeedEffect ? tmp.tickspeedEffect.step.max(1).log10().pow(.3).mul(x.pow(.3)) : E(1)
 					let a = x.add(1).pow(0.75)
 					if (hasTree("fn4")) a = a.pow(2)
 					return a

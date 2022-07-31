@@ -96,7 +96,7 @@ let GLUBALL = {
 			desc: (x) => "Supernovae raises Exotic Matter by ^"+format(x)+".",
 			color: "#ff0000",
 			eff(x) {
-				return player.supernova.times.div(300).add(1).pow(x.mul(0.5).min(2))
+				return player.supernova.times.div(300).add(1).pow(x.mul(0.5).min(1))
 			},
 		},
 		p2_3: {
@@ -259,10 +259,12 @@ function updateGlueballTemp() {
 
 	let extra = E(0)
 	let fP = E(1)
-	if (tmp.chal) extra = tmp.chal.eff[14].fg_add
-	if (hasPrim("p7_0")) extra = extra.add(tmp.pr.eff.p7_0)
+	if (tmp.chal) {
+		extra = tmp.chal.eff[14].fg_add
+		fP = tmp.chal.eff[14].fg_mul
+	}
 	if (AXION.unl()) fP = fP.mul(tmp.ax.eff[22])
-	if (tmp.chal) fP = fP.mul(tmp.chal.eff[14].fg_mul)
+	if (hasPrim("p7_0")) fP = fP.mul(tmp.pr.eff.p7_0)
 
 	let em_log = EXT.eff().max(10).log10()
 	data.bp_next = E(10).pow(E(1.75).pow(save.bp.sub(extra).div(fP)).mul(1e15).div(em_log))
@@ -279,7 +281,11 @@ function updateGlueballTemp() {
 			if (id[3] != "1") data.mlt = data.mlt.mul(0.8)
 			else if (id[0] == "p") data.mlt = data.mlt.mul(1.2)
 			else if (id[0] == "s") data.mlt = data.mlt.mul(1.5)
-			else if (id[0] == "t") data.mlt = data.mlt.mul(2)
+			else if (id[0] == "t") {
+				let b = E(2)
+				if (hasPrim("p6_0")) b = b.root(tmp.pr.eff.p6_0)
+				data.mlt = data.mlt.mul(b)
+			}
 		}
 	}
 }
@@ -327,17 +333,17 @@ function updateGlueballHTML() {
 	elm.ch_nxt_assign.setTxt(save.upg.length > 0 && save.upg.length < 21 ? "Next: " + format(GLUBALL.spices.cost(),0) + " Free Gluons" : "")
 }
 
-function toggleGlueballBG() {
+function toggleChromaBG() {
 	if (player.options.noChroma && !confirm("Warning! This will cause high performance for your PC / phone! Are you sure about that?!")) return
 	player.options.noChroma = !player.options.noChroma
 }
 
 function updateChromaScreen() {
-	let unl = GLUBALL.unl() && !player.options.noChroma
+	let unl = GLUBALL.unl() && !PRES.unl() && !player.options.noChroma
 	elm.chroma_bg.setDisplay(unl)
 	if (!unl) return
 
-	let progress = player.stats.maxMass.log10().log10().sub(14).div(16).max(0).min(1).toNumber()
+	let progress = player.stats.maxMass.log10().log10().div(21).log(4).max(0).min(1)
 	elm.chroma_bg1.setOpacity(progress)
 	elm.chroma_bg2.setOpacity(progress)
 

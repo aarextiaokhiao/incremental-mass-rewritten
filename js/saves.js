@@ -219,12 +219,7 @@ function getPlayerData() {
         s.supernova.radiation.bs.push(E(0),E(0))
     }
 
-	if (inNGM()) {
-		s.mg = {
-			unl: false,
-			amt: E(0)
-		}
-	}
+	if (inNGM()) s.mg = MAGIC.setup()
     return s
 }
 

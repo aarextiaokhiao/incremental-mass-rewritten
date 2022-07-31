@@ -26,14 +26,24 @@ let PRIM = {
 	},
 
 	can(x) {
-		if (player.ext.pr.pt.lt(E(2).pow(player.ext.pr.strand.length).mul(100))) return
-		return !player.ext.pr.strand.includes(x)
+		let s = player.ext.pr.strand
+		let l = s.length
+		if (player.ext.pr.pt.lt(this.req())) return
+		if (l == this.max_strands) return
+		if (l < x - 1) return
+
+		for (var i = 1; i < 4; i++) if (l - i >= 0 && s[l - i] == x) return
+		return true
+	},
+	req(x) {
+		return E(1.1).pow(player.ext.pr.strand.length).mul(120)
 	},
 	choose(x) {
 		if (!PRIM.can(x)) return
 		player.ext.pr.strand.push(x)
 	},
 	respec() {
+		if (player.ext.pr.strand.length == 0) return
 		if (!confirm("Respec? This will force a Exotic reset!")) return
 		player.ext.pr.strand = []
 		EXT.reset(true)
@@ -41,12 +51,14 @@ let PRIM = {
 
 	strands: [
 		null,
-		[0,1,2,3,4],
-		[0,1,2,3,4],
-		[0,1,2,3,4],
-		[0,1,2,3,4],
-		[0,1,2,3,4],
+		[0,2,0,2,7],
+		[1,1,2,3,5],
+		[2,0,1,3,4],
+		[1,3,0,2,6],
+		[3,0,2,0,6],
 	],
+	max_strands: 20,
+
 	prim: [
 		// COMMON PRIMORDIUMS
 		{
@@ -122,9 +134,9 @@ let PRIM = {
 			sym: "E",
 			eff: [
 				{
-					unl: () => false,
-					eff: (x) => x,
-					desc: (x) => "Placeholder."
+					unl: () => true,
+					eff: (x) => x.add(1).log10().div(3).add(1),
+					desc: (x) => "Teritary increases " + formatMultiply(x) + " slower."
 				}
 			]
 		},
@@ -134,7 +146,7 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => x.div(5).add(1),
+					eff: (x) => x.div(5).add(1).sqrt(),
 					desc: (x) => "Gain " + formatMultiply(x) + " more Free Gluons."
 				}
 			]
@@ -158,7 +170,7 @@ function updatePrimTemp() {
 
 	for (var s = 0; s < save.strand.length; s++) {
 		for (var x = 0; x < Math.min(save.strand.length - s, 5); x++) {
-			data.ratio[PRIM.strands[save.strand[s]][x]]++
+			data.ratio[PRIM.strands[save.strand[s]][x]] += 5
 		}
 	}
 
@@ -189,7 +201,7 @@ function setupPrimHTML() {
 	new Element("pr_table").setHTML(html)
 
 	var html = ""
-	for (var y = 0; y < 5; y++) {
+	for (var y = 0; y < PRIM.max_strands; y++) {
 		var row = `<tr id="pr_str${y}">`
 		for (var x = 0; x < 5; x++) {
 			row += `<td><div class="prim_gain" id="pr_str${y}_${x}">???</div></td>`
@@ -203,10 +215,21 @@ function setupPrimHTML() {
 function updatePrimHTML() {
 	elm.pr_bp.setTxt(format(player.ext.pr.bp,0))
 	elm.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
-	elm.pr_rs.setDisplay(player.ext.pr.strand.length)
 	elm.pr_pt.setTxt(format(player.ext.pr.pt,0))
-	for (var x = 1; x <= 5; x++) elm["pr_ch"+x].setClasses({btn: true, prim_btn: true, locked: !PRIM.can(x)})
-	for (var x = 0; x < 5; x++) {
+
+	elm.pr_req.setTxt("Next choice: " + format(PRIM.req(),0) + " Primordial Clouds")
+	for (var x = 1; x <= 5; x++) {
+		var str = ""
+		for (var i = 0; i < 5; i++) {
+			if (i > 0) str += ", "
+			str += PRIM.prim[PRIM.strands[x][i]].sym
+		}
+		elm["pr_ch"+x].setClasses({btn: true, prim_btn: true, locked: !PRIM.can(x)})
+		elm["pr_ch"+x].setTooltip("Group: " + str)
+	}
+
+	elm.pr_rs.setClasses({btn: true, locked: player.ext.pr.strand.length == 0})
+	for (var x = 0; x < PRIM.max_strands; x++) {
 		let unl = player.ext.pr.strand.length > x 
 		elm["pr_str"+x].setDisplay(unl)
 		if (unl) {
@@ -218,9 +241,11 @@ function updatePrimHTML() {
 			}
 		}
 	}
+
 	for (var x = 0; x < 8; x++) {
 		var effs = PRIM.prim[x].eff
 		elm["pr_"+x].setTxt(format(player.ext.pr.prim[x],0))
+		elm["pr_per"+x].setTxt(format(tmp.pr.ratio[x],0)+"%")
 		for (var y = 0; y < effs.length; y++) {
 			elm["pr_eff"+x+"_"+y].setHTML(effs[y].unl() ? effs[y].desc(tmp.pr.eff["p"+x+"_"+y]) : "(Locked)")
 			elm["pr_eff"+x+"_"+y].setOpacity(effs[y].unl() ? 1 : 0.5)

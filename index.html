@@ -206,17 +206,17 @@
 				<span class="purple" id="ch_nxt_assign"></span>
 			</div>
 			<div id="stab_frame6_2">
-				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
-				<br>
-				<button class="btn" id="pr_rs" onclick="PRIM.respec()">Respec</button>
-				<br>
+				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds<br><br>
+
+				<span id="pr_req"></span><br>
+				<button class="btn" id="pr_rs" onclick="PRIM.respec()">Respec</button><br>
 				<table class="table_center">
 					<tr>
-						<td><button class="btn prim_btn" id="pr_ch1" onclick="PRIM.choose(1)">A</button></td>
-						<td><button class="btn prim_btn" id="pr_ch2" onclick="PRIM.choose(2)">B</button></td>
-						<td><button class="btn prim_btn" id="pr_ch3" onclick="PRIM.choose(3)">C</button></td>
-						<td><button class="btn prim_btn" id="pr_ch4" onclick="PRIM.choose(4)">D</button></td>
-						<td><button class="btn prim_btn" id="pr_ch5" onclick="PRIM.choose(5)">E</button></td>
+						<td><button class="btn prim_btn" id="pr_ch1" onclick="PRIM.choose(1)" t-size="small">A</button></td>
+						<td><button class="btn prim_btn" id="pr_ch2" onclick="PRIM.choose(2)" t-size="small">B</button></td>
+						<td><button class="btn prim_btn" id="pr_ch3" onclick="PRIM.choose(3)" t-size="small">C</button></td>
+						<td><button class="btn prim_btn" id="pr_ch4" onclick="PRIM.choose(4)" t-size="small">D</button></td>
+						<td><button class="btn prim_btn" id="pr_ch5" onclick="PRIM.choose(5)" t-size="small">E</button></td>
 					</tr>
 				</table>
 				<table class="table_center" id="pr_conv"></table>
@@ -469,8 +469,6 @@
                 </div>
             </div>
         </div><div id="tab_frame7">
-            <span class="red">Soon.</span>
-        </div><div id="tab_frame8">
             <button class="btn" onclick="save()">Save</button>
             <button class="btn" onclick="exporty()">Export</button>
             <button class="btn" onclick="export_copy()">Export to clipboard</button>
@@ -500,6 +498,10 @@
 				<button id="beta" class="btn" onclick="window.open('http://raw.githack.com/aarextiaokhiao/incremental-mass-rewritten/'+betaLink+'/')">Test Server</button>
 			</div>
         </div>
+		<!-- NG- TABS -->
+		<div id="tab_frame8">
+			<span class="red">Soon.</span>
+		</div>
         <b id="beginning" style="opacity: 0.05; font-size: 8px">At the beginning, there's just mass. No nature, which leads to a monotonic universe.<br>Altar awaits your recall, defying you from nothing.<br><br>Rank up to proceed!</b>
         <b id="beginning2" style="font-size: 8px">
 			<br><br>

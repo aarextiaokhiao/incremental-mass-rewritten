@@ -171,6 +171,9 @@ function updateTemp() {
 	updateRagePowerTemp()
 	updateBlackHoleTemp()
 	updateTickspeedTemp()
+
+	//Pre-Rage
+	MAGIC.updateTmp()
 	updateRanksTemp()
 	updateMassTemp()
 }

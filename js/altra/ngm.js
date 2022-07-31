@@ -20,6 +20,20 @@ function toggleMinus(start) {
 
 //MAGIC
 let MAGIC = {
+	setup() {
+		let flows = []
+		for (var i = 0; i < MAGIC_NORMAL.flows.length; i++) flows.push([])
+		return {
+			unl: false,
+			amt: E(0),
+
+			normal: {
+				amt: E(0),
+				flows: flows
+			}
+		}
+	},
+
 	can() {
 		return player.mass.gte(2e4)
 	},
@@ -36,5 +50,88 @@ let MAGIC = {
 	},
 	doReset() {
 		RANKS.doReset.highest()
+	},
+
+	updateTmp() {
+		if (!inNGM() || !player.mg.unl) {
+			delete tmp.mg
+			return
+		}
+		if (!tmp.mg) tmp.mg = {}
+		MAGIC_NORMAL.updateTmp()
+	}
+}
+
+let MAGIC_NORMAL = {
+	unl: () => tmp.mg != undefined,
+	boosts: [
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		},
+		{
+			name: "???",
+			abb: "?",
+			eff: (m) => E(1),
+			desc: (x) => "Placeholder.",
+		}
+	],
+	flows: [
+		{
+			unl: () => true,
+			order: [[0,E(5)],[1,E(5)],[2,E(5)],[3,E(5)]]
+		},
+		{
+			unl: () => true,
+			order: [[4,E(5)],[5,E(5)],[6,E(5)],[7,E(5)]]
+		}
+	],
+
+	eff: (x) => tmp.mg.normal.eff[x],
+
+	updateTmp() {
+		let data = {
+			eff: []
+		}
+		for (var i = 0; i < 8; i++) data.eff[i] = this.boosts[i].eff(E(0))
+		tmp.mg.normal = data
 	}
 }
