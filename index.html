@@ -208,39 +208,18 @@
 			<div id="stab_frame6_2">
 				<span id="pr_bp"></span> Blueprint Particles <span id="pr_bp_gain"></span> -> <span id="pr_pt"></span> Primordial Clouds
 				<br>
+				<button class="btn" id="pr_rs" onclick="PRIM.respec()">Respec</button>
+				<br>
 				<table class="table_center">
 					<tr>
-						<td><button class="btn prim_btn">A</button></td>
-						<td><button class="btn prim_btn">B</button></td>
-						<td><button class="btn prim_btn">C</button></td>
-						<td><button class="btn prim_btn">D</button></td>
-						<td><button class="btn prim_btn">E</button></td>
-					</tr><tr>
-						<td><div class="prim_gain">P<sub>A</sub></div></td>
-						<td><div class="prim_gain">P<sub>Ω</sub></div></td>
-						<td><div class="prim_gain">P<sub>B</sub></div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-					</tr><tr>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-					</tr><tr>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-					</tr><tr>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
-						<td><div class="prim_gain locked">???</div></td>
+						<td><button class="btn prim_btn" id="pr_ch1" onclick="PRIM.choose(1)">A</button></td>
+						<td><button class="btn prim_btn" id="pr_ch2" onclick="PRIM.choose(2)">B</button></td>
+						<td><button class="btn prim_btn" id="pr_ch3" onclick="PRIM.choose(3)">C</button></td>
+						<td><button class="btn prim_btn" id="pr_ch4" onclick="PRIM.choose(4)">D</button></td>
+						<td><button class="btn prim_btn" id="pr_ch5" onclick="PRIM.choose(5)">E</button></td>
 					</tr>
 				</table>
+				<table class="table_center" id="pr_conv"></table>
 				<br>
 				<div id="pr_table" class="table_center"></div>
 			</div>
@@ -274,6 +253,8 @@
                     </div><div class="resources yellow" id="dm_div">
                         <div tooltip="Dark Matter" t-size="small"><img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="dmAmt">X</span>
+                    </div><div class="resources yellow" id="portal_div">
+                        <div tooltip="Portal" t-size="small"><img class="res_img" src="images/portal.png" onclick="addNotify('Soon.')" onmousemove="FORMS.reset_msg.set('portal')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                     </div>
                 </div><div id="res_col2">
                     <div class="resources sml yellow" id="bh_div">
@@ -305,9 +286,6 @@
                     </div><div class="resources sml scarlet" id="ext_div">
                         <div tooltip="Exotic Matter" t-size="small"><img class="res_img" src="images/ext.png" tooltip="Exotic Matter" onclick="EXOTIC.reset()" onmousemove="FORMS.reset_msg.set('ext')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
                         <span style="margin-left: 5px; text-align: left;" id="extAmt">X</span>
-                    </div><div class="resources sml purple" id="pres_div">
-                        <div tooltip="Prestige Tier" t-size="small"><img class="res_img" src="images/six.png" tooltip="Prestige Tier" onmousemove="FORMS.reset_msg.set('pres')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
-                        <span style="margin-left: 5px; text-align: left;" id="presAmt">0</span>
                     </div>
                 </div>
             </div><span id="reset_desc"></span>
@@ -440,20 +418,25 @@
             <div id="main_upg_msg" style="min-height: 100px;"></div>
             <div id="main_upgs_table" class="table_center"></div>
         </div><div id="tab_frame3">
-            <div id="chal_hint">Hint: Click any image to show challenge description. Click again to enter any challenge.</div>
-            <div id="chal_shrt">Hint: Click a specific challenge to add a shortcut.</div><br><br>
-			<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
-            <button class="btn" id="chal_exit" onclick="CHALS.exit()">Exit Challenge</button><br><br>
-            <div style="min-height: 120px;" id="chals_table" class="table_center"></div><br><br>
-            <div id="chal_desc_div">
-                <button class="btn" id="chal_enter" onclick="CHALS.enter()">Enter Challenge</button>
-                <p id="chal_ch_title"></p>
-                <span class="red" id="chal_ch_desc"></span><br>
-                <span class="red" id="chal_ch_reset"></span>
-                <p id="chal_ch_goal"></p>
-                <span class="green" id="chal_ch_reward"></span><br>
-                <span class="green" id="chal_ch_eff"></span>
-            </div>
+            <div id="stab_frame3_0">
+				<div id="chal_hint">Hint: Click any image to show challenge description. Click again to enter any challenge.</div>
+				<div id="chal_shrt">Hint: Click a specific challenge to add a shortcut.</div><br><br>
+				<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
+				<button class="btn" id="chal_exit" onclick="CHALS.exit()">Exit Challenge</button><br><br>
+				<div style="min-height: 120px;" id="chals_table" class="table_center"></div><br><br>
+				<div id="chal_desc_div">
+					<button class="btn" id="chal_enter" onclick="CHALS.enter()">Enter Challenge</button>
+					<p id="chal_ch_title"></p>
+					<span class="red" id="chal_ch_desc"></span><br>
+					<span class="red" id="chal_ch_reset"></span>
+					<p id="chal_ch_goal"></p>
+					<span class="green" id="chal_ch_reward"></span><br>
+					<span class="green" id="chal_ch_eff"></span>
+				</div>
+			</div>
+			<div id="stab_frame3_1">
+				<span class="red">Soon.</span>
+			</div>
         </div><div id="tab_frame4">
             <div id="stab_frame4_0">
                 <div id="particles_assign">
@@ -486,7 +469,7 @@
                 </div>
             </div>
         </div><div id="tab_frame7">
-            Nothing here...
+            <span class="red">Soon.</span>
         </div><div id="tab_frame8">
             <button class="btn" onclick="save()">Save</button>
             <button class="btn" onclick="exporty()">Export</button>

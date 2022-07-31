@@ -3,42 +3,39 @@ const TABS = {
         if (!stab) {
             tmp.prev_tab = tmp.tab
             tmp.tab = x
-        }
-        else tmp.stab[tmp.tab] = x
+        } else tmp.stab[tmp.tab] = x
     },
     back() {
         tmp.tab = tmp.prev_tab
         tmp.prev_tab = tmp.tab
     },
-	order: [0,1,2,3,9,4,5,6,7,8],
+	order: [0,1,2,3,7,4,5,6,8],
     1: [
         { id: "Main" },
-        { id: "Stats", unl() { return player.rp.unl && !PRES.unl() } },
-        { id: "Upgrades", unl() { return player.rp.unl && !PRES.unl() } },
+        { id: "Stats", unl() { return player.rp.unl } },
+        { id: "Upgrades", unl() { return player.rp.unl } },
         { id: "Challenges", unl() { return player.chal.unl } },
-        { id: "Atom", unl() { return player.atom.unl && !PRES.unl() }, style: "atom" },
+        { id: "Atom", unl() { return player.atom.unl }, style: "atom" },
         { id: "Supernova", unl() { return player.supernova.unl }, style: "sn" },
         { id: "Exotic", unl() { return EXT.unl() }, style: "ext" },
-        { id: "Prestige", unl() { return PRES.unl() } },
-        { id: "Options" },
         { id: "Magic", unl() { return inNGM() && player.mg.unl }, style: "magic" },
+        { id: "Options" },
     ],
     2: {
         0: [
-            { id: "Mass", unl() { return !PRES.unl() } },
-            { id: "Black Hole", unl() { return player.bh.unl && !PRES.unl() }, style: "bh" },
-            { id: "Atomic Generator", unl() { return player.atom.unl && !PRES.unl() }, style: "atom" },
-            { id: "Stars", unl() { return STARS.unlocked() && !PRES.unl() }, style: "star" },
-            { id: "Big Rip", unl() { return PRES.unl() } },
+            { id: "Mass" },
+            { id: "Black Hole", unl() { return player.bh.unl }, style: "bh" },
+            { id: "Atomic Generator", unl() { return player.atom.unl }, style: "atom" },
+            { id: "Stars", unl() { return STARS.unlocked() }, style: "star" },
         ],
         1: [
             { id: "General" },
-            { id: "Rewards", unl() { return !PRES.unl() } },
+            { id: "Rewards" },
             { id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
         ],
         3: [
             { id: "Challenges" },
-            { id: "Entropic Grid", unl() { return false || PRES.unl() }, style: "exotic" },
+            { id: "Entropic Grid", unl() { return future || PRES.unl() }, style: "ext" },
         ],
         4: [
             { id: "Particles" },
@@ -55,7 +52,7 @@ const TABS = {
             { id: "Axions" },
             { id: "Glueballs", unl() { return player.ext.ch.unl || PRES.unl() }, style: "ch" },
             { id: "Primordium", unl() { return PRIM.unl() || PRES.unl() }, style: "pr" },
-            { id: "False Vacuum", unl() { return false || PRES.unl() } }
+            { id: "False Vacuum", unl() { return future || PRES.unl() } }
         ],
     },
 }

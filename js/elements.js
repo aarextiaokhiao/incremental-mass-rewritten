@@ -222,12 +222,11 @@ function updateUpperHTML() {
 	elm.quark_div.setDisplay(unl)
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
-	let pres = PRES.unl()
 	let scut = hasTree("qol_shrt")
-	elm.scut_div.setDisplay(scut && !pres)
-	elm.md_div.setDisplay()
+	elm.scut_div.setDisplay(scut)
+	elm.md_div.setDisplay(!scut && MASS_DILATION.unlocked())
 	if (scut) updateShortcuts()
-	else if (!pres) {
+	else {
 		unl = MASS_DILATION.unlocked()
 		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
 	}
@@ -241,8 +240,7 @@ function updateUpperHTML() {
 	elm.res_col2.setDisplay(!unl)
 	if (unl) elm.extAmt.setHTML(format(player.ext.amt,1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain):""))
 
-	unl = PRES.unl()
-	elm.pres_div.setDisplay(unl)
+	elm.portal_div.setDisplay(PRES.unl())
 }
 
 function updateRanksHTML() {
@@ -500,7 +498,7 @@ function updateHTML() {
 			updateMainUpgradesHTML()
 		}
 		if (tmp.tab == 3) {
-			updateChalHTML()
+			if (tmp.stab[3] == 0) updateChalHTML()
 		}
 		if (tmp.tab == 4) {
 			if (tmp.stab[4] == 0) updateAtomHTML()

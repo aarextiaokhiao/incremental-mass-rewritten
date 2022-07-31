@@ -218,6 +218,7 @@ button {
 	display: flex;
 	align-items: center;
 	min-width: 300px;
+	line-height: 1.1em
 }
 
 .res_img {

@@ -517,30 +517,31 @@ const CHALS = {
 		effect(x) {
 			return {
 				c10: E(1).add(x.div(20).sqrt().min(.6)),
-				bp: x,
+				fg_add: x,
+				fg_mul: x.div(5).max(1)
 			}
 		},
-        effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.bp) },
+        effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.fg_add)+", "+formatMultiply(x.fg_mul) },
 	},
 	15: {
 		unl() { return player.chal.comps[14].gt(0) || PRES.unl() },
 		title: "Chernobyl Exclusion",
 		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
 		reward: `Multiply Polarizer.`,
-		max: E(100),
+		max: E(1),
 		inc: E(2),
 		pow: E(3),
-		start: mlt(1e300),
+		start: EINF,
 		effect(x) {
 			return E(1)
 		},
 		effDesc(x) { return format(x)+"x" },
 	},
 	16: {
-		unl() { return PRES.unl() },
-		title: "Subspatial Normalcy [Big Rip]",
+		unl() { return player.chal.comps[15].gt(0) || PRES.unl() },
+		title: "Subspatial Normalcy",
 		desc: "Liquidate pre-Supernovae.",
-		reward: `Unlock Zeta Layer. <b style='color: red'>On completion, you are always stuck in this challenge permanently!</b>`,
+		reward: `???`,
 		max: E(1),
 		inc: E(1),
 		pow: E(1),

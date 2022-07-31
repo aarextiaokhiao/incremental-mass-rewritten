@@ -319,7 +319,7 @@ const FORMS = {
 			atom: "Require over 1e100 uni of black hole to reset all previous features for Atoms & Quarks",
 			md: "Dilate mass, then cancel",
 			ext: "Require Challenge 12 to rise the exotic particles!",
-			pres: "Prestige to embrace Primordial Gods!",
+			portal: "Call the Altar to teleport!",
 		},
 		set(id) {
 			if (id=="sn") {

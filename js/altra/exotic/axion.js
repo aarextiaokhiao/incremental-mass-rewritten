@@ -46,7 +46,6 @@ let AXION = {
 
 		var inc = E(1)
 		if (tmp.chal) inc = inc.div(tmp.chal.eff[13])
-		if (hasPrim("p6_0")) inc = inc.div(tmp.pr.eff.p6_0)
 
 		var sum = normal.add(other.mul(inc)).mul(tmp.ax.fp)
 		var r = E([2,3,1.6][type])

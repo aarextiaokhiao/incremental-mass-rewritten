@@ -25,6 +25,28 @@ let PRIM = {
 		}
 	},
 
+	can(x) {
+		if (player.ext.pr.pt.lt(E(2).pow(player.ext.pr.strand.length).mul(100))) return
+		return !player.ext.pr.strand.includes(x)
+	},
+	choose(x) {
+		if (!PRIM.can(x)) return
+		player.ext.pr.strand.push(x)
+	},
+	respec() {
+		if (!confirm("Respec? This will force a Exotic reset!")) return
+		player.ext.pr.strand = []
+		EXT.reset(true)
+	},
+
+	strands: [
+		null,
+		[0,1,2,3,4],
+		[0,1,2,3,4],
+		[0,1,2,3,4],
+		[0,1,2,3,4],
+		[0,1,2,3,4],
+	],
 	prim: [
 		// COMMON PRIMORDIUMS
 		{
@@ -35,10 +57,6 @@ let PRIM = {
 					unl: () => true,
 					eff: (x) => E(1.2).pow(x).min(1e6),
 					desc: (x) => "Reduce Luminosity start by ^"+format(x)+"."
-				},{
-					unl: () => false,
-					eff: (x) => E(0),
-					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -104,9 +122,9 @@ let PRIM = {
 			sym: "E",
 			eff: [
 				{
-					unl: () => true,
-					eff: (x) => x.div(100).add(1),
-					desc: (x) => "Weaken Axion penalties by "+formatMultiply(x)+"."
+					unl: () => false,
+					eff: (x) => x,
+					desc: (x) => "Placeholder."
 				}
 			]
 		},
@@ -138,6 +156,12 @@ function updatePrimTemp() {
 	data.mul = 1
 	data.ratio = [0, 0, 0, 0, 0, 0, 0, 0]
 
+	for (var s = 0; s < save.strand.length; s++) {
+		for (var x = 0; x < Math.min(save.strand.length - s, 5); x++) {
+			data.ratio[PRIM.strands[save.strand[s]][x]]++
+		}
+	}
+
 	let b = {}
 	for (var i = 0; i < 8; i++) {
 		let p = PRIM.prim[i].eff
@@ -163,12 +187,37 @@ function setupPrimHTML() {
 		`
 	}
 	new Element("pr_table").setHTML(html)
+
+	var html = ""
+	for (var y = 0; y < 5; y++) {
+		var row = `<tr id="pr_str${y}">`
+		for (var x = 0; x < 5; x++) {
+			row += `<td><div class="prim_gain" id="pr_str${y}_${x}">???</div></td>`
+		}
+		row += `</tr>`
+		html += row
+	}
+	new Element("pr_conv").setHTML(html)
 }
 
 function updatePrimHTML() {
 	elm.pr_bp.setTxt(format(player.ext.pr.bp,0))
 	elm.pr_bp_gain.setTxt(formatGain(player.ext.pr.bp,tmp.pr.bp))
+	elm.pr_rs.setDisplay(player.ext.pr.strand.length)
 	elm.pr_pt.setTxt(format(player.ext.pr.pt,0))
+	for (var x = 1; x <= 5; x++) elm["pr_ch"+x].setClasses({btn: true, prim_btn: true, locked: !PRIM.can(x)})
+	for (var x = 0; x < 5; x++) {
+		let unl = player.ext.pr.strand.length > x 
+		elm["pr_str"+x].setDisplay(unl)
+		if (unl) {
+			let str = player.ext.pr.strand[x]
+			for (var i = 0; i < 5; i++) {
+				let reveal = player.ext.pr.strand.length > i + x
+				elm["pr_str"+x+"_"+i].setHTML(reveal ? "P<sub>"+PRIM.prim[PRIM.strands[str][i]].sym+"</sub>" : "???")
+				elm["pr_str"+x+"_"+i].setClasses({prim_gain: true, locked: !reveal})
+			}
+		}
+	}
 	for (var x = 0; x < 8; x++) {
 		var effs = PRIM.prim[x].eff
 		elm["pr_"+x].setTxt(format(player.ext.pr.prim[x],0))

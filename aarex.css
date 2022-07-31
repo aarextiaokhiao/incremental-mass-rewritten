@@ -1,6 +1,6 @@
 body {
-	background: linear-gradient(#001f3f, #00171f);
-	color: #bfdfff
+	background: linear-gradient(#000f1f, black, #00001f);
+	color: #bfcfff
 }
 body.ngm {
 	background: linear-gradient(#0f001f, black, #00001f);
@@ -10,10 +10,10 @@ body.ngm {
 .btn, .btn_tab {
 	border: 0px solid;
 	border-radius: 4px;
-	background: rgba(0, 191, 255, 0.75) !important;
-	box-shadow: 0 0 3px rgba(0, 255, 255, 0.75);
+	background: rgba(0, 159, 255, 0.75) !important;
+	box-shadow: 0 0 3px #0000ff;
 
-	color: #dfbfff;
+	color: #bfcfff;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)
 }
 
@@ -23,7 +23,7 @@ body.ngm {
 
 .btn.choosed, .btn_tab.choosed {
 	background: linear-gradient(#007fff, #005fbf) !important;
-	box-shadow: 0 0 3px #002f3f, 0 0 24px #007fff;
+	box-shadow: inset 0 0 3px #0000ff, 0 3px 6px rgba(0, 0, 191, 0.5);
 
 	color: #001f2f !important;
 	font-weight: bold;

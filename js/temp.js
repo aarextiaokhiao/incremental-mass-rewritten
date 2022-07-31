@@ -5,9 +5,10 @@ function resetTemp() {
     tmp = {
         tree_time: 0,
 
-        sn_tab: 0,
         tab: 0,
+        prev_tab: 0,
         stab: [],
+
         pass: true,
         notify: [],
         saving: 0,
@@ -50,7 +51,14 @@ function resetTemp() {
                 eff: [],
             },
         },
-        ch: {}
+        ch: {},
+
+		anti: {
+			open: false,
+			tab: 0,
+			prev_tab: 0,
+			stab: [],
+		}
     }
     for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
     for (let x = 1; x <= UPGS.main.cols; x++) tmp.upgs.main[x] = {}
@@ -135,8 +143,6 @@ function updateTemp() {
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
 	//Tab Forcing
-	if (PRES.unl() && tmp.stab[0] < 4) tmp.stab[0] = 4
-	if (!PRES.unl() && tmp.stab[0] == 4) tmp.stab[0] = 0
 	if (player.ext.toned == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
 
 	//Exotic

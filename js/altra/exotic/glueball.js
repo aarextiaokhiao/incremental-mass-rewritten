@@ -256,14 +256,15 @@ function updateGlueballTemp() {
 	tmp.ch = data
 	if (!save.unl) return
 
-	let em_log = EXT.eff().max(10).log10()
+
 	let extra = E(0)
 	let fP = E(1)
-
-	if (tmp.chal) extra = tmp.chal.eff[14].bp
+	if (tmp.chal) extra = tmp.chal.eff[14].fg_add
 	if (hasPrim("p7_0")) extra = extra.add(tmp.pr.eff.p7_0)
 	if (AXION.unl()) fP = fP.mul(tmp.ax.eff[22])
+	if (tmp.chal) fP = fP.mul(tmp.chal.eff[14].fg_mul)
 
+	let em_log = EXT.eff().max(10).log10()
 	data.bp_next = E(10).pow(E(1.75).pow(save.bp.sub(extra).div(fP)).mul(1e15).div(em_log))
 	data.bp_bulk = player.mass.max(1).log10().mul(em_log).div(1e15).log(1.75).mul(fP).add(extra).floor().add(1)
 
