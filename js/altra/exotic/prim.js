@@ -20,8 +20,8 @@ let PRIM = {
 
 		let pr_exp = 1
 		for (var i = 0; i < 8; i++) {
-			let pr = pt.mul(tmp.pr.ratio[i])
-			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.div(100).add(1).pow(pr_exp-1):1)
+			let pr = pt.mul(tmp.pr.ratio[i]).div(100)
+			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.add(1).pow(pr_exp-1):1)
 		}
 	},
 
