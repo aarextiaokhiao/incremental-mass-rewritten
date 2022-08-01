@@ -29,12 +29,11 @@ let GLUBALL = {
 			"t1_1", "t2_1", "t3_1", "t4_1", "t5_1", "t6_1",
 		],
 		power() {
-			let start = mlt(1e4)
-			if (hasPrim("p0_0")) start = start.root(tmp.pr.eff.p0_0)
-
-			let log = player.mass.max(1).log(start)
-			if (log.lt(1)) return E(0)
-			return log.log10().div(2).add(1).root(TONES.power(2)).sub(1)
+			let log = player.mass.max(1).log(mlt(hasTree("feat12") ? 1 : 1e4))
+			let ret = E(0)
+			if (log.gt(1)) ret = log.log10().div(2).add(1).root(TONES.power(2)).sub(1)
+			if (hasPrim("p0_0")) ret = ret.add(tmp.pr.eff.p0_0)
+			return ret
 		},
 		cost(x) {
 			return tmp.ch.mlt.mul(player.ext.ch.upg.length).floor()
@@ -277,15 +276,19 @@ function updateGlueballTemp() {
 	for (var i = 0; i < s.all.length; i++) {
 		let id = s.all[i]
 		data.eff[id] = s[id].eff(data.pwr)
+
 		if (GLUBALL.got(id)) {
-			if (id[3] != "1") data.mlt = data.mlt.mul(0.8)
-			else if (id[0] == "p") data.mlt = data.mlt.mul(1.2)
-			else if (id[0] == "s") data.mlt = data.mlt.mul(1.5)
-			else if (id[0] == "t") {
-				let b = E(2)
-				if (hasPrim("p6_0")) b = b.root(tmp.pr.eff.p6_0)
-				data.mlt = data.mlt.mul(b)
-			}
+			let mul = E(1)
+			if (id[3] != "1") mul = E(0.8)
+			else if (id[0] == "p") mul = E(1.2)
+			else if (id[0] == "s") mul = E(1.5)
+			else if (id[0] == "t") mul = E(2)
+
+			if (id[0] == "t" && hasPrim("p6_0")) mul = mul.root(tmp.pr.eff.p6_0)
+			if (id[3] != "1" && hasPrim("p6_1")) mul = mul.pow(tmp.pr.eff.p6_1)
+			if (id[3] != "1" && tmp.chal) mul = mul.pow(tmp.chal.eff[15])
+
+			data.mlt = data.mlt.mul(mul)
 		}
 	}
 }

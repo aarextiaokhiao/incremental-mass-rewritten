@@ -122,6 +122,7 @@ const CHALS = {
 		if (act == x) return
 		if (x > 12) {
 			if (player.confirms.ec && !confirm("Make sure to sweep before starting! Are you sure?")) return
+			if (x == 16) player.ext.ch.upg = []
 			player.chal.active = 0
 		}
 		if (act > 0) this.exit(false, true)
@@ -526,31 +527,30 @@ const CHALS = {
 	15: {
 		unl() { return player.chal.comps[14].gt(0) || PRES.unl() },
 		title: "Chernobyl Exclusion",
-		desc: `Atomic Power gives Stronger and BH Mass multiplies Booster instead. [COMING SOON!]`,
-		reward: `Multiply Polarizer.`,
-		max: E(1),
-		inc: E(2),
-		pow: E(3),
-		start: EINF,
+		desc: `Tickspeed Power and Temporal Supernovae are always 1x.`,
+		reward: `Extending Glueball Upgrades cheapens faster.`,
+		max: E(50),
+		inc: E(10),
+		pow: E(1.5),
+		start: mlt(1e3),
 		effect(x) {
-			return E(1)
+			return x.add(1).log10().add(1).sqrt()
 		},
-		effDesc(x) { return format(x)+"x" },
+		effDesc(x) { return formatMultiply(x) },
 	},
 	16: {
 		unl() { return player.chal.comps[15].gt(0) || PRES.unl() },
 		title: "Subspatial Normalcy",
-		desc: "Liquidate pre-Supernovae.",
-		reward: `???`,
-		max: E(1),
+		desc: "Reset Glueball Upgrades, but liquate pre-Supernovae!",
+		reward: `Raise Primordiums.`,
+		max: E(80),
 		inc: E(1),
 		pow: E(1),
 		start: EINF,
 		effect(x) {
-			let ret = E(1)
-			return ret
+			return x.div(20).add(1).toNumber()
 		},
-		effDesc(x) { return format(x)+"x" },
+		effDesc(x) { return "^"+format(x,3) },
 	},
     cols: 16,
 }

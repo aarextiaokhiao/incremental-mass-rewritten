@@ -28,7 +28,7 @@ const TREE_IDS = [
 		['chal4','chal8'],
 		['fn3','fn4','fn2','fn5','','','rad4','rad5'],
 		["ext_l1","","ext_b1"],
-		['feat11'],
+		['feat11','feat12'],
 	],[
 		['s3','m3','gr2','sn3'],
 		['qol_ext1','qol_ext2','qol_ext3','qol_ext4','qol_ext5'],
@@ -832,6 +832,14 @@ const TREE_UPGS = {
 			req() { return player.ext.chal.f11 },
 			reqDesc() { return `Raise best mass in Mass Dilation.` },
 			desc: `Raise Exotic Matter by ^1.2.`,
+			cost: E(0)
+		},
+		feat12: {
+			unl() { return PRIM.unl() },
+			req() { return player.mass.lt(10) && CHALS.inChal(10) },
+			failed() { return !player.mass.gte(10) || !CHALS.inChal(10) },
+			reqDesc() { return `Get your mass less than 10 g in Reality I.` },
+			desc: `Luminosity starts 1,000x earlier.`,
 			cost: E(0)
 		},
 

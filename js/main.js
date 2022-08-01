@@ -144,6 +144,7 @@ const FORMS = {
 			if (hasTree("t1")) step = step.pow(1.15)
 			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
 			if (hasTree("ext_u2") && hasElement(18)) step = step.pow(tmp.elements.effect[18])
+			if (CHALS.inChal(15)) step = E(1)
 
 			let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
 			if (scalingToned("tickspeed")) ss = EINF

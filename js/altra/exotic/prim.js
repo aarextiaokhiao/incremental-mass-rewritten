@@ -19,9 +19,10 @@ let PRIM = {
 		player.ext.pr.pt = pt.mul(tmp.pr.mul)
 
 		let pr_exp = 1
+		if (tmp.chal) pr_exp *= tmp.chal.eff[16]
 		for (var i = 0; i < 8; i++) {
 			let pr = pt.mul(tmp.pr.ratio[i]).div(100)
-			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.add(1).pow(pr_exp-1):1)
+			player.ext.pr.prim[i] = pr.mul(pr_exp>1?pr.div(10).add(1).pow(pr_exp-1):1)
 		}
 	},
 
@@ -36,7 +37,7 @@ let PRIM = {
 		return true
 	},
 	req(x) {
-		return E(1.1).pow(player.ext.pr.strand.length).mul(120)
+		return E(1.3).pow(player.ext.pr.strand.length).mul(115)
 	},
 	choose(x) {
 		if (!PRIM.can(x)) return
@@ -51,11 +52,11 @@ let PRIM = {
 
 	strands: [
 		null,
-		[0,2,0,2,7],
-		[1,1,2,3,5],
-		[2,0,1,3,4],
-		[1,3,0,2,6],
-		[3,0,2,0,6],
+		[0,2,0,2,2,7],
+		[1,1,2,3,2,5],
+		[2,0,1,3,3,4],
+		[1,3,0,2,0,6],
+		[3,0,2,0,0,6],
 	],
 	max_strands: 20,
 
@@ -67,8 +68,8 @@ let PRIM = {
 			eff: [
 				{
 					unl: () => true,
-					eff: (x) => E(1.2).pow(x).min(1e6),
-					desc: (x) => "Reduce Luminosity start by ^"+format(x)+"."
+					eff: (x) => x.div(50),
+					desc: (x) => "Add Luminosity by "+format(x.mul(100))+"%."
 				}
 			]
 		},
@@ -99,7 +100,8 @@ let PRIM = {
 			sym: "Δ",
 			eff: [
 				{
-					unl: () => true,
+					unl: () => player.chal.comps[14].gte(10),
+					req: () => "10 C14 completions",
 					eff: (x) => x.div(1e3).add(1),
 					desc: (x) => "Increase Polarizer's base by "+formatMultiply(x)+"."
 				}
@@ -112,7 +114,8 @@ let PRIM = {
 			sym: "B",
 			eff: [
 				{
-					unl: () => true,
+					unl: () => player.chal.comps[14].gte(10),
+					req: () => "10 C14 completions",
 					eff: (x) => E(1.75).sub(x.div(100)).max(1).toNumber(),
 					desc: (x) => "Tetr scales at ^"+format(x,3)+" rate."
 				}
@@ -123,7 +126,8 @@ let PRIM = {
 			sym: "Θ",
 			eff: [
 				{
-					unl: () => true,
+					unl: () => player.chal.comps[14].gte(15),
+					req: () => "15 C14 completions",
 					eff: (x) => x,
 					desc: (x) => "Add "+format(x)+" C12 completions."
 				}
@@ -134,9 +138,15 @@ let PRIM = {
 			sym: "E",
 			eff: [
 				{
-					unl: () => true,
+					unl: () => player.chal.comps[14].gte(25),
+					req: () => "25 C14 completions",
 					eff: (x) => x.add(1).log10().div(3).add(1),
-					desc: (x) => "Teritary increases " + formatMultiply(x) + " slower."
+					desc: (x) => "Teritary Glueball Upgrades multiply " + formatMultiply(x) + " slower."
+				},{
+					unl: () => player.chal.comps[13].gte(40),
+					req: () => "40 C13 completions",
+					eff: (x) => x.div(3).add(1).log10().div(3).add(1),
+					desc: (x) => "Extending Glueball Upgrades cheapen " + formatMultiply(x) + " faster."
 				}
 			]
 		},
@@ -145,7 +155,8 @@ let PRIM = {
 			sym: "Φ",
 			eff: [
 				{
-					unl: () => true,
+					unl: () => player.chal.comps[14].gte(15),
+					req: () => "15 C14 completions",
 					eff: (x) => x.div(5).add(1).sqrt(),
 					desc: (x) => "Gain " + formatMultiply(x) + " more Free Gluons."
 				}
@@ -169,7 +180,7 @@ function updatePrimTemp() {
 	data.ratio = [0, 0, 0, 0, 0, 0, 0, 0]
 
 	for (var s = 0; s < save.strand.length; s++) {
-		for (var x = 0; x < Math.min(save.strand.length - s, 5); x++) {
+		for (var x = 0; x < Math.min(save.strand.length - s, 6); x++) {
 			data.ratio[PRIM.strands[save.strand[s]][x]] += 5
 		}
 	}
@@ -203,7 +214,7 @@ function setupPrimHTML() {
 	var html = ""
 	for (var y = 0; y < PRIM.max_strands; y++) {
 		var row = `<tr id="pr_str${y}">`
-		for (var x = 0; x < 5; x++) {
+		for (var x = 0; x < 6; x++) {
 			row += `<td><div class="prim_gain" id="pr_str${y}_${x}">???</div></td>`
 		}
 		row += `</tr>`
@@ -220,7 +231,7 @@ function updatePrimHTML() {
 	elm.pr_req.setTxt("Next choice: " + format(PRIM.req(),0) + " Primordial Clouds")
 	for (var x = 1; x <= 5; x++) {
 		var str = ""
-		for (var i = 0; i < 5; i++) {
+		for (var i = 0; i < 6; i++) {
 			if (i > 0) str += ", "
 			str += PRIM.prim[PRIM.strands[x][i]].sym
 		}
@@ -234,7 +245,7 @@ function updatePrimHTML() {
 		elm["pr_str"+x].setDisplay(unl)
 		if (unl) {
 			let str = player.ext.pr.strand[x]
-			for (var i = 0; i < 5; i++) {
+			for (var i = 0; i < 6; i++) {
 				let reveal = player.ext.pr.strand.length > i + x
 				elm["pr_str"+x+"_"+i].setHTML(reveal ? "P<sub>"+PRIM.prim[PRIM.strands[str][i]].sym+"</sub>" : "???")
 				elm["pr_str"+x+"_"+i].setClasses({prim_gain: true, locked: !reveal})
@@ -247,7 +258,7 @@ function updatePrimHTML() {
 		elm["pr_"+x].setTxt(format(player.ext.pr.prim[x],0))
 		elm["pr_per"+x].setTxt(format(tmp.pr.ratio[x],0)+"%")
 		for (var y = 0; y < effs.length; y++) {
-			elm["pr_eff"+x+"_"+y].setHTML(effs[y].unl() ? effs[y].desc(tmp.pr.eff["p"+x+"_"+y]) : "(Locked)")
+			elm["pr_eff"+x+"_"+y].setHTML(effs[y].unl() ? effs[y].desc(tmp.pr.eff["p"+x+"_"+y]) : "(Req: " + (effs[y].req() || "???") + ")")
 			elm["pr_eff"+x+"_"+y].setOpacity(effs[y].unl() ? 1 : 0.5)
 		}
 	}

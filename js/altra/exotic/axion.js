@@ -165,6 +165,7 @@ let AXION = {
 			desc: "Speed up all Supernova productions.",
 			req: E(0),
 			eff(x) {
+				if (CHALS.inChal(15)) return E(1)
 				return x.mul(1.5).add(1)
 			},
 			effDesc(x) {

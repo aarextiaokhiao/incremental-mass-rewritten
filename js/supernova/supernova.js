@@ -138,7 +138,7 @@ function calcSupernova(dt, dt_offline) {
     }
 
 	//Exotic
-	if (!future && hasTree("qol_ext10") && tmp.supernova.bulk.gte(player.supernova.times)) {
+	if (!future && hasTree("qol_ext10") && tmp.supernova.bulk.gt(player.supernova.times)) {
 		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
 		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
 	}
