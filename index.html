@@ -161,7 +161,7 @@
 	<div id="app_ext" style="z-index: 5">
 		<div style="position: absolute; top: 5px; left: 5px">
 			<button class="btn" onclick="TABS.back()">Close</button>
-			<button class="btn" onclick="EXOTIC.reset(true)">Restart</button>
+			<button class="btn" onclick="EXOTIC.reset(true, true)">Restart</button>
 		</div>
 
 		<div style="position: absolute; left: 5px; top: 45px; width: 100%">
@@ -478,7 +478,6 @@
             <button class="btn" onclick="if (confirm('Are you sure you want to RESET your progress to new game?')) {wipe(true)}">Hard Reset</button><br><br>
             <button class="btn" onclick="updateAarex(true)">Aarex's Theme: <span id="aarex_active">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">Notations</button>
-            <button class="btn" onclick="player.options.pure = !player.options.pure">Mass: <span id="pure">ON</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">Fonts</button>
             <button class="btn" id="tree_ani_btn" onclick="changeTreeAnimation()">Tree Animation: <span id="tree_ani">ON</span></button>
             <button class="btn" id="chroma_bg_btn" onclick="toggleChromaBG()">Chroma BG: <span id="chroma_bg">ON</span></button><br><br>

@@ -44,20 +44,23 @@ const POPUP_GROUPS = {
         MMWG (mass of Milky Way Galaxy): 1.5e12 M☉ = 2.9835e45 g<br>
         uni (mass of Universe): 50,276,520,864 MMWG = 1.5e56 g<br><br>
 
-        mlt (mass of Multiverse): 1e1e9 uni<br>
-        meg (mass of Megaverse): 1e15 mlt = 1e1e24 uni<br>
-        gig (mass of Gigaverse): 1e15 meg = 1e1e39 uni<br>
-        tvr (mass of Teraverse): 1e15 gig = 1e1e54 uni<br>
-        pev (mass of Petaverse): 1e15 tvr = 1e1e69 uni<br>
-        exv (mass of Exaverse): 1e15 pev = 1e1e84 uni<br>
-        zev (mass of Zettaverse): 1e15 exv = 1e1e99 uni<br>
-        ytv (mass of Yottaverse): 1e15 zev = 1e1e114 uni<br>
-        xvr (mass of Xennaverse): 1e15 ytv = 1e1e129 uni<br>
-        wkv (mass of Wekaverse): 1e15 xvr = 1e1e144 uni<br><br>
-        arv-11 (mass of 11th Archverse): 1e15 wkv = 1e1e159 uni<br><br>
-
-        omni (mass of Omniverse): 1e1,000 mlt = 1e1e1,009 uni<br>
-        `,
+        mlt (mass of Multiverse): 1e1e9 uni (log)<br>
+        meg (mass of Megaverse): ` + POPUP_GROUPS.help.arvSect(1) + `<br>
+        gig (mass of Gigaverse): ` + POPUP_GROUPS.help.arvSect(2) + `<br>
+        tvr (mass of Teraverse): ` + POPUP_GROUPS.help.arvSect(3) + `<br>
+        pev (mass of Petaverse): ` + POPUP_GROUPS.help.arvSect(4) + `<br>
+        exv (mass of Exaverse): ` + POPUP_GROUPS.help.arvSect(5) + `<br>
+        zev (mass of Zettaverse): ` + POPUP_GROUPS.help.arvSect(6) + `<br>
+        ytv (mass of Yottaverse): ` + POPUP_GROUPS.help.arvSect(7) + `<br>
+        xvr (mass of Xennaverse): ` + POPUP_GROUPS.help.arvSect(8) + `<br>
+        wkv (mass of Wekaverse): ` + POPUP_GROUPS.help.arvSect(9) + `<br>
+        arv-11 (mass of 11th Archverse): ` + POPUP_GROUPS.help.arvSect(10) + `<br><br>
+		`+
+        (player.options.pure == 2 ? `` : `omni (mass of Omniverse): 1e1,000 mlt = 1e1e1,009 uni<br>`),
+		arvSect(x) {
+			if (player.options.pure == 2) return "1e1e9 " + ARV[x - 1] + " (log)"
+			return "1e15 " + ARV[x - 1] + " = 1e1e" + (x * 15 + 9) + " uni"
+		}
     },
     fonts: {
         html: `
@@ -79,19 +82,32 @@ const POPUP_GROUPS = {
         `,
     },
     notations: {
-        html: `
-            <button class="btn" onclick="player.options.notation = 'mix'">Mixed Scientific</button>
-            <button class="btn" onclick="player.options.notation = 'sc'">Scientific</button>
-            <button class="btn" onclick="player.options.notation = 'log'">Logarithm</button>
-            <button class="btn" onclick="player.options.notation = 'eng'">Engineering</button><br><br>
-            <button class="btn" onclick="player.options.notation = 'st'">Standard</button>
-            <button class="btn" onclick="player.options.notation = 'elemental'">Elemental</button>
-            <button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>
-            <button class="btn" onclick="player.options.notation = 'omega'">Omega</button>
-            <button class="btn" onclick="player.options.notation = 'omega_short'">Omega Short</button>
-            <button class="btn" onclick="player.options.notation = 'inf'">Infinity</button>
-            <button class="btn" onclick="player.options.notation = 'max'">Maximus</button>
-        `,
+		html: ()=>`
+			<b style='font-size: 24px'>Normal</b><br>
+			<button class="btn" onclick="player.options.notation = 'mix'">Mixed Scientific</button>
+			<button class="btn" onclick="player.options.notation = 'sc'">Scientific</button>
+			<button class="btn" onclick="player.options.notation = 'log'">Logarithm</button>
+			<button class="btn" onclick="player.options.notation = 'eng'">Engineering</button><br><br>
+			<button class="btn" onclick="player.options.notation = 'st'">Standard</button>
+			<button class="btn" onclick="player.options.notation = 'elemental'">Elemental</button>
+			`+(player.stats.maxMass.gte(Number.MAX_VALUE)?`<button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>`:``)+`
+			<button class="btn" onclick="player.options.notation = 'omega'">Omega</button>
+			<button class="btn" onclick="player.options.notation = 'omega_short'">Omega Short</button>
+			`+(player.stats.maxMass.gte(Number.MAX_VALUE)?`<button class="btn" onclick="player.options.notation = 'inf'">Infinity</button>
+			<button class="btn" onclick="player.options.notation = 'max'">Maximus</button>`:``)+`<br><br>
+			
+			`+(player.stats.maxMass.gte("10^^4")?`
+			<b style='font-size: 24px'>Tetrational</b><br>
+			(Only works above ee1e10)<br>
+			<button class="btn" onclick="player.options.tetr = 'letter'" tooltip='By PsiCubed2'>Letter</button>
+			<button class="btn" onclick="player.options.tetr = 'hyper-e'" tooltip='By Sbiis'>Hyper-E</button><br><br>
+			`:``)+`
+			
+			<b style='font-size: 24px'>Mass</b><br>
+			<button class="btn" onclick="player.options.pure = 0">On</button>
+			<button class="btn" onclick="player.options.pure = 1">Off</button>
+			`+(player.stats.maxMass.gte(mlt(1))?`<button class="btn" onclick="player.options.pure = 2" tooltip='1e1e9 mlt = 1 mgv (log)'>Large-scale</button>`:``)
+		,
     },
     supernova10: {
         html: `

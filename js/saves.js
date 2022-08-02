@@ -191,6 +191,8 @@ function getPlayerData() {
         options: {
             font: 'Verdana',
             notation: 'mix',
+            tetr: 'letter',
+            pure: 0,
             tree_animation: 0,
 			noChroma: true
         },
@@ -241,6 +243,7 @@ function loadPlayer(load) {
     player.reset_msg = ""
     player.main_upg_msg = [0,0]
     player.chal.choosed = 0
+	if (typeof(player.options.pure) == "boolean") player.options.pure = player.options.pure ? 1 : 0
 	if (player.bh.eb2) player.bh.eb2 = E(player.bh.eb2)
 	if (player.bh.eb3) player.bh.eb3 = E(player.bh.eb3)
 	if (player.atom.eb2) player.atom.eb2 = E(player.atom.eb2)

@@ -109,7 +109,7 @@ const CHALS = {
 					player.supernova.auto.t = Infinity
 				}
 				if (!noExt && active > 12) {
-					if (player.confirms.ec && !confirm("You'll not lose progress on exiting. Proceed?")) return
+					if (player.confirms.ec && !confirm("You won't lose progress, but you won't recieve completions anymore. Proceed?")) return
 					player.ext.ec = 0
 				}
 			}

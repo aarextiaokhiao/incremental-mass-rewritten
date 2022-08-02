@@ -61,18 +61,18 @@ let EXOTIC = {
 		return r
 	},
 
-	reset(force) {
+	reset(force, restart) {
 		let can = player.chal.comps[12].gt(0)
-		if (!force) {
-			if (!can) return
-			if (player.confirms.ext && !confirm("Are you sure?")) return false
-
-			if (!player.ext.unl) addPopup(POPUP_GROUPS.layer_5)
-			player.ext.unl = true
+		if (!force && !can) return
+		if ((!force || restart) && player.confirms.ext && !confirm("Are you sure?")) return false
+		if (can) {
+			player.ext.amt = player.ext.amt.add(player.ext.gain)
+			if (!player.ext.unl) {
+				player.ext.unl
+				addPopup(POPUP_GROUPS.layer_5)
+			}
 		}
-		player.ext.amt = player.ext.amt.add(player.ext.gain)
 		EXT.doReset()
-		return true
 	},
 	doReset(pres) {
 		player.ext.time = 0

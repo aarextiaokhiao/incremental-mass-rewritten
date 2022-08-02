@@ -429,8 +429,7 @@ function updateOptionsHTML() {
 	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
 	elm.minus_active.setTxt(metaSave.ngm?"ON":"OFF")
-	elm.pure.setTxt(player.options.pure?"OFF":"ON")
-	elm.help.setDisplay(!player.options.pure)
+	elm.help.setDisplay(player.options.pure!=1)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
 	elm.chroma_bg_btn.setDisplay(GLUBALL.unl() && !PRES.unl())
@@ -461,7 +460,7 @@ function updateHTML() {
 	updateTabsHTML()
 	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 5) {
 		elm.beginning.setDisplay(!gameStarted())
-		elm.beginning2.setDisplay(!metaSave.started && player.mass.gt(15))
+		elm.beginning2.setDisplay(!gameStarted() && !inNGM() && player.mass.gt(15))
 		updateUpperHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {

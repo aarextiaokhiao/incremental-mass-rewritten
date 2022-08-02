@@ -242,10 +242,6 @@ const FORMATS = {
 			let e = ex.max(1).log10().floor()
 			if (e.lt(Math.max(acc, 3))) return ex.toFixed(Math.max(acc-e.toNumber(), 0))
 			else {
-				if (ex.gte("eeee10")) {
-					let slog = ex.slog()
-					return (slog.gte(1e9)?'':E(10).pow(slog.sub(slog.floor())).toFixed(3)) + "F" + format(slog.floor(), 0)
-				}
 				let m = ex.div(E(10).pow(e))
 				if (e.gte(1e4)) return colorize('e', color, "magenta") + format(e, Math.max(acc, 3))
 				return m.toFixed(Math.max(acc, 2)) + 'e' + e.floor().toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -363,8 +359,20 @@ function format(ex, acc=2, type=player.options.notation, color) {
 	if (ex.sign == -1) return "-" + format(ex.neg(), acc, type, color)
 	if (ex.mag == Infinity) return '∞'
 
+	if ((ex.mag >= 1e10 && ex.layer == 3) || ex.layer >= 4) return formatTetr(ex, player.options.tetr)
 	if (!FORMATS[type]) type = "mix"
 	return FORMATS[type].format(ex, acc, color)
+}
+
+function formatTetr(ex, tetr) {
+	ex = E(ex)
+
+	let slog = ex.slog()
+	let layer = slog.floor()
+	let mant = E(10).pow(slog.sub(layer))
+
+	if (tetr=="hyper-e") return "E"+(slog.gte(1e4)?'1':mant.toFixed(3)) + "#" + format(layer, 0)
+	if (tetr=="letter") return (slog.gte(1e4)?'':mant.toFixed(3)) + "F" + format(layer, 0)
 }
 
 function formatColored(x, p, mass) {
@@ -381,7 +389,7 @@ function formatGain(amt, gain, isMass=false, main=false) {
 	let f = isMass?formatMass:format
 
 	if (!main && amt.max(gain).gte("ee4")) return ""
-	if (main && !player.options.pure && amt.max(gain).gte(mlt(1))) {
+	if (main && player.options.pure != 1 && amt.max(gain).gte(mlt(1))) {
 		amt = amt.max(1).log10().div(1e9)
 		gain = gain.max(1).log10().div(1e9).sub(amt).mul(20)
 		f = (x) => formatArv(x, true)
@@ -416,7 +424,7 @@ function formatMultiply(a) {
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
     ex = E(ex)
-    if (player.options.pure) return f(ex)
+    if (player.options.pure == 1) return f(ex)
 
     if (ex.gte(EINF)) return f(ex)
     if (ex.gte(mlt(1))) return formatArv(ex.div(1.5e56).log10().div(1e9), color)
@@ -433,12 +441,23 @@ function formatMass(ex, color) {
 
 const ARV = ['mlt','mgv','giv','tev','pev','exv','zev','yov',"xvr","wkv"]
 function formatArv(mlt, color) {
-	if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
+    let arv = E(0)
+	let div = mlt
+	if (player.options.pure == 2) {
+		while (mlt.gte("ee9")) {
+			mlt = mlt.log("ee9")
+			arv = arv.add(1).round()
+		}
+	} else {
+		if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
+
+		arv = mlt.log10().div(15).floor()
+		mlt = mlt.div(E(10).pow(arv.mul(15)))
+	}
 
 	let f = color ? formatColored : format
-    let arv = mlt.log10().div(15).floor()
     let postArv = arv.gte(ARV.length)
-    return f(mlt.div(Decimal.pow(1e15,arv))) + " " + colorize(postArv ? "arv^" + format(arv.add(2),0) : ARV[arv.toNumber()], color, postArv ? "magenta" : "red")
+    return f(mlt) + " " + colorize(postArv ? "arv^" + format(arv.add(2),0) : ARV[arv.toNumber()], color, postArv ? "magenta" : "red")
 }
 
 //TIME
