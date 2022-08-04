@@ -36,7 +36,9 @@ const TABS = {
 		],
 		3: [
 			{ id: "Challenges" },
-			{ id: "Entropic Grid", unl() { return future || PRES.unl() }, style: "ext" },
+			{ id: "Virtual", unl() { return future || PRES.unl() } },
+			{ id: "Entropic", unl() { return future || PRES.unl() }, style: "ent" },
+			{ id: "Vacuum Decay", unl() { return future || PRES.unl() }, style: "vac" },
 		],
 		4: [
 			{ id: "Particles" },
@@ -52,8 +54,7 @@ const TABS = {
 		6: [
 			{ id: "Axions" },
 			{ id: "Glueballs", unl() { return player.ext.ch.unl || PRES.unl() }, style: "ch" },
-			{ id: "Primordium", unl() { return PRIM.unl() || PRES.unl() }, style: "pr" },
-			{ id: "False Vacuum", unl() { return future || PRES.unl() } }
+			{ id: "Primordium", unl() { return PRIM.unl() || PRES.unl() }, style: "pr" }
 		],
 	},
 }

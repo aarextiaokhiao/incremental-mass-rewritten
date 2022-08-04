@@ -205,6 +205,7 @@ const TREE_UPGS = {
             cost: E(10000),
             effect() {
                 let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
+                if (AXION.unl()) x = x.pow(tmp.ax.eff[21])
                 return x
             },
             effDesc(x) { return "^"+format(x) },

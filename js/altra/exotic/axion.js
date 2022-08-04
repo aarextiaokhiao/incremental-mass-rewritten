@@ -152,7 +152,7 @@ let AXION = {
 		if (hasTree("ext_b2") && p < 16) r = E(1.02).pow(this.getXLvl(p)).mul(r)
 		if (hasTree("ext_b3") && p < 16) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3))).mul(r)
 		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6))).mul(r)
-		return r.pow(tmp.ax.str)
+		return r.pow(tmp.ax.str).mul(tmp.ax.str)
 	},
 	getEff(p, l) {
 		return AXION.ids[p].eff(l)
@@ -163,6 +163,7 @@ let AXION = {
 		0: {
 			title: "Temporal Supernovae",
 			desc: "Speed up all Supernova productions.",
+			unl: () => !CHALS.inChal(15),
 			req: E(0),
 			eff(x) {
 				if (CHALS.inChal(15)) return E(1)
@@ -422,12 +423,12 @@ let AXION = {
 			}
 		},
 		21: {
-			title: "Singular",
-			desc: "Raise Black Hole effect.",
+			title: "Stellar",
+			desc: "Raise [s4], which Supernovae raise Star Generators more.",
 			unl: () => PRIM.unl(),
 			req: E(500),
 			eff(x) {
-				return x.div(500).add(1).pow(.1)
+				return x.div(500).add(1).min(5)
 			},
 			effDesc(x) {
 				return "^"+format(x,3)

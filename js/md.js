@@ -8,10 +8,10 @@ const MASS_DILATION = {
         updateMDTemp()
     },
 	isActive() {
-		return player.md.active || CHALS.inChal(10) || CHALS.inChal(11) || CHALS.inChal(12) || FERMIONS.onActive("02") || FERMIONS.onActive("03")
+		return player.md.active || CHALS.inChal(10) || CHALS.inChal(11) || CHALS.inChal(12) || CHALS.inChal(15) || FERMIONS.onActive("02") || FERMIONS.onActive("03")
 	},
 	getPenalty() {
-		if (CHALS.inChal(12)) return 3/7
+		if (CHALS.inChal(12) || CHALS.inChal(15)) return 3/7
 		var exp = 1
 		if (tmp.fermions) exp /= tmp.fermions.effs[0][4]
 		if (GLUBALL.got("p2_2")) exp /= GLUBALL.eff("p2_2")
@@ -39,7 +39,7 @@ const MASS_DILATION = {
 		return m.div(uni(1)).max(1).log10().div(40).sub(14)
 	},
 	RPmassgain(m=player.mass) {
-		if (CHALS.inChal(11)) return E(0)
+		if (CHALS.inChal(11) || CHALS.inChal(15)) return E(0)
 		return this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
 	},
 	RPgain(m=player.mass) {
@@ -50,7 +50,6 @@ const MASS_DILATION = {
 		return player.mass.pow(1e-3).max("ee15")
 	},
     massGain() {
-        if (CHALS.inChal(11)) return E(0)
         let pow = E(2)
         let x = player.md.particles.pow(pow)
         x = x.mul(tmp.md.upgs[0].eff)

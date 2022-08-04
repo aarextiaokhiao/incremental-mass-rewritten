@@ -359,6 +359,19 @@ button {
 	color: #3f1f00;
 }
 
+.btn_tab.ent {
+	color: #bfbfbf;
+	border-color: #3f3f3f;
+}
+
+.btn_tab.vac {
+	color: #ff7f7f;
+	text-shadow: 0 0 6px #ff0000;
+	border-color: #bf0000;
+	background-color: #3f0000;
+	box-shadow: 0 0 24px #ff3f00;
+}
+
 .btn_tab:not(.choosed):hover {
 	background-color: #444
 }

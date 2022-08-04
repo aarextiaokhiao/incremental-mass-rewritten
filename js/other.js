@@ -77,6 +77,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: 'Nova Mono';" onclick="changeFont('Nova Mono')">Nova Mono</button>
             <button class="btn" style="font-family: 'Nunito';" onclick="changeFont('Nunito')">Nunito</button>
             <button class="btn" style="font-family: 'Retron2000';" onclick="changeFont('Retron2000')">Retron 2000</button>
+            <button class="btn" style="font-family: 'Roboto';" onclick="changeFont('Roboto')">Roboto</button>
             <button class="btn" style="font-family: 'Roboto Mono';" onclick="changeFont('Roboto Mono')">Roboto Mono</button>
             <button class="btn" style="font-family: Verdana, Geneva, Tahoma, sans-serif;" onclick="changeFont('Verdana, Geneva, Tahoma, sans-serif')">Verdana</button>
         `,
@@ -86,8 +87,10 @@ const POPUP_GROUPS = {
 			<b style='font-size: 24px'>Normal</b><br>
 			<button class="btn" onclick="player.options.notation = 'mix'">Mixed Scientific</button>
 			<button class="btn" onclick="player.options.notation = 'sc'">Scientific</button>
-			<button class="btn" onclick="player.options.notation = 'log'">Logarithm</button>
-			<button class="btn" onclick="player.options.notation = 'eng'">Engineering</button><br><br>
+			<button class="btn" onclick="player.options.notation = 'eng'">Engineering</button>
+			<button class="btn" onclick="player.options.notation = 'log'">Logarithm</button><br><br>
+
+			<b style='font-size: 18px'>Others</b><br>
 			<button class="btn" onclick="player.options.notation = 'st'">Standard</button>
 			<button class="btn" onclick="player.options.notation = 'elemental'">Elemental</button>
 			`+(player.stats.maxMass.gte(Number.MAX_VALUE)?`<button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>`:``)+`
@@ -104,8 +107,8 @@ const POPUP_GROUPS = {
 			`:``)+`
 			
 			<b style='font-size: 24px'>Mass</b><br>
-			<button class="btn" onclick="player.options.pure = 0">On</button>
 			<button class="btn" onclick="player.options.pure = 1">Off</button>
+			<button class="btn" onclick="player.options.pure = 0">On</button>
 			`+(player.stats.maxMass.gte(mlt(1))?`<button class="btn" onclick="player.options.pure = 2" tooltip='1e1e9 mlt = 1 mgv (log)'>Large-scale</button>`:``)
 		,
     },

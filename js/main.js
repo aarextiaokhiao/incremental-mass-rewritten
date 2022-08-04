@@ -11,7 +11,7 @@ const CONFIRMS_PNG = {
 	sn: "sn",
 	ext: "ext",
 	ec: "chal_ext",
-	pres: "six"
+	pres: "empty"
 }
 const CONFIRMS_UNL = {
 	mg: () => player.mg.unl,
@@ -144,7 +144,6 @@ const FORMS = {
 			if (hasTree("t1")) step = step.pow(1.15)
 			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
 			if (hasTree("ext_u2") && hasElement(18)) step = step.pow(tmp.elements.effect[18])
-			if (CHALS.inChal(15)) step = E(1)
 
 			let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
 			if (scalingToned("tickspeed")) ss = EINF
@@ -205,7 +204,7 @@ const FORMS = {
 			gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
 			if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) gain = gain.root(8)
 			gain = gain.pow(tmp.chal.eff[8].dm)
-			if (tmp.md.active && !CHALS.inChal(12)) gain = MASS_DILATION.applyDil(gain)
+			if (tmp.md.active && !CHALS.inChal(12) && !CHALS.inChal(15)) gain = MASS_DILATION.applyDil(gain)
 			return gain.floor()
 		},
 		massPowerGain() {
@@ -223,7 +222,7 @@ const FORMS = {
 			if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.photon[0].effect)
 			if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) x = x.root(8)
 			x = x.pow(tmp.chal.eff[8].bh)
-			if (tmp.md.active && !CHALS.inChal(12)) x = MASS_DILATION.applyDil(x)
+			if (tmp.md.active && !CHALS.inChal(12) && !CHALS.inChal(15)) x = MASS_DILATION.applyDil(x)
 			return x.softcap(tmp.bh.massSoftGain, tmp.bh.massSoftPower, 0)
 		},
 		massSoftGain() {
@@ -253,11 +252,9 @@ const FORMS = {
 			FORMS.rp.doReset()
 		},
 		effect() {
-			let x = hasUpgrade('atom',12)
+			return hasUpgrade('atom',12)
 			?player.bh.mass.add(1).pow(1.25)
 			:player.bh.mass.add(1).root(4)
-			if (AXION.unl()) x = x.pow(tmp.ax.eff[21])
-			return x
 		},
 		condenser: {
 			autoSwitch() { player.bh.autoCondenser = !player.bh.autoCondenser },

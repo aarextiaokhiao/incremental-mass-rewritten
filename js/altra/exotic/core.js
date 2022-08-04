@@ -252,9 +252,9 @@ let EXTRA_BUILDINGS = {
 
 			let r = x.add(1).log10().add(5).div(25)
 			if (GLUBALL.got("p3_2")) r = r.add(GLUBALL.eff("p3_2"))
-			return r
+			return r.softcap(1,3,1)
 		},
-		dispHTML: (x) => "^" + format(x,3)
+		dispHTML: (x) => "^" + format(x,3) + getSoftcapHTML(x,1)
 	},
 	ag2: {
 		start: E("ee6"),

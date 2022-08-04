@@ -510,29 +510,29 @@ const CHALS = {
 		unl() { return (AXION.unl() && tmp.ax.lvl[25].gt(0)) || PRES.unl() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
-		reward: `Raise Challenge 10 and add Free Gluons`,
+		reward: `Raise Challenge 10 and add Free Gluons.`,
 		max: E(100),
-		inc: E(1.5),
+		inc: E(1.2),
 		pow: E(1.5),
-		start: mlt(1e3),
+		start: uni("e2e5"),
 		effect(x) {
 			return {
 				c10: E(1).add(x.div(20).sqrt().min(.6)),
 				fg_add: x,
-				fg_mul: x.div(5).max(1)
+				fg_mul: x.div(10).max(1)
 			}
 		},
         effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.fg_add)+", "+formatMultiply(x.fg_mul) },
 	},
 	15: {
 		unl() { return player.chal.comps[14].gt(0) || PRES.unl() },
-		title: "Chernobyl Exclusion",
-		desc: `Tickspeed Power and Temporal Supernovae are always 1x.`,
-		reward: `Extending Glueball Upgrades cheapens faster.`,
+		title: "The Reality II",
+		desc: `Challenges 11 - 12, but Temporal Supernovae do nothing.`,
+		reward: `Extending Glueball Upgrades cheapens faster.<br><span class='gray'>On ???th completion, unlock Entropic Banks, Entropic Grid, and Virtual! [soon]</span>`,
 		max: E(50),
-		inc: E(10),
-		pow: E(1.5),
-		start: mlt(1e3),
+		inc: E(1.3),
+		pow: E(1.25),
+		start: E(1e100),
 		effect(x) {
 			return x.add(1).log10().add(1).sqrt()
 		},
@@ -541,8 +541,8 @@ const CHALS = {
 	16: {
 		unl() { return player.chal.comps[15].gt(0) || PRES.unl() },
 		title: "Subspatial Normalcy",
-		desc: "Reset Glueball Upgrades, but liquate pre-Supernovae!",
-		reward: `Raise Primordiums.`,
+		desc: "Liquate pre-Supernovae!",
+		reward: `Raise Primordiums.<br><span class='red'>On ???th completion, unlock Vacuum Decay!</span>`,
 		max: E(80),
 		inc: E(1),
 		pow: E(1),
