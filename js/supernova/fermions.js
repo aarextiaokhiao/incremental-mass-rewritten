@@ -132,7 +132,9 @@ const FERMIONS = {
                 },
 				eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-					let x = i.add(1).log10().pow(1.75).mul(t.pow(0.8)).div(100).add(1).softcap(5,0.75,0).softcap(100,4,3)
+					let total = i.add(1).log10().pow(1.75).mul(t.pow(0.8))
+					let x = total.div(100).add(1).softcap(5,0.75,0).softcap(100,4,3)
+					if (future) x = x.max(expMult(total.div(100).add(1),0.6).cbrt())
 					return x
 				},
 				desc(x) {
@@ -200,7 +202,10 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return E(1)
-                    return i.add(1).log10().times(t.pow(2)).add(1).log10().div(30).add(1)
+                    let total = i.add(1).log10().times(t.pow(2))
+                    let ret = total.add(1).log10().div(30).add(1)
+                    if (future) ret = ret.max(E(4).pow(expMult(ret.sub(1), 0.6)))
+                    return ret
                 },
                 desc(x) {
                     return `Radiation boosts scale ${formatMultiply(x)} slower.`

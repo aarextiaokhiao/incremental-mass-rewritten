@@ -428,7 +428,7 @@ let AXION = {
 			unl: () => PRIM.unl(),
 			req: E(500),
 			eff(x) {
-				return x.div(500).add(1).min(5)
+				return x.div(500).add(1).min(4)
 			},
 			effDesc(x) {
 				return "^"+format(x,3)

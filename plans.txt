@@ -1,13 +1,12 @@
 TO-DO LIST:
 1: Upgrades
-	1a. Primordiums boost itself
-	1b. Weaken Ar-18 softcap
-	1c. Polarizer weakens: Supernovae, Fermion Tiers, Radiation
-	1d. Multiply Axion Maximum Levels
+	1a. Weaken Ar-18 softcap
+	1b. Polarizer weakens: Supernovae, Fermion Tiers, Radiation
+	1c. Multiply Axion Maximum Levels
+	1d. On Mastery, Z Bosons have a greatly stronger effect.
 2: Decay Upgrades
 	[No Musculer]
 	2a. Booster adds Stronger
-	2b. Tickspeed Power multiplies Booster
 	2c. Retrieve Stars, which now cost Mass
 3: Layer 7 Names
 	3a. Entirity
