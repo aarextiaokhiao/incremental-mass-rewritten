@@ -72,19 +72,21 @@ function updateStarsTemp() {
 	}
 
 	let ts = tmp.stars
+	let exp = Math.max(TONES.power(1),1.25)
 	ts.gen_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
-	ts.gb_req = E("e100").pow(player.stars.boost.pow(1.25)).mul('e8000')
-	ts.gb_bulk = player.atom.quarks.div("e8000").log10().div(100).root(1.25).floor().add(1)
+	ts.gb_req = E("e100").pow(player.stars.boost.pow(exp)).mul('e8000')
+	ts.gb_bulk = player.atom.quarks.div("e8000").log10().div(100).root(exp).floor().add(1)
 	if (player.atom.quarks.lt("e8000")) ts.gb_bulk = E(0)
 
 	ts.gb_base = E(2)
+	ts.gb_str = E(1)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
     if (bosonsMastered()) ts.gb_base = ts.gb_base.mul(tmp.bosons.upgs.photon[1].effect)
-	if (tmp.chal) ts.gb_base = ts.gb_base.pow(tmp.chal.eff[11])
-	if (GLUBALL.got("s2_1")) ts.gb_base = ts.gb_base.pow(GLUBALL.eff("s2_1"))
+	if (tmp.chal) ts.gb_str = ts.gb_str.mul(tmp.chal.eff[11])
+	if (GLUBALL.got("s2_1")) ts.gb_str = ts.gb_str.mul(GLUBALL.eff("s2_1"))
 
 	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
-	ts.gb_eff = ts.gb_base.pow(player.stars.boost.add(ts.gb_bonus))
+	ts.gb_eff = ts.gb_base.pow(player.stars.boost.add(ts.gb_bonus).mul(ts.gb_str))
 
 	for (let x = 0; x < 5; x++) ts.gen_gains[x] = STARS.generators.gain(x)
 	ts.softPower = STARS.softPower()
@@ -148,7 +150,7 @@ function updateStarsHTML() {
 	elm.star_btn.setHTML(
 		!boost_unl ? `Unlock a new type of Stars. (${format(tmp.stars.gen_req)} Quarks)` :
 		`Boost Stars. (${format(tmp.stars.gb_req)} Quarks)<br>`+
-		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.gb_bonus.gt(0)?" + "+format(tmp.stars.gb_bonus,0):"") +
+		`Level: ${format(player.stars.boost,0)}` + (tmp.stars.gb_bonus.gt(0)?" + "+format(tmp.stars.gb_bonus,0):"") + (tmp.stars.gb_str.gt(1) ? ", " + formatMultiply(tmp.stars.gb_str) : "") +
 		`<br>Effect: ${format(tmp.stars.gb_eff)}x (${format(tmp.stars.gb_base, 3)}x power)`
 	)
 

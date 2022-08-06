@@ -31,9 +31,9 @@ let PRIM = {
 		let l = s.length
 		if (player.ext.pr.pt.lt(this.req())) return
 		if (l == this.max_strands) return
-		if (l < x - 1) return
+		if (l < x - 2) return
 
-		for (var i = 1; i < 4; i++) if (l - i >= 0 && s[l - i] == x) return
+		for (var i = 1; i < 5; i++) if (l - i >= 0 && s[l - i] == x) return
 		return true
 	},
 	req(x) {

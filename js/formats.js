@@ -195,7 +195,7 @@ const FORMATS = {
 		format(ex, acc, log) {
 			ex = E(ex)
 			let e = ex.log10()
-			if (e.lt(6)) return formatDef(ex, Math.max(acc, 2))
+			if (e.lt(6)) return formatDef(ex, acc)
 			return 'MX-' + formatDef(e, Math.max(acc, 2))
 		}
 	},
@@ -367,12 +367,15 @@ function format(ex, acc=2, type=player.options.notation, color) {
 function formatTetr(ex, tetr) {
 	ex = E(ex)
 
-	let slog = ex.slog()
-	let layer = slog.floor()
-	let mant = E(10).pow(slog.sub(layer))
+	let layer = ex.layer
+	let mag = ex.mag
+	if (mag >= 1e3) {
+		mag = Math.log10(mag)
+		layer++
+	}
 
-	if (tetr=="hyper-e") return "E"+(slog.gte(1e4)?'1':mant.toFixed(3)) + "#" + format(layer, 0)
-	if (tetr=="letter") return (slog.gte(1e4)?'':mant.toFixed(3)) + "F" + format(layer, 0)
+	if (tetr=="hyper-e") return "E"+(layer>=1e4?'1':formatDef(mag, 3)) + "#" + format(layer, 0)
+	if (tetr=="letter") return (layer>=1e4?'':formatDef(mag, 3)) + "F" + format(layer, 0)
 }
 
 function formatColored(x, p, mass) {

@@ -423,39 +423,39 @@ let AXION = {
 			}
 		},
 		21: {
-			title: "Stellar",
-			desc: "Raise [s4], which Supernovae raise Star Generators more.",
-			unl: () => PRIM.unl(),
-			req: E(500),
-			eff(x) {
-				return x.div(500).add(1).min(4)
-			},
-			effDesc(x) {
-				return "^"+format(x,3)
-			}
-		},
-		22: {
 			title: "Glueball",
 			desc: "Multiply Free Gluons.",
 			unl: () => PRIM.unl(),
 			req: E(750),
 			eff(x) {
-				return x.div(750).add(1).sqrt()
+				return x.div(750).add(1).cbrt()
+			},
+			effDesc(x) {
+				return formatMultiply(x)
+			}
+		},
+		22: {
+			title: "Isotopic",
+			desc: "Cosmic Argon produces faster.",
+			unl: () => PRIM.unl(),
+			req: E(750),
+			eff(x) {
+				return x.div(1e3).add(1)
 			},
 			effDesc(x) {
 				return formatMultiply(x)
 			}
 		},
 		23: {
-			title: "Isotopic",
-			desc: "Cosmic Argon produces faster.",
+			title: "Placeholder",
+			desc: "Placeholder.",
 			unl: () => PRIM.unl(),
 			req: E(1e3),
 			eff(x) {
-				return x.div(1e3).add(1).pow(1.5)
+				return E(1)
 			},
 			effDesc(x) {
-				return formatMultiply(x)
+				return format(x)+"x"
 			}
 		},
 

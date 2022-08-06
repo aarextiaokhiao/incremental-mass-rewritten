@@ -204,9 +204,7 @@ const TREE_UPGS = {
             desc: `Supernovae raise Star Generators.`,
             cost: E(10000),
             effect() {
-                let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
-                if (AXION.unl()) x = x.pow(tmp.ax.eff[21])
-                return x
+                return player.supernova.times.max(0).root(10).mul(0.1).add(1).min(2)
             },
             effDesc(x) { return "^"+format(x) },
         },
@@ -584,9 +582,9 @@ const TREE_UPGS = {
 			reqDesc() { return "Get " + format(EXT.amt("e2e3")) + " Exotic Matter." },
 			desc: `Exotic Matter weakens Axion Upgrades.`,
             effect() {
-                return EXT.eff().add(1).log10().div(5e3).add(1).log10().div(6).add(1).min(2)
+                return EXT.eff().add(1).log10().div(5e3).add(1).log10().div(6).add(1).min(3)
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return formatMultiply(x) },
 			cost: E("1e4500"),
 		},
 		ext_b1: {
@@ -618,7 +616,7 @@ const TREE_UPGS = {
 			branch: ["ext_c"],
 			req() { return player.ext.amt.gte(EXT.amt(1e65)) },
 			reqDesc() { return "Get " + format(EXT.amt(1e65)) + " Exotic Matter." },
-			desc: `Start producing Z-Axions based on log^2(EM). <span class='scarlet'>[Z-Axion Upgrades multiply!]</span>`,
+			desc: `Start producing Z-Axions. <span class='scarlet'>[Z-Axion Upgrades multiply!]</span>`,
 			cost: E(0),
 		},
 		ext_u1: {

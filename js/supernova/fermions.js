@@ -204,7 +204,6 @@ const FERMIONS = {
 					if (FERMIONS.onActive(05)) return E(1)
                     let total = i.add(1).log10().times(t.pow(2))
                     let ret = total.add(1).log10().div(30).add(1)
-                    if (future) ret = ret.max(E(4).pow(expMult(ret.sub(1), 0.6)))
                     return ret
                 },
                 desc(x) {

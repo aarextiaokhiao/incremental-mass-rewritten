@@ -74,7 +74,7 @@ let GLUBALL = {
 			desc: (x) => "C12 raises Exotic Matter by ^"+format(x)+".",
 			color: "#bf0000",
 			eff(x) {
-				return E(1.03).pow(player.chal.comps[12])
+				return E(1.04).pow(player.chal.comps[12].mul(x.min(5)))
 			},
 		},
 		p2_2: {
@@ -92,10 +92,10 @@ let GLUBALL = {
 			},
 		},
 		p1_3: {
-			desc: (x) => "Supernovae raises Exotic Matter by ^"+format(x)+".",
+			desc: (x) => "Supernovae raises Exotic Matter by ^"+format(x)+"."+getSoftcapHTML(x,100),
 			color: "#ff0000",
 			eff(x) {
-				return player.supernova.times.div(300).add(1).pow(x.mul(0.5).min(1))
+				return player.supernova.times.div(300).add(1).pow(x.div(2).min(0.75))
 			},
 		},
 		p2_3: {
@@ -145,7 +145,7 @@ let GLUBALL = {
 			},
 		},
 		s2_2: {
-			desc: (x) => "Rank boosts Mass by "+format(x)+"x.",
+			desc: (x) => "Placeholder.",
 			color: "#00bfbf",
 			eff(x) {
 				return E(10).pow(player.ranks.rank.mul(x.div(50).min(.08)).pow(3))
@@ -175,7 +175,7 @@ let GLUBALL = {
 			},
 		},
 		t3_1: {
-			desc: (x) => "Add +^"+format(x,3)+" to Neutron Condensers.",
+			desc: (x) => "Placeholder.",
 			color: "#007f3f",
 			eff(x) {
 				return x.div(10)
@@ -262,7 +262,7 @@ function updateGlueballTemp() {
 		extra = tmp.chal.eff[14].fg_add
 		fP = tmp.chal.eff[14].fg_mul
 	}
-	if (AXION.unl()) fP = fP.mul(tmp.ax.eff[22])
+	if (AXION.unl()) fP = fP.mul(tmp.ax.eff[21])
 	if (hasPrim("p7_0")) fP = fP.mul(tmp.pr.eff.p7_0)
 
 	let em_log = EXT.eff().max(10).log10()
@@ -319,7 +319,7 @@ function updateGlueballHTML() {
 	let all = s.all
 	for (var i = 0; i < all.length; i++) {
 		let id = all[i]
-		elm["cs_"+id].setTxt(s[id].desc(tmp.ch.eff[id]))
+		elm["cs_"+id].setHTML(s[id].desc(tmp.ch.eff[id]))
 		elm["cs_"+id].setOpacity(GLUBALL.got(id) ? 1 : 0.25)
 		elm["cs_"+id].setDisplay(s.unl(id))
 	}

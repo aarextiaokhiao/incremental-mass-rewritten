@@ -191,7 +191,7 @@ const RADIATION = {
                 let x = b.add(1).root(3)
                 return x
             },
-            desc(x) { return `Cosmic Ray power is boosted by ${format(x)}x` },
+            desc(x) { return `Multiply Cosmic Ray power by ${format(x)}x` },
         },{
             title: `Neturon-Star Boost`,
             eff(b) {

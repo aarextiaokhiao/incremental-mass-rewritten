@@ -49,7 +49,6 @@ const FORMS = {
 		x = x.mul(tmp.stars.effect.eff)
 		if (hasTree("m1")) x = x.mul(treeEff("m1"))
 		x = x.mul(tmp.bosons.effect.pos_w[0])
-		if (GLUBALL.got("s2_2")) x = x.mul(GLUBALL.eff("s2_2"))
 
 		return x
 	},

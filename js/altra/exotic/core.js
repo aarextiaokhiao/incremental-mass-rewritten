@@ -25,7 +25,6 @@ let EXOTIC = {
 			.mul(player.chal.comps[12].add(1))
 			.div(500)
 		if (hasTree("feat11")) s = s.mul(1.2)
-		if (hasTree("ext_u1")) s = s.mul(E(1.01).pow(player.chal.comps[12].add(1)))
 		if (GLUBALL.got("p1_3")) s = s.mul(GLUBALL.eff("p1_3"))
 		if (GLUBALL.got("p1_2")) s = s.mul(GLUBALL.eff("p1_2"))
 
@@ -264,7 +263,7 @@ let EXTRA_BUILDINGS = {
 			//1.4 * 0.75 = 1.05
 			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3).softcap(1e11,5/6*1/1.05,0)
 		},
-		softcapHTML: (x) => getSoftcapHTML(x, 1e11)
+		dispHTML: (x) => getSoftcapHTML(x, 1e11)
 	},
 	ag3: {
 		start: E("e7.5e9"),
@@ -434,7 +433,7 @@ function updatePolarizeTemp() {
 function getCosmicArgonProd() {
 	let r = E(0)
 	if (hasPrim("p2_0")) r = tmp.pr.eff.p2_0
-	if (AXION.unl()) r = r.mul(tmp.ax.eff[23])
+	if (AXION.unl()) r = r.mul(tmp.ax.eff[22])
 }
 
 // TECHNICAL FUNCTIONS
