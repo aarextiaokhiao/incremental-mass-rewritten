@@ -1,7 +1,7 @@
 //Functions
 Decimal.prototype.scale = function (s, b, p, mode, rev=false) {
-    s = E(s)
-    p = E(p)
+    s = D(s)
+    p = D(p)
     var x = this.clone()
     if (x.gte(s)) x = SCALE_FUNCS[mode].func(x, s, b, p, rev)
     return x
@@ -73,56 +73,56 @@ const SCALE_MODE = {
 const SCALE_FUNCS = {
 	0: {
 		func(x, s, b, p, rev) { // Power
-			p = E(b).pow(p)
+			p = D(b).pow(p)
 			if (p.eq(1)) return x
 			return rev ? x.div(s).root(p).mul(s) : x.div(s).pow(p).mul(s)
 		},
 		desc(x, p) {
-			return "^" + format(E(x).pow(p))
+			return "^" + format(D(x).pow(p))
 		}
 	},
 	1: {
 		func(x, s, b, p, rev) { // Exponent
-			return rev ? x.div(s).max(1).log(b).div(p).add(s) : E(b).pow(x.sub(s).mul(p)).mul(s)
+			return rev ? x.div(s).max(1).log(b).div(p).add(s) : D(b).pow(x.sub(s).mul(p)).mul(s)
 		},
 		desc(x, p) {
-			return "^" + format(x,3) + (p.gte(1) ? "" : p.lt(0.01) ? ", /" + format(E(1).div(p)) : ", " + format(p.mul(100)) + "%")
+			return "^" + format(x,3) + (p.gte(1) ? "" : p.lt(0.01) ? ", /" + format(D(1).div(p)) : ", " + format(p.mul(100)) + "%")
 		}
 	}
 }
 
 const SCALE_START = {
     super: {
-        rank: E(50),
-		tier: E(10),
-		tetr: E(7),
-        massUpg: E(100),
-		tickspeed: E(100),
-		bh_condenser: E(100),
-		gamma_ray: E(100),
-		supernova: E(15),
-		fTier: E(10),
+        rank: D(50),
+		tier: D(10),
+		tetr: D(7),
+        massUpg: D(100),
+		tickspeed: D(100),
+		bh_condenser: D(100),
+		gamma_ray: D(100),
+		supernova: D(15),
+		fTier: D(10),
     },
 	hyper: {
-		rank: E(120),
-		tier: E(200),
-		massUpg: E(500),
-		tickspeed: E(250),
-		bh_condenser: E(300),
-		gamma_ray: E(300),
-		supernova: E(35),
-		fTier: E(50),
+		rank: D(120),
+		tier: D(200),
+		massUpg: D(500),
+		tickspeed: D(250),
+		bh_condenser: D(300),
+		gamma_ray: D(300),
+		supernova: D(35),
+		fTier: D(50),
 	},
 	ultra: {
-		rank: E(600),
-		tickspeed: E(700),
-		bh_condenser: E(750),
-		gamma_ray: E(800),
-		supernova: E(60),
+		rank: D(600),
+		tickspeed: D(700),
+		bh_condenser: D(750),
+		gamma_ray: D(800),
+		supernova: D(60),
 	},
 	meta: {
-		rank: E(1e4),
-		tickspeed: E(5e4),
+		rank: D(1e4),
+		tickspeed: D(5e4),
 	},
 }
 
@@ -189,7 +189,7 @@ const SCALE_RES = {
 	tetr(x=0) { return player.ranks.tetr },
 	pent(x=0) { return player.ranks.pent },
 	tickspeed(x=0) { return player.tickspeed },
-    massUpg(x=1) { return E(player.massUpg[x]||0) },
+    massUpg(x=1) { return D(player.massUpg[x]||0) },
 	bh_condenser(x=0) { return player.bh.condenser },
 	gamma_ray(x=0) { return player.atom.gamma_ray },
 	supernova(x=0) { return player.supernova.times },
@@ -263,11 +263,9 @@ function scalingToned(name) {
 
 function scalingInitPower(name) {
 	if (name == "tier") {
-		if (GLUBALL.got("t5_1")) return 1
 		return 2
 	}
 	if (name == "tetr") {
-		if (hasPrim("p4_0")) return tmp.pr.eff.p4_0
 		if (hasElement(44)) return 1.75
 		return 2
 	}
@@ -282,7 +280,7 @@ function scalingInitPower(name) {
 function scalingActive(name, amt, type) {
 	if (SCALE_START[type][name] === undefined) return false
 	if (scalingToned(name)) return false
-	amt = E(amt);
+	amt = D(amt);
 	return amt.gte(getScalingStart(type, name)) && getScalingPower(type, name).gt(0);
 }
 
@@ -298,10 +296,10 @@ function getScalingName(name, x=0, y=0) {
 }
 
 function getScalingStart(type, name) {
-	let start = E(SCALE_START[type][name])
+	let start = D(SCALE_START[type][name])
 	if (type=="super") {
 		if (name=="rank") {
-			if (CHALS.inChal(1) || CHALS.inChal(10)) return E(25)
+			if (CHALS.inChal(1) || CHALS.inChal(10)) return D(25)
 			start = start.add(tmp.chal?tmp.chal.eff[1].rank:0)
 		}
 		if (name=="tier") {
@@ -312,11 +310,11 @@ function getScalingStart(type, name) {
 			if (hasRank("pent", 2)) start = start.add(player.supernova.times.pow(1.5).div(200))
 		}
 		if (name=="massUpg") {
-			if (CHALS.inChal(1) || CHALS.inChal(10)) return E(25)
+			if (CHALS.inChal(1) || CHALS.inChal(10)) return D(25)
 			if (hasUpgrade('bh',3)) start = start.add(tmp.upgs?tmp.upgs.main?tmp.upgs.main[2][3].effect:0:0)
 		}
 		if (name=='tickspeed') {
-			if (CHALS.inChal(1) || CHALS.inChal(10)) return E(50)
+			if (CHALS.inChal(1) || CHALS.inChal(10)) return D(50)
 		}
 		if (name=='supernova') {
 			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
@@ -368,7 +366,7 @@ function getScalingStart(type, name) {
 }
 
 function getScalingPower(type, name) {
-	let power = E(1)
+	let power = D(1)
 	if (type=="super") {
 		if (name=="rank") {
 			if (hasUpgrade('rp',10)) power = power.mul(0.8)

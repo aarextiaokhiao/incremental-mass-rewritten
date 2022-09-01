@@ -1,5 +1,5 @@
 function gameStarted() {
-	return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || (inNGM() ? player.mg.unl : player.rp.unl)
+	return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || (inNGM() ? MAGIC.unl() : player.rp.unl)
 }
 
 function addNotify(text, duration=3) {
@@ -250,7 +250,27 @@ const POPUP_GROUPS = {
         },
     },
 
-	ap_chroma: {
+	ap_update: {
+		html() { return `
+			<b class='purple' style='font-size: 20px'>v0.5.1 - Prismatic Recall!</b><br>
+			<i>Recalling the Altar, <span class='ch_color'>colors</span> <span class='red'>aw</span><span class='green'>ai</span><span class='sky'>t</span><span class='magenta'>...</span></i>
+            <br>
+			Introducing a new feature:
+            <br><br>
+			<span class='ch_color'>Glueballs</span>, bringing out colors with buildable spectrums!<br>
+			You need to get 13 C13 completions to unlock Glueballs.
+			<br><br>
+			Have fun! End-game: `+formatMass(D("1e1e21"))+`<br><br>
+			
+			<b class='purple' style='font-size: 7px'>Oh, this is a part of Spectraglow series.</b>
+		` },
+		width: 600,
+		height: 300,
+		otherStyle: {
+			'font-size': "14px",
+		},
+	},
+	/*ap_chroma: {
 		html() { return `
 			<b class='purple' style='font-size: 20px'>v1 - Prismatic Recall!</b><br>
 			<i>Recalling the Altar, <span class='ch_color'>colors</span> <span class='red'>aw</span><span class='green'>ai</span><span class='sky'>t</span><span class='magenta'>...</span></i>
@@ -264,7 +284,7 @@ const POPUP_GROUPS = {
 			<span class='pr_color'>Formulate the spacetime!</span>
             <br><br>
 			Final Neutron upgrades and Axion Boosts have been also added.<br>
-			Have fun! End-game: `+formatMass(E("1e1e42"))+`<br><br>
+			Have fun! End-game: `+formatMass(D("1e1e42"))+`<br><br>
 			
 			<b class='purple' style='font-size: 7px'>Oh, this is a part of Spectraglow series.</b>
 		` },
@@ -273,7 +293,7 @@ const POPUP_GROUPS = {
 		otherStyle: {
 			'font-size': "14px",
 		},
-	},
+	},*/
 }
 
 function addPopup(data) {
@@ -318,4 +338,6 @@ function removeDuplicates(x) {
 	return r
 }
 
-const BUILDINGS = ["massUpg", "tickspeed", "bh_condenser", "gamma_ray"]
+//MASS FUNCTIONS
+function uni(x) { return D(1.5e56).mul(x) }
+function mlt(x) { return uni(D(10).pow(D(1e9).mul(x))) }

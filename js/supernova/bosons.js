@@ -4,42 +4,42 @@ const BOSONS = {
     names: ['pos_w','neg_w','z_boson','photon','gluon','graviton','hb'],
     gain: {
         pos_w() {
-            let x = E(0.01).mul(tmp.bosons.effect.neg_w?tmp.bosons.effect.neg_w[1]:1).mul(tmp.bosons.effect.z_boson?tmp.bosons.effect.z_boson[1]:1).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            let x = D(0.01).mul(tmp.bosons.effect.neg_w?tmp.bosons.effect.neg_w[1]:1).mul(tmp.bosons.effect.z_boson?tmp.bosons.effect.z_boson[1]:1).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         neg_w() {
-            let x = E(0.01).mul(tmp.bosons.effect.pos_w?tmp.bosons.effect.pos_w[1]:1).mul(tmp.bosons.effect.z_boson?tmp.bosons.effect.z_boson[1]:1).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            let x = D(0.01).mul(tmp.bosons.effect.pos_w?tmp.bosons.effect.pos_w[1]:1).mul(tmp.bosons.effect.z_boson?tmp.bosons.effect.z_boson[1]:1).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         z_boson() {
-            let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            let x = D(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             if (hasTree("sn4")) x = x.pow(1.5)
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         photon() {
-            let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            let x = D(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1)
             if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         gluon() {
-            let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            let x = D(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1)
             if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         graviton() {
-            let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1).mul(tmp.fermions.effs[1][1])
+            let x = D(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1).mul(tmp.fermions.effs[1][1])
             x = x.mul(tmp.supernova.timeMult)
             return x
         },
         hb() {
-            let x = E(0.01).mul(tmp.fermions.effs[1][1])
+            let x = D(0.01).mul(tmp.fermions.effs[1][1])
             if (hasTree("bs1")) x = x.mul(treeEff("bs1",1))
             x = x.mul(tmp.supernova.timeMult)
             return x
@@ -47,18 +47,18 @@ const BOSONS = {
     },
     effect: {
         pos_w(x) {
-            let a = FERMIONS.onActive(15) ? E(1) : x.add(1).pow(2e4)
+            let a = FERMIONS.onActive(15) ? D(1) : x.add(1).pow(2e4)
             let b = expMult(x.add(1),2/3,2)
             return [a,b]
         },
         neg_w(x) {
-            let a = FERMIONS.onActive(15) ? E(1) : x.add(1).log10().add(1).root(3)
+            let a = FERMIONS.onActive(15) ? D(1) : x.add(1).log10().add(1).root(3)
             let b = expMult(x.add(1),0.75,2)
             return [a,b]
         },
         z_boson(x) {
             let a = x.add(1).log10().add(1)
-            if (bosonsMastered()) a = E(2).pow(E(3).pow(x.add(10).log10().log10().pow(0.6)).sub(1))
+            if (bosonsMastered()) a = D(2).pow(D(3).pow(x.add(10).log10().log10().pow(0.6)).sub(1))
             a = a.pow(tmp.fermions.effs[0][2])
             let b = x.add(1).pow(2/3)
             return [a,b]
@@ -85,21 +85,21 @@ const BOSONS = {
         photon: [
             {
                 desc: () => bosonsMastered() ? "Raise Tickspeed Effect." : "Photons multiply Dark Matter and BH Mass.",
-                cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
-                bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(1.5).pow(x.pow(1.25)).mul(10) },
+                bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
+					if (FERMIONS.onActive(15)) return D(1)
 					if (bosonsMastered()) return x.add(1).log10().div(20).add(1)
 					return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
 				},
                 effDesc(x) { return bosonsMastered() ? "^"+format(x) : format(x)+"x" },
             },{
                 desc: () => bosonsMastered() ? "Tickspeed Power multiplies Star Booster Power." : "Boost BH Condenser Power.",
-                cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
-                bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(2).pow(x.pow(1.25)).mul(100) },
+                bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return tmp.tickspeedEffect ? tmp.tickspeedEffect.step.pow(x.add(1).log10().div(1e4)) : E(1)
+					if (FERMIONS.onActive(15)) return D(1)
+					if (bosonsMastered()) return tmp.tickspeedEffect ? tmp.tickspeedEffect.step.pow(x.add(1).log10().div(1e4)) : D(1)
 					let a = x.add(1).pow(0.75)
 					if (hasTree("fn4")) a = a.pow(2)
 					return a
@@ -107,20 +107,20 @@ const BOSONS = {
                 effDesc(x) { return format(x)+"x" },
             },{
                 desc: () => bosonsMastered() ? "Produce more Photons." : "Collapsed stars boost Photons.",
-                cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
-                bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(5).pow(x.pow(1.25)).mul(500) },
+                bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1.5).pow(x.pow(1.25))
+					if (FERMIONS.onActive(15)) return D(1)
+					if (bosonsMastered()) return D(1.5).pow(x.pow(1.25))
 					return player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0)
 				},
                 effDesc(x) { return format(x)+"x"+(bosonsMastered()?"":getSoftcapHTML(x,1e15)) },
             },{
                 desc: () => "Photons boost Stars.",
-                cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
-                bulk(x=player.supernova.bosons.photon) { return x.gte(1e5) ? x.div(1e5).max(1).log(5).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(5).pow(x.pow(1.25)).mul(1e5) },
+                bulk(x=player.supernova.bosons.photon) { return x.gte(1e5) ? x.div(1e5).max(1).log(5).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
+					if (FERMIONS.onActive(15)) return D(1)
 					return player.supernova.bosons.photon.add(1).log10().add(1).pow(x.pow(tmp.fermions.effs[0][3]).mul(0.5)).min("ee14")
 				},
                 effDesc(x) { return format(x)+"x" },
@@ -129,20 +129,20 @@ const BOSONS = {
         gluon: [
             {
                 desc: () => bosonsMastered() ? "Gain more bonus Cosmic Rays." : "Gain more Atoms & Atomic Powers based on Gluon.",
-                cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
-                bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(1.5).pow(x.pow(1.25)).mul(10) },
+                bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
+					if (FERMIONS.onActive(15)) return D(1)
 					if (bosonsMastered()) return x.add(1).log10().div(10).add(1)
 					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)).min("e3e13")
 				},
                 effDesc(x) { return format(x)+"x" },
             },{
                 desc: () => bosonsMastered() ? "Cosmic Ray Power softcap scales later." : "Boost Cosmic Ray Power.",
-                cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
-                bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(2).pow(x.pow(1.25)).mul(100) },
+                bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : D(0) },
                 effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
+					if (FERMIONS.onActive(15)) return D(1)
                     let a = x.add(1).pow(0.75)
                     if (hasTree("fn4")) a = a.pow(2)
                     return a
@@ -150,22 +150,22 @@ const BOSONS = {
                 effDesc(x) { return format(x)+"x" },
             },{
                 desc: () => bosonsMastered() ? "Produce more Gluons." : "Quarks boost Gluons.",
-                cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
-                bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(5).pow(x.pow(1.25)).mul(500) },
+                bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
-					if (bosonsMastered()) return E(1.5).pow(x.pow(1.25))
+					if (FERMIONS.onActive(15)) return D(1)
+					if (bosonsMastered()) return D(1.5).pow(x.pow(1.25))
 					return player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0)
 				},
                 effDesc(x) { return format(x)+"x"+(bosonsMastered()?"":getSoftcapHTML(x,1e15)) },
             },{
                 desc: () => "Gluons weaken Supernovae scaling.",
-                cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
-                bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : E(0) },
+                cost(x) { return D(10).pow(x.pow(1.25)).mul(1e5) },
+                bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
-					if (FERMIONS.onActive(15)) return E(1)
+					if (FERMIONS.onActive(15)) return D(1)
 
-					let exp = E(1/3)
+					let exp = D(1/3)
 					exp = exp.mul(tmp.fermions.effs[0][3])
 					return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(exp)).div(10).add(1)
 				},
@@ -208,7 +208,7 @@ function updateBosonsTemp() {
     }
     for (let x in BOSONS.names) {
         let id = BOSONS.names[x]
-        tmp.bosons.gain[id] = BOSONS.gain[id]?BOSONS.gain[id]():E(0)
+        tmp.bosons.gain[id] = BOSONS.gain[id]?BOSONS.gain[id]():D(0)
         if (BOSONS.effect[id]) tmp.bosons.effect[id] = BOSONS.effect[id](player.supernova.bosons[id])
 
         if (BOSONS.upgs.ids.includes(id)) for (let y in BOSONS.upgs[id]) {
@@ -242,5 +242,5 @@ function updateBosonsHTML() {
 }
 
 function bosonsMastered() {
-	return GLUBALL.got("p3_3")
+	return false
 }

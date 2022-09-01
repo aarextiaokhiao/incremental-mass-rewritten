@@ -2744,3 +2744,15 @@ for (var i = 0; i < 10; ++i)
   return Decimal;
 
 }));
+
+//EXTENSION SCRIPTS
+const EINF = Decimal.dInf
+const D = Decimal.fromValue_noAlloc
+
+Decimal.prototype.modular=Decimal.prototype.mod=function (other){
+    other=D(other);
+    if (other.eq(0)) return D(0);
+    if (this.sign*other.sign==-1) return this.abs().mod(other.abs()).neg();
+    if (this.sign==-1) return this.abs().mod(other.abs());
+    return this.sub(this.div(other).floor().mul(other));
+};

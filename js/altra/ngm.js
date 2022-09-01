@@ -20,45 +20,61 @@ function toggleMinus(start) {
 
 //MAGIC
 let MAGIC = {
+	unl: () => player.mg?.unl,
 	setup() {
 		let flows = []
 		for (var i = 0; i < MAGIC_NORMAL.flows.length; i++) flows.push([])
 		return {
 			unl: false,
-			amt: E(0),
+			amt: D(0),
 
 			normal: {
-				amt: E(0),
+				amt: D(0),
 				flows: flows
 			}
 		}
 	},
+	calc(dt) {
+		
+	},
+	updateTmp() {
+		if (!MAGIC.unl()) {
+			delete tmp.mg
+			return
+		}
+		if (!tmp.mg) tmp.mg = {}
 
+		MAGIC_NORMAL.updateTmp()
+	},
+
+	//PRESTIGE FUNCTIONS
 	can() {
 		return player.mass.gte(2e4)
 	},
 	gain() {
-		if (!this.can()) return E(0)
+		if (!this.can()) return D(0)
 		return player.mass.div(2e4).pow(.2).floor()
 	},
 	reset() {
 		if (!MAGIC.can()) return
 		if (player.confirms.mg && !confirm("Are you sure to reset?")) return
+
+		if (!MAGIC.unl()) {
+			player.mg = MAGIC.setup()
+			player.mg.unl = true
+		}
+
 		player.mg.amt = player.mg.amt.add(MAGIC.gain())
-		player.mg.unl = true
-		RANKS.doReset.highest()
+		MAGIC.doReset()
 	},
 	doReset() {
-		RANKS.doReset.highest()
+		player.ranks.tetr = D(0)
+		RANKS.doReset.tetr()
 	},
 
-	updateTmp() {
-		if (!inNGM() || !player.mg.unl) {
-			delete tmp.mg
-			return
-		}
-		if (!tmp.mg) tmp.mg = {}
-		MAGIC_NORMAL.updateTmp()
+	//AMOUNT
+	amt() {
+		return player.magic?.amt ?? D(0)
 	}
 }
 
@@ -68,60 +84,60 @@ let MAGIC_NORMAL = {
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		},
 		{
 			name: "???",
 			abb: "?",
-			eff: (m) => E(1),
+			eff: (m) => D(1),
 			desc: (x) => "Placeholder.",
 		}
 	],
 	flows: [
 		{
 			unl: () => true,
-			order: [[0,E(5)],[1,E(5)],[2,E(5)],[3,E(5)]]
+			order: [[0,D(5)],[1,D(5)],[2,D(5)],[3,D(5)]]
 		},
 		{
 			unl: () => true,
-			order: [[4,E(5)],[5,E(5)],[6,E(5)],[7,E(5)]]
+			order: [[4,D(5)],[5,D(5)],[6,D(5)],[7,D(5)]]
 		}
 	],
 
@@ -131,7 +147,7 @@ let MAGIC_NORMAL = {
 		let data = {
 			eff: []
 		}
-		for (var i = 0; i < 8; i++) data.eff[i] = this.boosts[i].eff(E(0))
+		for (var i = 0; i < 8; i++) data.eff[i] = this.boosts[i].eff(D(0))
 		tmp.mg.normal = data
 	}
 }

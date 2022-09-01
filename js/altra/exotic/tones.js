@@ -1,17 +1,17 @@
 let TONES = {
-	amt: () => player.ext.toned,
+	amt: () => player.ext?.toned || 0,
 	max: 30,
 
-	base_reqs: [E(1e33), E(1e70), E("1e600"), E("e1e6"), E("e1e8")],
+	base_reqs: [D(1e33), D(1e70), D("1e600"), D("e1e6"), D("e1e8")],
 	req(x = toned()) {
 		let c = EINF
 		if (x < 5) c = this.base_reqs[x]
-		else if (x < 30) c = E(10).pow(E(10).pow(Math.pow(1.15, Math.pow(x-6, 4/3)) * 10))
+		else if (x < 30) c = D(10).pow(D(10).pow(Math.pow(1.15, Math.pow(x-6, 4/3)) * 10))
 		return EXT.amt(c)
 	},
 
 	can() {
-		return player.ext.amt.gte(this.req()) && toned() < this.max
+		return EXT.rawAmt().gte(this.req()) && toned() < this.max
 	},
 	tone() {
 		if (!TONES.can()) return

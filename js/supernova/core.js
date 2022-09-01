@@ -5,8 +5,10 @@ const SUPERNOVA = {
         if (tmp.supernova.reached || force || fermion) {
             elm.supernova_scene.setDisplay(false)
             if (!force && !fermion) {
-				if (player.supernova.times.gt(20) && tmp.supernova.bulk.sub(player.supernova.times).lt(5)) player.ext.chal.f8 = false
-				if (player.supernova.times.gt(100) && tmp.supernova.bulk.div(player.supernova.times).gte(1.1) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
+				if (EXT.unl()) {
+					if (player.supernova.times.gt(20) && tmp.supernova.bulk.sub(player.supernova.times).lt(5)) player.ext.chal.f8 = false
+					if (player.supernova.times.gt(100) && tmp.supernova.bulk.div(player.supernova.times).gte(1.1) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
+				}
                 player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
             }
             tmp.pass = true
@@ -16,15 +18,15 @@ const SUPERNOVA = {
     doReset() {
         tmp.supernova.time = 0
         player.supernova.unl = true
-        player.supernova.maxMass = E(0)
+        player.supernova.maxMass = D(0)
         player.supernova.auto.t = 0
 
-        player.atom.points = E(0)
-        player.atom.quarks = E(0)
-        player.atom.particles = [E(0),E(0),E(0)]
-        player.atom.powers = [E(0),E(0),E(0)]
-        player.atom.atomic = E(0)
-        player.atom.gamma_ray = E(0)
+        player.atom.points = D(0)
+        player.atom.quarks = D(0)
+        player.atom.particles = [D(0),D(0),D(0)]
+        player.atom.powers = [D(0),D(0),D(0)]
+        player.atom.atomic = D(0)
+        player.atom.gamma_ray = D(0)
 		resetExtraBuildings("ag")
         
         let list_keep = [2,5]
@@ -42,16 +44,16 @@ const SUPERNOVA = {
         player.atom.elements = keep
 
         player.md.active = hasTree("qol_ext11") && player.md.active
-        player.md.particles = E(0)
-        player.md.mass = E(0)
-        for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = E(0)
+        player.md.particles = D(0)
+        player.md.mass = D(0)
+        for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = D(0)
 
         player.stars.unls = 0
-        player.stars.generators = [E(0),E(0),E(0),E(0),E(0)]
-        player.stars.points = E(0)
-        player.stars.boost = E(0)
+        player.stars.generators = [D(0),D(0),D(0),D(0),D(0)]
+        player.stars.points = D(0)
+        player.stars.boost = D(0)
 
-        if (!hasTree("chal3")) for (let x = 5; x <= 8; x++) player.chal.comps[x] = E(0)
+        if (!hasTree("chal3")) for (let x = 5; x <= 8; x++) player.chal.comps[x] = D(0)
 
         ATOM.doReset()
 
@@ -61,24 +63,23 @@ const SUPERNOVA = {
         tmp.pass = false
     },
     starGain() {
-        let x = E(hasTree("c")?0.1:0)
+        let x = D(hasTree("c")?0.1:0)
         if (hasTree("sn1")) x = x.mul(treeEff("sn1"))
         if (hasTree("sn2")) x = x.mul(treeEff("sn2"))
         if (hasTree("sn3")) x = x.mul(treeEff("sn3"))
         if (hasTree("bs3")) x = x.mul(treeEff("bs3"))
         if (hasElement(74)) x = x.mul(tmp.elements && tmp.elements.effect[74])
         x = x.mul(tmp.radiation.bs.eff[11])
-        if (GLUBALL.got("t4_1")) x = x.pow(GLUBALL.eff("t4_1"))
         x = x.mul(tmp.supernova.timeMult)
         return x
     },
     req(x=player.supernova.times) {
-        ml_fp = E(1).mul(scalingToned("supernova")?1:tmp.bosons.upgs.gluon[3].effect)
-        ml_fp2 = E(1).mul(AXION.unl()?tmp.ax.eff[12]:1)
+        ml_fp = D(1).mul(scalingToned("supernova")?1:tmp.bosons.upgs.gluon[3].effect)
+        ml_fp2 = D(1).mul(AXION.unl()?tmp.ax.eff[12]:1)
         exp = scalingInitPower("supernova")
-        maxlimit = E(1e20).pow(x.scaleEvery("supernova").div(ml_fp).pow(exp)).mul(1e90).root(ml_fp2)
+        maxlimit = D(1e20).pow(x.scaleEvery("supernova").div(ml_fp).pow(exp)).mul(1e90).root(ml_fp2)
         bulk = player.stars.points.pow(ml_fp2).div(1e90).max(1).log(1e20).max(0).root(exp).mul(ml_fp).scaleEvery("supernova",1).add(1).floor()
-        if (player.stars.points.lt(maxlimit)) bulk = E(0)
+        if (player.stars.points.lt(maxlimit)) bulk = D(0)
         return {maxlimit: maxlimit, bulk: bulk}
     },
 }
@@ -116,7 +117,7 @@ function calcSupernova(dt, dt_offline) {
 
     if (player.chal.comps[10].gte(1) && !player.supernova.fermions.unl) {
         player.supernova.fermions.unl = true
-        if (player.ext.amt.lt(1e10) && !GLUBALL.unl()) addPopup(POPUP_GROUPS.fermions)
+        if (EXT.rawAmt().lt(1e10) && !GLUBALL.unl()) addPopup(POPUP_GROUPS.fermions)
     }
     if (player.supernova.fermions.unl) {
         if (tmp.fermions.ch[0] >= 0) gainFermionTiers(tmp.fermions.ch)
@@ -197,7 +198,7 @@ function updateSupernovaTemp() {
         }
     }
     tmp.supernova.star_gain = SUPERNOVA.starGain()
-    tmp.supernova.timeMult = (AXION.unl() && tmp.ax.eff[0]) || E(1)
+    tmp.supernova.timeMult = (AXION.unl() && tmp.ax.eff[0]) || D(1)
 }
 
 function updateSupernovaEndingHTML() {

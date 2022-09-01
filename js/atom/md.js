@@ -14,20 +14,19 @@ const MASS_DILATION = {
 		if (CHALS.inChal(12) || CHALS.inChal(15)) return 3/7
 		var exp = 1
 		if (tmp.fermions) exp /= tmp.fermions.effs[0][4]
-		if (GLUBALL.got("p2_2")) exp /= GLUBALL.eff("p2_2")
 		return Math.pow(FERMIONS.onActive("02") ? 0.64 : 0.8, exp)
 	},
 	applyDil(x) {
 		return expMult(x, tmp.md.penalty).min(x)
 	},
     RPexpgain() {
-        let x = E(2).add(tmp.md.upgs[5].eff).mul((tmp.chal && !CHALS.inChal(10))?tmp.chal.eff[10]:1)
+        let x = D(2).add(tmp.md.upgs[5].eff).mul((tmp.chal && !CHALS.inChal(10))?tmp.chal.eff[10]:1)
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
         return x
     },
     RPmultgain() {
-        let x = E(1).mul(tmp.md.upgs[2].eff)
+        let x = D(1).mul(tmp.md.upgs[2].eff)
         if (hasElement(24)) x = x.mul(tmp.elements.effect[24])
         if (hasElement(31)) x = x.mul(tmp.elements.effect[31])
         if (hasElement(34)) x = x.mul(tmp.elements.effect[34])
@@ -39,7 +38,7 @@ const MASS_DILATION = {
 		return m.div(uni(1)).max(1).log10().div(40).sub(14)
 	},
 	RPmassgain(m=player.mass) {
-		if (CHALS.inChal(11) || CHALS.inChal(15)) return E(0)
+		if (CHALS.inChal(11) || CHALS.inChal(15)) return D(0)
 		return this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
 	},
 	RPgain(m=player.mass) {
@@ -50,7 +49,7 @@ const MASS_DILATION = {
 		return player.mass.pow(1e-3).max("ee15")
 	},
     massGain() {
-        let pow = E(2)
+        let pow = D(2)
         let x = player.md.particles.pow(pow)
         x = x.mul(tmp.md.upgs[0].eff)
         if (hasElement(22)) x = x.mul(tmp.elements.effect[22])
@@ -60,7 +59,7 @@ const MASS_DILATION = {
         return x
     },
     mass_req() {
-        let x = E(10).pow(player.md.particles.add(1).div(tmp.md.rp_mult_gain).root(tmp.md.rp_exp_gain).add(14).mul(40)).mul(1.50005e56)
+        let x = D(10).pow(player.md.particles.add(1).div(tmp.md.rp_mult_gain).root(tmp.md.rp_exp_gain).add(14).mul(40)).mul(1.50005e56)
         return x
     },
     effect() {
@@ -77,19 +76,19 @@ const MASS_DILATION = {
         ids: [
             {
                 desc: `Double dilated mass gain.`,
-                cost(x) { return E(10).pow(x).mul(10) },
-                bulk() { return player.md.mass.gte(10)?player.md.mass.div(10).max(1).log10().add(1).floor():E(0) },
+                cost(x) { return D(10).pow(x).mul(10) },
+                bulk() { return player.md.mass.gte(10)?player.md.mass.div(10).max(1).log10().add(1).floor():D(0) },
                 effect(x) {
                     let b = 2
                     if (hasElement(25)) b++
-                    if (hasTree("ext_u1")) return E(b).pow(x)
-                    return E(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)
+                    if (hasTree("ext_u1")) return D(b).pow(x)
+                    return D(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)
                 },
                 effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,'e1.2e4')) },
             },{
                 desc: `Multiply dilated mass effect.`,
-                cost(x) { return E(10).pow(x).mul(100) },
-                bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
+                cost(x) { return D(10).pow(x).mul(100) },
+                bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():D(0) },
 				effect(x) {
 					if (!hasTree("ext_u1")) x = x.mul(tmp.md.upgs[11].eff||1)
 					if (player.md.upgs[7].gte(1)) return x.root(1.5).mul(0.25).add(1)
@@ -98,33 +97,33 @@ const MASS_DILATION = {
                 effDesc(x) { return formatMultiply(x)+" stronger" },
             },{
                 desc: `Double Relativistic Particles.`,
-                cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
-                bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(E(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():E(0) },
+                cost(x) { return D(10).pow(x.pow(D(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
+                bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(D(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():D(0) },
 				effect(x) {
-                    if (hasTree("ext_u1")) return E(2).pow(x)
-					return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0)
+                    if (hasTree("ext_u1")) return D(2).pow(x)
+					return D(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0)
 				},
                 effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,1e25)) },
             },{
                 desc: `Dilated mass strengthen Stronger.`,
                 maxLvl: 1,
-                cost(x) { return E(1.619e20).mul(25) },
-                bulk() { return player.md.mass.gte(E(1.619e20).mul(25))?E(1):E(0) },
+                cost(x) { return D(1.619e20).mul(25) },
+                bulk() { return player.md.mass.gte(D(1.619e20).mul(25))?D(1):D(0) },
                 effect(x) { return player.md.mass.max(1).log(100).root(3).div(8).add(1) },
                 effDesc(x) { return format(x)+"x" },
             },{
                 desc: `Upgrade 3 scales 10% weaker.`,
                 maxLvl: 5,
-                cost(x) { return E(1e5).pow(x).mul(E(1.619e20).mul(1e4)) },
-                bulk() { return player.md.mass.gte(E(1.619e20).mul(1e4))?player.md.mass.div(E(1.619e20).mul(1e4)).max(1).log(1e5).add(1).floor():E(0) },
-                effect(x) { return E(1).sub(x.mul(0.1)) },
-                effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+                cost(x) { return D(1e5).pow(x).mul(D(1.619e20).mul(1e4)) },
+                bulk() { return player.md.mass.gte(D(1.619e20).mul(1e4))?player.md.mass.div(D(1.619e20).mul(1e4)).max(1).log(1e5).add(1).floor():D(0) },
+                effect(x) { return D(1).sub(x.mul(0.1)) },
+                effDesc(x) { return format(D(1).sub(x).mul(100))+"% weaker" },
             },{
                 desc: `Increase the RP formula exponent.`,
-                cost(x) { return E(1e3).pow(x.pow(1.5)).mul(1.5e73) },
-                bulk() { return player.md.mass.gte(1.5e73)?player.md.mass.div(1.5e73).max(1).log(1e3).max(0).root(1.5).add(1).floor():E(0) },
+                cost(x) { return D(1e3).pow(x.pow(1.5)).mul(1.5e73) },
+                bulk() { return player.md.mass.gte(1.5e73)?player.md.mass.div(1.5e73).max(1).log(1e3).max(0).root(1.5).add(1).floor():D(0) },
                 effect(i) {
-                    let s = E(0.25).add(tmp.md.upgs[10].eff||1)
+                    let s = D(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
                     if (hasElement(53)) x = x.mul(1.75)
                     if (hasRank("pent", 75)) return x.softcap(1e3,6/7,0).softcap(1e3,x.log10(),1)
@@ -134,30 +133,30 @@ const MASS_DILATION = {
             },{
                 desc: `Dilated mass boosts Quarks.`,
                 maxLvl: 1,
-                cost(x) { return E(1.5e191) },
-                bulk() { return player.md.mass.gte(1.5e191)?E(1):E(0) },
-                effect(x) { return E(5).pow(player.md.mass.max(1).log10().root(2)) },
+                cost(x) { return D(1.5e191) },
+                bulk() { return player.md.mass.gte(1.5e191)?D(1):D(0) },
+                effect(x) { return D(5).pow(player.md.mass.max(1).log10().root(2)) },
                 effDesc(x) { return format(x)+"x" },
             },{
                 desc: `Strengthen Upgrade 2.`,
                 maxLvl: 1,
-                cost(x) { return E(1.5e246) },
-                bulk() { return player.md.mass.gte(1.5e246)?E(1):E(0) },
+                cost(x) { return D(1.5e246) },
+                bulk() { return player.md.mass.gte(1.5e246)?D(1):D(0) },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
                 desc: `Tickspeed affect all-star resources at a reduced rate.`,
                 maxLvl: 1,
-                cost(x) { return E(1.5e296) },
-                bulk() { return player.md.mass.gte(1.5e296)?E(1):E(0) },
+                cost(x) { return D(1.5e296) },
+                bulk() { return player.md.mass.gte(1.5e296)?D(1):D(0) },
                 effect(x) { return player.tickspeed.add(1).pow(2/3) },
                 effDesc(x) { return format(x)+"x" },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
                 desc: `Double Quarks.`,
-                cost(x) { return E(5).pow(x).mul('1.50001e536') },
-                bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():E(0) },
+                cost(x) { return D(5).pow(x).mul('1.50001e536') },
+                bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():D(0) },
 				effect(x) {
-					let r = E(2).pow(x)
+					let r = D(2).pow(x)
 					if (!hasTree("ext_u1")) r = r.softcap(1e25,2/3,0)
 					return r
 				},
@@ -165,8 +164,8 @@ const MASS_DILATION = {
             },{
                 unl() { return player.supernova.times.gte(1) },
                 desc: `Add 0.015 Mass Dilation upgrade 6's base.`,
-                cost(x) { return E(1e50).pow(x.pow(1.5)).mul('1.50001e1556') },
-                bulk() { return player.md.mass.gte('1.50001e1556')?player.md.mass.div('1.50001e1556').max(1).log(1e50).max(0).root(1.5).add(1).floor():E(0) },
+                cost(x) { return D(1e50).pow(x.pow(1.5)).mul('1.50001e1556') },
+                bulk() { return player.md.mass.gte('1.50001e1556')?player.md.mass.div('1.50001e1556').max(1).log(1e50).max(0).root(1.5).add(1).floor():D(0) },
                 effect(x) {
                     return x.mul(0.015).add(1).softcap(1.2,0.75,0).sub(1)
                 },
@@ -174,8 +173,8 @@ const MASS_DILATION = {
             },{
                 unl() { return player.supernova.post_10 && !hasTree("ext_u1") },
                 desc: `Strengthen first 3 upgrades.`,
-                cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
-                bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
+                cost(x) { return D(1e100).pow(x.pow(2)).mul('1.5e8056') },
+                bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():D(0) },
                 effect(x) {
                     return x.sqrt().softcap(3.5,0.5,0).div(100).add(1).softcap(4,0.25,0)
                 },
@@ -223,14 +222,14 @@ function updateMDTemp() {
     tmp.md.rp_exp_gain = MASS_DILATION.RPexpgain()
     tmp.md.rp_mult_gain = MASS_DILATION.RPmultgain()
     tmp.md.rp_gain = MASS_DILATION.RPgain()
-    tmp.md.passive_rp_gain = hasTree("qol3")?MASS_DILATION.RPgain(MASS_DILATION.applyDil(player.mass)):E(0)
+    tmp.md.passive_rp_gain = hasTree("qol3")?MASS_DILATION.RPgain(MASS_DILATION.applyDil(player.mass)):D(0)
     tmp.md.mass_gain = MASS_DILATION.massGain()
     tmp.md.mass_req = MASS_DILATION.mass_req()
     tmp.md.mass_eff = MASS_DILATION.effect()
 }
 
 function updateMDHTML() {
-	let exp = AXION.unl() ? tmp.ax.eff[19] : E(1)
+	let exp = AXION.unl() ? tmp.ax.eff[19] : D(1)
     elm.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
     elm.md_eff.setTxt(exp.gt(1)?"^"+format(exp,3):tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
     elm.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
@@ -245,7 +244,7 @@ function updateMDHTML() {
         elm["md_upg"+x+"_div"].setVisible(unl)
         if (unl) {
             elm["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can, bought: upg.maxLvl !== undefined && player.md.upgs[x].eq(upg.maxLvl)})
-            elm["md_upg"+x+"_lvl"].setTxt(E(upg.maxLvl).eq(1)?"":"[Level "+format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):"")+"]")
+            elm["md_upg"+x+"_lvl"].setTxt(D(upg.maxLvl).eq(1)?"":"[Level "+format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):"")+"]")
             if (upg.effDesc) elm["md_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.md.upgs[x].eff))
             elm["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||EINF)?"Cost: "+formatMass(tmp.md.upgs[x].cost):"")
         }

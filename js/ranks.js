@@ -1,12 +1,11 @@
 const RANKS = {
     names: ['rank', 'tier', 'tetr', 'pent'],
     fullNames: ['Rank', 'Tier', 'Tetr', 'Pent'],
-	resetDescs: ['mass and upgrades', 'Rank', 'Tier', 'Tetr'],
+	resetDescs: ['mass and upgrades', 'Rank', 'Tier', 'pre-Atoms'],
 	mustReset(type) {
 		if (type == "rank" && hasUpgrade('rp',4)) return false
 		if (type == "tier" && hasUpgrade('bh',4)) return false
 		if (type == "tetr" && hasTree("qol5")) return false
-		if (type == "pent") return false
 		return true
 	},
     reset(type) {
@@ -26,36 +25,36 @@ const RANKS = {
     unl: {
         tier() { return hasRank("rank", 3) || hasRank("tier", 1) || hasUpgrade('atom',3) },
         tetr() { return hasUpgrade('atom',3) },
-        pent() { return hasTree("sn5") },
+        pent() { return player.chal.comps[11].gt(0) },
     },
 	doReset: {
 		rank() {
-			player.mass = E(0)
-			for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x]) player.massUpg[x] = E(0)
+			player.mass = D(0)
+			for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x]) player.massUpg[x] = D(0)
 		},
 		tier() {
-			player.ranks.rank = E(0)
+			player.ranks.rank = D(0)
 			this.rank()
 		},
 		tetr() {
-			player.ranks.tier = E(0)
+			player.ranks.tier = D(0)
 			this.tier()
 		},
 		pent() {
-			player.ranks.tetr = E(0)
-			this.tetr()
+			player.ranks.tetr = D(0)
+			ATOM.reset(true, true)
 		},
-		highest() {
-			player.ranks[RANKS.names[RANKS.names.length-1]] = E(0)
+		/*highest() {
+			player.ranks[RANKS.names[RANKS.names.length-1]] = D(0)
 			this[RANKS.names[RANKS.names.length-1]]()
-		},
+		},*/
 	},
     autoSwitch(rn) { player.auto_ranks[rn] = !player.auto_ranks[rn] },
     autoUnl: {
         rank() { return hasUpgrade('rp',5) },
         tier() { return hasUpgrade('rp',6) },
         tetr() { return hasUpgrade('atom',5) },
-        pent() { return true },
+        pent() { return false },
     },
     desc: {
         rank: {
@@ -125,11 +124,11 @@ const RANKS = {
     effect: {
         rank: {
             '3'() {
-                let ret = E(player.massUpg[1]||0).div(20)
+                let ret = D(player.massUpg[1]||0).div(20)
                 return ret
             },
             '5'() {
-                let ret = E(player.massUpg[2]||0).div(inNGM() ? 100 : 40)
+                let ret = D(player.massUpg[2]||0).div(inNGM() ? 100 : 40)
                 return ret
             },
             '6'() {
@@ -152,23 +151,23 @@ const RANKS = {
                 return ret
             },
             '380'() {
-                let ret = E(10).pow(player.ranks.rank.sub(379).pow(1.5).pow(hasRank("tier", 55)?RANKS.effect.tier[55]():1).softcap(1000,0.5,0))
+                let ret = D(10).pow(player.ranks.rank.sub(379).pow(1.5).pow(hasRank("tier", 55)?RANKS.effect.tier[55]():1).softcap(1000,0.5,0))
                 return ret
             },
             '800'() {
-                let ret = E(1).sub(player.ranks.rank.sub(799).mul(0.0025).add(1).softcap(1.25,0.5,0).sub(1)).max(0.75)
+                let ret = D(1).sub(player.ranks.rank.sub(799).mul(0.0025).add(1).softcap(1.25,0.5,0).sub(1)).max(0.75)
                 return ret
             },
         },
         tier: {
             '4'() {
-                let ret = E(0)
+                let ret = D(0)
                 if (hasRank("tier", 12)) ret = player.ranks.tier.mul(0.1)
                 else ret = player.ranks.tier.mul(0.05).add(1).softcap(1.4,0.75,0).sub(1)
                 return ret
             },
             '6'() {
-                let ret = E(2).pow(player.ranks.tier)
+                let ret = D(2).pow(player.ranks.tier)
                 if (hasRank("tier", 8)) ret = ret.pow(RANKS.effect.tier[8]())
                 return ret
             },
@@ -183,11 +182,11 @@ const RANKS = {
         },
         tetr: {
             '2'() {
-                let ret = E(player.massUpg[3]||0).div(400)
+                let ret = D(player.massUpg[3]||0).div(400)
                 return ret
             },
             '4'() {
-                let ret = E(0.96).pow(player.ranks.tier.pow(1/3))
+                let ret = D(0.96).pow(player.ranks.tier.pow(1/3))
                 return ret
             },
             '5'() {
@@ -202,7 +201,7 @@ const RANKS = {
 		pent: {
 			'1'(p) {
 				if (!p) p = player.ranks.pent.mul(STARS.rankStr())
-				let exp = E(0.8)
+				let exp = D(0.8)
 				if (hasRank("pent", 13)) exp = RANKS.effect.pent[13]()
 				return p.pow(exp).div(40).add(1)
 			},
@@ -211,16 +210,16 @@ const RANKS = {
 				return ret
 			},
 			'4'() {
-				let ret = E(1).div(player.ranks.pent.sub(2).log2())
+				let ret = D(1).div(player.ranks.pent.sub(2).log2())
 				return ret
 			},
 			'5'() {
-				let ret = E(3e5).div(getScalingStart("meta", "tickspeed"))
+				let ret = D(3e5).div(getScalingStart("meta", "tickspeed"))
 				if (hasRank("pent", 6)) ret = ret.div(2)
 				return ret.min(1)
 			},
 			'10'() {
-				let ret = tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:E(1)
+				let ret = tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:D(1)
 				ret = ret.times(player.ranks.pent.softcap(20,4,3).div(100))
 				return ret
 			},
@@ -229,7 +228,7 @@ const RANKS = {
 				return ret.min(1.5)
 			},
 			'50'() {
-				if (!tmp.tickspeedEffect) return E(1)
+				if (!tmp.tickspeedEffect) return D(1)
 				let ts = tmp.tickspeedEffect.step.log10().div(1e3)
 				return ts.add(1)
 			},
@@ -237,7 +236,7 @@ const RANKS = {
 				return player.ranks.pent.div(1e3).log10()
 			},
 			'2000'() {
-				if (!tmp.tickspeedEffect) return E(1)
+				if (!tmp.tickspeedEffect) return D(1)
 				return tmp.tickspeedEffect.step.log10().div(2e5).add(1).pow(27/20)
 			},
 		},
@@ -251,7 +250,7 @@ const RANKS = {
             45(x) { return format(x)+"x" },
             300(x) { return format(x)+"x" },
             380(x) { return format(x)+"x" },
-            800(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            800(x) { return format(D(1).sub(x).mul(100))+"% weaker" },
         },
         tier: {
             4(x) { return "+"+format(x.mul(100))+"%" },
@@ -261,15 +260,15 @@ const RANKS = {
         },
         tetr: {
             2(x) { return "+"+format(x) },
-            4(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            4(x) { return format(D(1).sub(x).mul(100))+"% weaker" },
             5(x) { return "+"+format(x,0)+" later" },
             18(x) { return format(x)+"x" },
         },
         pent: {
             1(x) { return "^"+format(x) },
             2(x) { return "+"+format(x,0)+" later" },
-            4(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
-            5(x) { return format(E(1).div(x))+"x weaker" },
+            4(x) { return format(D(1).sub(x).mul(100))+"% weaker" },
+            5(x) { return format(D(1).div(x))+"x weaker" },
             10(x) { return "^"+format(x) },
             13(x) { return "^"+format(x,3) },
             50(x) { return "^"+format(x) },
@@ -279,26 +278,26 @@ const RANKS = {
     },
     fp: {
         rank() {
-            let f = E(1)
+            let f = D(1)
             if (scalingToned("rank")) f = f.mul(2)
             if (hasRank("tier", 1)) f = f.mul(1/0.8)
             f = f.mul(tmp.chal.eff[5].pow(-1))
             return f
         },
         tier() {
-            let f = E(1)
-            if (!GLUBALL.got("t5_1")) f = f.mul(tmp.fermions.effs[1][3])
+            let f = D(1)
+            f = f.mul(tmp.fermions.effs[1][3])
             if (hasRank("tetr", 1)) f = f.mul(1/0.75)
             if (hasUpgrade('atom',10)) f = f.mul(2)
             return f
         },
         tetr() {
-            let f = E(1)
+            let f = D(1)
 			if (hasElement(9)) f = f.mul(1/0.85)
             return f
         },
         pent() {
-            let f = E(5/6)
+            let f = D(5/6)
             if (AXION.unl()) f = f.mul(tmp.ax.eff[15].div)
             if (hasElement(81)) f = f.div(0.88)
             return f
@@ -320,10 +319,10 @@ function updateRanksTemp() {
 
     let fp = u.fp.rank()
     let pow = scalingInitPower("rank")
-    d.rank.req = E(10).pow(s.rank.scaleEvery("rank").div(fp).pow(pow)).mul(10)
+    d.rank.req = D(10).pow(s.rank.scaleEvery("rank").div(fp).pow(pow)).mul(10)
     d.rank.bulk = player.mass.div(10).max(1).log10().root(pow).mul(fp).scaleEvery("rank", 1).add(1).floor()
-    if (FERMIONS.onActive(14)) d.rank.bulk = E(2e4).min(d.rank.bulk)
-    if (player.mass.lt(10)) d.rank.bulk = E(0)
+    if (FERMIONS.onActive(14)) d.rank.bulk = D(2e4).min(d.rank.bulk)
+    if (player.mass.lt(10)) d.rank.bulk = D(0)
     d.rank.can = player.mass.gte(d.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
 
 	let start = inNGM() ? 2.5 : 2

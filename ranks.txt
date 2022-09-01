@@ -1,6 +1,6 @@
-Rank tiers - Rank, Tier, Tetr, Pent, Hex, Hept, Oct, Enne, Dec, Hendec, Dodec, Tridec
-Prestige tiers - Prestige, Honor, Glory, Renown, Valor, Royalty, Divinity, Infinity, Uncountability, Absoluteness
-Ascension tiers - Ascension, Transcension, Beyond, Recursion, Breakthrough, Omnipotence
-Return tiers - Return, New Beginning, Full Reset
+Rank tiers - Rank, Tier, Tetr, Pent, Hex, Hept, Oct, Enne, Dec, Hendec, Dodec, Tridec, Tetradec, Pentadec
+Prestige tiers - Prestige, Honor, Glory, Renown, Valor, Royalty, Divinity, Infinity, Uncountability, Absoluteness, Totality
+Ascension tiers - Ascension, Transcension, Beyond, Recursion, Breakthrough, Reality Shift, Omnipotence
+Return tiers - Return, New Beginning, Full Reboot, Grand Finale, End
 
 (by Elund)

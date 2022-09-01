@@ -20,7 +20,7 @@ const TABS = {
 		{ id: "Exotic", unl() { return EXT.unl() }, style: "ext" },
 		{ id: "Options" },
 		// NG- TABS
-		{ id: "Magic", unl() { return inNGM() && player.mg.unl }, style: "magic" },
+		{ id: "Magic", unl() { return MAGIC.unl() }, style: "magic" },
 	],
 	2: {
 		0: [
@@ -36,9 +36,9 @@ const TABS = {
 		],
 		3: [
 			{ id: "Challenges" },
-			{ id: "Virtual", unl() { return future || PRES.unl() } },
-			{ id: "Entropic", unl() { return future || PRES.unl() }, style: "ent" },
-			{ id: "Vacuum Decay", unl() { return future || PRES.unl() }, style: "vac" },
+			{ id: "Virtual", unl() { return future || PORTAL.unl() } },
+			{ id: "Entropic", unl() { return future || PORTAL.unl() }, style: "ent" },
+			{ id: "Vacuum Decay", unl() { return future || PORTAL.unl() }, style: "vac" },
 		],
 		4: [
 			{ id: "Particles" },
@@ -53,8 +53,8 @@ const TABS = {
 		],
 		6: [
 			{ id: "Axions" },
-			{ id: "Glueballs", unl() { return player.ext.ch.unl || PRES.unl() }, style: "ch" },
-			{ id: "Primordium", unl() { return PRIM.unl() || PRES.unl() }, style: "pr" }
+			{ id: "Glueball", unl() { return player.ext.gb.unl || PORTAL.unl() }, style: "ch" },
+			{ id: "Milestones", unl() { return player.ext.gb.unl || PORTAL.unl() } }
 		],
 	},
 }

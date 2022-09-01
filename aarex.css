@@ -1,10 +1,58 @@
 body {
-	background: linear-gradient(#000f1f, black, #00001f);
+	background: radial-gradient(ellipse at top, #000f1f, transparent, #00001f), linear-gradient(#00001f, black);
 	color: #bfcfff
 }
 body.ngm {
-	background: linear-gradient(#0f001f, black, #00001f);
+	background: radial-gradient(ellipse at top, #0f001f, transparent, #00001f), linear-gradient(#00001f, black);
 	color: #dfbfff
+}
+
+#loading {
+	background: radial-gradient(ellipse at bottom, #bfcfff1f, transparent), #000000bf
+}
+#loading h1 {
+	animation: blink 2s linear infinite;
+	color: #007fff
+}
+#loading h2 {
+	width: 100%;
+	background: #0003;
+}
+.tab_header {
+	border-bottom: none !important;
+	height: 5px;
+	background: radial-gradient(ellipse at top, #bfcfff, transparent)
+}
+
+@keyframes blink {
+	0% {
+		opacity: 1
+	}
+	50% {
+		opacity: 0.25
+	}
+	100% {
+		opacity: 1
+	}
+}
+
+#notify {
+	position: fixed;
+	left: inherit;
+	right: 0;
+	top: 20px;
+	z-index: 3;
+	transform: none;
+
+	background: linear-gradient(90deg, transparent, #fff7);
+	border-radius: 2px 0 0 2px;
+	border: none;
+
+	text-align: right
+}
+#notify.hide {
+	transform: translate(100%, 0);
+	top: 20px
 }
 
 .btn, .btn_tab {
@@ -14,15 +62,22 @@ body.ngm {
 	box-shadow: 0 0 3px #0000ff;
 
 	color: #bfcfff;
-	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+	transition-duration: 0.5s
 }
 
 .btn:hover, .btn_tab:hover {
 	transform: scale(1.05)
 }
 
-.btn.choosed, .btn_tab.choosed {
-	background: linear-gradient(#007fff, #005fbf) !important;
+.btn_tab {
+	border-bottom: 0px solid #0007
+}
+
+.btn_tab.choosed {
+	border-bottom: 3px solid #fff7;
+	background: radial-gradient(ellipse at top, #007fff, #005fbf) !important;
 	box-shadow: inset 0 0 3px #0000ff, 0 3px 6px rgba(0, 0, 191, 0.5);
 
 	color: #001f2f !important;
@@ -30,8 +85,74 @@ body.ngm {
 	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
 }
 
+#tabs .btn_tab {
+	padding-top: 3px;
+	padding-bottom: 3px
+}
+
+#ranks_amt_0 {
+	background: linear-gradient(transparent, #84e6003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	padding: 2px;
+	color: #84e600;
+	font-size: 20px;
+	text-shadow: 0 0 3px #84e600
+}
+
+#ranks_amt_1 {
+	background: linear-gradient(transparent, #e6c9003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e6c900;
+	font-size: 20px;
+	text-shadow: 0 0 3px #e6c900
+}
+
+#ranks_amt_2 {
+	background: linear-gradient(transparent, #e66d003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e66d00;
+	font-size: 20px;
+	text-shadow: 0 0 3px #e66d00
+}
+
+#ranks_amt_3 {
+	background: linear-gradient(transparent, #e600393f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e60039;
+	font-size: 20px;
+	text-shadow: 0 0 3px #e60039
+}
+
+#ranks_amt_4 {
+	background: linear-gradient(transparent, #d700953f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #d70095;
+	font-size: 20px;
+	text-shadow: 0 0 3px #d70095
+}
+
+#ranks_amt_5 {
+	background: linear-gradient(transparent, #d700953f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #cb01fd;
+	font-size: 20px;
+	text-shadow: 0 0 3px #cb01fd
+}
+
 .btn_tab.bh {
-	background: linear-gradient(#ff9f00, #ffbf00) !important;
+	background: radial-gradient(ellipse at top, #ff9f00, #ffbf00) !important;
 	box-shadow: 0 0 3px #bf9f00, 0 0 24px #ffbf00;
 
 	color: #ffdf7f;
@@ -39,7 +160,7 @@ body.ngm {
 }
 
 .btn_tab.atom {
-	background: linear-gradient(#007fff, #00ff7f) !important;
+	background: radial-gradient(ellipse at top, #007fff, #00ff7f) !important;
 	box-shadow: 0 0 3px #007fbf, 0 0 24px #00ffff;
 
 	color: #7fffff;
@@ -73,15 +194,15 @@ body.ngm {
 }
 
 .elements.locked {
-	background: linear-gradient(#2f1f1f, #1f1f1f) !important;
+	background: radial-gradient(ellipse at top, #5f1f1f, #1f1f1f) !important;
 	box-shadow: 0 4px 4px #5f0000;
 
-	color: #5f2f2f !important;
+	color: #7f2f2f !important;
 	text-shadow: 0 2px 4px #3f0000
 }
 
 .elements.locked.bought {
-	background: linear-gradient(#00ff00, #7fff00) !important;
+	background: radial-gradient(ellipse at top, #00ff00, #7fff00) !important;
 	box-shadow: 0 4px 4px #007f00;
 
 	color: #003f00 !important;
@@ -89,7 +210,7 @@ body.ngm {
 }
 
 .btn_tab.dilation {
-	background: linear-gradient(#00ff00, #7fff00) !important;
+	background: radial-gradient(ellipse at top, #00ff00, #7fff00) !important;
 	box-shadow: 0 0 3px #7fff00, 0 0 24px #7fff00;
 
 	color: #bfffbf;
@@ -105,7 +226,7 @@ body.ngm {
 }
 
 #stab0_3 {
-	background: linear-gradient(#ff7f00, #ff3f00) !important;
+	background: radial-gradient(ellipse at top, #ff7f00, #ff3f00) !important;
 	box-shadow: 0 4px 4px #7f3f00;
 
 	color: #3f3f00 !important;
@@ -121,10 +242,11 @@ body.ngm {
 }
 
 .btn.locked, #stab_frame0_1 .btn.locked, #stab_frame0_2 .btn.locked, #stab_frame0_3 .btn.locked {
-	background: linear-gradient(#2f1f1f, #1f1f1f) !important;
+	border: 0px solid;
+	background: radial-gradient(ellipse at top, #5f1f1f, #1f1f1f) !important;
 	box-shadow: 0 4px 4px #5f0000;
 
-	color: #5f2f2f !important;
+	color: #7f2f2f !important;
 	text-shadow: 0 2px 4px #3f0000
 }
 
@@ -137,23 +259,45 @@ body.ngm {
 }
 
 #stab5_1 {
-	background: linear-gradient(#ffbf00, #bf00ff) !important;
+	background: radial-gradient(ellipse at top, #ffbf00, #bf00ff) !important;
 	box-shadow: 0 0 3px #ffbf00, 0 0 24px #bf00ff;
 
-	color: #ffffbf !important;
-	text-shadow: 0 0 3px #ffffbf, 0 0 3px #ffffbf, 0 0 3px #ffffbf
+	color: #ffffdf !important;
+	text-shadow: 0 0 3px #ffff00, 0 0 3px #ffff00
+}
+
+.higgs_boson {
+	min-height: 50px;
+	background: linear-gradient(#dfff007f, transparent);
+	color: #dfff00
+}
+
+.graviton {
+	min-height: 50px;
+	background: linear-gradient(#007fff7f, transparent);
+	color: #007fff
+}
+
+.photon {
+	background: linear-gradient(#ffbf007f, transparent);
+	color: #ffbf00
+}
+
+.gluon {
+	background: linear-gradient(#df00ff7f, transparent);
+	color: #bf00ff
 }
 
 #stab5_2 {
-	background: linear-gradient(#ffbf00, #00ff00) !important;
+	background: radial-gradient(ellipse at top, #ffbf00, #00ff00) !important;
 	box-shadow: 0 0 3px #00ff00, 0 0 24px #ffffff;
 
 	color: #7f7f00 !important;
-	text-shadow: 0 0 3px #ffff00, 0 0 3px #bfbf00, 0 0 3px #bfbf00
+	text-shadow: 0 0 3px #ffff00, 0 0 3px #bfbf00
 }
 
 #stab5_3 {
-	background: linear-gradient(30deg, #ffff00, transparent, transparent, #00ffff), linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000) !important;
+	background: radial-gradient(ellipse at top, 30deg, #ffff00, transparent, transparent, #00ffff), radial-gradient(ellipse at top, 90deg, #ff0000, #00ff00, #0000ff, #ff0000) !important;
 	box-shadow: 0 0 3px #00ff00, 0 0 24px #00ff7f;
 
 	color: #bfffbf !important;
@@ -161,7 +305,7 @@ body.ngm {
 }
 
 #tab6 {
-	background: linear-gradient(#ff3f00, #ffbf00, #ff7f00) !important;
+	background: radial-gradient(ellipse at top, #ff3f00, #ffbf00, #ff7f00) !important;
 	box-shadow: 0 0 3px #ff3f00, 0 0 6px #ff3f00, 0 0 24px #ff3f00;
 
 	color: #fff7bf !important;
@@ -169,17 +313,17 @@ body.ngm {
 }
 
 #stab6_1 {
-	background: linear-gradient(#ff0000, #7fff00, #003fff) !important;
+	background: radial-gradient(ellipse at top, #ff0000, #7fff00, #003fff) !important;
 	box-shadow: 0 -3px 6px #ff0000, 0 0 6px #7fff00, 0 3px 6px #003fff, 0 0 60px #efbfff;
 
 	color: rgba(255, 255, 255, 0.75) !important;
 	text-shadow: 0 0 3px rgba(255, 255, 255, 0.5)
 }
 
-#stab6_2 {
-	background: linear-gradient(#ffff00, #7f7f00, #bfff00) !important;
+/*#stab6_2 {
+	background: radial-gradient(ellipse at top, #ffff00, #7f7f00, #bfff00) !important;
 	box-shadow: 0 -3px 6px #ffbf00, 0 0 6px #dfffbf, 0 3px 6px #7fff00;
 
 	color: rgba(223, 255, 191, 0.75) !important;
 	text-shadow: 0 0 3px #dfffbf
-}
+}*/

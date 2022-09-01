@@ -20,7 +20,7 @@ function resetTemp() {
 
         fermions: {
             ch: [0,0],
-            gains: [E(0),E(0)],
+            gains: [D(0),D(0)],
             maxTier: [[],[]],
             tiers: [[],[]],
             effs:  [[],[]],
@@ -51,14 +51,7 @@ function resetTemp() {
                 eff: [],
             },
         },
-        ch: {},
-
-		anti: {
-			open: false,
-			tab: 0,
-			prev_tab: 0,
-			stab: [],
-		}
+        ch: {}
     }
     for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
     for (let x = 1; x <= UPGS.main.cols; x++) tmp.upgs.main[x] = {}
@@ -85,8 +78,6 @@ function resetTemp() {
 	}
 }
 
-resetTemp()
-
 function updateMassTemp() {
     tmp.massSoftPower1 = FORMS.massSoftPower()
     tmp.massSoftGain1 = FORMS.massSoftGain()
@@ -103,9 +94,9 @@ function updateTickspeedTemp() {
 	let scale = scalingInitPower("tickspeed")
     tmp.tickspeedFP = tmp.upgs.fp.mul(tmp.fermions.effs[1][2])
     if (scalingToned("tickspeed")) tmp.tickspeedFP = tmp.tickspeedFP.div(4/3)
-    tmp.tickspeedCost = E(2).pow(player.tickspeed.scaleEvery("tickspeed").pow(scale)).floor()
+    tmp.tickspeedCost = D(2).pow(player.tickspeed.scaleEvery("tickspeed").pow(scale)).floor()
     tmp.tickspeedBulk = player.rp.points.max(1).log(2).root(scale).scaleEvery("tickspeed", 1).add(1).floor()
-    if (player.rp.points.lt(1)) tmp.tickspeedBulk = E(0)
+    if (player.rp.points.lt(1)) tmp.tickspeedBulk = D(0)
 
 }
 
@@ -129,9 +120,9 @@ function updateBlackHoleTemp() {
 
 	let scale = scalingInitPower("bh_condenser")
     t.condenser_bonus = FORMS.bh.condenser.bonus()
-    t.condenser_cost = E(1.75).pow(player.bh.condenser.scaleEvery("bh_condenser").pow(scale)).floor()
+    t.condenser_cost = D(1.75).pow(player.bh.condenser.scaleEvery("bh_condenser").pow(scale)).floor()
     t.condenser_bulk = player.bh.dm.max(1).log(1.75).root(scale).scaleEvery("bh_condenser", 1).add(1).floor()
-    if (player.bh.dm.lt(1)) t.condenser_bulk = E(0)
+    if (player.bh.dm.lt(1)) t.condenser_bulk = D(0)
     t.condenser_eff = FORMS.bh.condenser.effect()
 
 	t.rad_ss = FORMS.bh.radSoftStart()
@@ -143,10 +134,9 @@ function updateTemp() {
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
 	//Tab Forcing
-	if (player.ext.toned == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
+	if (toned() == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
 
 	//Exotic
-	updatePrimTemp()
 	updateGlueballTemp()
 	updateAxionTemp()
 	updatePolarizeTemp()

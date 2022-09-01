@@ -812,7 +812,7 @@ td.ax {
 	}
 }
 
-.prim {
+/*.prim {
 	background: linear-gradient(#fb03, transparent);
 	border: 1px solid #fb7;
 	box-shadow: 0 0 3px #fb0;
@@ -859,4 +859,4 @@ td.ax {
 	background: rgba(31, 31, 31, 0.25);
 	border: 1px solid #333;
 	color: rgba(255, 255, 255, 0.25)
-}
+}*/

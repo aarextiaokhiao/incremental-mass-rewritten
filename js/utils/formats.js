@@ -129,7 +129,7 @@ const FORMATS = {
 			const abbreviationProgress = abbreviationListUnfloored - abbreviationListIndex + 1
 			const abbreviationIndex = Math.floor(abbreviationProgress * abbreviationLength)
 			const abbreviation = this.getAbbreviation(abbreviationListIndex, abbreviationProgress)
-			const value = E(118).pow(abbreviationListIndex + abbreviationIndex / abbreviationLength - 1)
+			const value = D(118).pow(abbreviationListIndex + abbreviationIndex / abbreviationLength - 1)
 			return [abbreviation, value];
 		},
 		formatElementalPart(abbreviation, n) {
@@ -139,7 +139,7 @@ const FORMATS = {
 			return `${n} ${abbreviation}`;
 		},
 		format(value,acc) {
-			if (value.gt(E(118).pow(E(118).pow(E(118).pow(4))))) return "e"+this.format(value.log10(),acc)
+			if (value.gt(D(118).pow(D(118).pow(D(118).pow(4))))) return "e"+this.format(value.log10(),acc)
 
 			let log = value.log(118)
 			let slog = log.log(118)
@@ -155,7 +155,7 @@ const FORMATS = {
 			if (parts.length >= max) {
 			  return parts.map((x) => this.formatElementalPart(x[0], x[1])).join(" + ");
 			}
-			const formattedMantissa = E(118).pow(log).toFixed(parts.length === 1 ? 3 : acc);
+			const formattedMantissa = D(118).pow(log).toFixed(parts.length === 1 ? 3 : acc);
 			if (parts.length === 0) {
 			  return formattedMantissa;
 			}
@@ -167,7 +167,7 @@ const FORMATS = {
     },
 	log: {
 		format(ex, acc, color, log) {
-			ex = E(ex)
+			ex = D(ex)
 			let e = ex.log10()
 			if (e.lt(3)) return ex.toFixed(log ? acc : Math.max(Math.min(acc - e.toNumber(), acc), 0))
 			else if (e.lt(6)) return ex.floor().toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -177,7 +177,7 @@ const FORMATS = {
 	inf: {
 		format(ex, acc) {
 			let meta = 0
-			let inf = E(Number.MAX_VALUE)
+			let inf = D(Number.MAX_VALUE)
 			let symbols = ["", "∞", "Ω", "Ψ", "ʊ"]
 			let symbols2 = ["", "", "m", "mm", "mmm"]
 			while (ex.gte(inf)) {
@@ -193,7 +193,7 @@ const FORMATS = {
 	},
 	max: {
 		format(ex, acc, log) {
-			ex = E(ex)
+			ex = D(ex)
 			let e = ex.log10()
 			if (e.lt(6)) return formatDef(ex, acc)
 			return 'MX-' + formatDef(e, Math.max(acc, 2))
@@ -201,7 +201,7 @@ const FORMATS = {
 	},
     eng: {
       format(ex, acc) {
-        ex = E(ex)
+        ex = D(ex)
         let e = ex.log10().floor()
         if (e.lt(9)) {
           if (e.lt(3)) {
@@ -211,20 +211,20 @@ const FORMATS = {
         } else {
           if (ex.gte("eeee10")) {
             let slog = ex.slog()
-            return (slog.gte(1e9)?'':E(10).pow(slog.sub(slog.floor())).toFixed(4)) + "F" + this.format(slog.floor(), 0)
+            return (slog.gte(1e9)?'':D(10).pow(slog.sub(slog.floor())).toFixed(4)) + "F" + this.format(slog.floor(), 0)
           }
-          let m = ex.div(E(1000).pow(e.div(3).floor()))
-          return (e.log10().gte(4)?'':m.toFixed(E(2).max(acc).sub(e.sub(e.div(3).floor().mul(3))).toNumber()))+'e'+this.format(e.div(3).floor().mul(3),0)
+          let m = ex.div(D(1000).pow(e.div(3).floor()))
+          return (e.log10().gte(4)?'':m.toFixed(D(2).max(acc).sub(e.sub(e.div(3).floor().mul(3))).toNumber()))+'e'+this.format(e.div(3).floor().mul(3),0)
         }
       },
     },
     layer: {
       layers: ["infinity","eternity","reality","equality","affinity","celerity","identity","vitality","immunity","atrocity"],
       format(ex, acc) {
-        ex = E(ex)
+        ex = D(ex)
         let layer = ex.max(1).log10().max(1).log(INFINITY_NUM.log10()).floor()
         if (layer.lte(0)) return formatDef(ex,acc)
-        ex = E(10).pow(ex.max(1).log10().div(INFINITY_NUM.log10().pow(layer)).sub(layer.gte(1)?1:0))
+        ex = D(10).pow(ex.max(1).log10().div(INFINITY_NUM.log10().pow(layer)).sub(layer.gte(1)?1:0))
         let meta = layer.div(10).floor()
         let layer_id = layer.toNumber()%10-1
         return formatDef(ex,Math.max(3,acc)) + " " + (meta.gte(1)?"meta"+(meta.gte(2)?"^"+format(meta,0,"sc"):"")+"-":"") + (isNaN(layer_id)?"nanity":this.layers[layer_id])
@@ -233,7 +233,7 @@ const FORMATS = {
 
     mix: {
       format(ex, acc, color) {
-        ex = E(ex)
+        ex = D(ex)
         return format(ex,acc,ex.lt(1e63)?"st":"sc",color)
       }
     },
@@ -242,7 +242,7 @@ const FORMATS = {
 			let e = ex.max(1).log10().floor()
 			if (e.lt(Math.max(acc, 3))) return ex.toFixed(Math.max(acc-e.toNumber(), 0))
 			else {
-				let m = ex.div(E(10).pow(e))
+				let m = ex.div(D(10).pow(e))
 				if (e.gte(1e4)) return colorize('e', color, "magenta") + format(e, Math.max(acc, 3))
 				return m.toFixed(Math.max(acc, 2)) + 'e' + e.floor().toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 			}
@@ -255,7 +255,7 @@ const FORMATS = {
 			let ill = e3.sub(1).round()
 			if (ill.lt(1e3)) {
 				let e3_mul = e3.mul(3)
-				let m = ex.div(E(10).pow(e3_mul)).toFixed(Math.max(Math.max(e3.gte(1)?2:0,acc)-e.sub(e3_mul).toNumber(), 0))
+				let m = ex.div(D(10).pow(e3_mul)).toFixed(Math.max(Math.max(e3.gte(1)?2:0,acc)-e.sub(e3_mul).toNumber(), 0))
 				if (e3.lt(1)) return m
 				if (ill.lt(3)) return m + " " + ["K", "M", "B"][ill]
 				if (ill.lt(1e3)) return m + " " + this.tier1(ill, color)
@@ -268,7 +268,7 @@ const FORMATS = {
 				tier++
 				if (tier > 3) return formatDef(ex, acc, color)
 			}
-			ill = E(10).pow(ill_2.sub(ill_2.floor()).mul(3)).toNumber()
+			ill = D(10).pow(ill_2.sub(ill_2.floor()).mul(3)).toNumber()
 			ill_2 = ill_2.floor().toNumber()
 
 			let final = ""
@@ -328,7 +328,7 @@ const ST_NAMES = [
 ]
 const ST_CONNECTIONS = ["", "", "-", "a-"]
 
-const INFINITY_NUM = E(2).pow(1024);
+const INFINITY_NUM = D(2).pow(1024);
 const SUBSCRIPT_NUMBERS = "₀₁₂₃₄₅₆₇₈₉";
 const SUPERSCRIPT_NUMBERS = "⁰¹²³⁴⁵⁶⁷⁸⁹";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -351,7 +351,7 @@ function formatDef(ex, acc, color) {
 }
 
 function format(ex, acc=2, type=player.options.notation, color) {
-	ex = E(ex)
+	ex = D(ex)
 
 	//Special Formatting
 	if (Number.isNaN(ex.mag) || Number.isNaN(ex.sign)) return 'NaN'
@@ -365,7 +365,7 @@ function format(ex, acc=2, type=player.options.notation, color) {
 }
 
 function formatTetr(ex, tetr) {
-	ex = E(ex)
+	ex = D(ex)
 
 	let layer = ex.layer
 	let mag = ex.mag
@@ -400,7 +400,7 @@ function formatGain(amt, gain, isMass=false, main=false) {
 
 	if (amt.gte("e100") && gain.gt(0) && gain.log(amt).gte(1.1)) return "(^"+format(gain.log(amt), 3)+"/s)"
 	else if (amt.gte(100) && gain.div(amt).gte(0.1)) return "("+formatMultiply(gain.div(amt).add(1))+"/s)"
-	else if (gain.div(amt).gte(1e-4)) return "(+"+f(gain)+"/s)"
+	else if (gain.gt(0)) return "(+"+f(gain)+"/s)"
 	return ""
 }
 
@@ -426,7 +426,7 @@ function formatMultiply(a) {
 //MASS
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
-    ex = E(ex)
+    ex = D(ex)
     if (player.options.pure == 1) return f(ex)
 
     if (ex.gte(EINF)) return f(ex)
@@ -444,7 +444,7 @@ function formatMass(ex, color) {
 
 const ARV = ['mlt','mgv','giv','tev','pev','exv','zev','yov',"xvr","wkv"]
 function formatArv(mlt, color) {
-    let arv = E(0)
+    let arv = D(0)
 	let div = mlt
 	if (player.options.pure == 2) {
 		while (mlt.gte("ee9")) {
@@ -455,7 +455,7 @@ function formatArv(mlt, color) {
 		if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
 
 		arv = mlt.log10().div(15).floor()
-		mlt = mlt.div(E(10).pow(arv.mul(15)))
+		mlt = mlt.div(D(10).pow(arv.mul(15)))
 	}
 
 	let f = color ? formatColored : format
@@ -465,7 +465,7 @@ function formatArv(mlt, color) {
 
 //TIME
 function formatTime(ex,type="s") {
-    ex = E(ex)
+    ex = D(ex)
     if (ex.gte(86400*365)) return format(ex.div(86400*365).floor(),0)+"y, "+formatTime(ex.mod(86400*365))
     if (ex.gte(86400*7)) return format(ex.div(86400*7).floor(),0)+"w, "+formatTime(ex.mod(86400*7),'w')
     if (ex.gte(86400)||type=="w") return format(ex.div(86400).floor(),0)+"d, "+formatTime(ex.mod(86400),'d')

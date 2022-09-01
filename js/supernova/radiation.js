@@ -2,9 +2,9 @@ const RADIATION = {
     names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma"],
     unls: ["0","1e6","1e13","1e20","5e26","5e29","1e35"],
     hz_gain() {
-		if (CHALS.inChal(14)) return E(0)
+		if (CHALS.inChal(14)) return D(0)
 
-        let x = E(1)
+        let x = D(1)
         x = x.mul(tmp.radiation.ds_eff[0])
         if (hasTree('rad1')) x = x.mul(treeEff("rad1",1))
         if (hasElement(76)) x = x.mul(tmp.elements && tmp.elements.effect[76])
@@ -17,10 +17,10 @@ const RADIATION = {
     },
 	ds_gains: ["1", "1", "1", "1", "0.005", "0.00002", "1e-7"],
     ds_gain(i) {
-		if (CHALS.inChal(14)) return E(0)
-        if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return E(0)
+		if (CHALS.inChal(14)) return D(0)
+        if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return D(0)
 
-        let x = E(RADIATION.ds_gains[i])
+        let x = D(RADIATION.ds_gains[i])
         if (hasTree('rad2')) x = x.mul(treeEff("rad2",1))
         if (hasTree('feat1')) x = x.mul(3)
         if (i == 3 && hasElement(70)) x = x.mul(10)
@@ -39,15 +39,15 @@ const RADIATION = {
     getBoostData(i) {
         let b = player.supernova.radiation.bs[i]
         let [f1,f2,f3,f4] = [2+i/2,RADIATION.getBoostScalingExp(i),(i*0.5+1)**2*10,RADIATION.getBoostScalingMul(i)]
-        let cost = E(f1).pow(b.pow(f2).mul(f4)).mul(f3)
+        let cost = D(f1).pow(b.pow(f2).mul(f4)).mul(f3)
 
         let d = player.supernova.radiation.ds[Math.floor(i/2)]
-        let bulk = d.lt(f3) ? E(0) : d.div(f3).max(1).log(f1).max(0).div(f4).root(f2).add(1).floor()
+        let bulk = d.lt(f3) ? D(0) : d.div(f3).max(1).log(f1).max(0).div(f4).root(f2).add(1).floor()
 
         return [cost,bulk]
     },
     getBoostScalingMul(i) {
-		let f4 = E(1)
+		let f4 = D(1)
 		if (tmp.fermions) f4 = f4.div(tmp.fermions.effs[0][5]||1)
 		f4 = f4.div(tmp.chal?tmp.chal.eff[12]:1)
 		if (hasElement(78) && i % 2 == 1) f4 = f4.mul(0.85)
@@ -60,13 +60,13 @@ const RADIATION = {
 		return Math.max(f2,1.25)
     },
     getLevelEffect(i) {
-        let x = this.boosts[i].eff(FERMIONS.onActive(05)?E(0):tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i]))
+        let x = this.boosts[i].eff(FERMIONS.onActive(05)?D(0):tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i]))
         return x
     },
     getBonusLevel(i) {
-		if (CHALS.inChal(14)) return E(0)
+		if (CHALS.inChal(14)) return D(0)
 
-        let x = E(0)
+        let x = D(0)
         if (i < 8) x = x.add(RADIATION.applyBonus(tmp.radiation.bs.eff[8]&&tmp.radiation.bs.eff[8],8,i))
         if (i < 12 && hasElement(69)) x = x.add(1)
         if (i < 17) x = x.add(RADIATION.applyBonus(tmp.radiation.bs.eff[17]&&tmp.radiation.bs.eff[17][0],17,i))
@@ -75,7 +75,7 @@ const RADIATION = {
         return x
     },
     applyBonus(x,a,b) {
-		if (!x) x = E(0)
+		if (!x) x = D(0)
 		var m = RADIATION.bonusMul(a,b)
 		var e = RADIATION.bonusExp(a,b)
 		if (e <= 1) return x.mul(m)
@@ -85,7 +85,7 @@ const RADIATION = {
 		if (!hasTree("rad3")) return 1
 		a = Math.floor(a / 3)
 		b = Math.floor(b / 3)
-        return AXION.unl() ? tmp.ax.eff[7].pow(a - b) : E(1)
+        return AXION.unl() ? tmp.ax.eff[7].pow(a - b) : D(1)
     },
     bonusExp(a,b) {
 		if (!hasTree("rad3")) return 1
@@ -98,7 +98,7 @@ const RADIATION = {
         if (player.supernova.radiation.ds[j].gte(cost) && bulk.gt(player.supernova.radiation.bs[i])) {
             player.supernova.radiation.bs[i] = player.supernova.radiation.bs[i].max(bulk)
             let [f1,f2,f3,f4] = [2+i/2,RADIATION.getBoostScalingExp(i),(i*0.5+1)**2*10,RADIATION.getBoostScalingMul(i)]
-            if (!auto) player.supernova.radiation.ds[j] = player.supernova.radiation.ds[j].sub(E(f1).pow(bulk.sub(1).pow(f2).mul(f4)).mul(f3)).max(0)
+            if (!auto) player.supernova.radiation.ds[j] = player.supernova.radiation.ds[j].sub(D(f1).pow(bulk.sub(1).pow(f2).mul(f4)).mul(f3)).max(0)
         }
     },
 	max(auto) {
@@ -113,7 +113,6 @@ const RADIATION = {
 		else r = player.supernova.radiation.ds[x-1]
         r = r.add(1).log10().add(1)
 
-        if (GLUBALL.got("p3_1")) r = r.pow(GLUBALL.eff("p3_1"))
 		return r.pow(b).softcap(1e30,0.5,0)
 	},
     boosts: [
@@ -208,14 +207,14 @@ const RADIATION = {
         },{
             title: `Tickspeed-Cap Boost`,
 			eff(b) {
-				let x = E(1e3).pow(b.pow(0.9))
+				let x = D(1e3).pow(b.pow(0.9))
 				return x
 			},
             desc(x) { return `Tickspeed power's softcap starts ${format(x)}x later` },
         },{
             title: `Meta-Tickspeed Boost`,
             eff(b) {
-                let x = E(1.1).pow(b).softcap(15,3,3)
+                let x = D(1.1).pow(b).softcap(15,3,3)
                 return x
             },
             desc(x) { return `Meta-Tickspeed starts ${format(x)}x later`+getSoftcapHTML(x,15) },
@@ -260,7 +259,7 @@ const RADIATION = {
             title: `Supernova Boost`,
             eff(b) {
                 let b_sub = b.add(1).cbrt().softcap(3,10,1).min(11/3)
-                return { sub: b_sub, eff: E(5).sub(b_sub).log(5) }
+                return { sub: b_sub, eff: D(5).sub(b_sub).log(5) }
             },
             desc(x) { return `Ultra Supernova scales -^${format(x.sub)} slower.` + getSoftcapHTML(x.sub,3) },
         },
@@ -269,7 +268,7 @@ const RADIATION = {
         {
             title: `Placeholder Boost`,
             eff(b) {
-                let x = E(1)
+                let x = D(1)
                 return x
             },
             desc(x) { return `Placeholder` },

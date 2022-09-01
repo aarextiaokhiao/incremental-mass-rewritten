@@ -7,15 +7,15 @@ const STARS = {
         return x.softcap(tmp.stars.softGain,tmp.stars.softPower,0)
     },
     softGain() {
-        let s = E("e1000").pow(tmp.fermions.effs[1][0]||1)
+        let s = D("e1000").pow(tmp.fermions.effs[1][0]||1)
         return s
     },
     softPower() {
-        let p = E(0.75)
+        let p = D(0.75)
         return p
     },
     rankStr() {
-        let p = E(1)
+        let p = D(1)
         if (hasElement(48)) p = p.mul(1.1)
         return p
     },
@@ -27,7 +27,7 @@ const STARS = {
 		return { eff: b.pow(e), exp: e }
 	},
     generators: {
-        req: [E(1e225),E(1e280),E('e320'),E('e430'),E('e870')],
+        req: [D(1e225),D(1e280),D('e320'),D('e430'),D('e870')],
         unl(auto=false) {
             let boost_unl = STARS.generators.booster_unl()
             if (player.atom.quarks.gte(boost_unl ? tmp.stars.gb_req : tmp.stars.gen_req)) {
@@ -39,14 +39,14 @@ const STARS = {
             return hasTree("s4") && player.stars.unls == 5
         },
         gain(i) {
-            let pow = E(1.5)
-            if (FERMIONS.onActive("13")) pow = E(0.5)
+            let pow = D(1.5)
+            if (FERMIONS.onActive("13")) pow = D(0.5)
             else {
                 if (hasElement(50)) pow = pow.mul(1.05)
                 if (hasTree("s3")) pow = pow.mul(treeEff("s3"))
             }
 
-            let x = E(player.stars.unls > i ? 1 : 0).add(player.stars.generators[i+1]||0).pow(pow)
+            let x = D(player.stars.unls > i ? 1 : 0).add(player.stars.generators[i+1]||0).pow(pow)
             if (hasElement(49) && i==4) x = x.mul(tmp.elements.effect[49])
             if (hasTree("s1") && i==4) x = x.mul(treeEff("s1"))
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
@@ -74,18 +74,17 @@ function updateStarsTemp() {
 	let ts = tmp.stars
 	let exp = Math.max(TONES.power(1),1.25)
 	ts.gen_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
-	ts.gb_req = E("e100").pow(player.stars.boost.pow(exp)).mul('e8000')
+	ts.gb_req = D("e100").pow(player.stars.boost.pow(exp)).mul('e8000')
 	ts.gb_bulk = player.atom.quarks.div("e8000").log10().div(100).root(exp).floor().add(1)
-	if (player.atom.quarks.lt("e8000")) ts.gb_bulk = E(0)
+	if (player.atom.quarks.lt("e8000")) ts.gb_bulk = D(0)
 
-	ts.gb_base = E(2)
-	ts.gb_str = E(1)
+	ts.gb_base = D(2)
+	ts.gb_str = D(1)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
     if (bosonsMastered()) ts.gb_base = ts.gb_base.mul(tmp.bosons.upgs.photon[1].effect)
 	if (tmp.chal) ts.gb_str = ts.gb_str.mul(tmp.chal.eff[11])
-	if (GLUBALL.got("s2_1")) ts.gb_str = ts.gb_str.mul(GLUBALL.eff("s2_1"))
 
-	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:E(0)
+	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:D(0)
 	ts.gb_eff = ts.gb_base.pow(player.stars.boost.add(ts.gb_bonus).mul(ts.gb_str))
 
 	for (let x = 0; x < 5; x++) ts.gen_gains[x] = STARS.generators.gain(x)

@@ -50,19 +50,19 @@ function updateChalTemp() {
         eff: {},
         bulk: {},
         canFinish: false,
-        gain: E(0),
+        gain: D(0),
     }
     for (let x = 1; x <= CHALS.cols; x++) {
         let data = CHALS.getChalData(x)
         tmp.chal.max[x] = CHALS.getMax(x)
         tmp.chal.goal[x] = data.goal
         tmp.chal.bulk[x] = data.bulk
-        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive(04) ? E(0) : player.chal.comps[x])
+        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive(04) ? D(0) : player.chal.comps[x])
     }
 
 	let active = CHALS.lastActive()
     tmp.chal.format = active != 0 ? CHALS.getFormat() : format
-    tmp.chal.gain = active != 0 ? tmp.chal.bulk[active].min(tmp.chal.max[active]).sub(player.chal.comps[active]).max(0).floor() : E(0)
+    tmp.chal.gain = active != 0 ? tmp.chal.bulk[active].min(tmp.chal.max[active]).sub(player.chal.comps[active]).max(0).floor() : D(0)
     tmp.chal.canFinish = active != 0 ? tmp.chal.gain.gt(0) : false
 	tmp.chal.outside = active == 0 && !player.md.active && player.supernova.fermions.choosed == ""
 }
@@ -84,11 +84,11 @@ const CHALS = {
 		else player.chal.active = x
     },
     lastActive(x) {
-		return player.chal.active || player.ext.ec || 0
+		return player.chal.active || player.ext?.ec || 0
     },
     getActive(x) {
 		let r = player.chal.active
-        if (x > 12) r = player.ext.ec
+        if (x > 12) r = player.ext?.ec
 		return r || 0
     },
     inChal(x) { return this.getActive(x) == x },
@@ -110,7 +110,7 @@ const CHALS = {
 				}
 				if (!noExt && active > 12) {
 					if (player.confirms.ec && !confirm("You won't lose progress, but you won't recieve completions anymore. Proceed?")) return
-					player.ext.ec = 0
+					delete player.ext.ec
 				}
 			}
 		}
@@ -122,7 +122,6 @@ const CHALS = {
 		if (act == x) return
 		if (x > 12) {
 			if (player.confirms.ec && !confirm("Make sure to sweep before starting! Are you sure?")) return
-			if (x == 16) player.ext.ch.upg = []
 			player.chal.active = 0
 		}
 		if (act > 0) this.exit(false, true)
@@ -168,7 +167,7 @@ const CHALS = {
         return ""
     },
     getPower(i) {
-        let x = E(1)
+        let x = D(1)
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
         if (hasTree("feat7")) x = x.mul(0.96)
@@ -178,7 +177,7 @@ const CHALS = {
         return i > 8 ? 10 : 75
     },
     getPower2(i) {
-        let x = E(1)
+        let x = D(1)
         if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
         return x
     },
@@ -186,13 +185,13 @@ const CHALS = {
         return i > 8 ? 50 : i == 8 ? 200 : 300
     },
     getPower3(i) {
-        return E(1)
+        return D(1)
     },
     getPower3Start(i) {
         return i > 8 ? EINF : 1000
     },
-    getChalData(x, r=E(-1), a) {
-		let res = CHALS.inChal(x)||a?this.getResource(x):E(0)
+    getChalData(x, r=D(-1), a) {
+		let res = CHALS.inChal(x)||a?this.getResource(x):D(0)
 		let chal = this[x]
 
 		let lvl = r.lt(0)?player.chal.comps[x]:r
@@ -202,21 +201,21 @@ const CHALS = {
 			//Instant Exponential Scale.
 			let goal = chal.start.pow(chal.inc.pow(lvl.pow(pow)))
 			let bulk = res.log(chal.start).log(chal.inc).root(pow).add(1).floor()
-			if (res.lt(chal.start)) bulk = E(0)
+			if (res.lt(chal.start)) bulk = D(0)
 			return {goal: goal, bulk: bulk}
 		}
 
         let goal = chal.inc.pow(lvl.pow(pow)).mul(chal.start)
         let bulk = res.div(chal.start).max(1).log(chal.inc).root(pow).add(1).floor()
-        if (res.lt(chal.start)) bulk = E(0)
+        if (res.lt(chal.start)) bulk = D(0)
 
         let s1 = CHALS.getPower1Start(x)
         let s2 = CHALS.getPower2Start(x)
         let s3 = CHALS.getPower3Start(x)
 
         if (lvl.max(bulk).gte(s1)) {
-            let start = E(s1);
-            let exp = E(3).pow(this.getPower());
+            let start = D(s1);
+            let exp = D(3).pow(this.getPower());
             goal =
             chal.inc.pow(
                     lvl.pow(exp).div(start.pow(exp.sub(1))).pow(pow)
@@ -232,10 +231,10 @@ const CHALS = {
                 .floor();
         }
         if (lvl.max(bulk).gte(s2)) {
-            let start = E(s1);
-            let exp = E(3).pow(this.getPower());
-            let start2 = E(s2);
-            let exp2 = E(4.5).pow(this.getPower2())
+            let start = D(s1);
+            let exp = D(3).pow(this.getPower());
+            let start2 = D(s2);
+            let exp2 = D(4.5).pow(this.getPower2())
             goal =
             chal.inc.pow(
                     lvl.pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
@@ -253,12 +252,12 @@ const CHALS = {
                 .floor();
         }
         if (lvl.max(bulk).gte(s3)) {
-            let start = E(s1);
-            let exp = E(3).pow(this.getPower());
-            let start2 = E(s2);
-            let exp2 = E(4.5).pow(this.getPower2())
-            let start3 = E(s3);
-            let exp3_base = E(1).div(s3).add(1).pow(this.getPower3())
+            let start = D(s1);
+            let exp = D(3).pow(this.getPower());
+            let start2 = D(s2);
+            let exp2 = D(4.5).pow(this.getPower2())
+            let start3 = D(s3);
+            let exp3_base = D(1).div(s3).add(1).pow(this.getPower3())
             goal =
             chal.inc.pow(
                     exp3_base.pow(lvl.sub(start3)).mul(start3)
@@ -286,30 +285,30 @@ const CHALS = {
         title: "Instant Scale",
         desc: "Super Rank and Mass Upgrades start at 25. Additionally, Super Tickspeed starts at 50.",
         reward: `Super Rank scales later, and weaken Super Tickspeed.`,
-        max: E(100),
-        inc: E(5),
-        pow: E(1.3),
-        start: E(1.5e58),
+        max: D(100),
+        inc: D(5),
+        pow: D(1.3),
+        start: D(1.5e58),
         effect(x) {
             let rank = x.softcap(20,4,1).floor()
-            let tick = E(0.96).pow(x.root(2))
+            let tick = D(0.96).pow(x.root(2))
             return {rank: rank, tick: tick}
         },
-        effDesc(x) { return "+"+format(x.rank,0)+" to Super Rank, "+format(E(1).sub(x.tick).mul(100))+"% weaker to Super Tickspeed" },
+        effDesc(x) { return "+"+format(x.rank,0)+" to Super Rank, "+format(D(1).sub(x.tick).mul(100))+"% weaker to Super Tickspeed" },
     },
     2: {
         unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
         title: "Anti-Tickspeed",
         desc: "You can't buy Tickspeed.",
         reward: `Add Tickspeed Power.`,
-        max: E(100),
-        inc: E(10),
-        pow: E(1.3),
-        start: E(1.989e40),
+        max: D(100),
+        inc: D(10),
+        pow: D(1.3),
+        start: D(1.989e40),
         effect(x) {
-            let sp = E(0.5)
+            let sp = D(0.5)
             if (hasElement(8)) sp = sp.pow(0.25)
-            if (hasElement(39)) sp = E(1)
+            if (hasElement(39)) sp = D(1)
             let ret = x.mul(0.075).add(1).softcap(1.3,sp,0).sub(1)
             return ret
         },
@@ -320,14 +319,14 @@ const CHALS = {
         title: "Melted Mass",
         desc: "Mass softcap scales /1e150 earlier, and is stronger.",
         reward: `Raise Mass. [can't apply in this challenge]`,
-        max: E(100),
-        inc: E(25),
-        pow: E(1.25),
-        start: E(2.9835e49),
+        max: D(100),
+        inc: D(25),
+        pow: D(1.25),
+        start: D(2.9835e49),
 		effect(x) {
 			if (hasElement(64)) x = x.mul(1.5)
 			let ret = x.root(1.5).mul(0.01).add(1)
-			let cap = E(2.4).add(tmp.radiation && tmp.radiation.bs.eff[19])
+			let cap = D(2.4).add(tmp.radiation && tmp.radiation.bs.eff[19])
 			if (hasTree("feat5")) {
 				ret = ret.add(0.05)
 				cap = cap.add(0.05)
@@ -341,14 +340,14 @@ const CHALS = {
         title: "Weakened Rage",
         desc: "Reduce Rage Power. Additionally, mass softcap scales /1e100 earlier.",
         reward: `Raise Rage Power.`,
-        max: E(100),
-        inc: E(30),
-        pow: E(1.25),
-        start: E(1.736881338559743e133),
+        max: D(100),
+        inc: D(30),
+        pow: D(1.25),
+        start: D(1.736881338559743e133),
 		effect(x) {
 			if (hasElement(64)) x = x.mul(1.5)
 			let ret = x.root(1.5).mul(0.01).add(1)
-			let cap = E(2.4).add(tmp.fermions && tmp.fermions.effs[1][5])
+			let cap = D(2.4).add(tmp.fermions && tmp.fermions.effs[1][5])
 			if (hasTree("feat5")) {
 				ret = ret.add(0.05)
 				cap = cap.add(0.05)
@@ -362,25 +361,25 @@ const CHALS = {
         title: "No Rank",
         desc: "You can't rank up.",
         reward: `Weaken Rank.`,
-        max: E(50),
-        inc: E(50),
-        pow: E(1.25),
-        start: E(1.5e136),
+        max: D(50),
+        inc: D(50),
+        pow: D(1.25),
+        start: D(1.5e136),
         effect(x) {
-            let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0)).max(.5)
+            let ret = D(0.97).pow(x.root(2).softcap(5,0.5,0)).max(.5)
             return ret
         },
-        effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(x.log(0.97),5) },
+        effDesc(x) { return format(D(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(x.log(0.97),5) },
     },
     6: {
         unl() { return player.chal.comps[5].gte(1) || player.supernova.unl },
         title: "No Tickspeed & Condenser",
         desc: "You cannot buy Tickspeed & BH Condenser.",
         reward: `Add Tickspeed & BH Condenser Power.`,
-        max: E(50),
-        inc: E(64),
-        pow: E(1.25),
-        start: E(1.989e38),
+        max: D(50),
+        inc: D(64),
+        pow: D(1.25),
+        start: D(1.989e38),
         effect(x) {
             let ret = x.mul(0.1).add(1).softcap(1.5,hasElement(39)?1:0.5,0).sub(1)
             return ret
@@ -392,10 +391,10 @@ const CHALS = {
         title: "No Rage Power",
         desc: "You can't gain Rage Power, but gain Dark Matter by mass.<br>Additionally, strengthen mass softcap.",
         reward: `Add maximum completions to C1-4.<br><span class="yellow">At 16th completion, unlock Elements!</span>`,
-        max: E(50),
-        inc: E(64),
-        pow: E(1.25),
-        start: E(1.5e76),
+        max: D(50),
+        inc: D(64),
+        pow: D(1.25),
+        start: D(1.5e76),
         effect(x) {
             let ret = x.mul(2)
             if (hasElement(5)) ret = ret.mul(2)
@@ -408,10 +407,10 @@ const CHALS = {
         title: "White Hole",
         desc: "Reduce Dark Matter and Black Hole mass.",
         reward: `Raise Dark Matter and Black Hole mass.<br><span class="yellow">At first completion, unlock 3 rows of Elements!</span>`,
-        max: E(50),
-        inc: E(80),
-        pow: E(1.3),
-        start: E(1.989e38),
+        max: D(50),
+        inc: D(80),
+        pow: D(1.3),
+        start: D(1.989e38),
 		effect(x) {
 			let dm = x
 			if (hasElement(64)) dm = dm.mul(1.5)
@@ -430,10 +429,10 @@ const CHALS = {
         title: "No Particles",
         desc: "You can't assign quarks. Additionally, dilate mass by ^0.9!",
         reward: `Improve Magnesium-12 better.`,
-        max: E(100),
-        inc: E('e500'),
-        pow: E(2),
-        start: E('e9.9e4').mul(1.5e56),
+        max: D(100),
+        inc: D('e500'),
+        pow: D(2),
+        start: D('e9.9e4').mul(1.5e56),
         effect(x) {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
             return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(1.5) }
@@ -445,13 +444,13 @@ const CHALS = {
         title: "The Reality I",
         desc: "Challenges 1 - 8, but you are trapped in Mass Dilation!",
         reward: `Raise the RP formula. [can't apply in this challenge]<br><span class="yellow">At first completion, unlock Fermions!</span>`,
-        max: E(100),
-        inc: E('e2000'),
-        pow: E(2),
-        start: E('e3e4').mul(1.5e56),
+        max: D(100),
+        inc: D('e2000'),
+        pow: D(2),
+        start: D('e3e4').mul(1.5e56),
 		effect(x) {
-			let exp = E(1/1.75)
-			let mul = E(0.01)
+			let exp = D(1/1.75)
+			let mul = D(0.01)
 			if (player.chal.comps[14].gte(0)) {
 				let c14 = CHALS[14].effect(player.chal.comps[14])
 				exp = exp.mul(c14.c10)
@@ -465,10 +464,10 @@ const CHALS = {
         unl() { return hasTree("chal6") },
         title: "Absolutism",
         desc: "You can't gain relativistic particles. Additionally, you are trapped in Mass Dilation!",
-        reward: `Strengthen Star Boosters.`,
-        max: E(100),
-        inc: E("e1e6"),
-        pow: E(1.45),
+        reward: `Strengthen Star Boosters.<br><span class="yellow">On first completion, unlock Pent!</span>`,
+        max: D(100),
+        inc: D("e1e6"),
+        pow: D(1.45),
         start: uni("e8.5e7"),
         effect(x) {
             let ret = x.div(100).sqrt().add(1)
@@ -481,25 +480,24 @@ const CHALS = {
 		title: "Wormhole Devourer",
 		desc: "You are stuck in Mass Dilation, with ^0.428 penalty. Black Hole stays normal.",
 		reward: `Radiation Boosters scale slower.<br><span class="yellow">On first completion, unlock a new prestige layer!</span>`,
-		max: E(100),
-		inc: E(1.15),
-		pow: E(1),
+		max: D(100),
+		inc: D(1.15),
+		pow: D(1),
 		start: uni("e47250"),
 		effect(x) {
-			if (hasPrim("p5_0")) x = x.add(tmp.pr.eff.p5_0)
-			if (AXION.unl()) x = x.mul(tmp.ax.eff[20])
-            return E(1/0.985).pow(x)
+            //c12 boost - closer to linear inflation
+            return D(1/0.985).pow(x)
 		},
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	13: {
-		unl() { return hasTree("chal8") || PRES.unl() },
+		unl() { return hasTree("chal8") || PORTAL.unl() },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
 		reward: `Weaken Axion penalties.<br><span class="ch_color">On 9th completion, unlock Glueballs!</span>`,
-		max: E(100),
-		inc: E(11/9),
-		pow: E(1.15),
+		max: D(100),
+		inc: D(11/9),
+		pow: D(1.15),
 		start: uni("e4e4"),
 		effect(x) {
             return x.div(6).add(1)
@@ -507,17 +505,17 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[25].gt(0)) || PRES.unl() },
+		unl() { return (AXION.unl() && tmp.ax.lvl[25].gt(0)) || PORTAL.unl() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and add Free Gluons.`,
-		max: E(100),
-		inc: E(1.2),
-		pow: E(1.5),
+		max: D(100),
+		inc: D(1.2),
+		pow: D(1.5),
 		start: uni("e2e5"),
 		effect(x) {
 			return {
-				c10: E(1).add(x.div(20).sqrt().min(.6)),
+				c10: D(1).add(x.div(20).sqrt().min(.6)),
 				fg_add: x,
 				fg_mul: x.div(10).max(1)
 			}
@@ -525,27 +523,27 @@ const CHALS = {
         effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.fg_add)+", "+formatMultiply(x.fg_mul) },
 	},
 	15: {
-		unl() { return player.chal.comps[14].gt(0) || PRES.unl() },
+		unl() { return player.chal.comps[14].gt(0) || PORTAL.unl() },
 		title: "The Reality II",
 		desc: `Challenges 11 - 12, but Temporal Supernovae do nothing.`,
 		reward: `Extending Glueball Upgrades cheapens faster.<br><span class='gray'>On ???th completion, unlock Entropic Banks, Entropic Grid, and Virtual! [soon]</span>`,
-		max: E(50),
-		inc: E(1.3),
-		pow: E(1.25),
-		start: E(1e100),
+		max: D(50),
+		inc: D(1.3),
+		pow: D(1.25),
+		start: D(1e100),
 		effect(x) {
 			return x.add(1).log10().add(1).sqrt()
 		},
 		effDesc(x) { return formatMultiply(x) },
 	},
 	16: {
-		unl() { return player.chal.comps[15].gt(0) || PRES.unl() },
+		unl() { return player.chal.comps[15].gt(0) || PORTAL.unl() },
 		title: "Subspatial Normalcy",
 		desc: "Liquate pre-Supernovae!",
-		reward: `Raise Primordiums.<br><span class='red'>On ???th completion, unlock Vacuum Decay!</span>`,
-		max: E(80),
-		inc: E(1),
-		pow: E(1),
+		reward: `???<br><span class='red'>On ???th completion, unlock Vacuum Decay!</span>`,
+		max: D(80),
+		inc: D(1),
+		pow: D(1),
 		start: EINF,
 		effect(x) {
 			return x.div(20).add(1).toNumber()
@@ -561,12 +559,12 @@ const CHALS = {
     title: "Placeholder",
     desc: "Placeholder.",
     reward: `Placeholder.`,
-    max: E(50),
-    inc: E(10),
-    pow: E(1.25),
+    max: D(50),
+    inc: D(10),
+    pow: D(1.25),
     start: EINF,
     effect(x) {
-        let ret = E(1)
+        let ret = D(1)
         return ret
     },
     effDesc(x) { return format(x)+"x" },

@@ -6,12 +6,12 @@ let AXION = {
 
 	setup() {
 		return {
-			res: [ E(0), E(0), E(0) ],
-			upgs: [ E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0) ]
+			res: [ D(0), D(0), D(0) ],
+			upgs: [ D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0) ]
 		}
 	},
 	maxLvl(x) {
-		var sum = E(0)
+		var sum = D(0)
 		var min = EINF
 		for (var i = 4 * x; i < 4 * x + 4; i++) {
 			sum = axUpg(i).add(sum)
@@ -23,8 +23,8 @@ let AXION = {
 		if (x == 2) return min.mul(2).add(1).round()
 	},
 	cost(i) {
-		var normal = E(0)
-		var other = E(0)
+		var normal = D(0)
+		var other = D(0)
 		var type = Math.floor(i / 4)
 		for (var x = 4 * type; x < 4 * type + 4; x++) {
 			var lvl = axUpg(x)
@@ -44,25 +44,25 @@ let AXION = {
 			other = other.max(0)
 		}
 
-		var inc = E(1)
+		var inc = D(1)
 		if (tmp.chal) inc = inc.div(tmp.chal.eff[13])
 
 		var sum = normal.add(other.mul(inc)).mul(tmp.ax.fp)
-		var r = E([2,3,1.6][type])
+		var r = D([2,3,1.6][type])
 			.pow(sum.add(i - 4))
 			.mul(i >= 8 ? 1e4 : i >= 4 ? (1e3 * Math.pow(5, i - 4)) : (100 / (i + 5) * Math.pow(3, i)))
 		return r
 	},
 	costScale() {
-		var r = E(1)
-		if (hasTree("ext_l1")) r = E(0.8)
+		var r = D(1)
+		if (hasTree("ext_l1")) r = D(0.8)
 		if (hasTree("ext_l5")) r = r.div(treeEff("ext_l5", 1))
 		return r
 	},
 	bulk(p) {
 		var type = Math.floor(p / 4)
 		var cost = tmp.ax.cost[p]
-		if (player.ext.ax.res[type].lt(cost)) return E(0)
+		if (player.ext.ax.res[type].lt(cost)) return D(0)
 		var bulk = player.ext.ax.res[type]
 			.div(cost)
 			.log([2,3,1.6][type])
@@ -81,7 +81,7 @@ let AXION = {
 		var type = Math.floor(i / 4)
 		if (bulk.eq(0)) return
 		if (!a) player.ext.ax.res[type] = player.ext.ax.res[type].sub(
-			E([2,3,1.6][type]).pow(
+			D([2,3,1.6][type]).pow(
 				bulk.sub(1)
 				.mul(tmp.ax.fp)
 			).mul(cost)
@@ -92,10 +92,10 @@ let AXION = {
 	},
 
 	prod(x) {
-		if (!AXION.unl()) return E(0)
+		if (!AXION.unl()) return D(0)
 
 		//Base
-		let r = E(0)
+		let r = D(0)
 		let em = EXT.eff().add(1).log10()
 		if (x == 0) r = player.mass.max(1).log10().pow(0.7)
 			.mul(em.add(1).pow(2)).div(200)
@@ -118,7 +118,7 @@ let AXION = {
 	getXLvl(p) {
 		var x = p % 4
 		var y = Math.floor(p / 4)
-		return y < 4 ? axUpg(x).sub(y*4).div(y+1).max(0) : E(0)
+		return y < 4 ? axUpg(x).sub(y*4).div(y+1).max(0) : D(0)
 	},
 	getYLvl(p) {
 		var x = p % 4
@@ -137,7 +137,7 @@ let AXION = {
 	getBonusLvl(p) {
 		var x = p % 4
 		var y = Math.floor(p / 4)
-		var r = E(0)
+		var r = D(0)
 
 		if (y > 0 && y < 4) r = axUpg(y+3).sub((x+4)*(y+1)).div(y+2).max(0)
 		if (hasTree("ext_l2") && y < 4) {
@@ -148,10 +148,10 @@ let AXION = {
 		return r
 	},
 	getMultLvl(p) {
-		let r = E(1)
-		if (hasTree("ext_b2") && p < 16) r = E(1.02).pow(this.getXLvl(p)).mul(r)
-		if (hasTree("ext_b3") && p < 16) r = E(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3))).mul(r)
-		if (hasTree("ext_e1") && p < 16) r = E(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6))).mul(r)
+		let r = D(1)
+		if (hasTree("ext_b2") && p < 16) r = D(1.02).pow(this.getXLvl(p)).mul(r)
+		if (hasTree("ext_b3") && p < 16) r = D(1.02).pow(this.getYLvl(p).mul(2*Math.log2(3))).mul(r)
+		if (hasTree("ext_e1") && p < 16) r = D(1.01).pow(this.getZLvl(p).mul(4*Math.log2(1.6))).mul(r)
 		return r.pow(tmp.ax.str).mul(tmp.ax.str)
 	},
 	getEff(p, l) {
@@ -164,9 +164,9 @@ let AXION = {
 			title: "Temporal Supernovae",
 			desc: "Speed up all Supernova productions.",
 			unl: () => !CHALS.inChal(15),
-			req: E(0),
+			req: D(0),
 			eff(x) {
-				if (CHALS.inChal(15)) return E(1)
+				if (CHALS.inChal(15)) return D(1)
 				return x.mul(1.5).add(1)
 			},
 			effDesc(x) {
@@ -176,7 +176,7 @@ let AXION = {
 		1: {
 			title: "Cosmic Burst",
 			desc: "Cosmic Ray softcap scales later.",
-			req: E(0),
+			req: D(0),
 			eff(x) {
 				if (x.gte(100)) return EINF
 				return x.sqrt().div(10).add(1.2).pow(x)
@@ -188,7 +188,7 @@ let AXION = {
 		2: {
 			title: "Tickspeed Bravery",
 			desc: "Weaken Tickspeed inside Challenges.",
-			req: E(0),
+			req: D(0),
 			eff(x) {
 				return x.add(1).log10().div(5).add(1).softcap(1.4,0.5,0)
 			},
@@ -199,7 +199,7 @@ let AXION = {
 		3: {
 			title: "Hyperradiant",
 			desc: "Radiation Boosters scale slower. [Max: ^1.25 for each tier]",
-			req: E(0.5),
+			req: D(0.5),
 			eff(x) {
 				return x.pow(0.6).div(135).softcap(0.05,10,3)
 			},
@@ -211,7 +211,7 @@ let AXION = {
 		4: {
 			title: "Nucleosynthesis",
 			desc: "Raise Particles.",
-			req: E(1),
+			req: D(1),
 			eff(x) {
 				x = x.div(3).add(1).log(3).add(1)
 				if (hasTree("ext_u3")) x = x.div(10).add(.75).min(1.3)
@@ -224,7 +224,7 @@ let AXION = {
 		5: {
 			title: "Outrageous",
 			desc: "Multiply cap increments to Rage Power.",
-			req: E(0.5),
+			req: D(0.5),
 			eff(x) {
 				return x.add(1).div(x.max(1).log(5).add(1))
 			},
@@ -236,7 +236,7 @@ let AXION = {
 			title: "Superranked",
 			desc: "Weaken Meta-Rank based on its start.",
 			unl: () => !scalingToned("rank"),
-			req: E(5),
+			req: D(5),
 			eff(x) {
 				let str = x.cbrt().div(8e4).min(.01)
 				return {
@@ -251,7 +251,7 @@ let AXION = {
 		7: {
 			title: "Radiant Overheat",
 			desc: "Multiply Meta Boosts based on radiation types.",
-			req: E(7),
+			req: D(7),
 			eff(x) {
 				return x.add(1).cbrt().div(10).add(1).softcap(5,0.5,2)
 			},
@@ -264,7 +264,7 @@ let AXION = {
 			title: "Supermassive",
 			desc: "Evaporation softcap scales later.",
 			unl: () => GLUBALL.unl(),
-			req: E(18),
+			req: D(18),
 			eff(x) {
 				return x.add(1).log(3).add(1).pow(.75)
 			},
@@ -275,7 +275,7 @@ let AXION = {
 		9: {
 			title: "Dark Radiation",
 			desc: "Multiply Hawking Radiation.",
-			req: E(10),
+			req: D(10),
 			eff(x) {
 				return x.div(3).add(1).pow(.75).softcap(4,4,3)
 			},
@@ -287,7 +287,7 @@ let AXION = {
 			title: "Quark Condenser",
 			desc: "Raise Neutron Condensers until evaporation.",
 			unl: () => GLUBALL.unl(),
-			req: E(80),
+			req: D(80),
 			eff(x) {
 				return x.add(1).log10().div(30).add(1).min(4/3)
 			},
@@ -298,7 +298,7 @@ let AXION = {
 		11: {
 			title: "Lepton Anomaly",
 			desc: "Weaken Neutrino and Neut-Muon softcaps.",
-			req: E(5),
+			req: D(5),
 			eff(x) {
 				return x.add(4).sqrt().add(3).div(5).min(1.6)
 			},
@@ -311,7 +311,7 @@ let AXION = {
 			title: "Hypernovae",
 			desc: "Cheapen Supernovae.",
 			unl: () => GLUBALL.unl(),
-			req: E(35),
+			req: D(35),
 			eff(x) {
 				return x.div(10).add(3).log(3).div(scalingToned("supernova") ? 10 : 1).min(5)
 			},
@@ -322,7 +322,7 @@ let AXION = {
 		13: {
 			title: "Deep Challenge",
 			desc: "Increase the cap of Challenges 7, 9 - 12.",
-			req: E(1),
+			req: D(1),
 			eff(x) {
 				return x.add(1).log(2).times(25)
 			},
@@ -333,21 +333,21 @@ let AXION = {
 		14: {
 			title: "Insane Overcome",
 			desc: "Weaken Insane Challenge scaling.",
-			req: E(15),
+			req: D(15),
 			eff(x) {
-				return E(4.5).sub(x.add(1).log10().div(2)).max(1).log(4.5)
+				return D(4.5).sub(x.add(1).log10().div(2)).max(1).log(4.5)
 			},
 			effDesc(x) {
-				return format(E(1).sub(x).mul(100)) + "%"
+				return format(D(1).sub(x).mul(100)) + "%"
 			}
 		},
 		15: {
 			title: "Pent Buildup",
 			desc: "Pent scales slower.",
-			req: E(1),
+			req: D(1),
 			eff(x) {
 				return {
-					exp: E(1).add(E(0.25).div(x.add(1).cbrt())),
+					exp: D(1).add(D(0.25).div(x.add(1).cbrt())),
 					div: x.mul(2).add(1).log2().div(10).add(1)
 				}
 			},
@@ -360,7 +360,7 @@ let AXION = {
 			title: "Dyson Sphere",
 			desc: "Multiply BH Upgrade 15.",
 			unl: () => GLUBALL.unl(),
-			req: E(1),
+			req: D(1),
 			eff(x) {
 				return x.div(8).add(1).min(4)
 			},
@@ -372,7 +372,7 @@ let AXION = {
 			title: "Quasar",
 			desc: "Increase the cap of C8. [Post-600 doesn't affect BH Mass!]",
 			unl: () => GLUBALL.unl(),
-			req: E(8),
+			req: D(8),
 			eff(x) {
 				return x.add(1).cbrt().sub(1).mul(200)
 			},
@@ -384,7 +384,7 @@ let AXION = {
 			title: "Hypermassive",
 			desc: "Dilated Mass pushes evaporation farther.",
 			unl: () => GLUBALL.unl(),
-			req: E(40),
+			req: D(40),
 			eff(x) {
 				return x.div(4).add(1).log10().div(100).min(.05)
 			},
@@ -395,10 +395,10 @@ let AXION = {
 		19: {
 			title: "General Relativity",
 			desc: "Dilated Mass raises Tickspeed power.",
-			req: E(25),
+			req: D(25),
 			unl: () => GLUBALL.unl(),
 			eff(x) {
-				if (x.lte(0)) return E(1)
+				if (x.lte(0)) return D(1)
 
 				let dm = player.md.mass.max(1).log10().max(1).log10()
 				let exp = dm.div(50).pow(.6)
@@ -413,8 +413,8 @@ let AXION = {
 		20: {
 			title: "Wormhole",
 			desc: "Strengthen Challenge 12.",
-			unl: () => PRIM.unl(),
-			req: E(200),
+			unl: () => false,
+			req: D(200),
 			eff(x) {
 				return x.div(200).add(1).min(2)
 			},
@@ -423,36 +423,36 @@ let AXION = {
 			}
 		},
 		21: {
-			title: "Glueball",
-			desc: "Multiply Free Gluons.",
-			unl: () => PRIM.unl(),
-			req: E(750),
+			title: "Placeholder",
+			desc: "Placeholder.",
+			unl: () => false,
+			req: D(500),
 			eff(x) {
-				return x.div(750).add(1).cbrt()
+				return D(1)
 			},
 			effDesc(x) {
-				return formatMultiply(x)
+				return format(x)
 			}
 		},
 		22: {
-			title: "Isotopic",
-			desc: "Cosmic Argon produces faster.",
-			unl: () => PRIM.unl(),
-			req: E(750),
+			title: "Placeholder",
+			desc: "Placeholder.",
+			unl: () => false,
+			req: D(500),
 			eff(x) {
-				return x.div(1e3).add(1)
+				return D(1)
 			},
 			effDesc(x) {
-				return formatMultiply(x)
+				return format(x)
 			}
 		},
 		23: {
 			title: "Placeholder",
 			desc: "Placeholder.",
-			unl: () => PRIM.unl(),
-			req: E(1e3),
+			unl: () => false,
+			req: D(1e3),
 			eff(x) {
-				return E(1)
+				return D(1)
 			},
 			effDesc(x) {
 				return format(x)+"x"
@@ -463,31 +463,31 @@ let AXION = {
 			title: "AX-Auto",
 			desc: "Automate X/Y AXIONS.",
 			unl: () => GLUBALL.unl(),
-			req: E(8)
+			req: D(8)
 		},
 		25: {
 			title: "Monochromacy",
 			desc: "Unlock new Challenges.",
 			unl: () => GLUBALL.unl(),
-			req: E(14)
+			req: D(14)
 		},
 		26: {
 			title: "Primordia Lookback",
-			desc: "Unlock Primordiums.",
+			desc: "Unlock Primordiums. [Soon]",
 			unl: () => GLUBALL.unl(),
-			req: E(145)
+			req: D(145)
 		},
 		27: {
 			title: "Shortcut Mastery",
 			desc: "Unlock 3 more slots and Exit type for Shortcuts.",
 			unl: () => GLUBALL.unl(),
-			req: E(20)
+			req: D(20)
 		},
 	}
 }
 
 function axUpg(x) {
-	return E(player.ext.ax.upgs[x])
+	return D(player.ext?.ax?.upgs[x])
 }
 
 function updateAxionLevelTemp() {
@@ -497,7 +497,7 @@ function updateAxionLevelTemp() {
 }
 
 function updateAxionTemp() {
-	if (!EXT.unl(true)) {
+	if (!EXT.unl()) {
 		tmp.ax = {}
 		return
 	}
@@ -520,8 +520,8 @@ function updateAxionTemp() {
 	}
 
 	//BOOSTS
-	d.str = E(1)
-	if (GLUBALL.got("t6_1")) d.str = d.str.mul(GLUBALL.eff("t6_1"))
+	d.str = D(1)
+	//no strength boosts yet
 
 	d.lvl = {}
 	for (var i = 0; i < AXION.maxRows * 4; i++) d.lvl[i] = AXION.getLvl(i)

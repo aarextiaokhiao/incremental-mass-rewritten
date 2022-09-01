@@ -159,22 +159,25 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
-	let hideSome = EXT.unl()
-	elm.reset_desc.setHTML(player.reset_msg)
 	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
 
-	let unl = gameStarted() && inNGM() && !hideSome
-	elm.mg_div.setDisplay(unl)
-	if (unl) elm.mgAmt.setHTML(format(player.mg.amt,0)+"<br>"+formatGainOrGet(player.mg.amt, MAGIC.gain(), false))
+	//RESET
+	elm.reset_desc.setHTML(player.reset_msg)
 
-	unl = ((inNGM() ? player.mg.unl : player.stats.maxMass.gte(1e9)) || player.rp.unl) && !hideSome
+	let preExt = !EXT.unl()
+
+	let unl = gameStarted() && inNGM() && preExt
+	elm.mg_div.setDisplay(unl)
+	if (unl) elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
+
+	unl = (inNGM() ? MAGIC.unl() : (player.stats.maxMass.gte(1e9) || player.rp.unl)) && preExt
 	elm.rp_div.setDisplay(unl)
 	if (unl) elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 
-	unl = FORMS.bh.see() && !hideSome
+	unl = FORMS.bh.see() && preExt
 	elm.dm_div.setDisplay(unl)
 	if (unl) elm.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
-	unl = player.bh.unl && !hideSome
+	unl = player.bh.unl && preExt
 	elm.bh_div.setDisplay(unl)
 	elm.atom_div.setDisplay(unl)
 	if (unl) {
@@ -182,6 +185,29 @@ function updateUpperHTML() {
 		elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
 	}
 
+	unl = player.atom.unl && preExt
+	elm.quark_div.setDisplay(unl)
+	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
+
+	let scut = hasTree("qol_shrt")
+	elm.scut_div.setDisplay(scut)
+	elm.md_div.setDisplay(!scut && MASS_DILATION.unlocked())
+	if (scut) updateShortcuts()
+	else {
+		unl = MASS_DILATION.unlocked()
+		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+	}
+
+	unl = player.supernova.post_10
+	elm.sn_div.setDisplay(unl)
+	if (unl) elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
+
+	unl = EXT.unl(true)
+	elm.ext_div.setDisplay(unl)
+	elm.res_col2.setDisplay(!unl)
+	if (unl) elm.extAmt.setHTML(EXT.unl() ? format(EXT.rawAmt(),1) + (player.chal.comps[12].gt(0) ? "<br>" + formatGainOrGet(EXT.rawAmt(), player.ext.gain) : "") : "Click to rise Exotic!")
+
+	//CHALLENGES
 	let chal = CHALS.lastActive()
 	let md = player.md.active
 	let f = player.supernova.fermions.choosed
@@ -217,30 +243,6 @@ function updateUpperHTML() {
 			)
 		)
 	}
-
-	unl = player.atom.unl && !hideSome
-	elm.quark_div.setDisplay(unl)
-	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
-
-	let scut = hasTree("qol_shrt")
-	elm.scut_div.setDisplay(scut)
-	elm.md_div.setDisplay(!scut && MASS_DILATION.unlocked())
-	if (scut) updateShortcuts()
-	else {
-		unl = MASS_DILATION.unlocked()
-		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
-	}
-
-	unl = player.supernova.post_10
-	elm.sn_div.setDisplay(unl)
-	if (unl) elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
-
-	unl = EXT.unl(true)
-	elm.ext_div.setDisplay(unl)
-	elm.res_col2.setDisplay(!unl)
-	if (unl) elm.extAmt.setHTML(format(player.ext.amt,1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain):""))
-
-	elm.portal_div.setDisplay(PRES.unl())
 }
 
 function updateRanksHTML() {
@@ -398,7 +400,6 @@ function updateStatsHTML() {
 	elm.total_time.setTxt(formatTime(player.time))
 	elm.best_mass.setTxt(formatMass(player.stats.maxMass))
 	elm.features.setTxt(
-		PRIM.unl() ? 14 :
 		GLUBALL.unl() ? 13 :
 		AXION.unl() ? 12 :
 		hasTree("unl1") ? 11 :
@@ -432,7 +433,7 @@ function updateOptionsHTML() {
 	elm.help.setDisplay(player.options.pure!=1)
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
-	elm.chroma_bg_btn.setDisplay(GLUBALL.unl() && !PRES.unl())
+	elm.chroma_bg_btn.setDisplay(GLUBALL.unl() && !PORTAL.unl())
 	elm.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
 }
 

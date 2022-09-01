@@ -1,22 +1,22 @@
 const ATOM = {
     gain() {
-        if (CHALS.inChal(13)) return E(0)
+        if (CHALS.inChal(13)) return D(0)
         let x = player.bh.mass.div(1.5e156)
-        if (x.lt(1)) return E(0)
+        if (x.lt(1)) return D(0)
         x = x.root(5)
-        if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:E(1))
+        if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:D(1))
         if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
         if (hasElement(17)) x = x.pow(1.1)
         if (FERMIONS.onActive("10")) x = expMult(x,0.625)
         return x.floor()
     },
     quarkGain() {
-        if (CHALS.inChal(13)) return E(0)
-        if (tmp.atom.gain.lt(1)) return E(0)
+        if (CHALS.inChal(13)) return D(0)
+        if (tmp.atom.gain.lt(1)) return D(0)
         x = tmp.atom.gain.max(1).log10().pow(1.1).add(1)
-        if (hasElement(1)) x = E(1.25).pow(tmp.atom.gain.max(1).log10())
+        if (hasElement(1)) x = D(1.25).pow(tmp.atom.gain.max(1).log10())
         if (hasUpgrade('bh',13)) x = x.mul(10)
-        if (hasUpgrade('atom',8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:E(1))
+        if (hasUpgrade('atom',8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:D(1))
         if (hasRank("rank", 300)) x = x.mul(RANKS.effect.rank[300]())
         if (hasElement(6)) x = x.mul(tmp.elements.effect[6])
         if (hasElement(42)) x = x.mul(tmp.elements.effect[42])
@@ -37,33 +37,33 @@ const ATOM = {
         }
     },
     doReset(chal_reset=true) {
-        player.atom.atomic = E(0)
-        player.bh.dm = E(0)
-        player.bh.condenser = E(0)
+        player.atom.atomic = D(0)
+        player.bh.dm = D(0)
+        player.bh.condenser = D(0)
 		resetExtraBuildings("bh")
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         player.mainUpg.bh = keep
-        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = E(0)
+        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = D(0)
         FORMS.bh.doReset()
     },
     atomic: {
         gain() {
-            let x = tmp.atom.gamma_ray_eff?tmp.atom.gamma_ray_eff.eff:E(0)
+            let x = tmp.atom.gamma_ray_eff?tmp.atom.gamma_ray_eff.eff:D(0)
             if (hasElement(3)) x = x.mul(tmp.elements.effect[3])
             if (hasElement(52)) x = x.mul(tmp.elements.effect[52])
             if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             if (FERMIONS.onActive("00")) x = expMult(x,0.6)
-            if (tmp.md.active && !GLUBALL.got("p2_3")) x = MASS_DILATION.applyDil(x)
+            if (tmp.md.active) x = MASS_DILATION.applyDil(x)
             return x
         },
 		softcap() {
-			let r = E(5e4)
+			let r = D(5e4)
 			if (AXION.unl()) r = r.mul(tmp.ax.eff[1])
 			return r
 		},
 		effect() {
-			if (CHALS.inChal(14)) return E(0)
+			if (CHALS.inChal(14)) return D(0)
 			let sc = ATOM.atomic.softcap()
 			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75)
 			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0).softcap(sc.mul(800),0.25,0)
@@ -90,9 +90,9 @@ const ATOM = {
         effect() {
             let t = player.atom.gamma_ray
             if (!scalingToned("gamma_ray")) t = t.mul(tmp.radiation.bs.eff[10])
-            let pow = E(2)
-            if (hasUpgrade('atom',4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
-            if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
+            let pow = D(2)
+            if (hasUpgrade('atom',4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:D(0))
+            if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
             if (hasTree("gr1")) pow = pow.mul(treeEff("gr1"))
             if (!bosonsMastered()) pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             if (hasTree("gr2")) pow = pow.pow(1.25)
@@ -101,9 +101,8 @@ const ATOM = {
             return {pow: pow, eff: eff}
         },
         bonus() {
-			if (CHALS.inChal(14)) return E(0)
-            let x = tmp.fermions.effs[0][0]||E(0)
-            if (hasPrim("p2_0")) x = x.mul(tmp.pr.eff.p2_0)
+			if (CHALS.inChal(14)) return D(0)
+            let x = tmp.fermions.effs[0][0]||D(0)
             if (bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             return x
         },
@@ -116,7 +115,7 @@ const ATOM = {
         assign(x) {
             if (player.atom.quarks.lt(1) || this.disabled()) return
             let m = player.atom.ratio
-            let spent = m > 0 ? player.atom.quarks.mul(RATIO_MODE[m]).ceil() : E(1)
+            let spent = m > 0 ? player.atom.quarks.mul(RATIO_MODE[m]).ceil() : D(1)
             player.atom.quarks = player.atom.quarks.sub(spent).max(0)
             player.atom.particles[x] = player.atom.particles[x].add(spent)
         },
@@ -132,7 +131,7 @@ const ATOM = {
         },
 		mg12(p) {
 			if (!p) p = player.atom.particles[0].max(player.atom.particles[1].max(player.atom.particles[2]))
-			let e, m = [E(1), E(1)]
+			let e, m = [D(1), D(1)]
 			if (tmp.chal) {
 				e = tmp.chal.eff[9].exp.div(4)
 				m = tmp.chal.eff[9].mul
@@ -148,8 +147,8 @@ const ATOM = {
             return x
         },
         gain(i) {
-            let x = tmp.atom.particles[i]?tmp.atom.particles[i].effect:E(0)
-            if (hasUpgrade('atom',7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
+            let x = tmp.atom.particles[i]?tmp.atom.particles[i].effect:D(0)
+            if (hasUpgrade('atom',7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:D(1))
             return x
         },
         powerEffect: [
@@ -229,17 +228,17 @@ function updateAtomTemp() {
     tmp.atom.atomicGain = ATOM.atomic.gain()
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
-	let fp = scalingToned("gamma_ray") ? E(30) : E(1)
-	if (GLUBALL.got("s3_2")) fp = fp.div(GLUBALL.eff("s3_2"))
+	let fp = scalingToned("gamma_ray") ? D(30) : D(1)
+	//polarizer synergy
 
 	let scale = scalingInitPower("gamma_ray")
-    tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
+    tmp.atom.gamma_ray_cost = D(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
     tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).root(scale).div(fp).scaleEvery("gamma_ray", 1).add(1).floor()
-    if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = E(0)
+    if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = D(0)
 
     tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)
     tmp.atom.gamma_ray_bonus = ATOM.gamma_ray.bonus()
-    tmp.atom.gamma_ray_ss = E(1e20)
+    tmp.atom.gamma_ray_ss = D(1e20)
     if (bosonsMastered()) tmp.atom.gamma_ray_ss = tmp.atom.gamma_ray_ss.mul(tmp.bosons.upgs.gluon[1].effect)
     tmp.atom.gamma_ray_eff = ATOM.gamma_ray.effect()
 

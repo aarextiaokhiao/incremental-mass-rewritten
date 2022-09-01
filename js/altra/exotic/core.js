@@ -2,31 +2,28 @@ let EXOTIC = {
 	setup() {
 		return {
 			unl: false,
-			amt: E(0),
-			gain: E(1),
+			amt: D(0),
+			gain: D(1),
 
 			chal: {},
 			ec: 0,
 
 			toned: 0,
-			ar39: E(0),
+			ar39: D(0),
 
 			ax: AXION.setup(),
-			ch: GLUBALL.setup(),
-			pr: PRIM.setup()
+			gb: GLUBALL.setup()
 		}
 	},
 
 	unl(disp) {
-		return (disp && player.chal.comps[12].gte(1)) || player.ext.unl || PRES.unl()
+		return (disp && player.chal.comps[12].gte(1)) || player.ext?.unl || PORTAL.unl()
 	},
 	gain() {
 		let s = player.supernova.times
 			.mul(player.chal.comps[12].add(1))
 			.div(500)
 		if (hasTree("feat11")) s = s.mul(1.2)
-		if (GLUBALL.got("p1_3")) s = s.mul(GLUBALL.eff("p1_3"))
-		if (GLUBALL.got("p1_2")) s = s.mul(GLUBALL.eff("p1_2"))
 
 		let r = player.mass.max(1).log10().div(1e9).add(1).pow(s)
 		return this.amt(r)
@@ -37,8 +34,11 @@ let EXOTIC = {
 		if (hasTree("feat10")) l++
 		return l
 	},
+	rawAmt(r) {
+		return D(player.ext?.amt ?? 0)
+	},
 	amt(r) {
-		r = E(r)
+		r = D(r)
 		if (this.extLvl() >= 1) r = this.reduce(1, r)
 		if (this.extLvl() >= 2) r = this.reduce(2, r)
 		return r
@@ -49,14 +49,13 @@ let EXOTIC = {
 		return x
 	},
 	reduceAmt() {
-		player.ext.amt = EXT.reduce(EXT.extLvl(), player.ext.amt)
+		player.ext.amt = EXT.reduce(EXT.extLvl(), EXT.rawAmt())
 		player.ext.gain = EXT.reduce(EXT.extLvl(), player.ext.gain)
 	},
 	eff(r) {
-		if (!r) r = player.ext.amt
+		if (!r) r = EXT.rawAmt()
 		if (this.extLvl() >= 2) r = expMult(r, 1/0.8)
-		if (this.extLvl() >= 1) r = E(10).pow(r.div(10).root(5)).div(10)
-		if (GLUBALL.got("p1_1")) r = expMult(r,GLUBALL.eff("p1_1"))
+		if (this.extLvl() >= 1) r = D(10).pow(r.div(10).root(5)).div(10)
 		return r
 	},
 
@@ -65,17 +64,18 @@ let EXOTIC = {
 		if (!force && !can) return
 		if ((!force || restart) && player.confirms.ext && !confirm("Are you sure?")) return false
 		if (can) {
-			player.ext.amt = player.ext.amt.add(player.ext.gain)
-			if (!player.ext.unl) {
-				player.ext.unl
+			if (!player.ext) player.ext = EXT.setup()
+			if (!EXT.unl()) {
+				player.ext.unl = true
 				addPopup(POPUP_GROUPS.layer_5)
 			}
+			player.ext.amt = player.ext.amt.add(player.ext.gain)
 		}
 		EXT.doReset()
 	},
 	doReset(pres) {
 		player.ext.time = 0
-		player.ext.gain = E(1)
+		player.ext.gain = D(1)
 		player.ext.chal.f7 = true
 		player.ext.chal.f8 = true
 		player.ext.chal.f9 = true
@@ -99,46 +99,42 @@ let EXOTIC = {
 			player.supernova.tree = list_keep
 		}
 
-		player.supernova.times = E(0)
-		player.supernova.stars = E(0)
+		player.supernova.times = D(0)
+		player.supernova.stars = D(0)
 
-		for (let c = 1; c <= 12; c++) player.chal.comps[c] = E(0)
+		for (let c = 1; c <= 12; c++) player.chal.comps[c] = D(0)
 
 		player.supernova.bosons = {
-			pos_w: E(0),
-			neg_w: E(0),
-			z_boson: E(0),
-			photon: E(0),
-			gluon: E(0),
-			graviton: E(0),
-			hb: E(0),
+			pos_w: D(0),
+			neg_w: D(0),
+			z_boson: D(0),
+			photon: D(0),
+			gluon: D(0),
+			graviton: D(0),
+			hb: D(0),
 		}
 		player.supernova.b_upgs = {
-			photon: [ E(0), E(0), E(0), E(0) ],
-			gluon: [ E(0), E(0), E(0), E(0) ],
+			photon: [ D(0), D(0), D(0), D(0) ],
+			gluon: [ D(0), D(0), D(0), D(0) ],
 		}
 		player.supernova.fermions = {
 			unl: false,
-			points: [E(0),E(0)],
-			tiers: [[E(0),E(0),E(0),E(0),E(0),E(0)],[E(0),E(0),E(0),E(0),E(0),E(0)]],
+			points: [D(0),D(0)],
+			tiers: [[D(0),D(0),D(0),D(0),D(0),D(0)],[D(0),D(0),D(0),D(0),D(0),D(0)]],
 			choosed: "",
 			choosed2: "",
 			dual: player.supernova.fermions.dual
 		}
 		player.supernova.radiation = {
-			hz: E(0),
-			ds: [ E(0), E(0), E(0), E(0), E(0), E(0), E(0) ],
-			bs: [ E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0), E(0) ],
+			hz: D(0),
+			ds: [ D(0), D(0), D(0), D(0), D(0), D(0), D(0) ],
+			bs: [ D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0) ],
 		}
 		player.supernova.auto = {
 			toggle: player.supernova.auto.toggle,
 			on: -2,
 			t: 0
 		}
-
-		player.ext.pr.bp = E(0)
-		player.ext.pr.pt = E(0)
-		for (var i = 0; i < 8; i++) player.ext.pr.prim[i] = E(0)
 
 		SUPERNOVA.doReset()
 		updateTemp()
@@ -147,15 +143,17 @@ let EXOTIC = {
 	},
 
 	calc(dt) {
-		if (player.ext.amt.gt(0)) player.ext.unl = true
+		if (!player.ext) return
+		if (EXT.rawAmt().gt(0)) player.ext.unl = true
 		if (!player.ext.unl) return
 
+		player.ext.time += dt
+
+		//FEATS
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
 		if (tmp.chal.outside) player.ext.chal.f7 = false
 		if (player.supernova.fermions.choosed == "") player.ext.chal.f9 = false
 		player.ext.gain = player.ext.gain.max(this.gain())
-
-		if (hasPrim("p1_0")) player.ext.ar39 = player.ext.ar39.add(tmp.pr.eff.p1_0.mul(dt))
 
 		//AXIONS
 		player.ext.ax.res[0] = player.ext.ax.res[0].add(AXION.prod(0).mul(dt))
@@ -169,16 +167,14 @@ let EXOTIC = {
 		}
 
 		//GLUEBALLS
-		if (!player.ext.ch.unl && player.chal.comps[13].gte(9)) {
+		if (player.ext.gb.unl) GLUBALL.calc(dt)
+		else if (player.chal.comps[13].gte(9)) {
 			addPopup(POPUP_GROUPS.chroma)
-			player.ext.ch.unl = true
-		} else if (player.ext.ch.unl) GLUBALL.calc(dt)
+			player.ext.gb.unl = true
+		}
 
-		//PRIMORDIUMS
-		if (!player.ext.pr.unl && AXION.unl() && E(tmp.ax.lvl[26]).gt(0)) {
-			addPopup(POPUP_GROUPS.prim)
-			player.ext.pr.unl = true
-		} else if (player.ext.pr.unl) PRIM.calc(dt)
+		//EXTRA RESOURCES
+		player.ext.ar39 = player.ext.ar39.add(getCosmicArgonProd().mul(dt))
 	}
 }
 let EXT = EXOTIC
@@ -190,18 +186,17 @@ function updateExoticHTML() {
 		updateExoticHeader()
 		if (tmp.stab[6] == 0) updateAxionHTML()
 		if (tmp.stab[6] == 1) updateGlueballHTML()
-		if (tmp.stab[6] == 2) updatePrimHTML()
 	}
 }
 
 function updateExoticHeader() {
 	elm.extDiv2.setDisplay(tmp.stab[6] == 0)
-	elm.extAmt2.setHTML(format(player.ext.amt,1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(player.ext.amt, player.ext.gain):""))
+	elm.extAmt2.setHTML(format(EXT.rawAmt(),1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(EXT.rawAmt(), player.ext.gain):""))
 
 	elm.polarDiv.setDisplay(tmp.stab[6] == 1)
 	elm.polarEff.setHTML(format(tmp.polarize)+"x Buildings")
 
-	elm.ar39Div.setDisplay(tmp.stab[6] == 2)
+	elm.ar39Div.setDisplay(false)
 	elm.ar39Eff.setHTML("+"+format(player.ext.ar39)+"x <sup>39</sup>Ar")
 
 	elm.toneDiv.setDisplay(GLUBALL.unl())
@@ -231,9 +226,9 @@ let EXTRA_BUILDINGS = {
 		ag: () => player.atom,
 	},
 	bh2: {
-		start: E("e2e6"),
-		mul: E("ee6"),
-		pow: E(2),
+		start: D("e2e6"),
+		mul: D("ee6"),
+		pow: D(2),
 		eff(x) {
 			let r = x.times(5).add(1).log(2).div(500)
 			if (AXION.unl()) r = r.mul(tmp.ax.eff[9])
@@ -242,37 +237,36 @@ let EXTRA_BUILDINGS = {
 		dispHTML: (x) => format(x,3) + "x" + getSoftcapHTML(x, 1e12)
 	},
 	bh3: {
-		start: E("e5e8"),
-		mul: E("ee9"),
-		pow: E(3),
+		start: D("e5e8"),
+		mul: D("ee9"),
+		pow: D(3),
 		eff(x) {
-			if (x.eq(0)) return E(0)
+			if (x.eq(0)) return D(0)
 			if (AXION.unl() && tmp.bh && player.bh.mass.lt(tmp.bh.rad_ss)) x = x.pow(tmp.ax.eff[10])
 
 			let r = x.add(1).log10().add(5).div(25)
-			if (GLUBALL.got("p3_2")) r = r.add(GLUBALL.eff("p3_2"))
 			return r.softcap(1,3,1)
 		},
 		dispHTML: (x) => "^" + format(x,3) + getSoftcapHTML(x,1)
 	},
 	ag2: {
-		start: E("ee6"),
-		mul: E("e5e5"),
-		pow: E(2.5),
+		start: D("ee6"),
+		mul: D("e5e5"),
+		pow: D(2.5),
 		eff(x) {
 			//1.4 * 0.75 = 1.05
-			return x.times(tmp.atom ? tmp.atom.atomicEff : E(0)).pow(.75).div(3e3).softcap(1e11,5/6*1/1.05,0)
+			return x.times(tmp.atom ? tmp.atom.atomicEff : D(0)).pow(.75).div(3e3).softcap(1e11,5/6*1/1.05,0)
 		},
 		dispHTML: (x) => getSoftcapHTML(x, 1e11)
 	},
 	ag3: {
-		start: E("e7.5e9"),
-		mul: E("e2.5e9"),
-		pow: E(2),
+		start: D("e7.5e9"),
+		mul: D("e2.5e9"),
+		pow: D(2),
 		eff(x) {
-			if (x.eq(0)) return E(0)
+			if (x.eq(0)) return D(0)
 			let exp = x.add(1).log(3).div(100)
-			return E(tmp.atom ? tmp.atom.atomicEff : E(0)).add(1).pow(exp.min(1/20)).sub(1).mul(hasTree("rad4")?1:2/3)
+			return D(tmp.atom ? tmp.atom.atomicEff : D(0)).add(1).pow(exp.min(1/20)).sub(1).mul(hasTree("rad4")?1:2/3)
 		}
 	}
 }
@@ -308,7 +302,7 @@ function updateExtraBuildingTemp() {
 				let res = EXTRA_BUILDINGS.res[id]()
 				tmp.eb[id+b] = {
 					cost: cost,
-					gain: cost.gt(res) ? E(0) : res.div(data.start).log(data.mul).root(data.pow).add(1).floor(),
+					gain: cost.gt(res) ? D(0) : res.div(data.start).log(data.mul).root(data.pow).add(1).floor(),
 					eff: data.eff(amt),
 				}
 			}
@@ -317,13 +311,12 @@ function updateExtraBuildingTemp() {
 }
 
 function getExtraBuildings(type, x) {
-	return E(EXTRA_BUILDINGS.saves[type]()["eb"+x] || 0)
+	return D(EXTRA_BUILDINGS.saves[type]()["eb"+x] || 0)
 }
 function resetExtraBuildings(type) {
 	let s = EXTRA_BUILDINGS.saves[type]()
 	for (let b = EXTRA_BUILDINGS.start[type]; b <= EXTRA_BUILDINGS.max; b++) {
-		if (type == "bh" && b == 2 && GLUBALL.got("t2_1")) s["eb"+b] = s["eb"+b].pow(GLUBALL.eff("t2_1"))
-		else delete s["eb"+b]
+		delete s["eb"+b]
 	}
 }
 function buyExtraBuildings(type, x) {
@@ -425,18 +418,17 @@ let SHORTCUT_EDIT = {
 
 // POLARIZER
 function updatePolarizeTemp() {
-	tmp.polarize = E(1)
-	if (GLUBALL.got("s3_1")) tmp.polarize = tmp.polarize.mul(GLUBALL.eff("s3_1"))
+	tmp.polarize = D(1)
+	//it will get a new boost soon
 }
 
 // COSMIC ARGONS
 function getCosmicArgonProd() {
-	let r = E(0)
-	if (hasPrim("p2_0")) r = tmp.pr.eff.p2_0
-	if (AXION.unl()) r = r.mul(tmp.ax.eff[22])
+	let r = D(0)
+	return r
 }
 
 // TECHNICAL FUNCTIONS
 function hasQolExt9() {
-	return hasTree("qol_ext9") && player.ext.ec == 0
+	return hasTree("qol_ext9") && !player.ext.ec
 }
