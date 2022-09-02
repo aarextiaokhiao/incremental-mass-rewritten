@@ -8,16 +8,11 @@ const RANKS = {
 		if (type == "tetr" && hasTree("qol5")) return false
 		return true
 	},
-    reset(type) {
+    reset(type, bulk) {
+        if (type == "pent" && hasExtMilestone(3)) bulk = true
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
-            if (this.mustReset(type)) this.doReset[type]()
-            updateRanksTemp()
-        }
-    },
-    bulk(type) {
-        if (tmp.ranks[type].can) {
-            player.ranks[type] = player.ranks[type].add(1).max(tmp.ranks[type].bulk)
+            if (bulk) player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk)
             if (this.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
@@ -298,7 +293,7 @@ const RANKS = {
         },
         pent() {
             let f = D(5/6)
-            if (AXION.unl()) f = f.mul(tmp.ax.eff[15].div)
+            //if (AXION.unl()) f = f.mul(tmp.ax.eff[15].div)
             if (hasElement(81)) f = f.div(0.88)
             return f
         },

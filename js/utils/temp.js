@@ -137,7 +137,7 @@ function updateTemp() {
 	if (toned() == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
 
 	//Exotic
-	updateGlueballTemp()
+	//updateGlueballTemp()
 	updateAxionTemp()
 	updatePolarizeTemp()
 	updateExtraBuildingTemp()

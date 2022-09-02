@@ -56,7 +56,7 @@ const RADIATION = {
     getBoostScalingExp(i) {
 		let f2 = 1.3+i*0.05
 		if (tmp.radiation.bs.eff[17] && i % 2 == 1) f2 -= tmp.radiation.bs.eff[17][1]
-		if (AXION.unl()) f2 -= tmp.ax.eff[3].toNumber()
+		//if (AXION.unl()) f2 -= tmp.ax.eff[3].toNumber()
 		return Math.max(f2,1.25)
     },
     getLevelEffect(i) {
@@ -85,7 +85,7 @@ const RADIATION = {
 		if (!hasTree("rad3")) return 1
 		a = Math.floor(a / 3)
 		b = Math.floor(b / 3)
-        return AXION.unl() ? tmp.ax.eff[7].pow(a - b) : D(1)
+        return D(1) //AXION.unl() ? tmp.ax.eff[7].pow(a - b) : D(1)
     },
     bonusExp(a,b) {
 		if (!hasTree("rad3")) return 1

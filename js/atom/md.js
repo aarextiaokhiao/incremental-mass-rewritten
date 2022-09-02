@@ -81,16 +81,16 @@ const MASS_DILATION = {
                 effect(x) {
                     let b = 2
                     if (hasElement(25)) b++
-                    if (hasTree("ext_u1")) return D(b).pow(x)
+                    if (hasExtMilestone(9)) return D(b).pow(x)
                     return D(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)
                 },
-                effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,'e1.2e4')) },
+                effDesc(x) { return format(x,0)+"x"+(hasExtMilestone(9)?"":getSoftcapHTML(x,'e1.2e4')) },
             },{
                 desc: `Multiply dilated mass effect.`,
                 cost(x) { return D(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():D(0) },
 				effect(x) {
-					if (!hasTree("ext_u1")) x = x.mul(tmp.md.upgs[11].eff||1)
+					if (!hasExtMilestone(9)) x = x.mul(tmp.md.upgs[11].eff||1)
 					if (player.md.upgs[7].gte(1)) return x.root(1.5).mul(0.25).add(1)
 					return x.root(2).mul(0.15).add(1)
 				},
@@ -100,10 +100,10 @@ const MASS_DILATION = {
                 cost(x) { return D(10).pow(x.pow(D(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(D(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():D(0) },
 				effect(x) {
-                    if (hasTree("ext_u1")) return D(2).pow(x)
+                    if (hasExtMilestone(9)) return D(2).pow(x)
 					return D(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0)
 				},
-                effDesc(x) { return format(x,0)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,1e25)) },
+                effDesc(x) { return format(x,0)+"x"+(hasExtMilestone(9)?"":getSoftcapHTML(x,1e25)) },
             },{
                 desc: `Dilated mass strengthen Stronger.`,
                 maxLvl: 1,
@@ -157,10 +157,10 @@ const MASS_DILATION = {
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():D(0) },
 				effect(x) {
 					let r = D(2).pow(x)
-					if (!hasTree("ext_u1")) r = r.softcap(1e25,2/3,0)
+					if (!hasExtMilestone(9)) r = r.softcap(1e25,2/3,0)
 					return r
 				},
-                effDesc(x) { return format(x)+"x"+(hasTree("ext_u1")?"":getSoftcapHTML(x,1e25)) },
+                effDesc(x) { return format(x)+"x"+(hasExtMilestone(9)?"":getSoftcapHTML(x,1e25)) },
             },{
                 unl() { return player.supernova.times.gte(1) },
                 desc: `Add 0.015 Mass Dilation upgrade 6's base.`,
@@ -171,7 +171,7 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,0.2) },
             },{
-                unl() { return player.supernova.post_10 && !hasTree("ext_u1") },
+                unl() { return player.supernova.post_10 && !hasExtMilestone(9) },
                 desc: `Strengthen first 3 upgrades.`,
                 cost(x) { return D(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():D(0) },

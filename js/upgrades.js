@@ -19,7 +19,7 @@ const UPGS = {
         buy(x, manual=false) {
             let cost = manual ? this.getData(x).cost : tmp.upgs.mass[x].cost
             if (player.mass.gte(cost)) {
-                if (!hasUpgrade('bh',1) && !hasTree("qol_ext5")) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh',1) && !hasExtMilestone(2)) player.mass = player.mass.sub(cost)
                 if (!player.massUpg[x]) player.massUpg[x] = D(0)
                 player.massUpg[x] = player.massUpg[x].add(1)
             }
@@ -30,7 +30,7 @@ const UPGS = {
             if (player.mass.gte(cost)) {
                 if (!player.massUpg[x]) player.massUpg[x] = D(0)
                 player.massUpg[x] = player.massUpg[x].max(bulk.floor().max(player.massUpg[x].plus(1)))
-                if (!hasUpgrade('bh',1) && !hasTree("qol_ext5")) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh',1) && !hasExtMilestone(2)) player.mass = player.mass.sub(cost)
             }
         },
         getData(i) {
@@ -439,7 +439,7 @@ const UPGS = {
                 cost: D('e420'),
                 effect() {
                     let ret = player.atom.atomic.add(1).log(5)
-                    if (AXION.unl()) ret = ret.mul(tmp.ax.eff[16])
+                    //if (AXION.unl()) ret = ret.mul(tmp.ax.eff[16])
                     return ret.floor()
                 },
                 effDesc(x=this.effect()) {

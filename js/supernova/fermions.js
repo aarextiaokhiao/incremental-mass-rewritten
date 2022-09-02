@@ -299,13 +299,13 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return D(1)
 					let sc = D(0.25)
-					if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
+					//if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
                     let x = i.max(1).log10().add(1).mul(t).div(200).add(1).softcap(1.5,0.5,0).softcap(20,sc,0)
                     return x
                 },
                 desc(x) {
 					let sc = D(0.25)
-					if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
+					//if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
                     return `Cheapen Tiers by ${format(x)}x.`+getSoftcapHTML(x,1.5,sc)
                 },
                 inc: "Collapsed Star",
@@ -327,7 +327,7 @@ const FERMIONS = {
 					if (FERMIONS.onActive(14)) return D(1)
 					if (t.eq(0)) return D(1)
 					let sc = D(0.25)
-					if (AXION.unl()) sc = tmp.ax.eff[11].mul(sc)
+					//if (AXION.unl()) sc = tmp.ax.eff[11].mul(sc)
                     return t.add(1).times(i.div(1e30).add(1).log10()).div(400).add(1).softcap(2.5, sc, 0)
                 },
                 desc(x) {
@@ -353,7 +353,7 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return D(0)
                     let x = i.add(1).log10().times(t.add(1).log10()).add(1).log10().div(20)
-			        if (AXION.unl()) x = x.mul(tmp.ax.eff[5])
+			        //if (AXION.unl()) x = x.mul(tmp.ax.eff[5])
                     return x.softcap(2,4,3)
                 },
                 desc(x) {
@@ -457,7 +457,7 @@ function updateFermionsHTML() {
             elm[id+"_div"].setDisplay(unl)
 
             if (unl) {
-                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasQolExt9() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
+                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasExtMilestone13() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
                 elm[id+"_nextTier"].setHTML(max ? "" : "Next at: " + fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])) + `<br>(Increased by ${f.inc})<br><br>`)
                 elm[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x))
                 elm[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(D(tmp.fermions.maxTier[i][x]).lt(EINF) && !max ? " / " + format(tmp.fermions.maxTier[i][x],0) : ""))

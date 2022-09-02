@@ -59,7 +59,7 @@ const ATOM = {
         },
 		softcap() {
 			let r = D(5e4)
-			if (AXION.unl()) r = r.mul(tmp.ax.eff[1])
+			//if (AXION.unl()) r = r.mul(tmp.ax.eff[1])
 			return r
 		},
 		effect() {
@@ -74,7 +74,7 @@ const ATOM = {
         buy() {
 			if (CHALS.inChal(14)) return
             if (tmp.atom.gamma_ray_can) {
-                if (!hasTree("qol_ext5")) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                if (!hasExtMilestone(2)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
                 player.atom.gamma_ray = player.atom.gamma_ray.add(1)
             }
         },
@@ -82,7 +82,7 @@ const ATOM = {
 			if (CHALS.inChal(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
-                if (!hasTree("qol_ext5")) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                if (!hasExtMilestone(2)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
             }
 			buyExtraBuildings("ag",2)
 			buyExtraBuildings("ag",3)
@@ -141,9 +141,9 @@ const ATOM = {
         effect(i) {
             let p = player.atom.particles[i]
             let x = p.pow(2)
-            if (hasElement(12) && !hasTree("ext_u3")) x = p.pow(this.mg12(p))
-			if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
-            if (!hasTree("ext_u3")) x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
+            if (hasElement(12) && !hasExtMilestone(11)) x = p.pow(this.mg12(p))
+			//if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
+            if (!hasExtMilestone(11)) x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
             return x
         },
         gain(i) {
@@ -292,7 +292,7 @@ function updateAtomHTML() {
         elm["particle_"+x+"_assign"].setDisplay(!EXT.unl())
         elm["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
         elm["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
-        elm["particle_"+x+"_sc"].setHTML(hasTree("ext_u3") ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
+        elm["particle_"+x+"_sc"].setHTML(hasExtMilestone(11) ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
         elm["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain))
         elm["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
     }

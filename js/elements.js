@@ -189,7 +189,7 @@ function updateUpperHTML() {
 	elm.quark_div.setDisplay(unl)
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
-	let scut = hasTree("qol_shrt")
+	let scut = hasExtMilestone(8)
 	elm.scut_div.setDisplay(scut)
 	elm.md_div.setDisplay(!scut && MASS_DILATION.unlocked())
 	if (scut) updateShortcuts()

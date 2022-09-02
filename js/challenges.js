@@ -12,8 +12,8 @@ function updateChalHTML() {
         let max = player.chal.comps[x].gte(tmp.chal.max[x])
         let chal = CHALS[x]
         let unl = chal.unl ? chal.unl() : true
-        if (x <= 8 && hasTree("qol_ext8")) unl = false
-        if (x <= 11 && hasQolExt9()) unl = false
+        if (x <= leastManualChal()) unl = false
+
         elm["chal_div_"+x].setDisplay(unl)
         elm["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: max})
         if (unl) {
@@ -155,8 +155,8 @@ const CHALS = {
         if (hasElement(56) && (i==8)) x = x.add(200)
         if (hasElement(65) && (i==7||i==8)) x = x.add(200)
         if (hasTree("chal1") && (i==7||i==8)) x = x.add(100)
-        if (AXION.unl() && (i==7||i>=9&&i<=12)) x = x.add(tmp.ax.eff[13])
-		if (AXION.unl() && i==8) x = x.add(tmp.ax.eff[17])
+        //if (AXION.unl() && (i==7||i>=9&&i<=12)) x = x.add(tmp.ax.eff[13])
+		//if (AXION.unl() && i==8) x = x.add(tmp.ax.eff[17])
         return x.floor()
     },
     getScaleName(i) {
@@ -178,7 +178,7 @@ const CHALS = {
     },
     getPower2(i) {
         let x = D(1)
-        if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
+        //if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
         return x
     },
     getPower2Start(i) {
@@ -491,10 +491,10 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	13: {
-		unl() { return hasTree("chal8") || PORTAL.unl() },
+		unl() { return hasExtMilestone(8) || PORTAL.unl() },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
-		reward: `Weaken Axion penalties.<br><span class="ch_color">On 9th completion, unlock Glueballs!</span>`,
+		reward: `Weaken Axion penalties.<br><span class="ch_color">On 9th completion, unlock Glueball and Chroma Tonings!</span>`,
 		max: D(100),
 		inc: D(11/9),
 		pow: D(1.15),
@@ -505,7 +505,7 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	14: {
-		unl() { return (AXION.unl() && tmp.ax.lvl[25].gt(0)) || PORTAL.unl() },
+		unl() { return player.chal.comps[13].gt(0) || PORTAL.unl() },
 		title: "Monochromatic Mass",
 		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
 		reward: `Raise Challenge 10 and add Free Gluons.`,

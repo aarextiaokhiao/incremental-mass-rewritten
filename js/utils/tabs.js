@@ -53,8 +53,9 @@ const TABS = {
 		],
 		6: [
 			{ id: "Axions" },
-			{ id: "Glueball", unl() { return player.ext.gb.unl || PORTAL.unl() }, style: "ch" },
-			{ id: "Milestones", unl() { return player.ext.gb.unl || PORTAL.unl() } }
+			/*{ id: "Glueball", unl() { return player.ext.gb.unl }, style: "ch" },
+			{ id: "Primordiums", unl() { return player.ext.pr.unl }, style: "ch" },*/
+			{ id: "Milestones" }
 		],
 	},
 }

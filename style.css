@@ -680,35 +680,33 @@ h2 {
 	background: repeating-linear-gradient(45deg, transparent, #ff003f, #ff3f00, transparent 75%);
 }
 
-td.ax {
-	min-width: 60px;
-	min-height: 60px;
-	max-width: 60px;
-	max-height: 60px;
-	padding: 6px
+.milestones div {
+	height: 120px;
+	width: 480px;
+
+	background: black;
+	border-left: 2px solid #f30;
+	border-right: 2px solid #f07;
+
+	color: #311;
 }
 
-.btn_ax {
-	background-color: black;
-	border: solid 2px white;
-	width: 60px;
-	height: 60px;
-	padding: 0;
+.milestones div.bought {
+	background: green;
+	box-shadow: -3px 0 6px #f30, 3px 0 6px #f07;
+	color: #7f7
 }
 
-.btn_ax.normal {
-	background-color: #333
+.milestones div .milestoneReq {
+	font-size: 24px
 }
 
-.btn_ax.normal:hover {
-	background-color: grey
+.milestones div .milestoneEff {
+	font-size: 10px
 }
 
-.btn_ax:not(.bonus).locked {
-	border-color: #333;
-}
-.btn_ax.bonus {
-	border-color: #0f0;
+.milestones div.bought .milestoneReq {
+	color: #ff3f00
 }
 
 .ch_color {

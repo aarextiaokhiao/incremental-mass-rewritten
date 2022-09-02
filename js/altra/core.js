@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "9/1/22a"
-let betaVerNum = 220901.0
+let betaVer = "9/1/22b"
+let betaVerNum = 220901.1
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -45,28 +45,33 @@ function gtAPVer(a, b) {
 	return false
 }
 
+function gteAPVer(a, b) {
+	a = getAPVer(a)
+	b = getAPVer(b)
+
+	for (var i in a) {
+		if (a[i] > b[i]) return true
+		if (a[i] < b[i]) return false
+	}
+	return true
+}
+
 function checkAPVers() {
-	if (gtAPVer("0.5.1", player.ap_ver)) {
-		//Old system: Number
-		if (player.ap_ver < 1.001) {
-			player.ext.ax.res[2] = D(0)
-			for (var i = 8; i < 12; i++) player.ext.ax.upgs[i] = D(0)
-		}
-		if (player.ap_ver < 1.002 && player.ext?.ch?.tones) {
-			if (player.ext.ch.tones[0]) player.ext.toned = 1
-			if (player.ext.ch.tones[1]) player.ext.toned = 2
-			if (player.ext.ch.tones[2]) {
-				alert("Due to reworks of toning, you need to rise Exotic! ~ Aarex")
-				EXT.reset(true)
+	if (gteAPVer("0.5.1", player.ap_ver)) {
+		if (player.ap_build < 220901.1 && player.ext) {
+			alert("Due to a big rebalance, you have to go back to the beginning of Exotic!")
+			player.ext = EXT.setup()
+			player.ext.amt = D(1)
+			player.ext.unl = true
 
-				player.chal.comps[13] = D(20)
-				player.chal.comps[14] = D(4)
+			player.supernova.tree = ["c"]
+			delete player.chal.comps[13]
+			delete player.chal.comps[14]
+			delete player.chal.comps[15]
+			delete player.chal.comps[16]
 
-				player.ext.amt = player.ext.amt.min(EXT.amt("e3e4"))
-				for (var i = 0; i < 2; i++) player.ext.ax.res[i] = D(0)
-				for (var i = 0; i < 12; i++) player.ext.ax.upgs[i] = D(3)
-				player.ext.toned = 3
-			}
+			resetTemp()
+			EXT.reset(true)
 		}
 	}
 	if (gtAPVer(currentAPVer, player.ap_ver)) addPopup(POPUP_GROUPS.ap_update)
@@ -108,7 +113,8 @@ function skipToRadiation() {
 function setupAltraHTML() {
 	//Exotic
 	setupAxionHTML()
-	setupGlueballHTML()
+	setupExtMilestonesHTML()
+	//setupGlueballHTML()
 }
 
 function updateAarex(toggle) {
@@ -143,8 +149,6 @@ let PORTAL = {
 	doReset() {
 		player.ext.amt = D(0)
 		player.ext.toned = 0
-		for (var i = 0; i < 3; i++) player.ext.ax.res[i] = D(0)
-		for (var i = 0; i < 12; i++) player.ext.ax.upgs[i] = D(0)
 
 		player.supernova.tree = ["c", "eb1", "eb2"]
 		for (var i = 1; i <= 11; i++) player.supernova.tree.push("feat"+i)

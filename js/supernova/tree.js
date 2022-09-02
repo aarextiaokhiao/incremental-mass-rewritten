@@ -3,7 +3,6 @@ const TREE_TAB = [
     {title: "Quality of Life"},
     {title: "Challenge"},
     {title: "Post-Supernova", unl() { return player.supernova.post_10 } },
-    {title: "Exotic", unl() { return EXT.unl() } },
     {title: "Feats", unl() { return hasTree("rad1") || EXT.unl() } },
 ]
 
@@ -13,39 +12,33 @@ const TREE_IDS = [
 		['qol1','qol2','qol3','qol4'],
 		['chal1'],
 		['','bs1','','','unl1','rad1'],
-		['eb1','eb2','ext_u1','ext_u2'],
 		['feat1','feat2','feat3','feat4','feat5'],
 	],[
 		['s1','m1','rp1','bh1','sn1'],
 		['qol7','qol6','qol5'],
 		['chal2','chal4a','chal3'],
 		['bs4','bs2','fn1','bs3','','','rad2','rad3'],
-		['','','ext_c','','ext_u3'],
 		['feat6','feat7','feat8','feat9','feat10'],
 	],[
 		['s2','m2','t1','d1','bh2','gr1','sn2'],
 		['qol8','qol9','qol10'],
-		['chal4','chal8'],
+		['chal4'],
 		['fn3','fn4','fn2','fn5','','','rad4','rad5'],
-		["ext_l1","","ext_b1"],
 		['feat11','feat12'],
 	],[
 		['s3','m3','gr2','sn3'],
-		['qol_ext1','qol_ext2','qol_ext3','qol_ext4','qol_ext5'],
+		[],
 		['chal5','chal6','chal7'],
 		['','fn6','fn7','fn8','','','',''],
-		["ext_l2","ext_l3","ext_e1","ext_b2","ext_b3"],
 		[],
 	],[
 		['s4','sn5','sn4'],
-		['qol_ext6','qol_ext7','qol_ext8','qol_ext9','qol_ext10'],
 		[],
 		[],
-		["ext_l4","ext_l5"],
+		['eb1', 'eb2'],
 		[],
 	],[
 		[],
-		['', '', 'qol_shrt', '', 'qol_ext11'],
 		[],
 		[],
 		[],
@@ -66,7 +59,6 @@ const TREE_UPGS = {
     ids: {
         c: {
             desc: `Start generating 0.1 Neutron Stars per second. (no offline)`,
-			perm: 2,
             cost: D(0),
         },
         sn1: {
@@ -143,7 +135,6 @@ const TREE_UPGS = {
         t1: {
             branch: ["m1", 'rp1'],
 			req() {
-				if (hasTree("qol_ext1")) return true
 				return player.supernova.chal.noTick && player.mass.gte(D("1.5e1.650056e6").pow(hasTree('bh2')?1.46:1))
 			},
             reqDesc() {return `Reach ${formatMass(D("1.5e1.650056e6").pow(hasTree('bh2')?1.46:1))} without buying Tickspeed in Supernova run. You can still obtain Tickspeed from Cosmic Rays.`},
@@ -173,7 +164,6 @@ const TREE_UPGS = {
         bh2: {
             branch: ['bh1'],
 			req() {
-				if (hasTree("qol_ext1")) return true
 				return player.supernova.chal.noBHC && player.bh.mass.gte("1.5e1.7556e4")
 			},
             reqDesc() {return `Reach ${format("e1.75e4")} uni of black hole without buying any BH Condenser in Supernova run.`},
@@ -274,7 +264,6 @@ const TREE_UPGS = {
         chal2: {
             branch: ["chal1"],
             req() {
-				if (hasTree("qol_ext1")) return true
                 for (let x = 1; x <= 4; x++) if (player.chal.comps[x].gte(1)) return false
                 return player.mass.gte(D('e2.05e6').mul(1.5e56))
             },
@@ -285,7 +274,6 @@ const TREE_UPGS = {
         chal3: {
             branch: ["chal1"],
             req() {
-				if (hasTree("qol_ext1")) return true
                 for (let x = 5; x <= 8; x++) if (player.chal.comps[x].gte(1)) return false
                 return player.bh.mass.gte(D('e1.75e4').mul(1.5e56))
             },
@@ -379,7 +367,7 @@ const TREE_UPGS = {
         },
         fn2: {
             branch: ["fn1"],
-            req() { return hasTree("qol_ext1") || (player.mass.div('1.5e56').gte("ee6") && player.md.active && FERMIONS.onActive("01")) },
+            req() { return player.mass.div('1.5e56').gte("ee6") && player.md.active && FERMIONS.onActive("01") },
             reqDesc() { return `Reach ${formatMass(D('e1e6').mul(1.5e56))} while dilating mass in [Down]` },
             desc: `Unlock 2 new types of U-Quark & U-Fermion.`,
             cost: D(1e33),
@@ -400,14 +388,14 @@ const TREE_UPGS = {
         fn5: {
             unl() { return hasTree("fn2") },
             branch: ["fn1"],
-            req() { return hasTree("qol_ext1") || (player.atom.quarks.gte("e12500") && FERMIONS.onActive("10")) },
+            req() { return player.atom.quarks.gte("e12500") && FERMIONS.onActive("10") },
             reqDesc() { return `Reach ${format("e12500")} quarks while in [Electron]` },
             desc: `[Electron] max tier is increased by 35. Its effect softcap is weaker.`,
             cost: D(1e42),
         },
         fn6: {
             branch: ["fn2"],
-            req() { return hasTree("qol_ext1") || (player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS.inChal(5)) },
+            req() { return player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS.inChal(5) },
             reqDesc() { return `Reach ${formatMass(uni("e4e4"))} while in [Charm] & Challenge 5.` },
             desc: `Unlock 2 new more types of U-Quark & U-Fermion.`,
             cost: D(1e48),
@@ -509,22 +497,14 @@ const TREE_UPGS = {
             unl() { return EXT.unl() },
             desc: `Unlock Black Hole and Atomic Buildings #2.`,
             cost: D(1e10),
-			perm: 2,
+			perm: 1,
         },
         eb2: {
 			branch: ["eb1"],
             desc: `Unlock Black Hole and Atomic Buildings #3.`,
             cost: D(1e200),
-			perm: 2,
-        },
-		chal8: {
-			branch: ["chal7"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e32)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e32)) + " Exotic Matter." },
-			desc: `Unlock the introduction challenge of the Exotic side, Challenge 13.`,
-			cost: D(0),
 			perm: 1,
-		},
+        },
 		rad5: {
 			unl() { return EXT.unl() },
 			branch: ["rad3"],
@@ -536,196 +516,6 @@ const TREE_UPGS = {
 			effDesc(x) {
 				return "n -> " + format(x) + "n^2.5"
 			},
-		},
-		ext_c: {
-			branch: ["eb2"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e5)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e5)) + " Exotic Matter." },
-			desc: `Start producing Y-Axions based on Supernovae.`,
-			cost: D("3.333e333"),
-		},
-		ext_l1: {
-			branch: ["ext_c"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e8)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e8)) + " Exotic Matter." },
-			desc: `Axion Levels increase costs 20% slower.`,
-			cost: D("1e400"),
-		},
-		ext_l2: {
-			branch: ["ext_l1"],
-			req() { return EXT.rawAmt().gte(EXT.amt(hasTree("ext_l3") ? 1e40 : 1e11)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l3") ? 1e40 : 1e11)) + " Exotic Matter. [increased with ext_l3]" },
-			desc: `Axion Levels synergize with ones from the other side.`,
-			cost: D(0),
-			icon: "ext_l",
-		},
-		ext_l3: {
-			branch: ["ext_l1"],
-			req() { return EXT.rawAmt().gte(EXT.amt(hasTree("ext_l2") ? 1e40 : 1e11)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_l2") ? 1e40 : 1e11)) + " Exotic Matter. [increased with ext_l2]" },
-			desc: `Axion Levels cheapen the nearest ones.`,
-			cost: D(0),
-			icon: "ext_l",
-		},
-		ext_l4: {
-			branch: ["ext_l2", "ext_l3"],
-			req() { return hasTree("ext_l2") && hasTree("ext_l3") },
-			reqDesc() { return "Get 'ext_l2' and 'ext_l3' upgrades." },
-			desc: `Axion Levels cheapen ones on the right / underneath.`,
-			cost: D("1e1800"),
-			icon: "ext_l",
-		},
-		ext_l5: {
-			unl() { return GLUBALL.unl() },
-			branch: ["ext_l4"],
-			req() { return EXT.rawAmt().gte(EXT.amt("e2e3")) },
-			reqDesc() { return "Get " + format(EXT.amt("e2e3")) + " Exotic Matter." },
-			desc: `Exotic Matter weakens Axion Upgrades.`,
-            effect() {
-                return EXT.eff().add(1).log10().div(5e3).add(1).log10().div(6).add(1).min(3)
-            },
-            effDesc(x) { return formatMultiply(x) },
-			cost: D("1e4500"),
-		},
-		ext_b1: {
-			unl() { return hasTree("ext_l2") || hasTree("ext_l3") },
-			branch: ["ext_c"],
-			req() { return EXT.rawAmt().gte(EXT.amt(3e23)) },
-			reqDesc() { return "Get " + format(EXT.amt(3e23)) + " Exotic Matter." },
-			desc: `Row-4 levels synergize with row-1 levels.`,
-			cost: D(0),
-		},
-		ext_b2: {
-			unl() { return GLUBALL.unl() },
-			branch: ["ext_b1"],
-			req() { return EXT.rawAmt().gte(EXT.amt(hasTree("ext_b3") ? "e600" : 1e150)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b3") ? "e600" : 1e150)) + " Exotic Matter." },
-			desc: `X Axion Upgrades multiply levels.`,
-			cost: D(0),
-		},
-		ext_b3: {
-			unl() { return GLUBALL.unl() },
-			branch: ["ext_b1"],
-			req() { return EXT.rawAmt().gte(EXT.amt(hasTree("ext_b2") ? "e600" : 1e150)) },
-			reqDesc() { return "Get " + format(EXT.amt(hasTree("ext_b2") ? "e600" : 1e150)) + " Exotic Matter." },
-			desc: `Y Axion Upgrades multiply levels.`,
-			cost: D(0),
-		},
-		ext_e1: {
-			unl() { return GLUBALL.unl() },
-			branch: ["ext_c"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e65)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e65)) + " Exotic Matter." },
-			desc: `Start producing Z-Axions. <span class='scarlet'>[Z-Axion Upgrades multiply!]</span>`,
-			cost: D(0),
-		},
-		ext_u1: {
-			unl() { return EXT.unl() },
-			branch: ["ext_c"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e15)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e15)) + " Exotic Matter." },
-			desc: `Cleanse softcaps of MD Upgrades 1, 3, and 8; but nullify MD Upgrade 12.`,
-			cost: D(0),
-			perm: 2,
-		},
-		ext_u2: {
-			unl() { return EXT.unl() },
-			branch: ["ext_u1"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e50)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e50)) + " Exotic Matter." },
-			desc: `Square Argon-18, but boosts Tickspeed Power instead.`,
-			cost: D(0),
-			perm: 2,
-		},
-		ext_u3: {
-			unl() { return EXT.unl() },
-			branch: ["ext_u2"],
-			req() { return EXT.rawAmt().gte(EXT.amt(1e280)) },
-			reqDesc() { return "Get " + format(EXT.amt(1e280)) + " Exotic Matter." },
-			desc: `Remove Mg-12, but rebalance Particles. [Bring Particle Powers back to glory]`,
-			cost: D(0),
-			perm: 2,
-		},
-		qol_ext1: {
-			unl() { return EXT.unl() },
-			req() { return player.supernova.times.gte(1) },
-			reqDesc() { return `${format(1,0)} Supernovae` },
-			desc: `Skip requirements for several Supernova upgrades.`,
-			cost: D(2000),
-			icon: "qol_ext"
-		},
-		qol_ext2: {
-			branch: ["qol_ext1"],
-			req() { return EXT.rawAmt().gte(EXT.amt(10)) },
-			reqDesc() { return format(EXT.amt(10)) + " Exotic Matter" },
-			desc: `Reduce the auto-sweeper threshold to 10, and auto-sweep Challenge 12.`,
-			cost: D(1e100),
-			icon: "qol_ext"
-		},
-		qol_ext3: {
-			branch: ["qol_ext1"],
-			desc: `Radiation Boosters are fully automated for at least 100,000 radiation.`,
-			cost: D(1e185),
-			icon: "qol_ext"
-		},
-		qol_ext4: {
-			branch: ["qol_ext1"],
-			req() {
-				let sum = D(0)
-				for (var i = 1; i <= CHALS.cols; i++) sum = sum.add(player.chal.comps[i])
-				return sum.round().gte(6e3)
-			},
-			reqDesc: `Get 6,000 challenge completions.`,
-			desc: `Keep the 'chal' upgrades and decrease auto-Sweeper threshold to 0. [Exotic doesn't keep completions!]`,
-			cost: D(1e200),
-			icon: "qol_ext"
-		},
-		qol_ext5: {
-			branch: ["qol_ext1"],
-			desc: `Keep the core Supernova upgrades. Buildings no longer spend anything.`,
-			cost: D(1e170),
-			icon: "qol_ext"
-		},
-		qol_ext6: {
-			branch: ["qol_ext1"],
-			desc: `Keep the Boson - Fermion upgrades.`,
-			cost: D(1e250),
-			icon: "qol_ext"
-		},
-		qol_ext7: {
-			branch: ["qol_ext1"],
-			desc: `Keep the Radiation upgrades.`,
-			cost: D("1e400"),
-			icon: "qol_ext"
-		},
-		qol_ext8: {
-			branch: ["qol_ext1"],
-			desc: `Automatically gain C1 - 8 completions without entering.`,
-			cost: D("1e800"),
-			icon: "qol_ext"
-		},
-		qol_ext9: {
-			branch: ["qol_ext8"],
-			desc: `Outside of Exotic Challenges, automatically complete Challenges and Up - Top Quarks.`,
-			cost: D("e1e7"),
-			icon: "qol_ext"
-		},
-		qol_ext10: {
-			branch: ["qol_ext5"],
-			desc: `Gain Supernovae at least 30% more, passively during a sweep.`,
-			cost: D("1e2500"),
-			icon: "qol_ext"
-		},
-		qol_ext11: {
-			branch: ["qol_ext4"],
-			desc: `You can stay in Mass Dilation on reset.`,
-			cost: D("1e1e4"),
-			icon: "qol_ext"
-		},
-		qol_shrt: {
-			branch: ["qol_ext1"],
-			desc: `Unlock Shortcuts.`,
-			cost: D("1e300"),
 		},
 
 		/* FEATS */

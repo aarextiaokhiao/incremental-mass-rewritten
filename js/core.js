@@ -20,7 +20,7 @@ function calc(dt, dt_offline) {
 	if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
-		if (RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.bulk(rn)
+		if (RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.reset(rn, true)
 	}
 	for (let x = 1; x <= UPGS.main.cols; x++) {
 		let id = UPGS.main.ids[x]
@@ -148,13 +148,13 @@ const FORMS = {
 		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.inChal(2) && !CHALS.inChal(6) && !CHALS.inChal(10) },
 		buy() {
 			if (this.can()) {
-				if (!hasUpgrade('atom',2) && !hasTree("qol_ext5")) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasExtMilestone(2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = player.tickspeed.add(1)
 			}
 		},
 		buyMax() { 
 			if (this.can()) {
-				if (!hasUpgrade('atom',2) && !hasTree("qol_ext5")) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasExtMilestone(2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = tmp.tickspeedBulk
 			}
 		},
@@ -174,15 +174,15 @@ const FORMS = {
 				step = step.mul(tmp.md.mass_eff)
 			step = step.mul(tmp.bosons.effect.z_boson[0])
 			if (hasTree("t1")) step = step.pow(1.15)
-			if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
-			if (hasTree("ext_u2") && hasElement(18)) step = step.pow(tmp.elements.effect[18])
+			//if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
+			if (hasExtMilestone(10) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = D(1e50).mul(tmp.radiation.bs.eff[13])
 			if (scalingToned("tickspeed")) ss = EINF
 			else if (scalingToned("tickspeed")) step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
-			if (!hasTree("ext_u2") && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (!hasExtMilestone(10) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
             if (bosonsMastered()) eff = eff.pow(tmp.bosons.upgs.photon[0].effect)
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
@@ -297,14 +297,14 @@ const FORMS = {
 			buy() {
 				if (CHALS.inChal(14)) return
 				if (this.can()) {
-					if (!hasTree("qol_ext5")) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone(2)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
 				if (CHALS.inChal(14)) return
 				if (this.can()) {
-					if (!hasTree("qol_ext5")) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone(2)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
 				}
 				buyExtraBuildings("bh",2)
@@ -335,11 +335,11 @@ const FORMS = {
 		radSoftStart() {
 			let r = player.md.mass
 			let exp = 0.92
-			if (AXION.unl()) exp += tmp.ax.eff[18]
+			//if (AXION.unl()) exp += tmp.ax.eff[18]
 
 			r = expMult(r, exp).pow(1e3)
 			if (hasElement(80)) r = r.pow(2)
-			if (AXION.unl()) r = r.pow(tmp.ax.eff[8])
+			//if (AXION.unl()) r = r.pow(tmp.ax.eff[8])
 			return r
 		}
 	},

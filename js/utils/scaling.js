@@ -270,7 +270,7 @@ function scalingInitPower(name) {
 		return 2
 	}
 	if (name == "pent") {
-		if (AXION.unl()) return tmp.ax.eff[15].exp
+		//if (AXION.unl()) return tmp.ax.eff[15].exp
 		return 1.25
 	}
 	if (BUILDINGS.includes(name) && scalingToned(name)) return TONES.power(1)
@@ -385,7 +385,7 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			power = power.mul(tmp.chal?tmp.chal.eff[1].tick:1)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(15)) power = power.mul(0.8)
@@ -413,7 +413,7 @@ function getScalingPower(type, name) {
 			if (hasUpgrade('bh',12)) power = power.mul(0.85)
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -430,7 +430,7 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
-			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -445,11 +445,11 @@ function getScalingPower(type, name) {
 	if (type=="meta") {
 		if (name=="rank") {
 			if (hasRank("pent", 4)) power = power.mul(RANKS.effect.pent[4]())
-			if (AXION.unl()) power = power.div(tmp.ax.eff[6].eff)
+			//if (AXION.unl()) power = power.div(tmp.ax.eff[6].eff)
 		}
 		if (name=='tickspeed') {
 			if (hasRank("pent", 5)) power = power.mul(RANKS.effect.pent[5]())
-			if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}
 	return power
