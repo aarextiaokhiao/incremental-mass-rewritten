@@ -406,10 +406,10 @@ function formatGain(amt, gain, isMass=false, main=false) {
 
 function formatGet(a, g, always) {
 	g = g.max(0)
-	if (g.lte(always ? 0 : a.div(1e-4))) return ""
+	if (g.div(a).lt(0.005)) return ""
 	return "(" + (
 		a.gte("e100") && g.log(a).gte(1.1) ? "^" + format(g.log(a), 3) :
-		a.gte(100) && g.div(a).gte(0.1) ? formatMultiply(g.div(a).add(1)) :
+		a.gte(100) && g.div(a).gte(10) ? formatMultiply(g.div(a).add(1)) :
 		"+" + format(g,0)
 	) + ")"
 }

@@ -11,7 +11,7 @@ function loop() {
 
 function calc(dt, dt_offline) {
 	//PRE-DARK MATTER
-	player.mass = player.mass.add(tmp.massGain.mul(dt))
+	player.mass = addProdWorth(player.mass, "mass", dt)
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
 	if (GLUBALL.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
@@ -33,18 +33,7 @@ function calc(dt, dt_offline) {
 	if (hasUpgrade('atom',6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
 	if (player.bh.unl && tmp.pass) {
 		if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
-		player.bh.mass = player.bh.mass.add(tmp.bh.mass_gain.mul(dt))
-		if (player.bh.eb2 && player.bh.eb2.gt(0)) {
-			var pow = tmp.eb.bh2 ? tmp.eb.bh2.eff : D(0.001)
-			var log = tmp.eb.bh3 ? tmp.eb.bh3.eff : D(.1)
-			var ss = tmp.bh.rad_ss
-			var logProd = tmp.bh.mass_gain.max(10).softcap(ss,0.5,2).log10()
-
-			var newMass = player.bh.mass.log10().div(logProd).root(log)
-			newMass = newMass.add(pow.mul(dt))
-			newMass = D(10).pow(newMass.pow(log).mul(logProd))
-			if (newMass.gt(player.bh.mass)) player.bh.mass = newMass
-		}
+		player.bh.mass = addProdWorth(player.bh.mass, "bh", dt)
 	}
 
 	if (player.mass.gte(1.5e136)) player.chal.unl = true
@@ -148,13 +137,13 @@ const FORMS = {
 		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.inChal(2) && !CHALS.inChal(6) && !CHALS.inChal(10) },
 		buy() {
 			if (this.can()) {
-				if (!hasUpgrade('atom',2) && !hasExtMilestone(2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 3)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = player.tickspeed.add(1)
 			}
 		},
 		buyMax() { 
 			if (this.can()) {
-				if (!hasUpgrade('atom',2) && !hasExtMilestone(2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 3)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = tmp.tickspeedBulk
 			}
 		},
@@ -175,14 +164,14 @@ const FORMS = {
 			step = step.mul(tmp.bosons.effect.z_boson[0])
 			if (hasTree("t1")) step = step.pow(1.15)
 			//if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
-			if (hasExtMilestone(10) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
+			if (hasExtMilestone("boost", 1) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = D(1e50).mul(tmp.radiation.bs.eff[13])
 			if (scalingToned("tickspeed")) ss = EINF
 			else if (scalingToned("tickspeed")) step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
-			if (!hasExtMilestone(10) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (!hasExtMilestone("boost", 1) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
             if (bosonsMastered()) eff = eff.pow(tmp.bosons.upgs.photon[0].effect)
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
@@ -297,14 +286,14 @@ const FORMS = {
 			buy() {
 				if (CHALS.inChal(14)) return
 				if (this.can()) {
-					if (!hasExtMilestone(2)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone("qol", 3)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
 				if (CHALS.inChal(14)) return
 				if (this.can()) {
-					if (!hasExtMilestone(2)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone("qol", 3)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
 				}
 				buyExtraBuildings("bh",2)

@@ -297,7 +297,7 @@ body.ngm {
 }
 
 #stab5_3 {
-	background: radial-gradient(ellipse at top, 30deg, #ffff00, transparent, transparent, #00ffff), radial-gradient(ellipse at top, 90deg, #ff0000, #00ff00, #0000ff, #ff0000) !important;
+	background: linear-gradient(30deg, #ffff00, transparent, transparent, #00ffff), linear-gradient(90deg, #ff0000, #00ff00, #0000ff, #ff0000) !important;
 	box-shadow: 0 0 3px #00ff00, 0 0 24px #00ff7f;
 
 	color: #bfffbf !important;

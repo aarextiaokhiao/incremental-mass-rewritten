@@ -23,7 +23,7 @@ const TREE_IDS = [
 		['s2','m2','t1','d1','bh2','gr1','sn2'],
 		['qol8','qol9','qol10'],
 		['chal4'],
-		['fn3','fn4','fn2','fn5','','','rad4','rad5'],
+		['fn3','fn4','fn2','fn5','','','rad4',''],
 		['feat11','feat12'],
 	],[
 		['s3','m3','gr2','sn3'],
@@ -194,7 +194,12 @@ const TREE_UPGS = {
             desc: `Supernovae raise Star Generators.`,
             cost: D(10000),
             effect() {
-                return player.supernova.times.max(0).root(10).mul(0.1).add(1).min(2)
+                return player.supernova.times.max(0).root(10).mul(0.1).add(1)
+                //Toned Supernovae: ^0.2
+                //S3 Reduction: ^0.1
+                //Star Generators: ^5 (w/ milestone)
+                //Product: ^0.1
+                //Left: ^1.25 - ^1.1 = ^0.15
             },
             effDesc(x) { return "^"+format(x) },
         },
@@ -494,7 +499,7 @@ const TREE_UPGS = {
 
 		/* EXOTIC */
         eb1: {
-            unl() { return EXT.unl() },
+            unl() { return hasExtMilestone("unl", 1) },
             desc: `Unlock Black Hole and Atomic Buildings #2.`,
             cost: D(1e10),
 			perm: 1,
@@ -505,18 +510,6 @@ const TREE_UPGS = {
             cost: D(1e200),
 			perm: 1,
         },
-		rad5: {
-			unl() { return EXT.unl() },
-			branch: ["rad3"],
-			desc: `Meta-Boost I is stronger based on Pents.`,
-			cost: D("1e370"),
-			effect() {
-				return player.ranks.pent.div(5).add(1).log10().div(2)
-			},
-			effDesc(x) {
-				return "n -> " + format(x) + "n^2.5"
-			},
-		},
 
 		/* FEATS */
 		feat1: {
@@ -570,9 +563,9 @@ const TREE_UPGS = {
 		},
 		feat5: {
 			unl() { return EXT.unl() },
-			req() { return player.mass.gte(mlt(1)) && player.ext.time <= 3600 },
-			failed() { return player.ext.time > 3600 },
-			reqDesc() { return `Reach ${formatMass(mlt(1))} mass in 1 hour. ` + failedHTML(player.ext.time <= 3600, false, "(" + formatTime(player.ext.time) + " / 1:00:00)") },
+			req() { return player.mass.gte(mlt(1)) && EXT.time() <= 3600 },
+			failed() { return EXT.time() > 3600 },
+			reqDesc() { return `Reach ${formatMass(mlt(1))} mass in 1 hour. ` + failedHTML(EXT.time() <= 3600, false, "(" + formatTime(EXT.time()) + " / 1:00:00)") },
 			desc: `+^0.05 to Mass and Rage gain exponents and their caps.`,
 			cost: D(1e40),
 		},
@@ -604,17 +597,15 @@ const TREE_UPGS = {
 			req() { return player.mass.gte(mlt(1e4)) & player.ext?.chal?.f9 },
 			failed() { return !player.ext?.chal?.f9 },
 			reqDesc() { return `Get ${formatMass(mlt(1e4))} mass, but in any U-Lepton.` + failedHTML(player.ext?.chal?.f9) },
-			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
-			cost: D(0),
-			onBuy: () => EXT.reduceAmt()
+			desc: `???`,
+			cost: D(0)
 		},
 		feat10: {
 			unl() { return GLUBALL.unl() },
 			req() { return player.ext?.chal?.f10 },
 			reqDesc() { return `Gain 10% more Supernovae after 100 in Dual Fermions.` + failedHTML(player.ext?.chal?.f10, true) },
-			desc: `Make Exotic Matter stranger than before! [More efficient, but less EM]`,
-			cost: D(0),
-			onBuy: () => EXT.reduceAmt()
+			desc: `???`,
+			cost: D(0)
 		},
 		feat11: {
 			unl() { return GLUBALL.unl() },

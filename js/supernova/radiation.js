@@ -174,7 +174,7 @@ const RADIATION = {
             title: `Meta-Boost I`,
             eff(b) {
                 let x = b.root(2.5).div(1.75).mul(hasTree("rad4")?1.5:1)
-                if (hasTree("rad5")) x = x.mul(treeEff("rad5",0)).add(1).pow(1.5).mul(x)
+                //if (hasTree("rad5")) x = x.mul(treeEff("rad5",0)).add(1).pow(1.5).mul(x)
                 return x
             },
             desc(x) { return `Add ${format(x)} levels to all above boosts` },

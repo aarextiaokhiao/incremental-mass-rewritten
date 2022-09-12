@@ -33,6 +33,7 @@ const TABS = {
 			{ id: "General" },
 			{ id: "Rewards" },
 			{ id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
+			{ id: "Compression", unl() { return EXT.unl() } },
 		],
 		3: [
 			{ id: "Challenges" },
@@ -53,8 +54,8 @@ const TABS = {
 		],
 		6: [
 			{ id: "Axions" },
-			/*{ id: "Glueball", unl() { return player.ext.gb.unl }, style: "ch" },
-			{ id: "Primordiums", unl() { return player.ext.pr.unl }, style: "ch" },*/
+			{ id: "Glueball", unl() { return false }, style: "ch" },
+			{ id: "Primordiums", unl() { return false }, style: "pr" },
 			{ id: "Milestones" }
 		],
 	},

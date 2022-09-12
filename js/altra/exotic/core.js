@@ -2,6 +2,7 @@ let EXOTIC = {
 	setup() {
 		return {
 			unl: false,
+			time: 0,
 			amt: D(0),
 			gain: D(1),
 
@@ -25,32 +26,14 @@ let EXOTIC = {
 			.div(500)
 		if (hasTree("feat11")) s = s.mul(1.2)
 
-		let r = player.mass.max(1).log10().div(1e9).add(1).pow(s)
+		let r = expMult(player.supernova.stars.max(1).log10().pow(5), 1.5)
 		return this.amt(r)
-	},
-	extLvl() {
-		let l = 0
-		if (hasTree("feat9")) l++
-		if (hasTree("feat10")) l++
-		return l
 	},
 	rawAmt(r) {
 		return D(player.ext?.amt ?? 0)
 	},
 	amt(r) {
-		r = D(r)
-		if (this.extLvl() >= 1) r = this.reduce(1, r)
-		if (this.extLvl() >= 2) r = this.reduce(2, r)
 		return r
-	},
-	reduce(t, x) {
-		if (t == 1) return x.max(1).mul(10).log10().pow(5).mul(10)
-		if (t == 2) return expMult(x, 0.8)
-		return x
-	},
-	reduceAmt() {
-		player.ext.amt = EXT.reduce(EXT.extLvl(), EXT.rawAmt())
-		player.ext.gain = EXT.reduce(EXT.extLvl(), player.ext.gain)
 	},
 	eff(r) {
 		if (!r) r = EXT.rawAmt()
@@ -88,8 +71,8 @@ let EXOTIC = {
 		player.supernova.stars = D(0)
 
 		let list = []
-		if (hasExtMilestone(0)) list.push("c")
-		if (hasExtMilestone(1)) list.push("qol8")
+		if (hasExtMilestone("qol", 1)) list.push("c")
+		if (hasExtMilestone("qol", 2)) list.push("qol8")
 
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
@@ -143,7 +126,7 @@ let EXOTIC = {
 		if (EXT.rawAmt().gt(0)) player.ext.unl = true
 		if (!player.ext.unl) return
 
-		player.ext.time += dt
+		player.ext.time = EXT.time() + dt
 
 		//FEATS
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
@@ -163,6 +146,10 @@ let EXOTIC = {
 
 		//EXTRA RESOURCES
 		player.ext.ar39 = D(player.ext.ar39).add(getCosmicArgonProd().mul(dt))
+	},
+
+	time() {
+		return player.ext?.time ?? 0
 	}
 }
 let EXT = EXOTIC
@@ -173,12 +160,12 @@ function updateExoticHTML() {
 	if (tmp.tab == 6) {
 		updateExoticHeader()
 		if (tmp.stab[6] == 0) updateAxionHTML()
-		if (tmp.stab[6] == 1) updateExtMilestonesHTML()
+		if (tmp.stab[6] == 3) updateExtMilestonesHTML()
 	}
 }
 
 function updateExoticHeader() {
-	elm.extDiv2.setDisplay(tmp.stab[6] == 0 || tmp.stab[6] == 1)
+	elm.extDiv2.setDisplay(tmp.stab[6] == 0 || tmp.stab[6] == 3)
 	elm.extAmt2.setHTML(format(EXT.rawAmt(),1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(EXT.rawAmt(), player.ext.gain):""))
 
 	elm.polarDiv.setDisplay(false)
@@ -194,47 +181,100 @@ function updateExoticHeader() {
 /* [ EXOTIC ERA CONTENT ] */
 
 // MILESTONES
-const EXT_MILESTONES = [
-	{
-		req: 1,
-		desc: "Start with [c] upgrade, gain 10x more Supernovae resources, and unlock Extra Building Upgrades."
-	}, {
-		req: 3,
-		desc: "Automate Neutron Tree without requirements (not implemented), and keep [qol8]. Additionally, auto-Sweeper threshold is 10."
-	}, {
-		req: 10,
-		desc: "Automate Radiation Boosters at 100,000 radiation, and Buildings don't spend anything."
-	}, {
-		req: 30,
-		desc: "You can bulk Pent and unlock Y-Axions."
-	}, {
-		req: 100,
-		desc: "Automate Supernovae at where you would gain 30% more."
-	}, {
-		req: 300,
-		desc: "Going Supernovae automatically gives Pent."
-	}, {
-		req: 1e3,
-		desc: "You can automatically sweep Fermions without requirements."
-	}, {
-		req: 3e3,
-		desc: "You can automatically sweep Challenges without requirements."
-	}, {
-		req: 1e4,
-		desc: "Unlock Exotic Challenges and Shortcuts."
-	}, {
-		req: 1e5,
-		desc: "Cleanse softcaps of MD Upgrades 1, 3, and 8; but nullify MD Upgrade 12."
-	}, {
-		req: 1e6,
-		desc: "Bring Particle Powers back to former glory. (Removes Mg-12, several buffs, and softcaps)"
-	}, {
-		req: 1e7,
-		desc: "Argon-18 raises Tickspeed Power instead."
-	}, {
-		req: 1e8,
-		desc: "Outside of Exotic Challenges, automate Challenges 1 - 11 and Up - Top Quark Fermions without entering."
-	},
+const EXT_MILESTONES = {
+	qol: [
+		{
+			req: 1,
+			desc: "Start with [c] upgrade."
+		}, {
+			req: 3,
+			desc: "Automate Neutron Tree without requirements (not implemented), and keep [qol8]. Additionally, auto-Sweeper threshold is 10."
+		}, {
+			req: 10,
+			desc: "Automate Radiation Boosters at 100,000 radiation, and Buildings don't spend anything."
+		}, {
+			req: 30,
+			desc: "You can bulk Pent."
+		}, {
+			req: 100,
+			desc: "Automate Supernovae at where you would gain 30% more."
+		}, {
+			req: 300,
+			desc: "Going Supernovae automatically gives Pent."
+		}, {
+			req: 1e3,
+			desc: "You can automatically sweep Fermions without requirements."
+		}, {
+			req: 3e3,
+			desc: "You can automatically sweep Challenges without requirements."
+		}, {
+			req: 1e4,
+			desc: "Unlock Shortcuts."
+		}, {
+			req: 1e8,
+			desc: "Outside of Exotic Challenges, automate Challenges 1 - 11 and Up - Top Quark Fermions without entering."
+		},
+	],
+	boost: [
+		{
+			req: 1,
+			desc: "Star Generations generate 5x faster and gain 5x more Supernovae resources."
+		}, {
+			req: 100,
+			desc: "Argon-18 raises Tickspeed Power instead."
+		}, {
+			req: 1e3,
+			desc: "Mass multiplies Relativistic Particles at a reduced rate."
+		}, {
+			req: 1e4,
+			desc: "Meta-Boost I is stronger based on Pents."
+		}, {
+			req: 1e5,
+			desc: "Cleanse softcaps of MD Upgrades 1, 3, and 8; but nullify MD Upgrade 12."
+		}, {
+			req: 1e6,
+			desc: "Bring Particle Powers back to former glory. (Removes Mg-12, several buffs, and softcaps)"
+		}, {
+			req: 1e7,
+			desc: "Dilated mass raises Tickspeed Power instead."
+		}
+	],
+	axion: [
+		{
+			req: 1,
+			desc: "Unlock X-Axions. X-Axions raise Challenge 12 reward."
+		}, {
+			req: 30,
+			desc: "Unlock Y-Axions. Y-Axions make [s3] raise M-Type Stars."
+		}, {
+			req: 1e3,
+			desc: "X-Axions raise Challenge 10 reward."
+		}, {
+			req: 1e5,
+			desc: "Y-Axions subtract Radiation Booster's cost scaling exponent."
+		}, {
+			req: 1e8,
+			desc: "Unlock Z-Axions. Z-Axions make Tickspeed Power multiplies Star Booster Base."
+		}, {
+			req: 1e10,
+			desc: "X-Axions multiply Neutron Condensers."
+		}, {
+			req: 1e15,
+			desc: "Y-Axions multiply Hawking Radiation."
+		}, {
+			req: 1e20,
+			desc: "Z-Axions add Polarizer Base."
+		}
+	],
+	unl: [
+		{
+			req: 1,
+			desc: "Unlock Extra Building Upgrades. [located in Neutron Tree]"
+		}, {
+			req: 1e4,
+			desc: "Unlock Exotic Challenges."
+		}
+	],
 	/*{
 		req: 2,
 		desc: "???",
@@ -243,43 +283,61 @@ const EXT_MILESTONES = [
 			disp: (x) => format(x)
 		}
 	}*/
-]
-
-function hasExtMilestone(index) {
-	return EXT.rawAmt().gte(EXT.amt(EXT_MILESTONES[index].req))
 }
 
-function hasExtMilestoneEff(index) {
-	return EXT_MILESTONES[index].eff.eff()
+function hasExtMilestone(type, index) {
+	return EXT.rawAmt().gte(EXT_MILESTONES[type][index - 1].req)
+}
+
+function hasExtMilestoneEff(type, index) {
+	return EXT_MILESTONES[type][index].eff.eff()
 }
 
 function setupExtMilestonesHTML() {
-	let html = ""
-	for (let [index, ms] of Object.entries(EXT_MILESTONES)) {
-		html += `<div id='extMilestone${index}'>
-			<b class="milestoneReq" id='extMilestone${index}Req'>${format(EXT.amt(ms.req),0) + " Exotic Matter"}</b><br>
-			${ms.desc}
-			${ms.eff ? "<br><span class='milestoneEff'>Currently: <b id='extMilestone${index}Eff'>???</b></span>" : ""}
-		</div><br>`
-	}
+	for (let [ti, type] of Object.entries(EXT_MILESTONES)) {
+		let html = document.createElement("div")
+		html.id = `extMilestone_${ti}`
+		html.className = "table_center milestones"
 
-	document.getElementById("extMilestones").innerHTML = html
+		let dom = ""
+		for (let [msi, ms] of Object.entries(type)) {
+			dom += `<div id='extMilestone_${ti}_${msi}'>
+				<b class="milestoneReq" id='extMilestone_${ti}_${msi}_req'></b><br>
+				${ms.desc}
+				${ms.eff ? "<br><span class='milestoneEff'>Currently: <b id='extMilestone_${ti}_${msi}_eff'></b></span>" : ""}
+				<b class="milestoneId">${ti}${Number(msi)+1}</b>
+			</div>`
+		}
+		html.innerHTML = dom
+
+		new Element("extMilestones").append(html)
+	}
 }
 
 function updateExtMilestonesHTML() {
-	let gotBefore = true
-	for (let [index, ms] of Object.entries(EXT_MILESTONES)) {
-		elm[`extMilestone${index}`].setDisplay(gotBefore)
-		elm[`extMilestone${index}`].setClasses({ bought: hasExtMilestone(index) })
-		//elm[`extMilestone${index}Req`].setTxt(format(EXT.amt(ms.req), 0) + " Exotic Matter")
-		//if (ms.eff) elm[`extMilestone${index}Eff`].setTxt(ms.eff.disp(ms.eff.eff()))
-
-		if (!hasExtMilestone(index)) gotBefore = false
+	for (let [ti, type] of Object.entries(EXT_MILESTONES)) {
+		elm[`extMilestone_${ti}_tab`].setClasses({
+			btn_tab: true,
+			normal: true,
+			choosed: tmp.ext_ms_view == ti
+		})
+		elm[`extMilestone_${ti}`].setDisplay(tmp.ext_ms_view == ti)
+		if (tmp.ext_ms_view == ti) {
+			let gotBefore = true
+			for (let [msi, ms] of Object.entries(type)) {
+				let has = hasExtMilestone(ti, Number(msi) + 1)
+				elm[`extMilestone_${ti}_${msi}`].setDisplay(gotBefore)
+				elm[`extMilestone_${ti}_${msi}`].setClasses({ bought: has })
+				elm[`extMilestone_${ti}_${msi}_req`].setHTML(format(ms.req, 1) + " Exotic Matter")
+				if (ms.eff) elm[`extMilestone_${ti}_${msi}_eff`].setHTML(ms.eff.disp(ms.eff.eff))
+				if (!has) gotBefore = false
+			}
+		}
 	}
 }
 
-function hasExtMilestone13() {
-	return hasExtMilestone(12) && !player.ext.ec
+function hasExtMilestoneQ10() {
+	return hasExtMilestone("qol", 10) && !player.ext.ec
 }
 
 // POLARIZER

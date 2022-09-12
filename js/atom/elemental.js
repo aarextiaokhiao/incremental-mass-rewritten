@@ -151,7 +151,7 @@ const ELEMENTS = {
 			effect() {
 				let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
 				if (EXT.unl()) x = x.add(player.ext.ar39)
-				return x.softcap(1.3,0.1,0).softcap(100,0.1,0)
+				return x.softcap(1.3,0.1,0).softcap(100,0.3,0)
 			},
 			effDesc(x) {
 				return "^"+format(x)+getSoftcapHTML(x,1.3,100)
@@ -368,7 +368,7 @@ const ELEMENTS = {
             cost: D('e4600'),
         },
         {
-            desc: `Collapsed stars boost all-star resources at a reduced rate.`,
+            desc: `<b id="final_81">[Final Atomic Element]</b> Collapsed stars boost all-star resources at a reduced rate.`,
             cost: D('e5200'),
             effect() {
                 let x = player.mass.max(1).log10().root(2)
@@ -614,7 +614,7 @@ function updateElementsHTML() {
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {
-                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), final: hasElement(81) && x == 81})
+                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), sn: x > 54 && x <= 81, final: hasElement(x) && (x == 54 || x == 81)})
             }
         }
     }

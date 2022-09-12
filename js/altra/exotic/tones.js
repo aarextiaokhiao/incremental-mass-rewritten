@@ -7,7 +7,7 @@ let TONES = {
 		let c = EINF
 		if (x < 5) c = this.base_reqs[x]
 		else if (x < 30) c = D(10).pow(D(10).pow(Math.pow(1.15, Math.pow(x-6, 4/3)) * 10))
-		return EXT.amt(c)
+		return c
 	},
 
 	can() {

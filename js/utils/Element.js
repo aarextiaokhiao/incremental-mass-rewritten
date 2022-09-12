@@ -126,4 +126,11 @@ class Element {
 	static setSize(id, h, w) {
 		new Element(id).setSize(h, w);
 	}
+
+	append(child) {
+		this.el.append(child)
+	}
+	static append(id, child) {
+		new Element(id).append(child)
+	}
 }

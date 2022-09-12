@@ -9,7 +9,7 @@ const RANKS = {
 		return true
 	},
     reset(type, bulk) {
-        if (type == "pent" && hasExtMilestone(3)) bulk = true
+        if (type == "pent" && hasExtMilestone("qol", 4)) bulk = true
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
             if (bulk) player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk)

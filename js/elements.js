@@ -159,7 +159,7 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
-	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
+	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+getProdDisp(player.mass, "mass", true, true))
 
 	//RESET
 	elm.reset_desc.setHTML(player.reset_msg)
@@ -181,7 +181,7 @@ function updateUpperHTML() {
 	elm.bh_div.setDisplay(unl)
 	elm.atom_div.setDisplay(unl)
 	if (unl) {
-		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
+		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+getProdDisp(player.bh.mass, "bh", true))
 		elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
 	}
 
@@ -189,7 +189,7 @@ function updateUpperHTML() {
 	elm.quark_div.setDisplay(unl)
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
-	let scut = hasExtMilestone(8)
+	let scut = hasExtMilestone("qol", 8)
 	elm.scut_div.setDisplay(scut)
 	elm.md_div.setDisplay(!scut && MASS_DILATION.unlocked())
 	if (scut) updateShortcuts()
@@ -374,7 +374,7 @@ function updateMainUpgradesHTML() {
 
 function updateBlackHoleHTML() {
 	elm.bhMass2.setHTML(formatMass(player.bh.mass))
-	elm.bhMassGain.setHTML(formatGain(player.bh.mass, tmp.bh.mass_gain, true))
+	elm.bhMassGain.setHTML(getProdDisp(player.bh.mass, "bh", true))
 	elm.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
 	elm.bhEffect.setTxt(format(tmp.bh.effect))
 
@@ -387,10 +387,8 @@ function updateBlackHoleHTML() {
 	elm.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
 	elm.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
 
-	elm.bhSoft.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
+	elm.bhSoft.setDisplay(tmp.bh.massGain.base.gte(tmp.bh.massSoftGain))
 	elm.bhSoftStart.setTxt(formatMass(tmp.bh.massSoftGain))
-	elm.bhRad.setDisplay(player.bh.eb2 && tmp.bh.mass_gain.gte(tmp.bh.rad_ss))
-	elm.bhRadStart.setTxt(formatMass(tmp.bh.rad_ss))
 
 	updateExtraBuildingHTML("bh", 2)
 	updateExtraBuildingHTML("bh", 3)
@@ -444,7 +442,7 @@ function updateHTML() {
 		elm.offlineGainDiv.setHTML(
 			player.stats.maxMass.eq(player.offline.mass) || player.offline.mass.eq(0) ? "" :
 			(player.stats.maxMass.gte(mlt(1)) ? "^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) + " mass gained!"
-			: format(player.stats.maxMass.div(player.offline.mass)) + "x mass gained!") + " " + formatGain(player.mass, tmp.massGain, true, true)
+			: format(player.stats.maxMass.div(player.offline.mass)) + "x mass gained!") + " " + getProdDisp(player.mass, "mass", true, true)
 		)
 	}
 
@@ -470,7 +468,7 @@ function updateHTML() {
 				updateTickspeedHTML()
 
 				let lvl = 0
-				for (var i = 1; i <= 3; i++) if (tmp.massGain.gte(tmp["massSoftGain"+i])) lvl = i
+				for (var i = 1; i <= 3; i++) if (tmp.massGain.base.gte(tmp["massSoftGain"+i])) lvl = i
 				elm.massSoft.setDisplay(lvl)
 				if (lvl) {
 					elm.massSoft.setClasses({["soft"+lvl+"_desc"]: true})
@@ -493,6 +491,7 @@ function updateHTML() {
 			if (tmp.stab[1] == 0) updateStatsHTML()
 			if (tmp.stab[1] == 1) updateRanksRewardHTML()
 			if (tmp.stab[1] == 2) updateScalingHTML()
+			if (tmp.stab[1] == 3) updateCompressionHTML()
 		}
 		if (tmp.tab == 2) {
 			updateMainUpgradesHTML()

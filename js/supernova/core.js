@@ -9,7 +9,7 @@ const SUPERNOVA = {
 					if (player.supernova.times.gt(20) && tmp.supernova.bulk.sub(player.supernova.times).lt(5)) player.ext.chal.f8 = false
 					if (player.supernova.times.gt(100) && tmp.supernova.bulk.div(player.supernova.times).gte(1.1) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
 				}
-                if (hasExtMilestone(4)) player.ranks.pent = player.ranks.pent.max(tmp.ranks.pent.bulk)
+                if (hasExtMilestone("qol", 6)) player.ranks.pent = player.ranks.pent.max(tmp.ranks.pent.bulk)
                 player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
             }
             tmp.pass = true
@@ -122,7 +122,7 @@ function calcSupernova(dt, dt_offline) {
     if (player.supernova.fermions.unl) {
         if (tmp.fermions.ch[0] >= 0) gainFermionTiers(tmp.fermions.ch)
         if (tmp.fermions.ch2[0] >= 0) gainFermionTiers(tmp.fermions.ch2)
-        if (hasExtMilestone13()) for (let x = 0; x < 5; x++) gainFermionTiers([0, x])
+        if (hasExtMilestoneQ10()) for (let x = 0; x < 5; x++) gainFermionTiers([0, x])
 		
         for (let x = 0; x < 2; x++) player.supernova.fermions.points[x] = player.supernova.fermions.points[x].add(tmp.fermions.gains[x].mul(dt))
     }
@@ -131,7 +131,7 @@ function calcSupernova(dt, dt_offline) {
         player.supernova.radiation.hz = player.supernova.radiation.hz.add(tmp.radiation.hz_gain.mul(dt))
         for (let x = 0; x < RAD_LEN; x++) {
             player.supernova.radiation.ds[x] = player.supernova.radiation.ds[x].add(tmp.radiation.ds_gain[x].mul(dt))
-	        if (player.supernova.radiation.ds[x].gte(1e5) && hasExtMilestone(2)) {
+	        if (player.supernova.radiation.ds[x].gte(1e5) && hasExtMilestone("qol", 2)) {
                 RADIATION.buyBoost(x*2,1)
                 RADIATION.buyBoost(x*2+1,1)
             }
@@ -139,7 +139,7 @@ function calcSupernova(dt, dt_offline) {
     }
 
 	//Exotic
-	if (hasExtMilestone(4) && tmp.supernova.bulk.gt(player.supernova.times)) {
+	if (hasExtMilestone("qol", 5) && tmp.supernova.bulk.gt(player.supernova.times)) {
 		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
 		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
 	}
@@ -182,7 +182,7 @@ function updateSupernovaTemp() {
 
             let branch = t.branch||""
             let unl = (t.unl?t.unl():true)
-            let req = t.req?t.req():true
+            let req = !unl?false:t.req?t.req():true
             let can = player.supernova.stars.gte(t.cost) && !hasTree(id) && req
             if (branch != "") for (let x = 0; x < branch.length; x++) if (!hasTree(branch[x])) {
                 unl = false
@@ -198,7 +198,7 @@ function updateSupernovaTemp() {
         }
     }
     tmp.supernova.star_gain = SUPERNOVA.starGain()
-    tmp.supernova.timeMult = hasExtMilestone(0) ? D(10) : D(1)
+    tmp.supernova.timeMult = hasExtMilestone("boost", 1) ? D(5) : D(1)
 }
 
 function updateSupernovaEndingHTML() {
@@ -244,9 +244,9 @@ function getSupernovaAutoTemp(mode = "all") {
 
 	let c_thres = 50
 	if (hasTree("chal6")) c_thres = 15
-	if (hasExtMilestone(1)) c_thres = 10
+	if (hasExtMilestone("qol", 2)) c_thres = 10
 	if (hasTree("feat4")) c_thres = 7
-	if (hasExtMilestone(7)) c_thres = 0
+	if (hasExtMilestone("qol", 7)) c_thres = 0
 	if (mode == "all" || mode == "chal") {
 		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
@@ -255,13 +255,13 @@ function getSupernovaAutoTemp(mode = "all") {
 	}
 
 	let f_thres = 15
-	if (hasExtMilestone(1)) f_thres = 10
+	if (hasExtMilestone("qol", 2)) f_thres = 10
 	if (hasTree("feat4")) f_thres = 7
-	if (hasExtMilestone(6)) f_thres = 0
+	if (hasExtMilestone("qol", 6)) f_thres = 0
 	if (mode == "all" || mode == "ferm") {
 		for (var y = 0; y < 2; y++) {
 			for (var x = 0; x < FERMIONS.getUnlLength(); x++) {
-				if (x < 5 && y == 0 && hasExtMilestone13()) continue
+				if (x < 5 && y == 0 && hasExtMilestoneQ10()) continue
 				let tier = player.supernova.fermions.tiers[y][x]
 				if (tier.gte(f_thres) && tier.lt(FERMIONS.maxTier(y, x))) ret.push(-(y*10+x+1))
 			}
@@ -271,7 +271,7 @@ function getSupernovaAutoTemp(mode = "all") {
 }
 
 function leastManualChal() {
-	return hasExtMilestone13() ? 11 : 0
+	return hasExtMilestoneQ10() ? 11 : 0
 }
 
 function updateSupernovaSweep() {

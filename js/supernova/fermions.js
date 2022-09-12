@@ -457,7 +457,7 @@ function updateFermionsHTML() {
             elm[id+"_div"].setDisplay(unl)
 
             if (unl) {
-                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasExtMilestone13() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
+                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasExtMilestoneQ10() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
                 elm[id+"_nextTier"].setHTML(max ? "" : "Next at: " + fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])) + `<br>(Increased by ${f.inc})<br><br>`)
                 elm[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x))
                 elm[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(D(tmp.fermions.maxTier[i][x]).lt(EINF) && !max ? " / " + format(tmp.fermions.maxTier[i][x],0) : ""))

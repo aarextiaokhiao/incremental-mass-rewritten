@@ -471,9 +471,9 @@ const CHALS = {
         start: uni("e8.5e7"),
         effect(x) {
             let ret = x.div(100).sqrt().add(1)
-            return ret
+            return ret.softcap(2, 2/3, 2)
         },
-        effDesc(x) { return format(x)+"x stronger" },
+        effDesc(x) { return format(x)+"x stronger"+getSoftcapHTML(x,2) },
     },
 	12: {
 		unl() { return hasTree("chal7") },
@@ -491,7 +491,7 @@ const CHALS = {
 		effDesc(x) { return formatMultiply(x)+" slower" },
 	},
 	13: {
-		unl() { return hasExtMilestone(8) || PORTAL.unl() },
+		unl() { return hasExtMilestone("unl", 2) || PORTAL.unl() },
 		title: "Decay of Atom",
 		desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
 		reward: `Weaken Axion penalties.<br><span class="ch_color">On 9th completion, unlock Glueball and Chroma Tonings!</span>`,

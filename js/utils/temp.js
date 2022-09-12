@@ -3,27 +3,18 @@ var elm = {}
 
 function resetTemp() {
     tmp = {
-        tree_time: 0,
-
         tab: 0,
         prev_tab: 0,
         stab: [],
 
         pass: true,
-        notify: [],
         saving: 0,
+        notify: [],
 
+        compress: {},
         upgs: {
             main: {},
             mass: {},
-        },
-
-        fermions: {
-            ch: [0,0],
-            gains: [D(0),D(0)],
-            maxTier: [[],[]],
-            tiers: [[],[]],
-            effs:  [[],[]],
         },
     
         supernova: {
@@ -36,8 +27,16 @@ function resetTemp() {
             tree_afford: {},
             tree_afford2: [],
         },
+        tree_time: 0,
 		tree_tab: 0,
-    
+
+        fermions: {
+            ch: [0,0],
+            gains: [D(0),D(0)],
+            maxTier: [[],[]],
+            tiers: [[],[]],
+            effs:  [[],[]],
+        },
         radiation: {
             unl: false,
             ds_gain: [],
@@ -51,6 +50,8 @@ function resetTemp() {
                 eff: [],
             },
         },
+
+        ext_ms_view: "qol",
         ch: {}
     }
     for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
@@ -85,7 +86,7 @@ function updateMassTemp() {
     tmp.massSoftGain2 = FORMS.massSoftGain2()
     tmp.massSoftPower3 = FORMS.massSoftPower3()
     tmp.massSoftGain3 = FORMS.massSoftGain3()
-    tmp.massGain = FORMS.massGain()
+    tmp.massGain = calcProd("mass")
 }
 
 function updateTickspeedTemp() {
@@ -114,7 +115,7 @@ function updateBlackHoleTemp() {
     t.massSoftPower = FORMS.bh.massSoftPower()
     t.massSoftGain = FORMS.bh.massSoftGain()
     t.massPowerGain = FORMS.bh.massPowerGain()
-    t.mass_gain = FORMS.bh.massGain()
+    t.massGain = calcProd("bh")
     t.dm_can = t.dm_gain.gte(1)
     t.effect = FORMS.bh.effect()
 
@@ -124,8 +125,6 @@ function updateBlackHoleTemp() {
     t.condenser_bulk = player.bh.dm.max(1).log(1.75).root(scale).scaleEvery("bh_condenser", 1).add(1).floor()
     if (player.bh.dm.lt(1)) t.condenser_bulk = D(0)
     t.condenser_eff = FORMS.bh.condenser.effect()
-
-	t.rad_ss = FORMS.bh.radSoftStart()
 }
 
 function updateTemp() {
@@ -133,14 +132,11 @@ function updateTemp() {
 	tmp.offlineActive = player.offline.time > 1
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
+
 	//Tab Forcing
 	if (toned() == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
 
-	//Exotic
-	//updateGlueballTemp()
-	updateAxionTemp()
-	updatePolarizeTemp()
-	updateExtraBuildingTemp()
+	updateAltraTemp()
 
 	//Supernova
 	updateRadiationTemp()
