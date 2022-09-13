@@ -26,7 +26,7 @@ let EXOTIC = {
 			.div(500)
 		if (hasTree("feat11")) s = s.mul(1.2)
 
-		let r = expMult(player.supernova.stars.max(1).log10().pow(5), 1.5)
+		let r = expMult(player.supernova.stars.max(1).log10().pow(3), 1.5)
 		return this.amt(r)
 	},
 	rawAmt(r) {
@@ -52,7 +52,7 @@ let EXOTIC = {
 				player.ext.unl = true
 				addPopup(POPUP_GROUPS.layer_5)
 			}
-			player.ext.amt = player.ext.amt.add(player.ext.gain)
+			player.ext.amt = EXT.rawAmt().add(player.ext.gain)
 		}
 		EXT.doReset()
 	},
@@ -78,7 +78,6 @@ let EXOTIC = {
 		for (let x = 0; x < player.supernova.tree.length; x++) {
 			let it = player.supernova.tree[x]
 			if (list.includes(it)) list_keep.push(it)
-			else if (it.includes("qol") || it.includes("feat")) list_keep.push(it)
 			else if (TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) list_keep.push(it)
 		}
 		player.supernova.tree = list_keep
@@ -185,13 +184,13 @@ const EXT_MILESTONES = {
 	qol: [
 		{
 			req: 1,
-			desc: "Start with [c] upgrade."
+			desc: "Keep Main Upgrades and Elements you would start on Supernova. Keep [c] upgrade. Neutron Stars can generate in offline progress."
 		}, {
 			req: 3,
-			desc: "Automate Neutron Tree without requirements (not implemented), and keep [qol8]. Additionally, auto-Sweeper threshold is 10."
+			desc: "Keep [qol8] upgrade. Automate Neutron Tree without requirements (not implemented). Auto-Sweeper threshold is reduced to 10."
 		}, {
 			req: 10,
-			desc: "Automate Radiation Boosters at 100,000 radiation, and Buildings don't spend anything."
+			desc: "Automate Radiation Boosters at 100,000 radiation. Buildings don't spend anything."
 		}, {
 			req: 30,
 			desc: "You can bulk Pent."
@@ -269,7 +268,7 @@ const EXT_MILESTONES = {
 	unl: [
 		{
 			req: 1,
-			desc: "Unlock Extra Building Upgrades. [located in Neutron Tree]"
+			desc: "Unlock Extra Building Upgrades in Neutron Tree. [doesn't reset on Exotic]"
 		}, {
 			req: 1e4,
 			desc: "Unlock Exotic Challenges."

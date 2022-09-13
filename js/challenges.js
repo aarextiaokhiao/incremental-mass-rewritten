@@ -27,9 +27,10 @@ function updateChalHTML() {
     elm.chal_exit.setDisplay(!sweep)
     elm.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : CHALS.lastActive() > 12 ? "Exit Exotic Challenge" : "Exit Challenge")
     elm.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
-    elm.chal_sweep.setDisplay(player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
+    elm.chal_sweep.setDisplay(hasTree("qol10") && player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
     elm.chal_hint.setDisplay(!shrt)
     elm.chal_shrt.setDisplay(shrt)
+
     if (player.chal.choosed != 0 && !shrt) {
         let x = player.chal.choosed
         let chal = CHALS[x]
@@ -41,6 +42,46 @@ function updateChalHTML() {
         elm.chal_ch_reward.setHTML("Reward: "+chal.reward)
         elm.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[x]))
     }
+}
+
+function updateChalHeader() {
+	elm.chal_upper.setDisplay(!player.options.progress || CHALS.inChals())
+	elm.chal_upper.setVisible(CHALS.inChals())
+
+	let chal = CHALS.lastActive()
+	let md = player.md.active
+	let f = player.supernova.fermions.choosed
+	if (md) {
+		elm.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
+	} else if (f) {
+		let f1_y = f[0]
+		let f1_x = f[1]
+		let fm = FERMIONS.types[f1_y][f1_x]
+		let ft = player.supernova.fermions.tiers[f1_y][f1_x]
+		let ff = fm.isMass?formatMass:format
+
+		let f2 = player.supernova.fermions.choosed2
+		let f2_y = f2[0]
+		let f2_x = f2[1]
+
+		elm.chal_upper.setHTML(
+			"You are in "+FERMIONS.sub_names[f1_y][f1_x]+" "+FERMIONS.names[f1_y]+
+			(f2?" and "+FERMIONS.sub_names[f2_y][f2_x]+" "+FERMIONS.names[f2_y]:"")+
+			"!"+
+			(f2||ft.gte(FERMIONS.maxTier(f1_y,f1_x)) ? "" :
+				"<br>Go over "+ff(fm.res())+" / "+ff(fm.nextTierAt(ft))+" "+fm.inc+" to complete."
+			)
+		)
+	} else if (chal) {
+		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
+		elm.chal_upper.setHTML(
+			`You are in [${CHALS[chal].title}] Challenge!<br>` + (
+				player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
+				tmp.chal.gain.gt(0) ? `+${format(tmp.chal.gain,0)} (Next: ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})` :
+				`Get ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.`
+			)
+		)
+	}
 }
 
 function updateChalTemp() {
@@ -90,6 +131,10 @@ const CHALS = {
 		let r = player.chal.active
         if (x > 12) r = player.ext?.ec
 		return r || 0
+    },
+
+    inChals() {
+		return player.chal.active || player.md.active || player.supernova.fermions.choosed || player.ext?.ec
     },
     inChal(x) { return this.getActive(x) == x },
     reset(x, chal_reset=true) {
@@ -390,7 +435,7 @@ const CHALS = {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.unl },
         title: "No Rage Power",
         desc: "You can't gain Rage Power, but gain Dark Matter by mass.<br>Additionally, strengthen mass softcap.",
-        reward: `Add maximum completions to C1-4.<br><span class="yellow">At 16th completion, unlock Elements!</span>`,
+        reward: `Add maximum completions to C1-4.<br><span class="yellow">At 16th completion, unlock Element Upgrades!</span>`,
         max: D(50),
         inc: D(64),
         pow: D(1.25),

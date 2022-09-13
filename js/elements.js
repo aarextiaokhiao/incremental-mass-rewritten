@@ -166,83 +166,51 @@ function updateUpperHTML() {
 
 	let preExt = !EXT.unl()
 
-	let unl = gameStarted() && inNGM() && preExt
+	let unl = gameStarted() && inNGM()
 	elm.mg_div.setDisplay(unl)
 	if (unl) elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
 
-	unl = (inNGM() ? MAGIC.unl() : (player.stats.maxMass.gte(1e9) || player.rp.unl)) && preExt
+	unl = (inNGM() ? MAGIC.unl() : (player.stats.maxMass.gte(1e9) || player.rp.unl))
 	elm.rp_div.setDisplay(unl)
 	if (unl) elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 
-	unl = FORMS.bh.see() && preExt
+	unl = FORMS.bh.see() 
 	elm.dm_div.setDisplay(unl)
 	if (unl) elm.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
+
 	unl = player.bh.unl && preExt
 	elm.bh_div.setDisplay(unl)
+	if (unl) elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+getProdDisp(player.bh.mass, "bh", true))
+
+	unl = player.bh.unl
 	elm.atom_div.setDisplay(unl)
-	if (unl) {
-		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+getProdDisp(player.bh.mass, "bh", true))
-		elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
-	}
+	if (unl) elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
 
 	unl = player.atom.unl && preExt
 	elm.quark_div.setDisplay(unl)
 	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
 
-	let scut = hasExtMilestone("qol", 8)
-	elm.scut_div.setDisplay(scut)
-	elm.md_div.setDisplay(!scut && MASS_DILATION.unlocked())
-	if (scut) updateShortcuts()
-	else {
-		unl = MASS_DILATION.unlocked()
-		if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
-	}
+	unl = MASS_DILATION.unlocked() && preExt
+	elm.md_div.setDisplay(unl)
+	if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+
+	unl = hasExtMilestone("qol", 8)
+	elm.scut_div.setDisplay(unl)
+	if (unl) updateShortcuts()
 
 	unl = player.supernova.post_10
 	elm.sn_div.setDisplay(unl)
 	if (unl) elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
 
 	unl = EXT.unl(true)
-	elm.ext_div.setDisplay(unl)
+	elm[unl ? "atom_post_ext" : "atom_pre_ext"].appendHTML("atom_div")
 	elm.res_col2.setDisplay(!unl)
+	elm.ext_div.setDisplay(unl)
 	if (unl) elm.extAmt.setHTML(EXT.unl() ? format(EXT.rawAmt(),1) + (player.chal.comps[12].gt(0) ? "<br>" + formatGainOrGet(EXT.rawAmt(), player.ext.gain) : "") : "Click to rise Exotic!")
 
-	//CHALLENGES
-	let chal = CHALS.lastActive()
-	let md = player.md.active
-	let f = player.supernova.fermions.choosed
-	elm.chal_upper.setVisible(chal || md || f)
-	if (md) {
-		elm.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
-	} else if (f) {
-		let f1_y = f[0]
-		let f1_x = f[1]
-		let fm = FERMIONS.types[f1_y][f1_x]
-		let ft = player.supernova.fermions.tiers[f1_y][f1_x]
-		let ff = fm.isMass?formatMass:format
-
-		let f2 = player.supernova.fermions.choosed2
-		let f2_y = f2[0]
-		let f2_x = f2[1]
-
-		elm.chal_upper.setHTML(
-			"You are in "+FERMIONS.sub_names[f1_y][f1_x]+" "+FERMIONS.names[f1_y]+
-			(f2?" and "+FERMIONS.sub_names[f2_y][f2_x]+" "+FERMIONS.names[f2_y]:"")+
-			"!"+
-			(f2||ft.gte(FERMIONS.maxTier(f1_y,f1_x)) ? "" :
-				"<br>Go over "+ff(fm.res())+" / "+ff(fm.nextTierAt(ft))+" "+fm.inc+" to complete."
-			)
-		)
-	} else if (chal) {
-		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
-		elm.chal_upper.setHTML(
-			`You are in [${CHALS[chal].title}] Challenge!<br>` + (
-				player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
-				tmp.chal.gain.gt(0) ? `+${format(tmp.chal.gain,0)} (Next: ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})` :
-				`Get ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.`
-			)
-		)
-	}
+	//NON-RESETS
+	updateChalHeader()
+	updateProgressHeader()
 }
 
 function updateRanksHTML() {
@@ -397,28 +365,8 @@ function updateBlackHoleHTML() {
 function updateStatsHTML() {
 	elm.total_time.setTxt(formatTime(player.time))
 	elm.best_mass.setTxt(formatMass(player.stats.maxMass))
-	elm.features.setTxt(
-		GLUBALL.unl() ? 13 :
-		AXION.unl() ? 12 :
-		hasTree("unl1") ? 11 :
-		player.chal.comps[10].gte(1) ? 10 :
-		player.supernova.post_10 ? 9 :
-		player.supernova.unl ? 8 :
-		STARS.unlocked() ? 7 :
-		MASS_DILATION.unlocked() ? 6 :
-		player.chal.comps[7].gte(16) ? 5 :
-		player.atom.unl ? 4 :
-		player.chal.unl ? 3 :
-		player.bh.unl ? 2 :
-		player.rp.unl ? 1 : 0
-	)
-	elm.layers.setTxt(
-		EXT.unl() ? 5 :
-		player.supernova.unl ? 4 :
-		player.atom.unl ? 3 :
-		player.bh.unl ? 2 :
-		player.rp.unl ? 1 : 0
-	)
+	elm.progress_features_stats.setTxt(getFeatureProgress() + " / " + FEATURE_AMT)
+	elm.progress_layers_stats.setTxt(getLayerProgress() + " / " + LAYER_AMT)
 }
 
 function updateOptionsHTML() {
@@ -428,11 +376,12 @@ function updateOptionsHTML() {
 	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
 	elm.minus_active.setTxt(metaSave.ngm?"ON":"OFF")
-	elm.help.setDisplay(player.options.pure!=1)
+	elm.help.setDisplay(player.options.notation_mass !== 1)
+	elm.progress_active.setTxt(player.options.progress?"ON":"OFF")
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
 	elm.chroma_bg_btn.setDisplay(GLUBALL.unl() && !PORTAL.unl())
-	elm.chroma_bg_btn.setTxt("Chroma BG: "+(player.options.noChroma?"OFF":"ON"))
+	elm.chroma_bg_active.setTxt(player.options.chroma?"ON":"OFF")
 }
 
 function updateHTML() {

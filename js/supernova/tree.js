@@ -780,13 +780,13 @@ function updateTreeHTML() {
 	let t_ch = TREE_UPGS.ids[tmp.supernova.tree_choosed]
 	if (tmp.supernova.tree_choosed != "") {
 		req = t_ch.req?`<span class="${t_ch.req()?"green":"red"}">${t_ch.reqDesc?" Require: "+(typeof t_ch.reqDesc == "function"?t_ch.reqDesc():t_ch.reqDesc):""}</span>`:""
-		perm = t_ch.perm ? `<span class='yellow'> [Permanent]</span>` : ``
+		perm = t_ch.perm ? `<span class='scarlet'> [Kept on Exotic]</span>` : ``
 	}
 	elm.tree_desc.setHTML(
 		tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click any tree upgrade to show)</span></div>`
 		: `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click again to buy if affordable)</span>${req}</div>
 		<span class="sky">[${tmp.supernova.tree_choosed}] ${t_ch.desc}</span>${perm}<br>
-		<span>Cost: ${format(t_ch.cost,2)} Neutron star</span><br>
+		<span>Cost: ${format(t_ch.cost,2)} Neutron Stars</span><br>
 		<span class="green">${t_ch.effDesc?"Currently: "+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
 		`
 	)

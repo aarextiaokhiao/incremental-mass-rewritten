@@ -394,7 +394,7 @@ function capitalFirst(str) {
 		.join(" ");
 }
 
-function expMult(a,b,base=10) { return D(a).gte(1) ? D(base).pow(D(a).log(base).pow(b)) : D(0) }
+function expMult(a,b,base=10) { return D(a).gte(1) ? D(base).pow(D(a).log(base).pow(b)) : a }
 
 
 function changeFont(x) {

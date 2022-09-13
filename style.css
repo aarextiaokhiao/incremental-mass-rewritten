@@ -52,7 +52,8 @@ button {
 }
 
 #notify {
-	position: absolute;
+	position: fixed;
+    z-index: 999;
     left: 50%;
     top: 20px;
 	transform: translate(-50%, 0);

@@ -113,19 +113,22 @@ function getPlayerData() {
         main_upg_msg: [0,0],
         tickspeed: D(0),
         options: {
-            font: 'Verdana',
+			offline: true,
+
             notation: 'mix',
-            tetr: 'letter',
-            pure: 0,
+            notation_tetr: 'letter',
+            notation_mass: 0,
+
+            font: 'Verdana',
+			progress: true,
             tree_animation: 0,
-			noChroma: true
+			chroma: false,
         },
         confirms: {},
 		stats: {
 			maxMass: D(0),
 		},
         offline: {
-            active: true,
             current: Date.now(),
             time: 0,
         },
@@ -166,7 +169,7 @@ function loadPlayer(load) {
     player.reset_msg = ""
     player.main_upg_msg = [0,0]
     player.chal.choosed = 0
-	if (typeof(player.options.pure) == "boolean") player.options.pure = player.options.pure ? 1 : 0
+	if (typeof(player.options.notation_mass) == "boolean") player.options.notation_mass = player.options.notation_mass ? 1 : 0
 	if (player.bh.eb2) player.bh.eb2 = D(player.bh.eb2)
 	if (player.bh.eb3) player.bh.eb3 = D(player.bh.eb3)
 	if (player.atom.eb2) player.atom.eb2 = D(player.atom.eb2)
@@ -248,7 +251,7 @@ function load(x){
 	changeFont()
 }
 
-function exporty() {
+function download_save() {
     if (findNaN(player)) {
         addNotify("Error Exporting, because it got NaNed")
         return
@@ -264,7 +267,7 @@ function exporty() {
     a.click()
 }
 
-function export_copy() {
+function export_save() {
     if (findNaN(player)) {
         addNotify("Error Exporting, because it got NaNed")
         return
@@ -280,8 +283,8 @@ function export_copy() {
     addNotify("Copied to Clipboard")
 }
 
-function importy() {
-    let loadgame = prompt("Paste in your save WARNING: WILL OVERWRITE YOUR CURRENT SAVE")
+function import_save(input) {
+    let loadgame = input || prompt("Paste in your save WARNING: WILL OVERWRITE YOUR CURRENT SAVE")
     if (loadgame == 'monke') {
         addNotify('monke<br><img style="width: 100%; height: 100%" src="https://i.kym-cdn.com/photos/images/original/001/132/314/cbc.jpg">')
         return
@@ -321,6 +324,16 @@ function importy() {
 		}
     }
 }
+
+const import_input = document.getElementById('import_file');
+function import_file(event) {
+	import_save(event.target.result);
+}
+/*import_input.addEventListener('change', (event) => {
+	const reader = new FileReader()
+	reader.onload = handleFileLoad;
+	reader.readAsText(event.target.files[0])
+});*/
 
 let lastLoad = 0
 function loadGame(start=true, save) {

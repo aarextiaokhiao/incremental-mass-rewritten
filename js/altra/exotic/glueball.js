@@ -30,12 +30,12 @@ function updateGlueballHTML() {
 
 //CHROMA BACKGROUND
 function toggleChromaBG() {
-	if (player.options.noChroma && !confirm("Warning! This will cause high performance for your PC / phone! Are you sure about that?!")) return
-	player.options.noChroma = !player.options.noChroma
+	if (!player.options.chroma && !confirm("Warning! This will cause high performance for your PC / phone! Are you sure about that?!")) return
+	player.options.chroma = !player.options.chroma
 }
 
 function updateChromaScreen() {
-	let unl = GLUBALL.unl() && !PORTAL.unl() && !player.options.noChroma
+	let unl = GLUBALL.unl() && !PORTAL.unl() && player.options.chroma
 	elm.chroma_bg.setDisplay(unl)
 	if (!unl) return
 

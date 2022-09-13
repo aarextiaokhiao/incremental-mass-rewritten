@@ -96,7 +96,7 @@ function calcSupernova(dt, dt_offline) {
             SUPERNOVA.reset()
         }
     }
-    if (player.supernova.unl) player.supernova.stars = player.supernova.stars.add(tmp.supernova.star_gain.mul(dt_offline))
+    if (player.supernova.unl) player.supernova.stars = player.supernova.stars.add(tmp.supernova.star_gain.mul(hasExtMilestone("qol", 1) ? dt : dt_offline))
 
     if (!player.supernova.post_10 && player.supernova.times.gte(10)) {
         player.supernova.post_10 = true

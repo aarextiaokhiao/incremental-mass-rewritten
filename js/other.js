@@ -56,9 +56,9 @@ const POPUP_GROUPS = {
         wkv (mass of Wekaverse): ` + POPUP_GROUPS.help.arvSect(9) + `<br>
         arv-11 (mass of 11th Archverse): ` + POPUP_GROUPS.help.arvSect(10) + `<br><br>
 		`+
-        (player.options.pure == 2 ? `` : `omni (mass of Omniverse): 1e1,000 mlt = 1e1e1,009 uni<br>`),
+        (player.options.notation_mass == 2 ? `` : `omni (mass of Omniverse): 1e1,000 mlt = 1e1e1,009 uni<br>`),
 		arvSect(x) {
-			if (player.options.pure == 2) return "1e1e9 " + ARV[x - 1] + " (log)"
+			if (player.options.notation_mass == 2) return "1e1e9 " + ARV[x - 1] + " (log)"
 			return "1e15 " + ARV[x - 1] + " = 1e1e" + (x * 15 + 9) + " uni"
 		}
     },
@@ -102,14 +102,14 @@ const POPUP_GROUPS = {
 			`+(player.stats.maxMass.gte("10^^4")?`
 			<b style='font-size: 24px'>Tetrational</b><br>
 			(Only works above ee1e10)<br>
-			<button class="btn" onclick="player.options.tetr = 'letter'" tooltip='By PsiCubed2'>Letter</button>
-			<button class="btn" onclick="player.options.tetr = 'hyper-e'" tooltip='By Sbiis'>Hyper-E</button><br><br>
+			<button class="btn" onclick="player.options.notation_tetr = 'letter'" tooltip='By PsiCubed2'>Letter</button>
+			<button class="btn" onclick="player.options.notation_tetr = 'hyper-e'" tooltip='By Sbiis'>Hyper-E</button><br><br>
 			`:``)+`
 			
 			<b style='font-size: 24px'>Mass</b><br>
-			<button class="btn" onclick="player.options.pure = 1">Off</button>
-			<button class="btn" onclick="player.options.pure = 0">On</button>
-			`+(player.stats.maxMass.gte(mlt(1))?`<button class="btn" onclick="player.options.pure = 2" tooltip='1e1e9 mlt = 1 mgv (log)'>Large-scale</button>`:``)
+			<button class="btn" onclick="player.options.notation_mass = 1">Off</button>
+			<button class="btn" onclick="player.options.notation_mass = 0">On</button>
+			`+(player.stats.maxMass.gte(mlt(1))?`<button class="btn" onclick="player.options.notation_mass = 2" tooltip='1e1e9 mlt = 1 mgv (log)'>Large-scale</button>`:``)
 		,
     },
     supernova10: {

@@ -2,6 +2,7 @@ class Element {
 	constructor(el) {
 		this.id = typeof el == "string" ? el : el.id;
 		this.el = document.getElementById(this.id);
+		this.parent = null
 	}
 
 	get style() {
@@ -132,5 +133,14 @@ class Element {
 	}
 	static append(id, child) {
 		new Element(id).append(child)
+	}
+
+	appendHTML(child) {
+		if (elm[child].parent == this.id) return
+		elm[child].parent = this.id
+		this.el.append(elm[child].el)
+	}
+	static appendHTML(id, child) {
+		new Element(id).appendHTML(child)
 	}
 }

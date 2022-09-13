@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "9/11/22"
-let betaVerNum = 220911
+let betaVer = "9/12/22"
+let betaVerNum = 220912
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -28,29 +28,34 @@ function deleteAPWaste() {
 function skipToRadiation() {
 	if (!confirm("Are you want to skip into Radiation?")) return
 
-	for (var i = 1; i <= 10; i++) player.mainUpg.atom.push(i)
 	player.autoMassUpg = [null, true, true, true]
 	player.auto_mainUpg.rp = true
 	player.auto_mainUpg.bh = true
 	player.auto_mainUpg.atom = true
-	player.autoTickspeed = true
 	player.auto_ranks.rank = true
 	player.auto_ranks.tier = true
 	player.auto_ranks.tetr = true
 	player.rp.unl = true
+	player.autoTickspeed = true
 	player.bh.unl = true
+	player.bh.condenser = D(10)
+	player.bh.autoCondenser = true
 	player.atom.unl = true
+	player.atom.auto_gr = true
+	for (var i = 1; i <= 54; i++) player.atom.elements.push(i)
 	player.supernova.unl = true
 	player.supernova.post_10 = true
-	player.supernova.times = D(25)
+	player.supernova.stars = D(1e50)
+	player.supernova.times = D(40)
+	player.supernova.fermions.tiers = [[D(15), D(23), D(11), D(3), D(0), D(0)], [D(42), D(24), D(16), D(5), D(0), D(0)]]
 	player.chal.comps[9] = D(10)
 	player.chal.comps[10] = D(10)
 
 	let list = ["c"]
 	list = list.concat("chal1","chal2","chal3","chal4","chal4a","chal5")
-	list = list.concat("qol1","qol2","qol3","qol4","qol5","qol6")
+	list = list.concat("qol1","qol2","qol3","qol4","qol5","qol6","qol7","qol8")
 	list = list.concat("s1","s2","s3","s4","sn1","sn2","sn3","sn4","sn5","m1","m2","m3","rp1","bh1","bh2","t1","gr1","gr2","d1")
-	list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5")
+	list = list.concat("bs1","bs2","bs3","bs4","fn1","fn2","fn3","fn4","fn5","fn6")
 	list = list.concat("unl1")
 	player.supernova.tree = list
 
@@ -104,6 +109,17 @@ function checkAPVers() {
 
 			resetTemp()
 			EXT.reset(true)
+		}
+		if (player.ap_build < 220912) {
+			player.options.offline = !player.offline.active
+			player.options.notation_tetr = player.options.tetr
+			player.options.notation_mass = player.options.pure
+			player.options.chroma = !player.options.noChroma
+
+			delete player.offline.active
+			delete player.options.tetr
+			delete player.options.pure
+			delete player.options.noChroma
 		}
 	}
 	if (gtAPVer(currentAPVer, player.ap_ver)) addPopup(POPUP_GROUPS.ap_update)
@@ -195,26 +211,36 @@ function getProdDisp(x, id, isMass, isMain) {
 //do not use this without Compression
 function addProdWorth(x, id, dt) {
 	const data = tmp.compress[id]
-	return decompressProdWorth(compressProdWorth(x, data).add(dt), data)
+	return decompressProdWorth(compressProdWorth(x, data).add(dt), data).max(x)
 }
 
 function compressProdWorth(x, data) {
 	x = D(x)
 
-	if (data.log) x = x.log10()
+	if (data.log) x = x.add(1).log10()
 	if (Decimal.neq(data.base, 1)) x = x.div(data.base)
-	if (Decimal.neq(data.exp, 1)) x = x.root(data.exp)
-	if (Decimal.neq(data.dil, 1)) x = expMult(x, D(1).div(data.dil))
+	if (x.gt(1)) {
+		x = x.log10()
+		if (Decimal.neq(data.exp, 1)) x = x.div(data.exp)
+		if (x.gt(1) && Decimal.neq(data.dil, 1)) x = x.root(data.dil)
+		x = x.pow10()
+	}
+
 	return x
 }
 
 function decompressProdWorth(x, data) {
 	x = D(x)
 
-	if (Decimal.neq(data.dil, 1)) x = expMult(x, data.dil)
-	if (Decimal.neq(data.exp, 1)) x = x.pow(data.exp)
+	if (x.gt(1)) {
+		x = x.log10()
+		if (x.gt(1) && Decimal.neq(data.dil, 1)) x = x.pow(data.dil)
+		if (Decimal.neq(data.exp, 1)) x = x.mul(data.exp)
+		x = x.pow10()
+	}
 	if (Decimal.neq(data.base, 1)) x = x.mul(data.base)
-	if (data.log) x = x.pow10()
+	if (data.log) x = x.pow10().sub(1)
+
 	return x
 }
 
@@ -225,9 +251,9 @@ function calcProd(key) {
 	if (value.log()) {
 		tmp.compress[key] = {
 			log: true,
-			base: value.exp().div(100),
-			exp: value.dil(),
-			dil: D(2/3)
+			base: value.exp().add(value.base().max(1).log10()).div(2),
+			exp: value.dil().div(5),
+			dil: D(1)
 		}
 	} else {
 		tmp.compress[key] = {

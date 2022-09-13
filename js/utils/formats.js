@@ -359,7 +359,7 @@ function format(ex, acc=2, type=player.options.notation, color) {
 	if (ex.sign == -1) return "-" + format(ex.neg(), acc, type, color)
 	if (ex.mag == Infinity) return '∞'
 
-	if ((ex.mag >= 1e10 && ex.layer == 3) || ex.layer >= 4) return formatTetr(ex, player.options.tetr)
+	if ((ex.mag >= 1e10 && ex.layer == 3) || ex.layer >= 4) return formatTetr(ex, player.options.notation_tetr)
 	if (!FORMATS[type]) type = "mix"
 	return FORMATS[type].format(ex, acc, color)
 }
@@ -392,7 +392,7 @@ function formatGain(amt, gain, isMass=false, main=false) {
 	let f = isMass?formatMass:format
 
 	if (!main && amt.max(gain).gte("ee4")) return ""
-	if (main && player.options.pure != 1 && amt.max(gain).gte(mlt(1))) {
+	if (main && player.options.notation_mass != 1 && amt.max(gain).gte(mlt(1))) {
 		amt = amt.max(1).log10().div(1e9)
 		gain = gain.max(1).log10().div(1e9).sub(amt).mul(20)
 		f = (x) => formatArv(x, true)
@@ -427,7 +427,7 @@ function formatMultiply(a) {
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
     ex = D(ex)
-    if (player.options.pure == 1) return f(ex)
+    if (player.options.notation_mass == 1) return f(ex)
 
     if (ex.gte(EINF)) return f(ex)
     if (ex.gte(mlt(1))) return formatArv(ex.div(1.5e56).log10().div(1e9), color)
@@ -446,7 +446,7 @@ const ARV = ['mlt','mgv','giv','tev','pev','exv','zev','yov',"xvr","wkv"]
 function formatArv(mlt, color) {
     let arv = D(0)
 	let div = mlt
-	if (player.options.pure == 2) {
+	if (player.options.notation_mass == 2) {
 		while (mlt.gte("ee9")) {
 			mlt = mlt.log("ee9")
 			arv = arv.add(1).round()
