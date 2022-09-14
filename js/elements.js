@@ -365,7 +365,7 @@ function updateBlackHoleHTML() {
 function updateStatsHTML() {
 	elm.total_time.setTxt(formatTime(player.time))
 	elm.best_mass.setTxt(formatMass(player.stats.maxMass))
-	elm.progress_features_stats.setTxt(getFeatureProgress() + " / " + FEATURE_AMT)
+	elm.progress_stages_stats.setTxt(getStageProgress() + " / " + STAGE_AMT)
 	elm.progress_layers_stats.setTxt(getLayerProgress() + " / " + LAYER_AMT)
 }
 

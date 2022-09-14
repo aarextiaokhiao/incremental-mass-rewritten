@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "9/12/22"
-let betaVerNum = 220912
+let betaVer = "9/13/22"
+let betaVerNum = 220913
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -48,7 +48,7 @@ function skipToRadiation() {
 	player.supernova.stars = D(1e50)
 	player.supernova.times = D(40)
 	player.supernova.fermions.tiers = [[D(15), D(23), D(11), D(3), D(0), D(0)], [D(42), D(24), D(16), D(5), D(0), D(0)]]
-	player.chal.comps[9] = D(10)
+	player.chal.comps[9] = D(50)
 	player.chal.comps[10] = D(10)
 
 	let list = ["c"]

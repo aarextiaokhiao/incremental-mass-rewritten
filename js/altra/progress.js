@@ -30,26 +30,27 @@ function getLayerProgress() {
 		player.rp.unl ? 1 : 0
 }
 
-const FEATURE_AMT = 13
-const FEATURE_PROGRESS = {
+const STAGE_AMT = 13
+const STAGE_PROGRESS = {
 	1: {
+		req: () => "",
+		unl: "Beginning"
+	},
+	2: {
 		req: () => "a Rage Power",
 		unl: "Tickspeed"
 	},
-	2: {
+	3: {
 		req: () => "a Dark Matter",
 		unl: "Black Hole"
 	},
-	3: {
+	4: {
 		req: () => formatMass(1.5e136) + " mass",
 		unl: "Challenges"
 	},
-	4: {
+	5: {
 		req: () => "an Atom",
 		unl: "Atomic Generators and Quarks"
-	},
-	5: {
-		//Feature 5 unlocks at Atoms.
 	},
 	6: {
 		req: () => format(1e56) + " Quarks",
@@ -85,7 +86,7 @@ const FEATURE_PROGRESS = {
 	}
 }
 
-function getFeatureProgress() {
+function getStageProgress() {
 	let layers = getLayerProgress()
 	switch(layers) {
 		case 5:
@@ -104,25 +105,23 @@ function getFeatureProgress() {
 			return 5
 
 		case 2:
-			if (player.chal.unl) return 3
-			return 2
+			if (player.chal.unl) return 4
+			return 3
 
 		case 1:
-			return 1
+			return 2
 
 		default:
-			return 0
+			return 1
 	} 
 }
 
 function updateProgressHeader() {
-	let shown = player.options.progress && !CHALS.inChals()
-	elm.progress_header.setDisplay(shown)
-	elm.progress_header.setVisible(gameStarted())
+	elm.progress_header.setDisplay(player.options.progress && !CHALS.inChals() && gameStarted())
 
-	elm.progress_features.setTxt(getFeatureProgress() + " / " + FEATURE_AMT)
+	elm.progress_stages.setTxt(getStageProgress() + " / " + STAGE_AMT)
 	elm.progress_layers.setTxt(getLayerProgress() + " / " + LAYER_AMT)
 
-	elm.progress_features_next.setTxt(getFeatureProgress() == FEATURE_AMT ? "All features unlocked!" : "Get " + FEATURE_PROGRESS[getFeatureProgress() + 1].req() + " to unlock " + FEATURE_PROGRESS[getFeatureProgress() + 1].unl + ".")
+	elm.progress_stages_next.setTxt(getStageProgress() == STAGE_AMT ? "All features unlocked!" : "Get " + STAGE_PROGRESS[getStageProgress() + 1].req() + " to unlock " + STAGE_PROGRESS[getStageProgress() + 1].unl + ".")
 	elm.progress_layers_next.setTxt(getLayerProgress() == LAYER_AMT ? "All layers unlocked!" : "Get " + LAYER_PROGRESS[getLayerProgress() + 1].req() + " to unlock " + LAYER_PROGRESS[getLayerProgress() + 1].unl + ".")
 }

@@ -90,7 +90,7 @@ const POPUP_GROUPS = {
 			<button class="btn" onclick="player.options.notation = 'eng'">Engineering</button>
 			<button class="btn" onclick="player.options.notation = 'log'">Logarithm</button><br><br>
 
-			<b style='font-size: 18px'>Others</b><br>
+			<b style='font-size: 18px'>Non-Scientific</b><br>
 			<button class="btn" onclick="player.options.notation = 'st'">Standard</button>
 			<button class="btn" onclick="player.options.notation = 'elemental'">Elemental</button>
 			`+(player.stats.maxMass.gte(Number.MAX_VALUE)?`<button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>`:``)+`

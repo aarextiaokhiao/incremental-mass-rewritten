@@ -45,8 +45,7 @@ function updateChalHTML() {
 }
 
 function updateChalHeader() {
-	elm.chal_upper.setDisplay(!player.options.progress || CHALS.inChals())
-	elm.chal_upper.setVisible(CHALS.inChals())
+	elm.chal_upper.setDisplay(CHALS.inChals())
 
 	let chal = CHALS.lastActive()
 	let md = player.md.active

@@ -18,12 +18,6 @@ body.ngm {
 	width: 100%;
 	background: #0003;
 }
-.tab_header {
-	border-bottom: none !important;
-	height: 5px;
-	background: radial-gradient(ellipse at top, #bfcfff, transparent)
-}
-
 @keyframes blink {
 	0% {
 		opacity: 1
@@ -66,7 +60,6 @@ body.ngm {
 
 	transition-duration: 0.5s
 }
-
 .btn:hover, .btn_tab:hover {
 	transform: scale(1.05)
 }
@@ -74,7 +67,6 @@ body.ngm {
 .btn_tab {
 	border-bottom: 0px solid #0007
 }
-
 .btn_tab.choosed {
 	border-bottom: 3px solid #fff7;
 	background: radial-gradient(ellipse at top, #007fff, #005fbf) !important;
@@ -84,12 +76,17 @@ body.ngm {
 	font-weight: bold;
 	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
 }
-
 #tabs .btn_tab {
 	padding-top: 3px;
 	padding-bottom: 3px
 }
+.tab_header {
+	border-bottom: none !important;
+	height: 5px;
+	background: radial-gradient(ellipse at top, #bfcfff, transparent)
+}
 
+/* RANKS */
 #ranks_amt_0 {
 	background: linear-gradient(transparent, #84e6003f);
 	border-radius: 2px;
@@ -100,7 +97,6 @@ body.ngm {
 	font-size: 20px;
 	text-shadow: 0 0 3px #84e600
 }
-
 #ranks_amt_1 {
 	background: linear-gradient(transparent, #e6c9003f);
 	border-radius: 2px;
@@ -110,7 +106,6 @@ body.ngm {
 	font-size: 20px;
 	text-shadow: 0 0 3px #e6c900
 }
-
 #ranks_amt_2 {
 	background: linear-gradient(transparent, #e66d003f);
 	border-radius: 2px;
@@ -120,7 +115,6 @@ body.ngm {
 	font-size: 20px;
 	text-shadow: 0 0 3px #e66d00
 }
-
 #ranks_amt_3 {
 	background: linear-gradient(transparent, #e600393f);
 	border-radius: 2px;
@@ -130,7 +124,6 @@ body.ngm {
 	font-size: 20px;
 	text-shadow: 0 0 3px #e60039
 }
-
 #ranks_amt_4 {
 	background: linear-gradient(transparent, #d700953f);
 	border-radius: 2px;
@@ -140,7 +133,6 @@ body.ngm {
 	font-size: 20px;
 	text-shadow: 0 0 3px #d70095
 }
-
 #ranks_amt_5 {
 	background: linear-gradient(transparent, #d700953f);
 	border-radius: 2px;
@@ -151,6 +143,7 @@ body.ngm {
 	text-shadow: 0 0 3px #cb01fd
 }
 
+/* BLACK HOLE */
 .btn_tab.bh {
 	background: radial-gradient(ellipse at top, #ff9f00, #ffbf00) !important;
 	box-shadow: 0 0 3px #bf9f00, 0 0 24px #ffbf00;
@@ -158,15 +151,6 @@ body.ngm {
 	color: #ffdf7f;
 	text-shadow: 0 2px 4px #ffdf7f
 }
-
-.btn_tab.atom {
-	background: radial-gradient(ellipse at top, #007fff, #00ff7f) !important;
-	box-shadow: 0 0 3px #007fbf, 0 0 24px #00ffff;
-
-	color: #7fffff;
-	text-shadow: 0 2px 4px #7fffff
-}
-
 #stab_frame0_1 .btn {
 	background: rgba(255, 191, 0, 0.75) !important;
 	box-shadow: 0 0 3px #bf9f00;
@@ -175,6 +159,14 @@ body.ngm {
 	text-shadow: 0 2px 4px #ffff7f
 }
 
+/* -=- ATOM -=- */
+.btn_tab.atom {
+	background: radial-gradient(ellipse at top, #007fff, #00ff7f) !important;
+	box-shadow: 0 0 3px #007fbf, 0 0 24px #00ffff;
+
+	color: #7fffff;
+	text-shadow: 0 2px 4px #7fffff
+}
 #stab_frame0_2 .btn {
 	background: rgba(0, 255, 255, 0.75) !important;
 	box-shadow: 0 0 3px #007fbf;
@@ -183,6 +175,7 @@ body.ngm {
 	text-shadow: 0 2px 4px #7fffff
 }
 
+/* ELEMENTS */
 .elements {
 	border: 0px solid;
 	border-radius: 6px;
@@ -192,7 +185,6 @@ body.ngm {
 	color: #7fefff;
 	text-shadow: 0 2px 4px #7fefff
 }
-
 .elements.locked {
 	background: radial-gradient(ellipse at top, #5f1f1f, #1f1f1f) !important;
 	box-shadow: 0 4px 4px #5f0000;
@@ -200,7 +192,6 @@ body.ngm {
 	color: #7f2f2f !important;
 	text-shadow: 0 2px 4px #3f0000
 }
-
 .elements.locked.bought {
 	background: radial-gradient(ellipse at top, #00ff00, #7fff00) !important;
 	box-shadow: 0 4px 4px #007f00;
@@ -216,7 +207,6 @@ body.ngm {
 	color: #bfffbf;
 	text-shadow: 0 2px 4px #bfffbf
 }
-
 .btn.md {
 	background: rgba(0, 255, 0, 0.75) !important;
 	box-shadow: 0 0 3px #7fff00;
@@ -232,7 +222,6 @@ body.ngm {
 	color: #3f3f00 !important;
 	text-shadow: 0 2px 4px #1f1f00
 }
-
 #stab_frame0_3 .btn {
 	background: rgba(255, 63, 0, 0.75) !important;
 	box-shadow: 0 0 3px #ff3f00;

@@ -29,6 +29,7 @@
 
 	<!-- FEATURES -->
 	<script src="js/ranks.js"></script>
+	<script src="js/wip/ranks_new.js"></script>
 	<script src="js/upgrades.js"></script>
 	<script src="js/challenges.js"></script>
 
@@ -221,15 +222,17 @@
 
 		<div style='height: 5px'></div>
 		<div style="height: 190px">
-			<div id="chal_upper" style='height: 40px'></div>
-			<div class="table_center" id="progress_header" style='width: 100%; height: 40px'>
-				<div style="width: 50%">
-					<b>Stage #<span id="progress_features"></span></b>
-					<br><span id="progress_features_next"></span>
-				</div>
-				<div style="width: 50%">
-					<b>Layer #<span id="progress_layers"></span></b>
-					<br><span id="progress_layers_next"></span>
+			<div id="upper" style="height: 40px">
+				<div id="chal_upper"></div>
+				<div class="table_center" id="progress_header" style='width: 100%'>
+					<div style="width: 50%">
+						<b>Stage #<span id="progress_stages"></span></b>
+						<br><span id="progress_stages_next"></span>
+					</div>
+					<div style="width: 50%">
+						<b>Layer #<span id="progress_layers"></span></b>
+						<br><span id="progress_layers_next"></span>
+					</div>
 				</div>
 			</div>
 			<div class="table_center" style="margin: 5px 0px;">
@@ -399,7 +402,7 @@
 				Best mass: <span id="best_mass">X</span>
 				<br><br>
 				Layers: <span id="progress_layers_stats">X</span><br>
-				Stages: <span id="progress_features_stats">X</span>
+				Stages: <span id="progress_stages_stats">X</span>
 			</div><div id="stab_frame1_1">
 				<button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn" id="ranks_left_arrow"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn" id="ranks_right_arrow">--></button><br><br>
 				<div id="ranks_rewards_table"></div>
@@ -501,7 +504,7 @@
 			<button class="btn" id="chroma_bg_btn" onclick="toggleChromaBG()">Chroma BG: <span id="chroma_bg_active">ON</span></button>
 
 			<br><br>
-			<h2>Confirmation Settings</h2><br>
+			<h2>Confirmation</h2><br>
 			<div id="confirm_table" class="table_center"></div>
 
 			<br><br>
