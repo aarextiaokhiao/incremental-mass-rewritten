@@ -69,6 +69,7 @@ const UPGS = {
                 if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let ret = step.mul(x.add(tmp.upgs.mass[1].bonus))
+				if(hasElement(174))ret = ret.pow(tmp.elements.effect[174]||1);
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -94,7 +95,8 @@ const UPGS = {
                 let step = E(2)
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
-                let ret = step.mul(x.add(tmp.upgs.mass[2].bonus)).add(1)//.softcap("ee14",0.95,2)
+                let ret = step.mul(x.add(tmp.upgs.mass[2].bonus)).add(1)
+				if(hasElement(173))ret = ret.pow(tmp.elements.effect[173]||1);
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -122,7 +124,9 @@ const UPGS = {
                 let ss = E(10)
                 if (player.ranks.rank.gte(34)) ss = ss.add(2)
                 if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
-                let step = E(1).add(RANKS.effect.tetr[2]())
+                if (hasElement(331)) ss = EINF
+                let step = E(1)
+				if (player.ranks.tetr.gte(2) || player.superGal.lt(1)) step = step.add(RANKS.effect.tetr[2]())
                 if (player.mainUpg.rp.includes(9)) step = step.add(0.25)
                 if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
                 if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
@@ -136,15 +140,23 @@ const UPGS = {
                     sp2 **= 0.9
                     ss2 = ss2.mul(3)
                 }
-                let ret = step.mul(xx.mul(hasElement(80)?25:1)).add(1).softcap(ss,sp,0).softcap(1.8e5,hasPrestige(0,12)?0.525:0.5,0)
+				if (hasUpgrade('rp',17))sp = sp ** 0.75
+                let ret = step.mul(xx.mul(hasElement(80)?25:1)).add(1).softcap(ss,sp,0)
+				if (!hasElement(292))ret = ret.softcap(1.8e5,hasPrestige(0,12)?0.525:0.5,0)
                 ret = ret.mul(tmp.prim.eff[0])
-                if (!player.ranks.pent.gte(15)) ret = ret.softcap(ss2,sp2,0)
+                if (!player.ranks.pent.gte(15) && (!hasElement(292))) ret = ret.softcap(ss2,sp2,0)
+				tmp.strongerOverflowPower = player.ranks.oct.gte(8)?0.6:0.5;
+				if (hasElement(305))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.9;
+				if (hasElement(315))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.8;
+				if (hasPrestige(2,81))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.5;
+				tmp.strongerOverflow = overflow(ret, "e4e6", tmp.strongerOverflowPower).log(ret);
+				ret = overflow(ret, "e4e6", tmp.strongerOverflowPower);
                 return {step: step, eff: ret, ss: ss}
             },
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Booster Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped${eff.eff.gte(1.8e5)?eff.eff.gte(5e15)&&!player.ranks.pent.gte(15)?"^3":"^2":""})</span>`:"")
+                    eff: "^"+format(eff.eff)+" to Booster Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped${(eff.eff.gte(1.8e5)&&(!hasElement(292)))?eff.eff.gte(5e15)&&!player.ranks.pent.gte(15)?"^3":"^2":""})</span>`:"")
                 }
             },
             bonus() {
@@ -152,6 +164,113 @@ const UPGS = {
                 if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][7].effect:0)
                 x = x.mul(getEnRewardEff(4))
                 return x
+            },
+        },
+    },
+    prestigeMass: {
+        cols: 3,
+        temp() {
+            for (let x = this.cols; x >= 1; x--) {
+                let d = tmp.upgs.prestigeMass
+                let data = this.getData(x)
+                d[x].cost = data.cost
+                d[x].bulk = data.bulk
+                
+                d[x].bonus = this[x].bonus?this[x].bonus():E(0)
+                d[x].eff = this[x].effect(player.prestigeMassUpg[x]||E(0))
+                d[x].effDesc = this[x].effDesc(d[x].eff)
+            }
+        },
+        autoSwitch(x) {
+            player.autoprestigeMassUpg[x] = !player.autoprestigeMassUpg[x]
+        },
+        buy(x, manual=false) {
+            let cost = manual ? this.getData(x).cost : tmp.upgs.prestigeMass[x].cost
+            if (player.prestigeMass.gte(cost)) {
+                if (!player.prestigeMassUpg[x]) player.prestigeMassUpg[x] = E(0)
+                player.prestigeMassUpg[x] = player.prestigeMassUpg[x].add(1)
+            }
+        },
+        buyMax(x) {
+            let d = tmp.upgs.prestigeMass[x]
+            let bulk = d.bulk
+            let cost = d.cost
+            if (player.prestigeMass.gte(cost)) {
+                let m = player.prestigeMassUpg[x]
+                if (!m) m = E(0)
+                m = m.max(bulk.floor().max(m.plus(1)))
+                player.prestigeMassUpg[x] = m
+            }
+        },
+        getData(i) {
+            let upg = this[i]
+            let inc = upg.inc
+            let start = upg.start
+            let lvl = player.prestigeMassUpg[i]||E(0)
+            let cost, bulk
+
+            
+            cost = inc.pow(lvl).mul(start)
+            bulk = E(0)
+            if (player.prestigeMass.gte(start)) bulk = player.prestigeMass.div(start).max(1).log(inc).add(1).floor()
+        
+            return {cost: cost, bulk: bulk}
+        },
+        1: {
+            unl() { return hasPrestige(2,38) },
+            title: "Prestige Muscler",
+            start: E(10),
+            inc: E(1.5),
+            effect(x) {
+                let step = player.prestiges[0]
+                if (hasPrestige(2,51)) step = step.mul(prestigeEff(2,51))
+                step = step.mul(tmp.upgs.prestigeMass[2]?tmp.upgs.prestigeMass[2].eff.eff:1)
+                let ret = step.mul(x).add(1)
+                return {step: step, eff: ret}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+"+format(eff.step),
+                    eff: "x"+format(eff.eff)+" to Prestige Mass gain"
+                }
+            },
+        },
+        2: {
+            unl() { return hasPrestige(2,39) },
+            title: "Prestige Booster",
+            start: E(100),
+            inc: E(4),
+            effect(x) {
+                let step = player.prestiges[1]
+                if (hasPrestige(2,52)) step = step.mul(prestigeEff(2,52))
+                step = step.pow(tmp.upgs.prestigeMass[3]?tmp.upgs.prestigeMass[3].eff.eff:1)
+                let ret = step.mul(x).add(1)
+                return {step: step, eff: ret}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+"+format(eff.step)+"x",
+                    eff: "x"+format(eff.eff)+" to Prestige Muscler Power"
+                }
+            },
+        },
+        3: {
+            unl() { return hasPrestige(2,40) },
+            title: "Prestige Stronger",
+            start: E(1000),
+            inc: E(9),
+            effect(x) {
+                let step = E(0.001)
+                if (hasPrestige(2,53)) step = step.mul(prestigeEff(2,53))
+                if (hasPrestige(3,11)) step = step.mul(prestigeEff(3,11))
+				let ret = step.mul(x).add(1);
+                return {step: step, eff: ret}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+^"+format(eff.step),
+                    eff: "^"+format(eff.eff)+" to Prestige Booster Power"
+                }
             },
         },
     },
@@ -164,8 +283,8 @@ const UPGS = {
                 }
             }
         },
-        ids: [null, 'rp', 'bh', 'atom', 'br'],
-        cols: 4,
+        ids: [null, 'rp', 'bh', 'atom', 'br', 'inf'],
+        cols: 5,
         over(x,y) { player.main_upg_msg = [x,y] },
         reset() { player.main_upg_msg = [0,0] },
         1: {
@@ -181,7 +300,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return player.mainUpg.bh.includes(5) },
-            lens: 15,
+            lens: 20,
             1: {
                 desc: "Boosters adds Musclers.",
                 cost: E(1),
@@ -243,12 +362,12 @@ const UPGS = {
                 },
             },
             9: {
-                unl() { return player.bh.unl },
+                unl() { return player.bh.unl || player.chal.unl},
                 desc: "Stronger Power is added +^0.25.",
                 cost: E(1e31),
             },
             10: {
-                unl() { return player.bh.unl },
+                unl() { return player.bh.unl || player.chal.unl},
                 desc: "Super Rank scaling is 20% weaker.",
                 cost: E(1e43),
             },
@@ -258,7 +377,7 @@ const UPGS = {
                 cost: E(1e72),
                 effect() {
                     let ret = player.rp.points.add(1).root(10).softcap('e4000',0.1,0)
-                    return ret//.softcap("ee13",0.9,2)
+                    return overflow(ret,"ee11000",0.5);
                 },
                 effDesc(x=this.effect()) {
                     return format(x)+"x"+(x.gte("e4000")?" <span class='soft'>(softcapped)</span>":"")
@@ -305,6 +424,45 @@ const UPGS = {
                     return "x"+format(x)
                 },
             },
+            16: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Remove Tickspeed Power Softcap.",
+                cost: E('ee99'),
+            },
+            17: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "The first Stronger Softcap is weaker.",
+                cost: E('e2e101'),
+            },
+            18: {
+                unl() { return hasUpgrade('inf',15) },
+                desc() {return "Rage Power boost Infinity Mass."},
+                cost: E('e1e113'),
+                effect() {
+                    let ret = player.rp.points.add(1).log10().add(1).log10().sub(111).max(1).log2().add(1);
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
+            },
+            19: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Mass Overflow starts ^10 later.",
+                cost: E('e2e123'),
+            },
+            20: {
+                unl() { return hasUpgrade('inf',15) && hasElement(134) },
+                desc() {return "Rage Power boost Accelerator Power."},
+                cost: E('ee151'),
+                effect() {
+                    let ret = player.rp.points.add(1).log10().add(1).log10().add(1).log10().add(1).pow(0.1);
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
+            },
         },
         2: {
             title: "Black Hole Upgrades",
@@ -319,7 +477,7 @@ const UPGS = {
                     player.mainUpg.bh.push(x)
                 }
             },
-            lens: 15,
+            lens: 20,
             1: {
                 desc: "Mass Upgardes no longer spends mass.",
                 cost: E(1),
@@ -445,21 +603,69 @@ const UPGS = {
                     return "+"+format(x,0)
                 },
             },
+            16: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "The start of Black Hole Overflow is raised by 10.",
+                cost: E('ee100'),
+            },
+            17: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Remove mass of Black Hole formula softcap. Mass of Black Hole gain softcap is 10% weaker.",
+                cost: E('e3e102'),
+            },
+            18: {
+                unl() { return hasUpgrade('inf',15) },
+                desc() {return "Dark Matter boost Infinity Mass."},
+                cost: E('e1e116'),
+                effect() {
+                    let ret = player.bh.dm.add(1).log10().add(1).log10().sub(113).max(1).log2().add(1);
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
+            },
+            19: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Black Hole effect exponentially boost mass gain.",
+                cost: E('e2e130'),
+                effect() {
+					if(hasElement(279))return expMult((tmp.bh?(tmp.bh.effect||E(1)):E(1)).add(1).log10(),0.8);
+                    return (tmp.bh?(tmp.bh.effect||E(1)):E(1)).add(1).log10().add(1).log10().pow(0.1);
+                },
+                effDesc(x=this.effect()) {
+                    return "^"+format(x)
+                },
+            },
+            20: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "The first Black Hole Overflow effect is weaker.",
+                cost: E('ee170'),
+            },
         },
         3: {
             title: "Atom Upgrades",
             res: "Atom",
             getRes() { return player.atom.points },
             unl() { return player.atom.unl },
-            can(x) { return player.atom.points.gte(this[x].cost) && !player.mainUpg.atom.includes(x) },
+            can(x) { 
+				if (x >= 13 && x <= 15 && player.prestiges[0].gte(50))return player.atom.points.gte(this[x].cost.pow(1/20000)) && !player.mainUpg.atom.includes(x);
+				return player.atom.points.gte(this[x].cost) && !player.mainUpg.atom.includes(x) 
+			},
             buy(x) {
+				if (x >= 13 && x <= 15 && player.prestiges[0].gte(50)){
+					if (this.can(x)) {
+						player.atom.points = player.atom.points.sub(this[x].cost.pow(1/20000))
+						player.mainUpg.atom.push(x)
+					}
+				}
                 if (this.can(x)) {
                     player.atom.points = player.atom.points.sub(this[x].cost)
                     player.mainUpg.atom.push(x)
                 }
             },
             auto_unl() { return hasTree("qol1") },
-            lens: 15,
+            lens: 20,
             1: {
                 desc: "Start with Mass upgrades unlocked.",
                 cost: E(1),
@@ -553,19 +759,58 @@ const UPGS = {
                 cost: E('e2015'),
             },
             13: {
-                unl() { return player.md.break.active && player.qu.rip.active },
-                desc: "Cosmic Ray effect softcap starts x10 later.",
+                unl() { return player.md.break.active && (player.qu.rip.active || player.prestiges[0].gte(50)) },
+                desc() {if(player.prestiges[0].gte(50))return "Cosmic Ray effect's all softcaps starts x12 later."; return "Cosmic Ray effect's final softcap starts x10 later.";},
                 cost: E('e3.2e11'),
             },
             14: {
-                unl() { return player.md.break.active && player.qu.rip.active },
-                desc: "Tickspeed, Black Hole Condenser and Cosmic Ray scalings up to Meta start x10 later.",
+                unl() { return player.md.break.active && (player.qu.rip.active || player.prestiges[0].gte(50)) },
+                desc() {if(player.prestiges[0].gte(50))return "Tickspeed, Black Hole Condenser and Cosmic Ray scalings up to Meta start x12 later."; return "Tickspeed, Black Hole Condenser and Cosmic Ray scalings up to Meta start x10 later.";},
                 cost: E('e4.3e13'),
             },
             15: {
-                unl() { return player.md.break.active && player.qu.rip.active },
-                desc: "Reduce Cosmic Ray scaling by 20%.",
+                unl() { return player.md.break.active && (player.qu.rip.active || player.prestiges[0].gte(50)) },
+                desc() {if(player.prestiges[0].gte(50))return "Reduce Cosmic Ray scaling by 24%."; return "Reduce Cosmic Ray scaling by 20%.";},
                 cost: E('e3.4e14'),
+            },
+            16: {
+                unl() { return hasUpgrade('inf',15) },
+                desc() {return "Unlock more elements."},
+                cost: E('e1e88'),
+            },
+            17: {
+                unl() { return hasUpgrade('inf',15) },
+                desc() {return "Ultra Tier scaling is 20% weaker."},
+                cost: E('e5e89'),
+            },
+            18: {
+                unl() { return hasUpgrade('inf',15) },
+                desc() {return "Atoms boost Infinity Mass."},
+                cost: E('e1e101'),
+                effect() {
+                    let ret = player.atom.points.add(1).log10().add(1).log10().sub(99).max(1).log2().add(1);
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
+            },
+            19: {
+                unl() { return hasUpgrade('inf',15) },
+                desc() {return "Cosmic Ray effect softcaps are weaker."},
+                cost: E('e3e108'),
+            },
+            20: {
+                unl() { return hasUpgrade('inf',15) && hasElement(134) },
+                desc() {return "Atomic Powers boost Accelerator Power."},
+                cost: E('e2e124'),
+                effect() {
+                    let ret = player.atom.atomic.add(1).log10().add(1).log10().add(1).log10().add(1).pow(0.1);
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
             },
         },
         4: {
@@ -581,7 +826,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return false },
-            lens: 15,
+            lens: 20,
             1: {
                 desc: `Start with Hydrogen-1 unlocked in Big Rip.`,
                 cost: E(5),
@@ -594,10 +839,10 @@ const UPGS = {
                 desc: `Pre-Quantum Global Speed is raised based on Death Shards (before division).`,
                 cost: E(50),
                 effect() {
-                    let x = player.qu.rip.amt.add(1).log10().div(25).add(1)
+                    let x = player.qu.rip.amt.add(1).log10().div(25).add(1).softcap(500,0.25,0);
                     return x
                 },
-                effDesc(x=this.effect()) { return "^"+format(x) },
+                effDesc(x=this.effect()) { return "^"+format(x)+(x.gte(500)?" <span class='soft'>(softcapped)</span>":"") },
             },
             4: {
                 desc: `Start with 2 tiers of each Fermion in Big Rip.`,
@@ -667,6 +912,181 @@ const UPGS = {
                 unl() { return player.md.break.active },
                 desc: `Blueprint Particles give slightly more Pre-Quantum Global Speed.`,
                 cost: E(1e24),
+            },
+            16: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Timeshard Effect is slightly stronger.",
+                cost: E(1e229),
+            },
+            17: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Timeshard Effect is slightly stronger again.",
+                cost: E(1e232),
+            },
+            18: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Timeshard Effect is slightly stronger again.",
+                cost: E(1e266),
+            },
+            19: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Timeshard Effect is slightly stronger again.",
+                cost: E("1e337"),
+            },
+            20: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: "Death Shards boost mass gain.",
+                cost: E("1e375"),
+                effect() {
+                    let x = player.qu.rip.amt.add(1).log10().add(1).log10().add(1).pow(1.5);
+					if(hasElement(313))x = expMult(player.qu.rip.amt.add(100),0.75);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "^"+format(x) },
+            },
+        },
+        5: {
+            title: "Infinity Upgrades",
+            res: "Infinity Mass",
+            getRes() { return player.inf.points },
+            unl() { return player.inf.times.gte(1) },
+            can(x) { return player.inf.points.gte(this[x].cost) && !player.mainUpg.inf.includes(x) },
+            buy(x) {
+                if (this.can(x)) {
+                    player.inf.points = player.inf.points.sub(this[x].cost)
+                    player.mainUpg.inf.push(x)
+                }
+            },
+            auto_unl() { return false },
+            lens: 20,
+            1: {
+                desc: `Multiply your quantum times gain by (200+Infinity times). Infinity Mass boost Quantum Foam gain. The actual cost of this upgrade is 1 mg of Infinity Mass.`,
+                cost: E(1e-3),
+                effect() {
+                    let x = player.inf.points.add(1).pow(2);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            2: {
+                desc: `Keep your neutron tree when Infinity. Infinity Mass boost Entropy gain and cap.`,
+                cost: E(1),
+                effect() {
+                    let x = player.inf.points.mul(20).add(1);
+					if(hasUpgrade('inf',16))x = x.pow(2);
+					if(hasElement(211))x = x.pow(1.2);
+					if(hasElement(321))x = x.pow(5);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x.pow(0.1).mul(2))+" to gain, x"+format(x)+" to cap" },
+            },
+            3: {
+                desc: `Keep your upgrades and Quantum Shards when Infinity. Gain 200 Quantums when Infinity. Infinity Mass boost Death Shards gain.`,
+                cost: E(1),
+                effect() {
+					if(hasElement(308))return player.inf.points.add(1).pow(2);
+                    let x = overflow(player.inf.points.add(1).pow(2),1e10,hasUpgrade('inf',18)?0.6:0.5);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x)+(x.gte(1e10)&&!hasElement(308)?" <span class='soft'>(softcapped)</span>":"") },
+            },
+            4: {
+                desc: `Infinity times boost Infinity Mass.`,
+                cost: E(2),
+                effect() {
+                    let x = player.inf.times.add(1);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            5: {
+                desc: `Keep your elements when Infinity. Infinity Mass boost Prestige Mass gain.`,
+                cost: E(5),
+                effect() {
+                    let x = overflow(player.inf.points.add(1).pow(0.5),"1e2500",0.5);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x)+(x.gte("1e2500")?" <span class='soft'>(softcapped)</span>":"") },
+            },
+            6: {
+                desc: `Mass gain softcap^6-7 are 50% weaker.`,
+                cost: E(100),
+            },
+            7: {
+                desc: `Infinity Mass base formula is better.`,
+                cost: E(200),
+            },
+            8: {
+                desc: `Infinity Mass formula from normal mass is better.`,
+                cost: E(1000),
+            },
+            9: {
+                desc: `Infinity Mass formula from normal mass is better. Infinity Mass boost Pre-Quantum Global Speed.`,
+                cost: E(10000),
+                effect() {
+                    let x = overflow(player.inf.points.add(1).pow(hasElement(341)?1:0.4),"1e2000",hasElement(341)?1:0.5);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x)+(x.gte("1e2000")&&!hasElement(341)?" <span class='soft'>(softcapped)</span>":"") },
+            },
+            10: {
+                desc: `Infinity Mass formula from Prestige mass is better. Mass gain softcap^8 is 50% weaker.`,
+                cost: E(5e6),
+            },
+            11: {
+                desc: `Gain 100% of Infinity Mass gain per second. Gain 1 Infinity count per second.`,
+                cost: E(1e8),
+            },
+            12: {
+                desc: `Infinity Mass Boost Infinity count gain.`,
+                cost: E(5e10),
+                effect() {
+                    let x = player.inf.points.add(1).log10();
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            13: {
+                desc: `Mass gain softcap^8-9 are 1% weaker.`,
+                cost: E(1e12),
+            },
+            14: {
+                desc: `Infinity Mass base formula is better.`,
+                cost: E(6e12),
+            },
+            15: {
+                desc: `Unlock More Upgrades. Eternity Mass base formula is better.`,
+                cost: E(3e13),
+            },
+            16: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: `Infinity Mass base formula is better, and Infinity Upgrade 2 is squared.`,
+                cost: E(1e14),
+            },
+            17: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: `Timeshards boost Infinity Mass. Eternity Mass base formula is better.`,
+                cost: E(1e16),
+                effect() {
+                    let x = player.et.shards.add(1).pow(0.05);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            18: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: `Infinity Mass base formula is better, and Infinity Upgrade 3's softcap is weaker.`,
+                cost: E(1e27),
+            },
+            19: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: `Infinity Mass base formula is better, and Death Shard gain softcap is weaker.`,
+                cost: E(1e34),
+            },
+            20: {
+                unl() { return hasUpgrade('inf',15) },
+                desc: `Infinity Mass formula from Death Shards is better, and Death Shard gain softcap is weaker.`,
+                cost: E(1e51),
             },
         },
     },

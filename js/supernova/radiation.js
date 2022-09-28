@@ -7,6 +7,8 @@ const RADIATION = {
         if (hasTree('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
         if (player.ranks.pent.gte(2)) x = x.mul(RANKS.effect.pent[2]())
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
+		x = x.pow(SUPERNOVA_GALAXY.galPow5_eff())
+	if(player.gc.active)x = GCeffect(x)
         return x
     },
     hz_effect() {
@@ -25,6 +27,8 @@ const RADIATION = {
         if (hasTree('rad5')) x = x.mul(tmp.supernova.tree_eff.rad5||1)
         x = x.mul(tmp.radiation.bs.eff[3*i])
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
+		x = x.pow(SUPERNOVA_GALAXY.galPow5_eff())
+	if(player.gc.active)x = GCeffect(x)
         return x
     },
     ds_eff(i) {
@@ -183,7 +187,10 @@ const RADIATION = {
         },{
             title: `Meta-Rank Boost`,
             eff(b) {
-                let x = E(1.025).pow(b)
+				if(hasElement(224))return E(1.025).pow(b)
+				if(hasElement(207))return overflow(E(1.025).pow(b),2.5e62,0.1);
+				if(hasElement(193))return overflow(overflow(E(1.025).pow(b),1e51,0.1),2.5e62,0.1);
+                let x = overflow(overflow(overflow(E(1.025).pow(b).softcap(200000,0.5,0).softcap(1.2e10,0.1,0),1e13,0.1),1e51,0.1),2.5e62,0.1);
                 return x
             },
             desc(x) { return `Meta-Rank starts ${format(x)}x later` },

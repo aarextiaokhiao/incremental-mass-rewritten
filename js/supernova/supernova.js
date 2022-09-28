@@ -23,7 +23,7 @@ const SUPERNOVA = {
         player.atom.atomic = E(0)
         player.atom.gamma_ray = E(0)
         
-        let list_keep = [2,5]
+        let list_keep = [2,5,16]
         if (hasTree("qol2")) list_keep.push(6)
         let keep = []
         for (let x = 0; x < player.mainUpg.atom.length; x++) if (list_keep.includes(player.mainUpg.atom[x])) keep.push(player.mainUpg.atom[x])
@@ -37,7 +37,7 @@ const SUPERNOVA = {
         if (quUnl()) list_keep.push(30)
         keep = []
         for (let x = 0; x < player.atom.elements.length; x++) if (list_keep.includes(player.atom.elements[x]) || player.atom.elements[x] > 86) keep.push(player.atom.elements[x])
-        player.atom.elements = keep
+        if(player.superGal.lt(8))player.atom.elements = keep
         if (hasTree("qu_qol9") && QCs.active() && !player.atom.elements.includes(84)) player.atom.elements.push(84)
 
         player.md.active = false
@@ -68,13 +68,18 @@ const SUPERNOVA = {
         if (hasTree("sn5")) x = x.mul(tmp.supernova.tree_eff.sn5)
         if (tmp.qu.mil_reached[6]) x = x.mul(E(1.2).pow(player.qu.times).min(1e10))
         x = x.mul(tmp.radiation.bs.eff[11])
+		x = x.mul(SUPERNOVA_GALAXY.effects.nsMult())
+        if (hasTree("sn6")) x = x.pow(tmp.supernova.tree_eff.sn6)
+		x = x.pow(SUPERNOVA_GALAXY.effects.ns())
+	
+	if(player.gc.active)x = GCeffect(x)
         return x
     },
     req(x=player.supernova.times) {
         ml_fp = E(1).mul(tmp.bosons.upgs.gluon[3].effect)
         maxlimit = E(1e20).pow(x.scaleEvery('supernova').div(ml_fp).pow(1.25)).mul(1e90)
         bulk = E(0)
-        if (player.stars.points.div(1e90).gte(1)) bulk = player.stars.points.div(1e90).max(1).log(1e20).max(0).root(1.25).mul(ml_fp).scaleEvery('supernova',true).add(1).floor()
+        if (player.stars.points.div(1e90).gte(1)) bulk = player.stars.points.div(1e90).max(1).log(1e20).max(0).root(1.25).mul(ml_fp).scaleEvery('supernova',true).add(1).floor().min(hasElement(291)?EINF:SUPERNOVA_GALAXY.req())
         return {maxlimit: maxlimit, bulk: bulk}
     },
 }
@@ -109,6 +114,10 @@ function calcSupernova(dt, dt_offline) {
         if (tmp.fermions.ch[0] >= 0) {
             su.fermions.tiers[tmp.fermions.ch[0]][tmp.fermions.ch[1]] = su.fermions.tiers[tmp.fermions.ch[0]][tmp.fermions.ch[1]]
             .max(tmp.fermions.tiers[tmp.fermions.ch[0]][tmp.fermions.ch[1]])
+			if(tmp.fermions.ch[0] >= 2)
+				su.fermions.tiers[tmp.fermions.ch[0]-2][tmp.fermions.ch[1]] = su.fermions.tiers[tmp.fermions.ch[0]-2][tmp.fermions.ch[1]]
+				.max(tmp.fermions.tiers[tmp.fermions.ch[0]-2][tmp.fermions.ch[1]])
+			
         } else if (hasTree("qu_qol8") && !(!hasTree("qu_qol8a")&&QCs.active())) for (let i = 0; i < 2; i++) for (let j = 0; j < 6; j++) if (j < FERMIONS.getUnlLength()) {
             su.fermions.tiers[i][j] = su.fermions.tiers[i][j]
             .max(tmp.fermions.tiers[i][j])
@@ -139,6 +148,7 @@ function updateSupernovaTemp() {
             let unl = (t.unl?t.unl():true)
             let req = t.req?t.req():true
             if (tmp.qu.mil_reached[1] && NO_REQ_QU.includes(id)) req = true
+            if (player.superGal.gte(2)) req = true
             let can = (t.qf?player.qu.points:player.supernova.stars).gte(t.cost) && !hasTree(id) && req
             if (branch != "") for (let x = 0; x < branch.length; x++) if (!hasTree(branch[x])) {
                 unl = false
@@ -176,7 +186,8 @@ function updateSupernovaEndingHTML() {
     if (tmp.tab == 5) {
         tmp.el.supernova_scale.setTxt(getScalingName('supernova'))
         tmp.el.supernova_rank.setTxt(format(player.supernova.times,0))
-        tmp.el.supernova_next.setTxt(format(tmp.supernova.maxlimit,2))
+        tmp.el.supernova_next.setTxt("Next Supernova at "+format(tmp.supernova.maxlimit,2)+" stars")
+		if (player.supernova.times.gte(SUPERNOVA_GALAXY.req()) && !hasElement(291)) tmp.el.supernova_next.setTxt("You reached the maximum Supernova limit!")
         if (tmp.stab[5] == 0) {
             tmp.el.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain.mul(tmp.preQUGlobalSpeed)))
             updateTreeHTML()
@@ -184,5 +195,7 @@ function updateSupernovaEndingHTML() {
         if (tmp.stab[5] == 1) updateBosonsHTML()
         if (tmp.stab[5] == 2) updateFermionsHTML()
         if (tmp.stab[5] == 3) updateRadiationHTML()
+        if (tmp.stab[5] == 4) updateSupernovaGalaxyHTML()
+        if (tmp.stab[5] == 5) updateFermionsHTML()
     }
 }

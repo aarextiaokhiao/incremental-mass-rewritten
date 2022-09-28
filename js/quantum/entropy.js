@@ -16,13 +16,26 @@ const ENTROPY = {
         player.qu.en[i][3] = 0
     },
     gain() {
+		if (CHALS.inChal(13) || CHALS.inChal(19)) return E(0)
         let x = tmp.en.eff.eth.mul(getEnRewardEff(6))
         if (hasElement(93)) x = x.mul(tmp.elements.effect[93]||1)
         if (player.md.break.upgs[6].gte(1)) x = x.mul(tmp.bd.upgs[6].eff?tmp.bd.upgs[6].eff[0]:1)
+        if (hasTree("en2")) x = x.mul(tmp.supernova.tree_eff.en2||1)
+		if (hasPrestige(1,11)) x = x.mul(prestigeEff(1,11,[E(1),E(1)])[0]);
+        if (hasUpgrade('inf',2)) x = x.mul(upgEffect(5,2).pow(0.1).mul(2))
+        if (hasElement(125)) x = x.mul(tmp.elements.effect[125]||1)
+		if (hasPrestige(2,5)) x = x.mul(prestigeEff(2,5));
+		if (player.ranks.hex.gte(125)) x = x.mul(player.ranks.hex.add(1));
+        if (hasElement(139)) x = x.mul(tmp.elements.effect[139]||1)
+		if (player.ranks.hept.gte(52)) x = x.mul(E(10).pow(player.ranks.hept));
+		x = x.mul(SUPERNOVA_GALAXY.effects.entropyg())
+	
         return x
     },
     cap() {
         let x = tmp.en.eff.hr
+        if (hasUpgrade('inf',2)) x = x.mul(upgEffect(5,2))
+		x = x.mul(SUPERNOVA_GALAXY.effects.entropy())
         return x
     },
     evaPow(i) {
@@ -52,7 +65,7 @@ const ENTROPY = {
             inc: E(10),
 
             eff(i) {
-                let x = hasElement(114) ? i.add(1).root(1.5) : i.div(2).add(1).root(3)
+                let x = player.ranks.hex.gte(114) ? i.add(1) : hasElement(114) ? i.add(1).root(1.5) : i.div(2).add(1).root(3)
                 return x
             },
             desc(x) { return `Meta Tickspeed, BHC & Cosmic Ray start <b>${x.format()}x</b> later.` },
@@ -63,7 +76,7 @@ const ENTROPY = {
             inc: E(20),
 
             eff(i) {
-                let x = i.pow(0.5).div(5).add(1)
+                let x = i.pow(0.5).div(5).add(1).softcap(11,hasElement(269)?0.95:0.1,0).softcap(52,0.1,0)
                 return x
             },
             desc(x) { return `Atomic Power’s effect is <b>${formatPercent(x.sub(1))}</b> exponentially stronger.` },
@@ -78,6 +91,7 @@ const ENTROPY = {
             eff(i) {
                 let b = 3
                 if (hasElement(97)) b++
+                if (player.ranks.hex.gte(97)) b+=0.1
                 let x = Decimal.pow(b,i)
                 return x
             },
@@ -113,6 +127,8 @@ const ENTROPY = {
 
             eff(i) {
                 let x = i.root(2).div(10).add(1).pow(-1)
+				if(x.lt(0.07))x = x.mul(0.0049).cbrt()
+				if(x.lt(0.05))x = x.mul(0.0025).cbrt()
                 return x
             },
             desc(x) { return `All pre-Supernova scaling is <b>${formatReduction(x)}</b> weaker before Meta scaling (not including Pent).` },
@@ -166,6 +182,23 @@ const ENTROPY = {
         if (rc.scale) {
             let p = rc.scale.p
             if ((i == 2 || i == 6) && hasElement(106)) p = p**0.85
+			if (i == 2 && hasPrestige(0,91)) p = p ** 0.8
+				if (i == 2 && hasPrestige(0,115)) p = p ** 0.95
+				if (i == 2 && hasPrestige(0,131)) p = p ** 0.95
+				if (i == 2 && hasPrestige(0,141)) p = p ** 0.95
+				if (i == 6 && hasElement(138)) p = p ** 0.85
+				if (i == 7 && hasElement(141)) p = p ** 0.8
+				if (i == 6 && hasElement(144)) p = p ** 0.85
+				if (i == 6 && hasElement(151)) p = p ** 0.85
+				if (i == 2 && hasElement(165)) p = p ** 0.95
+				if (i == 6 && hasElement(167)) p = p ** 0.85
+				if (i == 6 && hasElement(177)) p = p ** 0.85
+				if (i == 6 && hasElement(197)) p = p ** 0.85
+				if (i == 2 && hasElement(198)) p = p ** 0.9
+				if (i == 7 && hasElement(201)) p = p ** 0.75
+				if (i == 7 && hasElement(208)) p = p ** 0.5
+				if (i == 6 && hasElement(266)) p = p ** 0.1
+				if (i == 7 && hasElement(266)) p = p ** 0.1
             r = r.scale(rc.scale.s, p, 0)
         }
         let x = rc.inc.pow(r).mul(rc.start)
@@ -181,6 +214,23 @@ const ENTROPY = {
             if (rc.scale) {
                 let p = rc.scale.p
                 if ((i == 2 || i == 6) && hasElement(106)) p = p**0.85
+				if (i == 2 && hasPrestige(0,91)) p = p ** 0.8
+				if (i == 2 && hasPrestige(0,115)) p = p ** 0.95
+				if (i == 2 && hasPrestige(0,131)) p = p ** 0.95
+				if (i == 2 && hasPrestige(0,141)) p = p ** 0.95
+				if (i == 6 && hasElement(138)) p = p ** 0.85
+				if (i == 7 && hasElement(141)) p = p ** 0.8
+				if (i == 6 && hasElement(144)) p = p ** 0.85
+				if (i == 6 && hasElement(151)) p = p ** 0.85
+				if (i == 2 && hasElement(165)) p = p ** 0.95
+				if (i == 6 && hasElement(167)) p = p ** 0.85
+				if (i == 6 && hasElement(177)) p = p ** 0.85
+				if (i == 6 && hasElement(197)) p = p ** 0.85
+				if (i == 2 && hasElement(198)) p = p ** 0.9
+				if (i == 7 && hasElement(201)) p = p ** 0.75
+				if (i == 7 && hasElement(208)) p = p ** 0.5
+				if (i == 6 && hasElement(266)) p = p ** 0.1
+				if (i == 7 && hasElement(266)) p = p ** 0.1
                 x = x.scale(rc.scale.s, p, 0, true)
             }
             x = x.add(1).floor()
@@ -200,12 +250,28 @@ const ENTROPY = {
 function getEnRewardEff(x,def=1) { return tmp.en.rewards_eff[x] ?? E(def) }
 
 function calcEntropy(dt, dt_offline) {
+	if(hasTree('qu_qol10')){
+		let s1 = Decimal.pow(4,player.supernova.radiation.hz.add(1).log10().add(1).log10().add(1).log10().add(1)).mul(2.25);
+		if(hasElement(268))s1 = Decimal.pow(10,player.supernova.radiation.hz.add(1).log10().add(1).log10().pow(0.75).mul(2));
+		else if (hasTree("en1")) s1 = s1.add(s1.pow(2)).add(s1.pow(3).div(3)); else s1 = s1.add(s1.pow(2).div(2));
+		s1 = s1.mul(getEnRewardEff(2));
+		if(player.qu.en.eth[2].lt(s1))player.qu.en.eth[2] = s1;
+		s1 = Decimal.pow(4,player.bh.mass.add(1).log10().add(1).log10().add(1).log10().add(1)).mul(2.25);
+		if (hasTree("en1")) s1 = s1.add(s1.pow(2)).add(s1.pow(3).div(3)); else s1 = s1.add(s1.pow(2).div(2));
+		s1 = s1.mul(getEnRewardEff(2));
+		if(player.qu.en.hr[2].lt(s1))player.qu.en.hr[2] = s1;
+	}
     if (player.qu.en.eth[0]) {
-        player.qu.en.eth[3] += dt
-        player.qu.en.eth[1] = player.qu.en.eth[1].add(tmp.en.gain.eth.mul(dt))
-        let s = player.supernova.radiation.hz.div(player.supernova.radiation.hz.max(1).pow(dt).pow(player.qu.en.eth[3]**(2/3))).sub(1)
-        if (s.lt(1)) ENTROPY.switch(0)
-        else player.supernova.radiation.hz = s
+		if(hasElement(268)){
+			player.qu.en.eth[1] = Decimal.pow(10,player.supernova.radiation.hz.add(1).log10().add(1).log10().pow(0.75).mul(2)).mul(getEnRewardEff(2));
+			ENTROPY.switch(0)
+		}else{
+			player.qu.en.eth[3] += dt
+			player.qu.en.eth[1] = player.qu.en.eth[1].add(tmp.en.gain.eth.mul(dt))
+			let s = player.supernova.radiation.hz.div(player.supernova.radiation.hz.max(1).pow(dt).pow(player.qu.en.eth[3]**(2/3))).sub(1)
+			if (s.lt(1)) ENTROPY.switch(0)
+			else player.supernova.radiation.hz = s
+		}
     }
     if (player.qu.en.hr[0]) {
         player.qu.en.hr[3] += dt

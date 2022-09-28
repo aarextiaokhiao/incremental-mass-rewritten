@@ -35,6 +35,7 @@ function resetTemp() {
         upgs: {
             main: {},
             mass: {},
+            prestigeMass: {},
         },
 
         elements: {
@@ -46,10 +47,10 @@ function resetTemp() {
         fermions: {
             ch: [0,0],
             gains: [E(0),E(0)],
-            maxTier: [[],[]],
-            tiers: [[],[]],
-            effs:  [[],[]],
-            bonuses: [[],[]],
+            maxTier: [[],[],[],[]],
+            tiers: [[],[],[],[]],
+            effs:  [[],[],[],[]],
+            bonuses: [[],[],[],[]],
         },
     
         supernova: {
@@ -101,9 +102,19 @@ function resetTemp() {
             
         },
 
+        inf: {
+            
+        },
+        et: {
+            
+        },
+        gc: {
+            
+        },
         prevSave: "",
     }
     for (let x = 0; x < PRES_LEN; x++) tmp.prestiges.eff[x] = {}
+    for (let x = UPGS.prestigeMass.cols; x >= 1; x--) tmp.upgs.prestigeMass[x] = {}
     for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
     for (let x = 1; x <= UPGS.main.cols; x++) tmp.upgs.main[x] = {}
     for (let j = 0; j < TREE_TAB.length; j++) {
@@ -126,6 +137,7 @@ function resetTemp() {
     for (let x = 0; x < MASS_DILATION.break.upgs.ids.length; x++) tmp.bd.upgs[x] = {}
     tmp.el = keep[0]
     tmp.prevSave = keep[1]
+	tmp.preQUGlobalSpeed = E(1)
 }
 
 resetTemp()
@@ -141,10 +153,25 @@ function updateMassTemp() {
     tmp.massSoftGain4 = FORMS.massSoftGain4()
     tmp.massSoftPower5 = FORMS.massSoftPower5()
     tmp.massSoftGain5 = FORMS.massSoftGain5()
+    tmp.massSoftPower6 = FORMS.massSoftPower6()
+    tmp.massSoftGain6 = FORMS.massSoftGain6()
+    tmp.massSoftPower7 = FORMS.massSoftPower7()
+    tmp.massSoftGain7 = FORMS.massSoftGain7()
+    tmp.massSoftPower8 = FORMS.massSoftPower8()
+    tmp.massSoftGain8 = FORMS.massSoftGain8()
+    tmp.massSoftPower9 = FORMS.massSoftPower9()
+    tmp.massSoftGain9 = FORMS.massSoftGain9()
     tmp.massGain = FORMS.massGain()
 }
 
 function updateTickspeedTemp() {
+    tmp.accelUnl = hasElement(134)
+
+    tmp.accelCost = FORMS.accel.cost()
+    tmp.accelBulk = E(0)
+    if (player.rp.points.gte(10)) tmp.accelBulk = player.rp.points.max(1).log10().max(1).log(1.5).add(1).floor()
+    tmp.accelEffect = FORMS.accel.effect()
+
     tmp.tickspeedFP = tmp.fermions.effs[1][2]
     tmp.tickspeedCost = E(2).pow(player.tickspeed.scaleEvery('tickspeed')).floor()
     tmp.tickspeedBulk = E(0)
@@ -155,6 +182,7 @@ function updateTickspeedTemp() {
 function updateUpgradesTemp() {
     UPGS.main.temp()
     UPGS.mass.temp()
+    UPGS.prestigeMass.temp()
 }
 
 function updateRagePowerTemp() {
@@ -187,9 +215,14 @@ function updateBlackHoleTemp() {
 }
 
 function updateTemp() {
+	
     tmp.offlineActive = player.offline.time > 1
     tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
+    updateGCTemp()
+	
+    updateInfinityTemp()
+	
     updateQuantumTemp()
 
     updateRadiationTemp()

@@ -432,6 +432,24 @@ button {
 	background-color: #800;
 }
 
+.elements.bought.ext {
+	border-color: #f90;
+	box-shadow: 0px 0px 10px 0px #ff99007e;
+	background-color: #960;
+}
+
+.elements.bought.ext.et {
+	border-color: #909;
+	box-shadow: 0px 0px 10px 0px #9900997e;
+	background-color: #606;
+}
+
+.elements.bought.ext.gqk {
+	border-color: #09f;
+	box-shadow: 0px 0px 10px 0px #0099ff7e;
+	background-color: #069;
+}
+
 .btn_tree:not(.qu_tree).bought {
 	border-color: #00520b;
 }

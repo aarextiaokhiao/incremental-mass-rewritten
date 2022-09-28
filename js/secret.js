@@ -4,7 +4,7 @@ var ss = ["",""]
 const ssf = [
     x=>{
         ss[0] += x.toLowerCase()
-        if (!"secretinvasion".includes(ss[0]) && !"shark".includes(ss[0])) {
+        if (!"secretinvasion".includes(ss[0]) && !"shark".includes(ss[0]) && !"bangdream".includes(ss[0]) && !"hikari".includes(ss[0])) {
             ss[0] = ""
         } else if (ss[0] == "secretinvasion") {
             ss[0] = ""
@@ -21,7 +21,40 @@ const ssf = [
             })
         } else if (ss[0] == "shark") {
             ss[0] = ""
-            addNotify(`Shark!!1!<br><img style="width: 100%; height: 100%;" src="https://i.guim.co.uk/img/media/67451b4b5c64652f11eca069b85013f8b31a4244/1549_893_5174_3105/master/5174.jpg?width=465&quality=45&auto=format&fit=max&dpr=2&s=df139353776471381634b995733c9ebc">`)
+            addNotify(`Shark!!1!`)
+        } else if (ss[0] == "bangdream") {
+            ss[0] = ""
+            addPopup({
+                html: `
+                    You input "BanGDream" in the periodic table.
+					<br>
+					I'm a BanG Dream! Girls Band Party! player.
+					<br>
+					My favorite BanG Dream! band is Poppin'Party.
+					<br>
+					And my favorite BanG Dream! character is Kasumi Toyama.
+					<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---loader3229
+					<br>
+					<a href="https://discord.gg/bangdream" target="_blank" style="color:yellow;">BanG Dream! Official Discord</a>
+					<br>
+					<a href="https://qq1010903229.github.io/bandorichartsEN" target="_blank" style="color:yellow;">My BanG Dream! Fanmade Charts</a>
+					<br>
+					<a href="https://bestdori.com/" target="_blank" style="color:yellow;">Bestdori!</a>
+					<br>
+					<span style="font-size:100%;color:#666666;">The Answer 2 is "KiraKiraDokiDoki"</span>
+					<br>
+					<img src="/incremental-mass-rewritten/images/kasumi.png">
+                `,
+                width: 500,
+                height: 400,
+                otherStyle: {
+                    'font-size': "14px",
+                },
+            })
+        } else if (ss[0] == "hikari") {
+            ss[0] = ""
+            addNotify(`Hikari!<br><img style="width: 300px;" src="/incremental-mass-rewritten/images/hikari.png">`)
         }
     },
     _=>{
@@ -31,7 +64,7 @@ const ssf = [
     x=>{
         if (x == ss[1]) {
             localStorage.setItem("imr_secret",ss[1])
-            window.open("https://mrredshark77.github.io/incremental-mass-rewritten/hidden.html","_self")
+            window.open("./hidden.html","_self")
             return true
         }
         return false

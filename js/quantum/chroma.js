@@ -5,11 +5,13 @@ const CHROMA = {
         }
     },
     gain(i) {
+		if (CHALS.inChal(13) || CHALS.inChal(19)) return E(0)
         if (!player.qu.chr_get.includes(i)) return E(0)
         let x = E(1)
-        if (tmp.qu.mil_reached[5]) x = x.mul(tmp.preQUGlobalSpeed.root(2))
+        if (tmp.qu.mil_reached[5]) x = x.mul((tmp.preQUGlobalSpeed||E(1)).root(2))
         if (hasTree('qu5')) x = x.mul(tmp.supernova.tree_eff.qu5)
         if (hasTree('qu8')) x = x.mul(tmp.supernova.tree_eff.qu8)
+			if (hasElement(155) && !player.qu.rip.active) x = x.pow(tmp.chal?tmp.chal.eff[13]:1)
         return x
     },
     names: [
@@ -21,17 +23,27 @@ const CHROMA = {
         i => {
             let x = i.add(1).log10().add(1).root(3)
             if (hasUpgrade('br',10)) x = x.mul(1.1)
+			if (hasElement(155) && !player.qu.rip.active) x = x.pow(tmp.chal?tmp.chal.eff[13]:1)
+			if (player.ranks.hept.gte(40)) x = x.pow(3)
             return x
         },
         i => {
             let x = E(1.01).pow(i.add(1).log10().max(0).pow(0.8))
-            if (hasUpgrade('br',7) && player.qu.rip.active) x = x.pow(2)
+			if(hasElement(335))x = E(1.01).pow(i.add(1).log10().max(0))
             if (hasUpgrade('br',10)) x = x.pow(1.1)
+			if (!hasElement(274))x = overflow(x,1000,0.5);
+			if (!hasElement(319))x = overflow(x,100000,hasElement(319)?1:hasElement(307)?0.85:hasElement(299)?0.8:hasElement(274)?0.75:0.5);
+            if (hasUpgrade('br',7) && player.qu.rip.active) x = x.pow(2)
+			if (hasElement(155) && !player.qu.rip.active) x = x.pow(tmp.chal?tmp.chal.eff[13]:1)
+            if (hasElement(180) && !player.qu.rip.active) x = x.pow(1.5)
             return x
         },
         i => {
             let x = E(1.1).pow(i.add(1).log10().max(0).pow(0.75))
+			if (!hasElement(310))x = overflow(x,"1e730",0.5)
+			if (!hasElement(250))x = x.min("1e1000");else x = overflow(x,"1e1000",0.2)
             if (hasUpgrade('br',10)) x = x.pow(1.1)
+			if (hasElement(155) && !player.qu.rip.active) x = x.pow(tmp.chal?tmp.chal.eff[13]:1)
             return x
         },
     ],
