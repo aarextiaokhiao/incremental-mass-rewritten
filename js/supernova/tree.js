@@ -381,6 +381,7 @@ const TREE_UPGS = {
         },
         chal9: {
 			qf: true,
+            icon: "placeholder",
             unl() { return player.atom.elements.includes(118) },
             branch: ["chal8"],
             desc: `Add 2000 more C9 completions.`,
@@ -388,6 +389,7 @@ const TREE_UPGS = {
         },
         chal10: {
 			qf: true,
+            icon: "placeholder",
             unl() { return player.atom.elements.includes(118) },
             branch: ["chal9"],
             desc: `Add 500 more C10-11 completions.`,
@@ -395,6 +397,7 @@ const TREE_UPGS = {
         },
         chal11: {
 			qf: true,
+            icon: "placeholder",
             unl() { return player.atom.elements.includes(118) },
             branch: ["chal10"],
             desc: `Add 500 more C9-11 completions.`,
@@ -402,6 +405,7 @@ const TREE_UPGS = {
         },
         chal12: {
 			qf: true,
+            icon: "placeholder",
             unl() { return player.atom.elements.includes(118) },
             branch: ["chal11"],
             desc: `Add 1900 more C9 completions, and add 3500 more C10-11 completions.`,
@@ -409,6 +413,7 @@ const TREE_UPGS = {
         },
         chal13: {
 			qf: true,
+            icon: "placeholder",
             unl() { return player.inf.times.gte(1) },
             branch: ["chal12"],
             desc: `Add 5000 more C9-11 completions.`,
@@ -416,6 +421,7 @@ const TREE_UPGS = {
         },
         chal14: {
 			qf: true,
+            icon: "placeholder",
             unl() { return player.inf.times.gte(1) },
             branch: ["chal13"],
             desc: `Add 900 more C12 completions.`,
@@ -567,36 +573,42 @@ const TREE_UPGS = {
         fn13: {
             unl() { return player.atom.elements.includes(118) },
             branch: ["fn12"],
+            icon: "placeholder",
             desc: `Remove [Neut-Muon]'s Hardcap.`,
             cost: E('1e3500000'),
         },
         fn14: {
             unl() { return player.atom.elements.includes(118) },
             branch: ["fn11"],
+            icon: "placeholder",
             desc: `[Strange], [Top], [Neutrino], [Neut-Muon] max tier is increased by 69. [Strange], [Top], [Neutrino], [Neut-Muon] Free Tiers from Epsilon Particles is unhardcapped.`,
             cost: E('1e3900000'),
         },
         fn15: {
             unl() { return player.atom.elements.includes(118) },
             branch: ["fn14","fn8"],
+            icon: "placeholder",
             desc: `[Bottom], [Neut-Tau] Free Tiers from Epsilon Particles is unhardcapped.`,
             cost: E('1e9000000'),
         },
         fn16: {
             unl() { return player.atom.elements.includes(118) },
             branch: ["fn14"],
+            icon: "placeholder",
             desc: `Break [Neutrino] Max Tier.`,
             cost: E('1e20000000'),
         },
         fn17: {
             unl() { return player.atom.elements.includes(118) },
             branch: ["fn16"],
+            icon: "placeholder",
             desc: `Break [Neut-Muon] Max Tier.`,
             cost: E('1e32000000'),
         },
         fn18: {
             unl() { return player.atom.elements.includes(118) },
             branch: ["fn13"],
+            icon: "placeholder",
             desc: `[Bottom]'s Hardcap becomes a softcap.`,
             cost: E('e2.5e13'),
         },
@@ -953,6 +965,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return player.atom.elements.includes(118) },
             branch: ["prim3"],
+            icon: "placeholder",
             desc: `Epsilon Particle’s second effect is stronger if you are not in Quantum Challenge.`,
             cost: E(1e200),
         },
@@ -960,6 +973,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return player.atom.elements.includes(118) },
             branch: ["prim3"],
+            icon: "placeholder",
             desc: `You can't gain Delta Particles from Primordium Theorem now. Instead, Add Free Delta Particles equals to your total Primordium Theorems.`,
             cost: E(1e105),
         },
@@ -967,6 +981,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return player.atom.elements.includes(118) },
             branch: ["prim4"],
+            icon: "placeholder",
             desc: `You can't gain Omega Particles from Primordium Theorem now. Instead, Add Free Omega Particles equals to your total Primordium Theorems.`,
             cost: E(1e116),
         },
@@ -974,6 +989,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return player.atom.elements.includes(118) },
             branch: ["prim5"],
+            icon: "placeholder",
             desc: `You can't gain Alpha Particles from Primordium Theorem now. Instead, Add Free Alpha Particles equals to your total Primordium Theorems.`,
             cost: E(1e147),
         },
@@ -981,6 +997,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return player.atom.elements.includes(118) },
             branch: ["prim6"],
+            icon: "placeholder",
             desc: `You can't gain Sigma Particles from Primordium Theorem now. Instead, Add Free Sigma Particles equals to your total Primordium Theorems.`,
             cost: E(1e178),
         },
@@ -988,6 +1005,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return player.atom.elements.includes(118) },
             branch: ["prim7"],
+            icon: "placeholder",
             desc: `Change the mechanics of Primordium.`,
             cost: E(1e235),
         },
@@ -1099,6 +1117,7 @@ const TREE_UPGS = {
             unl() { return player.atom.elements.includes(118) },
             qf: true,
             branch: ['en1'],
+            icon: "placeholder",
             desc: `Quantum Shard boost Entropy gain.`,
             cost: E(1e119),
             effect() {
@@ -1125,6 +1144,7 @@ const TREE_UPGS = {
             unl() { return hasElement(118) },
             qf: true,
             branch: ['br1'],
+            icon: "placeholder",
             desc: `All elements can be bought in Big Rip.`,
             cost: E(1e114),
         },
@@ -1132,6 +1152,7 @@ const TREE_UPGS = {
             unl() { return hasElement(118) },
             qf: true,
             branch: ['qu11'],
+            icon: "placeholder",
             req() { return player.supernova.times.gte(32) && player.qu.rip.active },
             reqDesc() { return `Reach 32 Supernovas in Big Rip.` },
             desc: `When outside Big Rips, Plutonium-94 works, but 90% weaker.`,
@@ -1243,7 +1264,7 @@ function setupTreeHTML() {
             for (let k = 0; k < TREE_IDS[i][j].length; k++) {
                 let id = TREE_IDS[i][j][k]
                 let option = id == "" ? `style="visibility: hidden"` : ``
-                let img = TREE_UPGS.ids[id]?`<img src="images/tree/${id}.png">`:""
+                let img = TREE_UPGS.ids[id]?`<img src="images/tree/${TREE_UPGS.ids[id].icon || id}.png">`:""
                 table += `<button id="treeUpg_${id}" class="btn_tree" onclick="TREE_UPGS.buy('${id}'); tmp.supernova.tree_choosed = '${id}'" ${option}>${img}</button>`
             }
             table += `</div>`

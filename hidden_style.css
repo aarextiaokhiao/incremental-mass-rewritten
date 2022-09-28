@@ -1,0 +1,38 @@
+* {
+	margin: 0.25em;
+	text-align: center;
+	font-family: 'Nunito', sans-serif
+}
+
+body {
+	font-size: 100%;
+
+	--background: radial-gradient(ellipse at top, #00000f, #00003f);
+
+	--text_color_1: #bfdfff;
+	--text_color_2: #00bfff;
+	--text_color_3: #00bfff;
+	--text_color_4: #00001f;
+
+	--box_color: radial-gradient(ellipse at top, #07fb, #07f3);
+	--box_shadow: 2px 2px 6px rgba(0, 127, 255, 0.5);
+
+	--button_color: radial-gradient(ellipse at top, #07f3, transparent);
+	--button_color_hovered: rgba(255, 255, 255, 0.8);
+
+	--animation_duration: 0s
+}
+
+#background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	background: var(--background)
+}
+
+a { 
+	color: var(--text_color_1)
+}

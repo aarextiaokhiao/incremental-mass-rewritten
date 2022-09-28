@@ -1,45 +1,15 @@
-<html>
+<html lang="en">
 <head>
-<title>Secret Invasion</title>
-<script src="sha512.js"></script>
-<script>
-setInterval(function(){
-var t = Math.floor(Date.now()/3600000)
-var c = Math.floor(t**(2*(Math.sin(t**3/Math.PI)+1))).toString(36)
-window.answer5 = sha512_256(c.replace(/\s/g, '').toUpperCase())
-},100);
-function check(a,b){
-	return sha512_256(document.getElementById(a).value.replace(/\s/g, '').toUpperCase()) == b;
-}
-function confirm(){
-	if(check("answer1","0e72e97ea635a6ea1d0ff3d91bb25dd35acacd28ee0490285d081de38165f164") && 
-	check("answer2","46ed09ab3e583bb39051bdeb0661510cc035d5f2dfe243b94a16fb274ef31045") && 
-	check("answer3","edc6b2b8094798a0debd69ea6559df17deb2633d956b979f435cf55028cc4fbf") && 
-	check("answer4","bf656aa9da302ddc9997c6bfe4db3ab0b9769397a52073fe2d04bf5e0eb6d6a2") &&
-	check("answer5",answer5)){
-		alert("Congretulations! You unlocked the Omega Badge in Incremental Mass Rewritten - loader3229's NG+!")
-		localStorage.imr_secret_badge1="1";
-	}else{
-		alert("Try Again!")
-	}
-}
-</script>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Nothing Happened</title>
+
+	<link rel="stylesheet" href="hidden_style.css">
 </head>
 <body>
-<a href="/incremental-mass-rewritten">Back To Incremental Mass Rewritten - loader3229's NG+</a><br>
-<a href="/">My Homepage</a><br>
-<a href="/incrementalgames">My Incremental Games</a><br>
-<a href=https://afdian.net/@loader3229/plan target=_blank>Afdian.net Donation</a><br>
-Question 1: There is an incremental game by me which a layer contains more than 140 milestones. Answer is the name of the game.<br>
-Question 2: Use the "Secret Invasion" to input the name of a game which is one of my favorite MUG.<br>
-Question 3: Infinity, Eternity, ???? (In My NG-4R) (Answer is a word)<br>
-Question 4: In Arcaea, which partner is in the cover of 'Grievous Lady'? (Answer is a word)<br>
-Question 5: The Secret Code in "Secret Invasion".<br>
-Answer 1:<input id="answer1"><br>
-Answer 2:<input id="answer2"><br>
-Answer 3:<input id="answer3"><br>
-Answer 4:<input id="answer4"><br>
-Answer 5:<input id="answer5"><br>
-<a href="javascript:confirm();">Confirm</a><br>
+	<div id="background">
+		<a href="index.html" id="no">Nothing Happened...</a>
+	</div>
 </body>
 </html>

@@ -82,7 +82,7 @@ function setupHTML() {
 		table += `<div style="width: 100%; margin-bottom: 5px;" class="table_center" id="prestigeMassUpg_div_${x}">
 			<div style="width: 400px">
 				<div class="resources">
-					<img src="images/mass_upg${x}.png">
+					<img src="images/pm_upg${x}.png">
 					<span style="margin-left: 5px; text-align: left;"><span id="prestigeMassUpg_scale_${x}"></span>${upg.title} [<span id="prestigeMassUpg_lvl_${x}">X</span>]</span>
 				</div>
 			</div><button id="prestigeMassUpg_btn_${x}" class="btn" style="width: 200px;" onclick="UPGS.prestigeMass.buy(${x}, true)">Cost: <span id="prestigeMassUpg_cost_${x}">X</span></button>
