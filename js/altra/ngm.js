@@ -14,7 +14,7 @@ function toggleMinus(start) {
 	else {
 		save()
 		setMetaSave()
-		loadGame(false)
+		switchSave()
 	}
 }
 

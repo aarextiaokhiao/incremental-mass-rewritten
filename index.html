@@ -72,13 +72,9 @@
 			<br><button class="btn" id="offlineSkip" onclick="player.offline.time = 0">Skip</button>
 		</span>
 	</div>
-	<div id="notify" class="hide">
-		Hello, world!
-	</div>
+	<div id="notify" class="hide"></div>
 	<div id="popup" style="display: none">
-		<div style="height: 365px; overflow-y: auto; margin-bottom: 5px;" id="popup_html">
-			Hello, world!
-		</div>
+		<div style="height: 365px; overflow-y: auto; margin-bottom: 5px;" id="popup_html"></div>
 		<button class="btn" id="popup_button" onclick="popup[0].callFunctions()">Okay</button>
 	</div>
 	<div id="supernova_scene" style='display: none'>
@@ -235,7 +231,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="table_center" style="margin: 5px 0px;">
+			<div class="table_center" style="margin: 5px 0px; flex-flow: initial; overflow-x: auto">
 				<div id="res_col1">
 					<div class="resources sml">
 						<div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
@@ -285,7 +281,8 @@
 						<span style="margin-left: 5px; text-align: left;" id="extAmt">X</span>
 					</div>
 				</div>
-			</div><span id="reset_desc"></span>
+			</div>
+			<span id="reset_desc"></span>
 		</div><div id="tabs" class="table_center" style="height: 30px"></div>
 		<div class="tab_header" id="tab_header" style="width: 100%; border-bottom: solid 2px white; height: 5px; margin-bottom: 13px;"></div>
 		<div id="stabs" style="min-height: 30px;"></div><br>
@@ -479,14 +476,14 @@
 			</div>
 		</div><div id="tab_frame7">
 			<h2>Saving</h2><br>
-			<button class="btn" onclick="save()">Save</button>
+			<button class="btn" onclick="save(true)">Save</button>
 			<button class="btn" onclick="export_save()">Export</button>
 			<button class="btn" onclick="download_save()">Download</button>
 			<button class="btn" onclick="import_save()">Import</button>
 			<button class="btn" onclick="document.getElementById('import_file').click()">Import File</button>
 			<br>
 			<button class="btn" onclick="player.options.offline = !player.options.offline">Offline Production: <span id="offline_active">ON</span></button>
-			<button class="btn" onclick="if (confirm('Are you sure you want to RESET your progress to new game?')) {wipe(true)}">Hard Reset</button>
+			<button class="btn" onclick="wipe()">Hard Reset</button>
 			<input
 			  type="file"
 			  style="display: none"

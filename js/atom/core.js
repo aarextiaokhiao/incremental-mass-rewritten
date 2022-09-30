@@ -285,7 +285,7 @@ function updateAtomicHTML() {
 }
 
 function updateAtomHTML() {
-    elm.particles_assign.setDisplay(!EXT.unl())
+    elm.particles_assign.setDisplay(!hasElement(30))
     elm.atom_ratio.setTxt(RATIO_ID[player.atom.ratio])
     elm.unassignQuarkAmt.setTxt(format(player.atom.quarks,0))
     for (let x = 0; x < ATOM.particles.names.length; x++) {

@@ -227,7 +227,7 @@ button {
 .resources {
 	display: flex;
 	align-items: center;
-	min-width: 300px;
+	min-width: 200px;
 	line-height: 1.1em
 }
 

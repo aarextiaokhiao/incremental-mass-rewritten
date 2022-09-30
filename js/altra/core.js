@@ -8,6 +8,11 @@ let betaSave = "testBeta"
 let globalSaveId = beta ? betaSave : "testSave"
 let metaSaveId = btoa(globalSaveId + "_meta")
 saveId = ""
+function switchSave(id) {
+	saveId = id || getSaveId()
+	load(localStorage.getItem(saveId))
+}
+
 function loadAPPlayer() {
 	//versions
 	if (player.ap_ver) checkAPVers()
@@ -93,6 +98,7 @@ function gteAPVer(a, b) {
 	return true
 }
 
+//SAVE UPDATING
 function checkAPVers() {
 	if (gteAPVer("0.5.1", player.ap_ver)) {
 		if (player.ap_build < 220901.1 && EXT.unl()) {

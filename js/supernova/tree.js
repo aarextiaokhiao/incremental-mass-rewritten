@@ -227,7 +227,7 @@ const TREE_UPGS = {
             branch: ["qol2"],
             req() { return player.supernova.times.gte(4) },
             reqDesc: `4 Supernovae.`,
-            desc: `Start with Techntium-43 unlocked, improve their element better. You can automatically gain Relativistic particles from mass.`,
+            desc: `Start with Techntium-43 unlocked, improve their element better. Passively generate Relativistic particles.`,
             cost: D(10000),
         },
         qol4: {
@@ -790,7 +790,6 @@ function updateTreeHTML() {
 		<span class="green">${t_ch.effDesc?"Currently: "+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
 		`
 	)
-    tree_update = true
 
 	for (let i = 0; i < TREE_TAB.length; i++) {
 		elm["tree_tab"+i+"_btn"].setDisplay(TREE_TAB[i].unl?TREE_TAB[i].unl():true)
@@ -803,6 +802,8 @@ function updateTreeHTML() {
 			if (unl) elm["treeUpg_"+id].setClasses({btn_tree: true, locked: !tmp.supernova.tree_afford[id], failed: TREE_UPGS.ids[id].failed && TREE_UPGS.ids[id].failed(id), bought: hasTree(id), perm: hasTree(id) && TREE_UPGS.ids[id].perm, choosed: id == tmp.supernova.tree_choosed})
 		}
 	}
+    tree_update = true
+	drawTreeHTML()
 
 	elm.feat_warn.setDisplay(tmp.tree_tab == 5)
 }

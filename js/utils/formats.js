@@ -444,6 +444,8 @@ function formatMass(ex, color) {
 
 const ARV = ['mlt','mgv','giv','tev','pev','exv','zev','yov',"xvr","wkv"]
 function formatArv(mlt, color) {
+	mlt = D(mlt)
+
     let arv = D(0)
 	let div = mlt
 	if (player.options.notation_mass == 2) {
@@ -452,7 +454,7 @@ function formatArv(mlt, color) {
 			arv = arv.add(1).round()
 		}
 	} else {
-		if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
+		//if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
 
 		arv = mlt.log10().div(15).floor()
 		mlt = mlt.div(D(10).pow(arv.mul(15)))
@@ -460,6 +462,7 @@ function formatArv(mlt, color) {
 
 	let f = color ? formatColored : format
     let postArv = arv.gte(ARV.length)
+    if (arv.gte(1e3)) return format(arv, 0) + " " + colorize("arvs", color, "magenta")
     return f(mlt) + " " + colorize(postArv ? "arv^" + format(arv.add(2),0) : ARV[arv.toNumber()], color, postArv ? "magenta" : "red")
 }
 

@@ -92,7 +92,7 @@ function calcSupernova(dt, dt_offline) {
     if (tmp.supernova.reached && (!tmp.offlineActive || player.supernova.times.gte(1)) && !player.supernova.post_10) {
         if (player.supernova.times.lte(0)) tmp.supernova.time += dt
         else {
-            addNotify("You become Supernova!")
+            notify("You become Supernova!")
             SUPERNOVA.reset()
         }
     }

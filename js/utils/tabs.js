@@ -48,9 +48,9 @@ const TABS = {
 		],
 		5: [
 			{ id: "Neutron Tree" },
-			{ id: "Bosons", unl() { return BOSONS.unl() } },
-			{ id: "Fermions", unl() { return player.supernova.fermions.unl } },
-			{ id: "Radiation", unl() { return tmp.radiation.unl } },
+			{ id: "Bosons", unl() { return BOSONS.unl() }, style: "boson" },
+			{ id: "Fermions", unl() { return player.supernova.fermions.unl }, style: "ferm" },
+			{ id: "Radiation", unl() { return tmp.radiation.unl }, style: "rad" },
 		],
 		6: [
 			{ id: "Axions" },
