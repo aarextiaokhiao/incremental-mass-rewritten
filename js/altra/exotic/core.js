@@ -45,7 +45,7 @@ let EXOTIC = {
 	reset(force, restart) {
 		let can = player.chal.comps[12].gt(0)
 		if (!force && !can) return
-		if ((!force || restart) && player.confirms.ext && !confirm("Are you sure?")) return false
+		if ((!force || restart) && !toConfirm('ext')) return false
 		if (can) {
 			if (!player.ext) player.ext = EXT.setup()
 			if (!EXT.unl()) {
@@ -65,7 +65,7 @@ let EXOTIC = {
 		tmp.pass = true
 
 		player.ranks.pent = D(0)
-		for (let c = 9; c <= 12; c++) player.chal.comps[c] = D(0)
+		CHALS_NEW.clear(2)
 
 		player.supernova.times = D(0)
 		player.supernova.stars = D(0)
@@ -129,7 +129,7 @@ let EXOTIC = {
 
 		//FEATS
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
-		if (tmp.chal.outside) player.ext.chal.f7 = false
+		if (!CHALS_NEW.inAny()) player.ext.chal.f7 = false
 		if (player.supernova.fermions.choosed == "") player.ext.chal.f9 = false
 		player.ext.gain = D(player.ext.gain).max(this.gain())
 
@@ -145,6 +145,14 @@ let EXOTIC = {
 
 		//EXTRA RESOURCES
 		player.ext.ar39 = D(player.ext.ar39).add(getCosmicArgonProd().mul(dt))
+	},
+	updateTmp() {
+		tmp.extMult = hasExtMilestone("boost", 1) ? D(5) : D(1)
+
+		//updateGlueballTemp()
+		updateAxionTemp()
+		updatePolarizeTemp()
+		updateExtraBuildingTemp()
 	},
 
 	time() {
@@ -187,7 +195,7 @@ const EXT_MILESTONES = {
 			desc: "Keep Main Upgrades and Elements you would start on Supernova. Keep [c] upgrade. Neutron Stars can generate in offline progress."
 		}, {
 			req: 3,
-			desc: "Keep [qol8] upgrade. Automate Neutron Tree without requirements (not implemented). Auto-Sweeper threshold is reduced to 10."
+			desc: "Keep [qol8] upgrade. Automate Neutron Tree upgrades. Auto-Sweeper threshold is reduced to 10."
 		}, {
 			req: 10,
 			desc: "Automate Radiation Boosters at 100,000 radiation. Buildings don't spend anything."
@@ -208,7 +216,7 @@ const EXT_MILESTONES = {
 			desc: "You can automatically sweep Challenges without requirements."
 		}, {
 			req: 1e4,
-			desc: "Unlock Shortcuts."
+			desc: "Unlock Shortcuts. [currently in refactor]"
 		}, {
 			req: 1e8,
 			desc: "Outside of Exotic Challenges, automate Challenges 1 - 11 and Up - Top Quark Fermions without entering."
@@ -216,8 +224,8 @@ const EXT_MILESTONES = {
 	],
 	boost: [
 		{
-			req: 1,
-			desc: "Star Generations generate 5x faster and gain 5x more Supernovae resources."
+			req: 0,
+			desc: "Gain 5x more pre-Exotic resources."
 		}, {
 			req: 100,
 			desc: "Argon-18 raises Tickspeed Power instead."
@@ -285,7 +293,7 @@ const EXT_MILESTONES = {
 }
 
 function hasExtMilestone(type, index) {
-	return EXT.rawAmt().gte(EXT_MILESTONES[type][index - 1].req)
+	return EXT.unl() && EXT.rawAmt().gte(EXT_MILESTONES[type][index - 1].req)
 }
 
 function hasExtMilestoneEff(type, index) {

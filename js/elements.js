@@ -88,7 +88,7 @@ function setupHTML() {
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
-			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/main_upg_${id+y}.png">`
+			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/upgrades/main_upg_${id+y}.png">`
 		}
 		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button></div>`
 	}
@@ -106,7 +106,7 @@ function setupHTML() {
 	}
 	scaling_table.setHTML(table)
 
-	setupChalHTML()
+	setupChalHTMLNew()
 	setupAtomHTML()
 	setupElementsHTML()
 	setupMDHTML()
@@ -115,14 +115,8 @@ function setupHTML() {
 	setupBosonsHTML()
 	setupFermionsHTML()
 	setupRadiationHTML()
+	setupConfirmHTML()
 	setupAltraHTML()
-
-	let confirm_table = new Element("confirm_table")
-	table = ""
-	for (let x = 0; x < CONFIRMS.length; x++) {
-		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${CONFIRMS_PNG[CONFIRMS[x]]}.png" style='width: 40px; height: 40px'><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">OFF</button></div>`
-	}
-	confirm_table.setHTML(table)
 
 	elm = {}
 	let all = document.getElementsByTagName("*")
@@ -159,58 +153,62 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
+	upperResources = 1
 	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+getProdDisp(player.mass, "mass", true, true))
 
 	//RESET
 	elm.reset_desc.setHTML(player.reset_msg)
 
 	let preExt = !EXT.unl()
-
-	let unl = gameStarted() && inNGM()
-	elm.mg_div.setDisplay(unl)
-	if (unl) elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
-
-	unl = (inNGM() ? MAGIC.unl() : (player.stats.maxMass.gte(1e9) || player.rp.unl))
-	elm.rp_div.setDisplay(unl)
-	if (unl) elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
-
-	unl = FORMS.bh.see() 
-	elm.dm_div.setDisplay(unl)
-	if (unl) elm.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
-
-	unl = player.bh.unl && preExt
-	elm.bh_div.setDisplay(unl)
-	if (unl) elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+getProdDisp(player.bh.mass, "bh", true))
-
-	unl = player.bh.unl
-	elm.atom_div.setDisplay(unl)
-	if (unl) elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
-
-	unl = player.atom.unl && preExt
-	elm.quark_div.setDisplay(unl)
-	if (unl) elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
-
-	unl = MASS_DILATION.unlocked() && preExt
-	elm.md_div.setDisplay(unl)
-	if (unl) elm.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
-
-	unl = hasExtMilestone("qol", 8)
-	elm.scut_div.setDisplay(unl)
-	if (unl) updateShortcuts()
-
-	unl = player.supernova.post_10
-	elm.sn_div.setDisplay(unl)
-	if (unl) elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
-
-	unl = EXT.unl(true)
-	elm[unl ? "atom_post_ext" : "atom_pre_ext"].appendHTML("atom_div")
-	elm.res_col2.setDisplay(!unl)
-	elm.ext_div.setDisplay(unl)
-	if (unl) elm.extAmt.setHTML(EXT.unl() ? format(EXT.rawAmt(),1) + (player.chal.comps[12].gt(0) ? "<br>" + formatGainOrGet(EXT.rawAmt(), player.ext.gain) : "") : "Click to rise Exotic!")
+	updateUpperRes("mg_div", gameStarted() && inNGM(), () => {
+		elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
+	})
+	updateUpperRes("rp_div", (player.rp.unl || (inNGM() ? MAGIC.unl() : player.stats.maxMass.gte(1e9))) && !CHALS_NEW.in(7), () => {
+		elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
+	})
+	updateUpperRes("dm_div", player.rp.unl, () => {
+		elm.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
+	})
+	updateUpperRes("bh_div", player.bh.unl && !player.supernova.unl, () => {
+		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+getProdDisp(player.bh.mass, "bh", true))
+	})
+	updateUpperRes("atom_div", player.chal.unl, () => {
+		elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
+	})
+	updateUpperRes("quark_div", player.atom.unl && !player.supernova.post_10, () => {
+		elm.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+formatGainOrGet(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(hasElement(14)?tmp.atom.quarkGainSec:1):0,hasElement(14)))
+	})
+	updateUpperRes("md_div", MASS_DILATION.unlocked() && !player.supernova.post_10, () => {
+		elm.mdAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+	})
+	updateUpperRes("star_div", (player.supernova.unl || STARS.unlocked()) && !EXT.unl(), () => {
+		elm.starAmt.setHTML(format(player.stars.points,2)+" / <br>"+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
+	})
+	updateUpperRes("sn_div", player.supernova.unl, () => {
+		elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
+	})
+	updateUpperRes("ns_div", player.supernova.unl && !EXT.unl(), () => {
+		elm.nsAmt.setHTML(format(player.supernova.stars)+"<br>"+formatGain(player.supernova.stars,tmp.supernova.star_gain))
+	})
+	updateUpperRes("ext_div", EXT.unl() || player.chal.comps[12].gt(0), () => {
+		elm.extAmt.setHTML(EXT.unl() ? format(EXT.rawAmt(),1) + (player.chal.comps[12].gt(0) ? "<br>" + formatGainOrGet(EXT.rawAmt(), player.ext.gain) : "") : "Click to rise Exotic!")
+	})
 
 	//NON-RESETS
-	updateChalHeader()
+	updateShortcuts()
+	updateChalHeaderNew()
 	updateProgressHeader()
+}
+
+let upperResources
+function updateUpperRes(id, unl, call) {
+	elm[id].setDisplay(unl)
+	if (unl) {
+		upperResources++
+		if (player.options.resLayout.col) elm["res_col"+((upperResources-1)%player.options.resLayout.num+1)].appendHTML(id)
+		else elm["res_col"+Math.ceil(upperResources/player.options.resLayout.num)].appendHTML(id)
+		call()
+	}
 }
 
 function updateRanksHTML() {
@@ -370,10 +368,6 @@ function updateStatsHTML() {
 }
 
 function updateOptionsHTML() {
-	for (let x = 0; x < CONFIRMS.length; x++) {
-		elm["confirm_div_"+x].setDisplay(CONFIRMS_MOD[CONFIRMS[x]]() && CONFIRMS_UNL[CONFIRMS[x]]())
-		elm["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
-	}
 	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
 	elm.minus_active.setTxt(metaSave.ngm?"ON":"OFF")
 	elm.help.setDisplay(player.options.notation_mass !== 1)
@@ -446,7 +440,7 @@ function updateHTML() {
 			updateMainUpgradesHTML()
 		}
 		if (tmp.tab == 3) {
-			if (tmp.stab[3] == 0) updateChalHTML()
+			if (tmp.stab[3] == 0) updateChalHTMLNew()
 		}
 		if (tmp.tab == 4) {
 			if (tmp.stab[4] == 0) updateAtomHTML()
@@ -454,6 +448,7 @@ function updateHTML() {
 			if (tmp.stab[4] == 2) updateMDHTML()
 		}
 		if (tmp.tab == 7) {
+			updateConfirmHTML()
 			updateOptionsHTML()
 		}
 	}

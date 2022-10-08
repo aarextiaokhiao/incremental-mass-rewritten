@@ -1,17 +1,19 @@
 const ATOM = {
     gain() {
-        if (CHALS.inChal(13)) return D(0)
+        if (CHALS_NEW.in(13)) return D(0)
         let x = player.bh.mass.div(1.5e156)
         if (x.lt(1)) return D(0)
         x = x.root(5)
         if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:D(1))
         if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+        x = x.mul(tmp.extMult)
+
         if (hasElement(17)) x = x.pow(1.1)
         if (FERMIONS.onActive("10")) x = expMult(x,0.625)
         return x.floor()
     },
     quarkGain() {
-        if (CHALS.inChal(13)) return D(0)
+        if (CHALS_NEW.in(13)) return D(0)
         if (tmp.atom.gain.lt(1)) return D(0)
         x = tmp.atom.gain.max(1).log10().pow(1.1).add(1)
         if (hasElement(1)) x = D(1.25).pow(tmp.atom.gain.max(1).log10())
@@ -23,12 +25,14 @@ const ATOM = {
         if (hasElement(67)) x = x.mul(tmp.elements.effect[67])
         if (player.md.upgs[6].gte(1)) x = x.mul(tmp.md.upgs[6].eff)
         x = x.mul(tmp.md.upgs[9].eff)
+        x = x.mul(tmp.extMult)
+
         if (hasElement(47)) x = x.pow(1.1)
         return x.floor()
     },
     canReset() { return tmp.atom.gain.gte(1) },
     reset() {
-        if (tmp.atom.canReset) if (player.confirms.atom?confirm("Are you sure to reset?"):true) {
+        if (tmp.atom.canReset && toConfirm('atom')) {
             player.atom.points = player.atom.points.add(tmp.atom.gain)
             player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain)
 			if (!player.atom.unl) addPopup(POPUP_GROUPS.layer_3)
@@ -44,7 +48,7 @@ const ATOM = {
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         player.mainUpg.bh = keep
-        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = D(0)
+        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) CHALS_NEW.clear(0)
         FORMS.bh.doReset()
     },
     atomic: {
@@ -63,7 +67,7 @@ const ATOM = {
 			return r
 		},
 		effect() {
-			if (CHALS.inChal(14)) return D(0)
+			if (CHALS_NEW.in(14)) return D(0)
 			let sc = ATOM.atomic.softcap()
 			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75)
 			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0).softcap(sc.mul(800),0.25,0)
@@ -72,14 +76,14 @@ const ATOM = {
     },
     gamma_ray: {
         buy() {
-			if (CHALS.inChal(14)) return
+			if (CHALS_NEW.in(14)) return
             if (tmp.atom.gamma_ray_can) {
                 if (!hasExtMilestone("qol", 3)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
                 player.atom.gamma_ray = player.atom.gamma_ray.add(1)
             }
         },
         buyMax() {
-			if (CHALS.inChal(14)) return
+			if (CHALS_NEW.in(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
                 if (!hasExtMilestone("qol", 3)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
@@ -101,7 +105,7 @@ const ATOM = {
             return {pow: pow, eff: eff}
         },
         bonus() {
-			if (CHALS.inChal(14)) return D(0)
+			if (CHALS_NEW.in(14)) return D(0)
             let x = tmp.fermions.effs[0][0]||D(0)
             if (bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             return x
@@ -110,7 +114,7 @@ const ATOM = {
     particles: {
         names: ['Proton', 'Neutron', 'Electron'],
         disabled(x) {
-            return CHALS.inChal(9) || FERMIONS.onActive("12")
+            return CHALS_NEW.in(9)
         },
         assign(x) {
             if (player.atom.quarks.lt(1) || this.disabled()) return
@@ -133,8 +137,9 @@ const ATOM = {
 			if (!p) p = player.atom.particles[0].max(player.atom.particles[1].max(player.atom.particles[2]))
 			let e, m = [D(1), D(1)]
 			if (tmp.chal) {
-				e = tmp.chal.eff[9].exp.div(4)
-				m = tmp.chal.eff[9].mul
+				let c9 = CHALS_NEW.eff(9)
+				e = c9.exp.div(4)
+				m = c9.mul
 			}
 			return p.add(1).log10().add(1).pow(e).mul(m) //Maximum of ^1.325
 		},

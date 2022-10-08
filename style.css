@@ -160,8 +160,22 @@ button {
 	margin: 3px;
 }
 
-.img_chal.ch {
+.img_chal.ch_choosed {
+	background-color: #333;
+}
+
+.img_chal.ch,
+.img_chal.ch_in {
 	background-color: #444;
+}
+
+.img_chal.ch_force {
+	background-color: #700;
+}
+
+.img_chal.chal_comp,
+.img_chal.ch_comp {
+	background-color: #00520b;
 }
 
 .red {
@@ -476,10 +490,6 @@ button {
 .img_btn.bought {
 	background-color: #00520b;
 	cursor: default;
-}
-
-.chal_comp {
-	background-color: #00520b;
 }
 
 .input_ratio {

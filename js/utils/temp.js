@@ -16,6 +16,12 @@ function resetTemp() {
             main: {},
             mass: {},
         },
+		chal_new: {
+			choosed: {},
+			in: [],
+			inForce: [],
+			eff: {}
+		},
     
         supernova: {
             time: 0,
@@ -132,7 +138,6 @@ function updateTemp() {
 	tmp.offlineActive = player.offline.time > 1
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
-
 	//Tab Forcing
 	if (toned() == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
 
@@ -150,7 +155,7 @@ function updateTemp() {
 	updateStarsTemp()
 	updateUpgradesTemp()
 	updateScalingTemp()
-	updateChalTemp()
+	updateChalTempNew()
 	updateAtomTemp()
 
 	//Pre-Atom

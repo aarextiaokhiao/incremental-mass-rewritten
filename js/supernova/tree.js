@@ -49,14 +49,19 @@ const TREE_IDS = [
 var tree_canvas,tree_ctx,tree_update=true
 
 const TREE_UPGS = {
-    buy(x) {
-        if (tmp.supernova.tree_choosed == x && tmp.supernova.tree_afford[x]) {
-            player.supernova.stars = player.supernova.stars.sub(this.ids[x].cost).max(0)
-            player.supernova.tree.push(x)
-            if (TREE_UPGS.ids[x].onBuy) TREE_UPGS.ids[x].onBuy()
-        }
-    },
-    ids: {
+	buy(x) {
+		player.supernova.stars = player.supernova.stars.sub(this.ids[x].cost).max(0)
+		player.supernova.tree.push(x)
+		if (TREE_UPGS.ids[x].onBuy) TREE_UPGS.ids[x].onBuy()
+	},
+	checkBuy(x) {
+		if (tmp.supernova.tree_afford[x]) TREE_UPGS.buy(x)
+	},
+	click(x) {
+		if (tmp.supernova.tree_choosed == x) TREE_UPGS.checkBuy(x)
+		tmp.supernova.tree_choosed = x
+	},
+	ids: {
         c: {
             desc: `Start generating 0.1 Neutron Stars per second. (no offline)`,
             cost: D(0),
@@ -109,6 +114,10 @@ const TREE_UPGS = {
         m1: {
             branch: ["c"],
             desc: `Neutron Stars boost Mass.`,
+			req() {
+				return player.supernova.times.gte(1)
+			},
+            reqDesc() { return `1 Supernova.` },
             cost: D(100),
             effect() {
                 let x = D(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -144,6 +153,10 @@ const TREE_UPGS = {
         rp1: {
             branch: ["c"],
             desc: `Neutron Stars boost Rage Power.`,
+			req() {
+				return player.supernova.times.gte(1)
+			},
+            reqDesc() { return `1 Supernova.` },
             cost: D(200),
             effect() {
                 let x = D(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -154,6 +167,10 @@ const TREE_UPGS = {
         bh1: {
             branch: ["c"],
             desc: `Neutron Stars boost Dark Matter.`,
+			req() {
+				return player.supernova.times.gte(1)
+			},
+            reqDesc() { return `1 Supernova.` },
             cost: D(400),
             effect() {
                 let x = D(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -173,6 +190,10 @@ const TREE_UPGS = {
         s1: {
             branch: ["c"],
             desc: `Neutron Stars boost last-unlocked Stars.`,
+			req() {
+				return player.supernova.times.gte(1)
+			},
+            reqDesc() { return `1 Supernova.` },
             cost: D(400),
             effect() {
                 let x = player.supernova.stars.add(1).pow(1.4)
@@ -400,7 +421,7 @@ const TREE_UPGS = {
         },
         fn6: {
             branch: ["fn2"],
-            req() { return player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS.inChal(5) },
+            req() { return player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS_NEW.in(5) },
             reqDesc() { return `Reach ${formatMass(uni("e4e4"))} while in [Charm] & Challenge 5.` },
             desc: `Unlock 2 new more types of U-Quark & U-Fermion.`,
             cost: D(1e48),
@@ -553,7 +574,7 @@ const TREE_UPGS = {
 			},
 			failed() {
 				let sum = D(0)
-				for (var i = 1; i <= CHALS.cols; i++) sum = sum.add(player.chal.comps[i])
+				for (var i = 1; i <= CHAL_NUM; i++) sum = sum.add(player.chal.comps[i])
 				for (var i = 1; i <= 8; i++) if (player.chal.comps[i].lte(sum.mul(.05))) return true
 				return false
 			},
@@ -616,8 +637,8 @@ const TREE_UPGS = {
 		},
 		feat12: {
 			unl() { return GLUBALL.unl() },
-			req() { return player.mass.lt(10) && CHALS.inChal(10) },
-			failed() { return !player.mass.gte(10) || !CHALS.inChal(10) },
+			req() { return player.mass.lt(10) && CHALS_NEW.in(10) },
+			failed() { return !player.mass.gte(10) || !CHALS_NEW.in(10) },
 			reqDesc() { return `Get your mass less than 10 g in Reality I.` },
 			desc: `Luminosity starts 1,000x earlier.`,
 			cost: D(0)
@@ -677,7 +698,7 @@ function setupTreeHTML() {
                 let id = TREE_IDS[i][j][k]
                 let option = id == "" ? `style="visibility: hidden"` : ``
 				let img = !TREE_UPGS.ids[id] ? `` : TREE_UPGS.ids[id].icon ? ` <img src="images/tree/${TREE_UPGS.ids[id].icon}.png">` : TREE_UPGS.ids[id].noIcon ? ` <img src="images/tree/placeholder.png">` : `<img src="images/tree/${id}.png">`
-                table += `<button id="treeUpg_${id}" class="btn_tree" onclick="TREE_UPGS.buy('${id}'); tmp.supernova.tree_choosed = '${id}'" ${option}>${img}</button>`
+                table += `<button id="treeUpg_${id}" class="btn_tree" onclick="TREE_UPGS.click('${id}')" ${option}>${img}</button>`
             }
             table += `</div>`
         }

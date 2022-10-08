@@ -36,10 +36,7 @@ function calc(dt, dt_offline) {
 		player.bh.mass = addProdWorth(player.bh.mass, "bh", dt)
 	}
 
-	if (player.mass.gte(1.5e136)) player.chal.unl = true
-	if (hasTree("qol6")) CHALS.exit(true)
-	for (var c = 1; c <= leastManualChal(); c++) player.chal.comps[c] = CHALS.getChalData(c,D(0),true).bulk.min(tmp.chal.max[c]).max(player.chal.comps[c])
-
+	chalTick()
 	calcAtoms(dt, dt_offline)
 	calcSupernova(dt, dt_offline)
 	EXT.calc(dt)
@@ -72,6 +69,7 @@ const FORMS = {
 		x = x.mul(tmp.stars.effect.eff)
 		if (hasTree("m1")) x = x.mul(treeEff("m1"))
 		x = x.mul(tmp.bosons.effect.pos_w[0])
+		x = x.mul(tmp.extMult)
 
 		return x
 	},
@@ -79,7 +77,7 @@ const FORMS = {
 		let exp = D(1)
 		if (hasRank("tier", 2)) exp = exp.mul(1.15)
 		if (hasRank("rank", 180)) exp = exp.mul(1.025)
-		if (!CHALS.inChal(3)) exp = exp.mul(tmp.chal.eff[3])
+		if (!CHALS_NEW.in(3)) exp = exp.mul(CHALS_NEW.eff(3))
 		if (tmp.md.active && hasElement(28)) exp = exp.mul(1.5)
 
 		let x = this.baseMassGain().pow(exp)
@@ -87,14 +85,14 @@ const FORMS = {
 			x = MASS_DILATION.applyDil(x)
 			if (hasElement(28)) x = x.pow(1.5)
 		}
-		if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
+		if (CHALS_NEW.in(9)) x = expMult(x,0.9)
 
 		return x.softcap(tmp.massSoftGain1,tmp.massSoftPower1,0).softcap(tmp.massSoftGain2,tmp.massSoftPower2,0).softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
 	},
 	massSoftGain() {
 		let s = D(1.5e156)
-		if (CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e150)
-		if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e100)
+		if (CHALS_NEW.in(3)) s = s.div(1e150)
+		if (CHALS_NEW.in(4)) s = s.div(1e100)
 		if (hasUpgrade('bh',7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:D(1))
 		if (hasUpgrade('rp',13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:D(1))
 		if (tmp.massSoftGain2) s = s.min(tmp.massSoftGain2)
@@ -102,8 +100,8 @@ const FORMS = {
 	},
 	massSoftPower() {
 		let p = D(1/3)
-		if (CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) p = p.mul(4)
-		if (CHALS.inChal(7) || CHALS.inChal(10)) p = p.mul(6)
+		if (CHALS_NEW.in(3)) p = p.mul(4)
+		if (CHALS_NEW.in(7)) p = p.mul(6)
 		if (hasUpgrade('bh',11)) p = p.mul(0.9)
 		if (hasRank("rank", 800)) p = p.mul(RANKS.effect.rank[800]())
 		return D(1).div(p.add(1))
@@ -134,7 +132,7 @@ const FORMS = {
 	},
 	tickspeed: {
 		cost(x=player.tickspeed) { return D(2).pow(x).floor() },
-		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.inChal(2) && !CHALS.inChal(6) && !CHALS.inChal(10) },
+		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS_NEW.in(2) && !CHALS_NEW.in(6) && !CHALS_NEW.in(10) },
 		buy() {
 			if (this.can()) {
 				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 3)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
@@ -155,8 +153,8 @@ const FORMS = {
 			let bonus = D(0)
 			if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
 			let step = D(1.5)
-				step = step.add(tmp.chal.eff[6])
-				step = step.add(tmp.chal.eff[2])
+				step = step.add(CHALS_NEW.eff(6))
+				step = step.add(CHALS_NEW.eff(2))
 				step = step.add(tmp.atom.particles[0].powerEffect.eff2)
 				if (hasRank("tier", 4)) step = step.add(RANKS.effect.tier[4]())
 				if (hasRank("rank", 40)) step = step.add(RANKS.effect.rank[40]())
@@ -181,7 +179,7 @@ const FORMS = {
 	},
 	rp: {
 		gain() {
-			if (player.mass.lt(1e15) || CHALS.inChal(7) || CHALS.inChal(10)) return D(0)
+			if (player.mass.lt(1e15) || CHALS_NEW.in(7)) return D(0)
 			let gain = player.mass.div(1e15).root(3)
 			if (hasRank("rank", 14)) gain = gain.mul(2)
 			if (hasRank("rank", 45)) gain = gain.mul(RANKS.effect.rank[45]())
@@ -189,14 +187,16 @@ const FORMS = {
 			if (hasUpgrade('bh',6)) gain = gain.mul(tmp.upgs.main?tmp.upgs.main[2][6].effect:D(1))
 			gain = gain.mul(tmp.atom.particles[1].powerEffect.eff1)
 			if (hasTree("rp1")) gain = gain.mul(treeEff("rp1"))
+			gain = gain.mul(tmp.extMult)
+
 			if (hasUpgrade('bh',8)) gain = gain.pow(1.15)
-			gain = gain.pow(tmp.chal.eff[4])
-			if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) gain = gain.root(10)
+			gain = gain.pow(CHALS_NEW.eff(4))
+			if (CHALS_NEW.in(4)) gain = gain.root(10)
 			if (tmp.md.active) gain = MASS_DILATION.applyDil(gain)
 			return gain.floor()
 		},
 		reset() {
-			if (tmp.rp.can) if (player.confirms.rp?confirm("Are you sure to reset?"):true) {
+			if (tmp.rp.can && toConfirm('rp')) {
 				player.rp.points = player.rp.points.add(tmp.rp.gain)
 				if (!player.rp.unl) addPopup(POPUP_GROUPS.layer_1)
 				player.rp.unl = true
@@ -217,18 +217,19 @@ const FORMS = {
 		see() { return player.rp.unl },
 		DM_gain() {
 			let gain = player.rp.points.div(1e20)
-			if (CHALS.inChal(7) || CHALS.inChal(10)) gain = player.mass.div(1e180)
+			if (CHALS_NEW.in(7)) gain = player.mass.div(1e180)
 			if (gain.lt(1)) return D(0)
 			gain = gain.root(4)
 
 			if (hasTree("bh1")) gain = gain.mul(treeEff("bh1"))
 			if (!bosonsMastered()) gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
+			gain = gain.mul(tmp.extMult)
 
-			if (CHALS.inChal(7) || CHALS.inChal(10)) gain = gain.root(6)
+			if (CHALS_NEW.in(7)) gain = gain.root(6)
 			gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
-			if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) gain = gain.root(8)
-			gain = gain.pow(tmp.chal.eff[8].dm)
-			if (tmp.md.active && !CHALS.inChal(12) && !CHALS.inChal(15)) gain = MASS_DILATION.applyDil(gain)
+			if (CHALS_NEW.in(8)) gain = gain.root(8)
+			gain = gain.pow(CHALS_NEW.eff(8).dm)
+			if (tmp.md.active && !CHALS_NEW.in(12) && !CHALS_NEW.in(15)) gain = MASS_DILATION.applyDil(gain)
 			return gain.floor()
 		},
 		massPowerGain() {
@@ -244,9 +245,11 @@ const FORMS = {
 			if (hasUpgrade('bh',14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:D(1))
 			if (hasElement(46)) x = x.mul(tmp.elements.effect[46])
 			if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.photon[0].effect)
-			if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) x = x.root(8)
-			x = x.pow(tmp.chal.eff[8].bh)
-			if (tmp.md.active && !CHALS.inChal(12) && !CHALS.inChal(15)) x = MASS_DILATION.applyDil(x)
+			x = x.mul(tmp.extMult)
+
+			if (CHALS_NEW.in(8)) x = x.root(8)
+			x = x.pow(CHALS_NEW.eff(8).bh)
+			if (tmp.md.active && !CHALS_NEW.in(12) && !CHALS_NEW.in(15)) x = MASS_DILATION.applyDil(x)
 			return x.softcap(tmp.bh.massSoftGain, tmp.bh.massSoftPower, 0)
 		},
 		massSoftGain() {
@@ -258,7 +261,7 @@ const FORMS = {
 			return D(0.5)
 		},
 		reset() {
-			if (tmp.bh.dm_can) if (player.confirms.bh?confirm("Are you sure to reset?"):true) {
+			if (tmp.bh.dm_can && toConfirm('bh')) {
 				player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain)
 				if (!player.bh.unl) addPopup(POPUP_GROUPS.layer_2)
 				player.bh.unl = true
@@ -282,16 +285,16 @@ const FORMS = {
 		condenser: {
 			autoSwitch() { player.bh.autoCondenser = !player.bh.autoCondenser },
 			autoUnl() { return hasUpgrade('atom',2) },
-			can() { return player.bh.dm.gte(tmp.bh.condenser_cost) && !CHALS.inChal(6) && !CHALS.inChal(10) },
+			can() { return player.bh.dm.gte(tmp.bh.condenser_cost) && !CHALS_NEW.in(6) && !CHALS_NEW.in(10) },
 			buy() {
-				if (CHALS.inChal(14)) return
+				if (CHALS_NEW.in(14)) return
 				if (this.can()) {
 					if (!hasExtMilestone("qol", 3)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
-				if (CHALS.inChal(14)) return
+				if (CHALS_NEW.in(14)) return
 				if (this.can()) {
 					if (!hasExtMilestone("qol", 3)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
@@ -303,7 +306,7 @@ const FORMS = {
 				let t = player.bh.condenser
 				if (!scalingToned("bh_condenser")) t = t.mul(tmp.radiation.bs.eff[5])
 				let pow = D(2)
-					pow = pow.add(tmp.chal.eff[6])
+					pow = pow.add(CHALS_NEW.eff(6))
 					if (hasUpgrade('bh',2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:D(1))
 					pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
 					if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
@@ -314,7 +317,7 @@ const FORMS = {
 				return {pow: pow, eff: eff}
 			},
 			bonus() {
-				if (CHALS.inChal(14)) return D(0)
+				if (CHALS_NEW.in(14)) return D(0)
 				let x = D(0)
 				if (hasUpgrade('bh',15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:D(0))
 				return x
@@ -334,56 +337,20 @@ const FORMS = {
 	},
 	reset_msg: {
 		msgs: {
-			mg: "Require over 20 kg of mass to reset previous features for Magic",
-			rp: "Require over 1e9 tonne of mass to reset previous features for Rage Power",
-			dm: "Require over 1e20 Rage Power to reset all previous features for Dark Matter",
-			atom: "Require over 1e100 uni of black hole to reset all previous features for Atoms & Quarks",
-			md: "Dilate mass, then cancel",
-			ext: "Require Challenge 12 to rise the exotic particles!",
-			portal: "Call the Altar to teleport!",
+			mg: () => "Require " + formatMass(2e4) + " to reset previous features for Magic",
+			rp: () => "Require " + formatMass(1e18) + " to reset previous features for Rage Power",
+			dm: () => "Require " + format(1e20, 0) + " Rage Power to reset all previous features for Dark Matter",
+			atom: () => "Require " + formatMass(uni(1e100)) + " black hole mass to reset all previous features for Atoms & Quarks",
+			md: () => "Dilate mass, then cancel",
+			sn: () => "Reach over "+format(tmp.supernova.maxlimit)+" collapsed stars to be Supernova",
+			ext: () => "Require Challenge 12 to rise the exotic particles!",
+			portal: () => "Call the Altar to teleport!",
 		},
 		set(id) {
-			if (id=="sn") {
-				player.reset_msg = "Reach over "+format(tmp.supernova.maxlimit)+" collapsed stars to be Supernova"
-				return
-			}
-			player.reset_msg = this.msgs[id]
+			player.reset_msg = this.msgs[id]()
 		},
 		reset() { player.reset_msg = "" },
 	},
-}
-
-//CONFIRMS
-const CONFIRMS = ['mg', 'rp', 'bh', 'atom', 'sn', 'ext', 'ec', 'pres']
-const CONFIRMS_PNG = {
-	mg: "ngm/magic",
-	rp: "rp",
-	bh: "dm",
-	atom: "atom",
-	sn: "sn",
-	ext: "ext",
-	ec: "chal_ext",
-	pres: "empty"
-}
-const CONFIRMS_UNL = {
-	mg: () => MAGIC.unl(),
-	rp: () => player.rp.unl && !EXT.unl(),
-	bh: () => player.bh.unl && !EXT.unl(),
-	atom: () => player.atom.unl && !EXT.unl(),
-	sn: () => player.supernova.unl,
-	ext: () => EXT.unl(),
-	ec: () => GLUBALL.unl(),
-	pres: () => PORTAL.unl()
-}
-const CONFIRMS_MOD = {
-	mg: () => inNGM(),
-	rp: () => true,
-	bh: () => true,
-	atom: () => true,
-	sn: () => true,
-	ext: () => true,
-	ec: () => true,
-	pres: () => true
 }
 
 function capitalFirst(str) {

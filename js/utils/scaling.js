@@ -102,6 +102,10 @@ const SCALE_START = {
 		gamma_ray: D(100),
 		supernova: D(15),
 		fTier: D(10),
+
+		chal0: D(1/0),
+		chal1: D(1/0),
+		chal2: D(1/0),
     },
 	hyper: {
 		rank: D(120),
@@ -112,6 +116,10 @@ const SCALE_START = {
 		gamma_ray: D(300),
 		supernova: D(35),
 		fTier: D(50),
+
+		chal0: D(1/0),
+		chal1: D(1/0),
+		chal2: D(1/0),
 	},
 	ultra: {
 		rank: D(600),
@@ -123,6 +131,9 @@ const SCALE_START = {
 	meta: {
 		rank: D(1e4),
 		tickspeed: D(5e4),
+
+		chal0: D(1/0),
+		chal1: D(1/0),
 	},
 }
 
@@ -137,6 +148,10 @@ const SCALE_POWER = {
 		gamma_ray: 2,
 		supernova: 3,
 		fTier: 2.5,
+
+		chal0: 1,
+		chal1: 1,
+		chal2: 1,
     },
 	hyper: {
 		rank: 2.5,
@@ -147,6 +162,10 @@ const SCALE_POWER = {
 		gamma_ray: 4,
 		supernova: 3,
 		fTier: 4,
+
+		chal0: 1,
+		chal1: 1,
+		chal2: 1,
 	},
 	ultra: {
 		rank: 4,
@@ -158,6 +177,9 @@ const SCALE_POWER = {
 	meta: {
 		rank: 1.0025,
 		tickspeed: 1.001,
+
+		chal0: 2,
+		chal1: 2,
 	},
 }
 
@@ -194,6 +216,10 @@ const SCALE_RES = {
 	gamma_ray(x=0) { return player.atom.gamma_ray },
 	supernova(x=0) { return player.supernova.times },
 	fTier(x=0, y=0) { return player.supernova.fermions.tiers[x][y] },
+
+	chal0(x=1) { return player.chal.comps[x] },
+	chal1(x=5) { return player.chal.comps[x] },
+	chal2(x=9) { return player.chal.comps[x] },
 }
 
 const NAME_FROM_RES = {
@@ -207,6 +233,10 @@ const NAME_FROM_RES = {
 	gamma_ray: "Cosmic Ray",
 	supernova: "Supernova",
 	fTier: "Fermion Tier",
+
+	chal0: "Challenges",
+	chal1: "Atomic Challenges",
+	chal2: "Supernovae Challenges",
 }
 
 function updateScalingHTML() {
@@ -299,8 +329,8 @@ function getScalingStart(type, name) {
 	let start = D(SCALE_START[type][name])
 	if (type=="super") {
 		if (name=="rank") {
-			if (CHALS.inChal(1) || CHALS.inChal(10)) return D(25)
-			start = start.add(tmp.chal?tmp.chal.eff[1].rank:0)
+			if (CHALS_NEW.in(1)) return D(25)
+			start = start.add(CHALS_NEW.eff(1))
 		}
 		if (name=="tier") {
 			if (hasUpgrade('atom',5)) start = start.add(10)
@@ -310,11 +340,11 @@ function getScalingStart(type, name) {
 			if (hasRank("pent", 2)) start = start.add(player.supernova.times.pow(1.5).div(200))
 		}
 		if (name=="massUpg") {
-			if (CHALS.inChal(1) || CHALS.inChal(10)) return D(25)
+			if (CHALS_NEW.in(1)) return D(25)
 			if (hasUpgrade('bh',3)) start = start.add(tmp.upgs?tmp.upgs.main?tmp.upgs.main[2][3].effect:0:0)
 		}
 		if (name=='tickspeed') {
-			if (CHALS.inChal(1) || CHALS.inChal(10)) return D(50)
+			if (CHALS_NEW.in(1)) return D(50)
 		}
 		if (name=='supernova') {
 			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
@@ -383,9 +413,9 @@ function getScalingPower(type, name) {
 			if (hasUpgrade('rp',8)) power = power.mul(tmp.upgs.main?tmp.upgs.main[1][8].effect:1)
 		}
 		if (name=='tickspeed') {
-			power = power.mul(tmp.chal?tmp.chal.eff[1].tick:1)
+			power = power.mul(CHALS_NEW.eff(1).tick)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(15)) power = power.mul(0.8)
@@ -413,7 +443,7 @@ function getScalingPower(type, name) {
 			if (hasUpgrade('bh',12)) power = power.mul(0.85)
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -430,7 +460,7 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
-			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -449,7 +479,7 @@ function getScalingPower(type, name) {
 		}
 		if (name=='tickspeed') {
 			if (hasRank("pent", 5)) power = power.mul(RANKS.effect.pent[5]())
-			//if (!chalOutside() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}
 	return power

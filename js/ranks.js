@@ -276,7 +276,7 @@ const RANKS = {
             let f = D(1)
             if (scalingToned("rank")) f = f.mul(2)
             if (hasRank("tier", 1)) f = f.mul(1/0.8)
-            f = f.mul(tmp.chal.eff[5].pow(-1))
+            f = f.mul(CHALS_NEW.eff(5).pow(-1))
             return f
         },
         tier() {
@@ -318,7 +318,7 @@ function updateRanksTemp() {
     d.rank.bulk = player.mass.div(10).max(1).log10().root(pow).mul(fp).scaleEvery("rank", 1).add(1).floor()
     if (FERMIONS.onActive(14)) d.rank.bulk = D(2e4).min(d.rank.bulk)
     if (player.mass.lt(10)) d.rank.bulk = D(0)
-    d.rank.can = player.mass.gte(d.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
+    d.rank.can = player.mass.gte(d.rank.req) && !CHALS_NEW.in(5) && !CHALS_NEW.in(10) && !FERMIONS.onActive("03") && (!FERMIONS.onActive(14) || s.rank.lt(2e4))
 
 	let start = inNGM() ? 2.5 : 2
     fp = u.fp.tier()

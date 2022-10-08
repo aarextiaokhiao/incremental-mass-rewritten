@@ -21,3 +21,13 @@ TO-DO LIST:
 		Correlate mass with Higgs.
 	3f. External
 		Experiment things subjecting to mass.
+
+Axions:
+-
+-
+
+Chroma:
+- Rotate through 3 primary colors.
+- Boost a color by going into it.
+- You can go clockwise / counterclockwise after 1 revolution.
+- Clockwise / Counterclockwise connections unlock at level X.

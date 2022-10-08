@@ -1,17 +1,17 @@
 const MASS_DILATION = {
     unlocked() { return hasElement(21) },
     onactive() {
-		if (CHALS.inChal(14)) return
+		if (CHALS_NEW.in(14)) return
         if (player.md.active) player.md.particles = player.md.particles.add(tmp.md.rp_gain)
         player.md.active = !player.md.active
         ATOM.doReset()
         updateMDTemp()
     },
 	isActive() {
-		return player.md.active || CHALS.inChal(10) || CHALS.inChal(11) || CHALS.inChal(12) || CHALS.inChal(15) || FERMIONS.onActive("02") || FERMIONS.onActive("03")
+		return player.md.active || CHALS_NEW.in(11) || CHALS_NEW.in(12) || CHALS_NEW.in(15) || FERMIONS.onActive("02")
 	},
 	getPenalty() {
-		if (CHALS.inChal(12) || CHALS.inChal(15)) return 3/7
+		if (CHALS_NEW.in(12) || CHALS_NEW.in(15)) return 3/7
 		var exp = 1
 		if (tmp.fermions) exp /= tmp.fermions.effs[0][4]
 		return Math.pow(FERMIONS.onActive("02") ? 0.64 : 0.8, exp)
@@ -20,7 +20,7 @@ const MASS_DILATION = {
 		return expMult(x, tmp.md.penalty).min(x)
 	},
     RPexpgain() {
-        let x = D(2).add(tmp.md.upgs[5].eff).mul((tmp.chal && !CHALS.inChal(10))?tmp.chal.eff[10]:1)
+        let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS_NEW.in(10) ? 1 : CHALS_NEW.eff(10))
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
         return x
@@ -32,13 +32,14 @@ const MASS_DILATION = {
         if (hasElement(34)) x = x.mul(tmp.elements.effect[34])
         if (hasElement(45)) x = x.mul(tmp.elements.effect[45])
         x = x.mul(tmp.fermions.effs[0][1]||1)
+        x = x.mul(tmp.extMult)
         return x
     },
 	RPbasegain(m=player.mass) {
 		return m.div(uni(1)).max(1).log10().div(40).sub(14)
 	},
 	RPmassgain(m=player.mass) {
-		if (CHALS.inChal(11) || CHALS.inChal(15)) return D(0)
+		if (CHALS_NEW.in(11) || CHALS_NEW.in(15)) return D(0)
 		return this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
 	},
 	RPgain(m=player.mass) {
@@ -56,6 +57,7 @@ const MASS_DILATION = {
         if (hasElement(35)) x = x.mul(tmp.elements.effect[35])
         if (hasElement(40)) x = x.mul(tmp.elements.effect[40])
         if (hasElement(32)) x = x.pow(1.05)
+        x = x.mul(tmp.extMult)
         return x
     },
     mass_req() {

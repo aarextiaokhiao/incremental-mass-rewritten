@@ -117,7 +117,7 @@ function getStageProgress() {
 }
 
 function updateProgressHeader() {
-	elm.progress_header.setDisplay(player.options.progress && !CHALS.inChals() && gameStarted())
+	elm.progress_header.setDisplay(player.options.progress && gameStarted() && !CHALS_NEW.inAny() && !player.reset_msg)
 
 	elm.progress_stages.setTxt(getStageProgress() + " / " + STAGE_AMT)
 	elm.progress_layers.setTxt(getLayerProgress() + " / " + LAYER_AMT)

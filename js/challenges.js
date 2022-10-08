@@ -20,14 +20,12 @@ function updateChalHTML() {
             elm["chal_comp_"+x].setTxt(max?"Completed":format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
         }
     }
-	let sweep = !CHALS.lastActive() && hasTree("qol10")
+
 	let shrt = SHORTCUT_EDIT.mode == 1
     elm.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
     elm.chal_exit.setVisible(CHALS.lastActive())
-    elm.chal_exit.setDisplay(!sweep)
     elm.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : CHALS.lastActive() > 12 ? "Exit Exotic Challenge" : "Exit Challenge")
     elm.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
-    elm.chal_sweep.setDisplay(hasTree("qol10") && player.chal.active == 0 && player.supernova.auto.on === -2 && !shrt)
     elm.chal_hint.setDisplay(!shrt)
     elm.chal_shrt.setDisplay(shrt)
 

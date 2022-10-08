@@ -33,9 +33,13 @@ function getPlayerData() {
 		},
 		chal: {
 			unl: false,
-			active: 0,
 			choosed: 0,
 			comps: {},
+
+			//IM:A CHALLENGES?!
+			progress: {},
+			lastComps: {},
+			bulkComps: {},
 		},
 		atom: {
 			unl: false,
@@ -119,11 +123,19 @@ function getPlayerData() {
 			notation_mass: 0,
 
 			font: 'Verdana',
+			resLayout: {
+				num: 2,
+				col: false
+			},
 			progress: true,
+
 			tree_animation: 0,
 			chroma: false,
 		},
-		confirms: {},
+		confirms: {
+			sn: true,
+			ext: true
+		},
 		stats: {
 			maxMass: D(0),
 		},
@@ -137,7 +149,7 @@ function getPlayerData() {
 		s.auto_mainUpg[UPGS.main.ids[x]] = false
 		s.mainUpg[UPGS.main.ids[x]] = []
 	}
-	for (let x = 1; x <= CHALS.cols; x++) s.chal.comps[x] = D(0)
+	for (let x = 1; x <= CHAL_NUM; x++) s.chal.comps[x] = D(0)
 	for (let x = 0; x < CONFIRMS.length; x++) if (CONFIRMS_MOD[CONFIRMS[x]]()) s.confirms[CONFIRMS[x]] = true
 	for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) s.md.upgs[x] = D(0)
 	for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) s.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = D(0)
@@ -224,26 +236,25 @@ function export_save() {
 	let str = btoa(JSON.stringify(player))
 	if (findNaN(str, true)) return
 
-	save();
-	let file = new Blob([str], {type: "text/plain"})
-	window.URL = window.URL || window.webkitURL;
-	let a = document.createElement("a")
-	a.href = window.URL.createObjectURL(file)
-	a.download = "IM Altrascendum - "+new Date().toGMTString()+".txt"
-	a.click()
-}
-
-function download_save() {
-	let str = btoa(JSON.stringify(player))
-	if (findNaN(str, true)) return
-
 	let copyText = document.getElementById('copy')
 	copyText.value = str
 	copyText.style.visibility = "visible"
 	copyText.select();
 	document.execCommand("copy");
 	copyText.style.visibility = "hidden"
-	console.log("Exported to clipboard")
+	notify("Exported to clipboard")
+}
+
+function download_save() {
+	let str = btoa(JSON.stringify(player))
+	if (findNaN(str, true)) return
+
+	let file = new Blob([str], {type: "text/plain"})
+	window.URL = window.URL || window.webkitURL;
+	let a = document.createElement("a")
+	a.href = window.URL.createObjectURL(file)
+	a.download = "IM Altrascendum - "+new Date().toGMTString()+".txt"
+	a.click()
 }
 
 function import_save() {
@@ -277,7 +288,7 @@ function import_save() {
 			save()
 		} catch (error) {
 			notify("Error importing")
-			console.error(error)
+			console.error(error, error.msg)
 			player = keep
 		}
 	}
@@ -287,6 +298,7 @@ function wipe() {
 	if (!confirm('Are you sure you want to RESET your progress to new game?')) return
 	if (!confirm("This will reset everything, with no rewards! Are you really sure to wipe?")) return
 	alert("If you did that accidentally, you can reload to retrieve your save. However, you have 30 seconds to think!")
+	notify("If you did that accidentally, you can reload to retrieve your save. However, you have 30 seconds to think!", 30)
 	load() //blank save
 }
 
@@ -305,15 +317,20 @@ function onLoaded() {
 
     player.offline.mass = player.stats.maxMass.max(player.mass)
     let off_time = (Date.now() - player.offline.current)/1000
-    if (off_time >= 60 && player.offline.active) player.offline.time += off_time
+    if (off_time >= 60 && player.options.offline) player.offline.time += off_time
 
 	updateAarex()
+	updateResourceLayout()
 	changeFont()
 }
 
 function convertStringToDecimal() {
 	for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x] !== undefined) player.massUpg[x] = D(player.massUpg[x])
-	for (let x = 1; x <= CHALS.cols; x++) player.chal.comps[x] = D(player.chal.comps[x])
+	for (let x = 1; x <= CHAL_NUM; x++) {
+		player.chal.comps[x] = D(player.chal.comps[x])
+		player.chal.lastComps[x] = D(player.chal.lastComps[x])
+		player.chal.bulkComps[x] = D(player.chal.bulkComps[x])
+	}
 	for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = D(player.md.upgs[x]||0)
 	for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) player.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = D(player.supernova.b_upgs[BOSONS.upgs.ids[x]][y]||0)
 
@@ -336,8 +353,12 @@ function correctSaveErrors() {
 
 /* SAFECHECKING */
 function safecheckSave(data) {
+	if (data.qu?.reached) {
+		notify("Your save fails to load, because you have Quantum unlocked!")
+		return false
+	}
 	if (findNaN(data, true)) {
-		alert("Your save fails to load, because it got NaNed!")
+		notify("Your save fails to load, because it got NaNed!")
 		return false
 	}
 

@@ -112,7 +112,7 @@ function resetExtraBuildings(type) {
 	}
 }
 function buyExtraBuildings(type, x) {
-	if (CHALS.inChal(14)) return
+	if (CHALS_NEW.in(14)) return
 	if (!EXTRA_BUILDINGS.unls[x]()) return
 	if (tmp.eb[type+x].gain.lt(getExtraBuildings(type,x))) return
 	EXTRA_BUILDINGS.saves[type]()["eb"+x] = tmp.eb[type+x].gain

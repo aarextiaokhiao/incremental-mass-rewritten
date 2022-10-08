@@ -57,7 +57,7 @@ let MAGIC = {
 	},
 	reset() {
 		if (!MAGIC.can()) return
-		if (player.confirms.mg && !confirm("Are you sure to reset?")) return
+		if (!toConfirm('mg')) return
 
 		if (!MAGIC.unl()) {
 			player.mg = MAGIC.setup()

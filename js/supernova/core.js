@@ -1,20 +1,20 @@
 const SUPERNOVA = {
-    reset(force=false, chal=false, post=false, fermion=false, auto=false) {
-        if (!chal && !post && !fermion && !auto) if ((force && player.confirms.sn)?!confirm("Are you sure to reset without being Supernova?"):false) return
-		if (hasTree("qol8") && player.supernova.auto.toggle && player.supernova.auto.on == -2 && !force && !fermion) startSupernovaSweep()
-        if (tmp.supernova.reached || force || fermion) {
-            elm.supernova_scene.setDisplay(false)
-            if (!force && !fermion) {
-				if (EXT.unl()) {
-					if (player.supernova.times.gt(20) && tmp.supernova.bulk.sub(player.supernova.times).lt(5)) player.ext.chal.f8 = false
-					if (player.supernova.times.gt(100) && tmp.supernova.bulk.div(player.supernova.times).gte(1.1) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
-				}
-                if (hasExtMilestone("qol", 6)) player.ranks.pent = player.ranks.pent.max(tmp.ranks.pent.bulk)
-                player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
-            }
-            tmp.pass = true
-            this.doReset()
-        }
+    reset(force=false) {
+        if (!force && !tmp.supernova.reached) return
+        if (force && toConfirm('supernova')) return
+
+		if (hasTree("qol8") && player.supernova.auto.toggle && player.supernova.auto.on == -2 && !force) startSupernovaSweep()
+
+		elm.supernova_scene.setDisplay(false)
+		if (!force) {
+			if (EXT.unl()) {
+				if (player.supernova.times.gt(20) && tmp.supernova.bulk.sub(player.supernova.times).lt(5)) player.ext.chal.f8 = false
+				if (player.supernova.times.gt(100) && tmp.supernova.bulk.div(player.supernova.times).gte(1.1) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
+			}
+			if (hasExtMilestone("qol", 6)) player.ranks.pent = player.ranks.pent.max(tmp.ranks.pent.bulk)
+			player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
+		}
+		this.doReset()
     },
     doReset() {
         player.supernova.unl = true
@@ -53,7 +53,7 @@ const SUPERNOVA = {
         player.stars.points = D(0)
         player.stars.boost = D(0)
 
-        if (!hasTree("chal3")) for (let x = 5; x <= 8; x++) player.chal.comps[x] = D(0)
+        if (!hasTree("chal3")) CHALS_NEW.clear(1)
 
         ATOM.doReset()
 
@@ -70,7 +70,7 @@ const SUPERNOVA = {
         if (hasTree("bs3")) x = x.mul(treeEff("bs3"))
         if (hasElement(74)) x = x.mul(tmp.elements && tmp.elements.effect[74])
         x = x.mul(tmp.radiation.bs.eff[11])
-        x = x.mul(tmp.supernova.timeMult)
+        x = x.mul(tmp.extMult)
         return x
     },
     req(x=player.supernova.times) {
@@ -96,7 +96,9 @@ function calcSupernova(dt, dt_offline) {
             SUPERNOVA.reset()
         }
     }
-    if (player.supernova.unl) player.supernova.stars = player.supernova.stars.add(tmp.supernova.star_gain.mul(hasExtMilestone("qol", 1) ? dt : dt_offline))
+
+	if (player.supernova.unl) player.supernova.stars = player.supernova.stars.add(tmp.supernova.star_gain.mul(hasExtMilestone("qol", 1) ? dt : dt_offline))
+	if (hasExtMilestone("qol", 2)) for (const [index, can] of Object.entries(tmp.supernova.tree_afford)) if (can) TREE_UPGS.buy(index)
 
     if (!player.supernova.post_10 && player.supernova.times.gte(10)) {
         player.supernova.post_10 = true
@@ -138,33 +140,33 @@ function calcSupernova(dt, dt_offline) {
         }
     }
 
-	//Exotic
-	if (hasExtMilestone("qol", 5) && tmp.supernova.bulk.gt(player.supernova.times)) {
-		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
-		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
-	}
+	//Sweep
 	if (player.supernova.auto.on > -2) {
 		var list = player.supernova.auto.list
 		player.supernova.auto.t += dt
 		if (player.supernova.auto.t >= 1.5) {
 			player.supernova.auto.t = 0
-			// Prevent multitasking
 
-			if (player.chal.active <= 12) CHALS.exit(false,true)
+			delete player.chal.progress[0]
+			delete player.chal.progress[1]
+			delete player.chal.progress[2]
 			if (player.supernova.fermions.choosed) FERMIONS.backNormal()
 
 			player.supernova.auto.on++
 			if (player.supernova.auto.on == list.length) player.supernova.auto.on = -2
 			else {
 				var id = list[player.supernova.auto.on]
-				if (id > 0) {
-					player.chal.active = id
-					CHALS.reset(id, true)
-					player.supernova.auto.t = 0
-				} else FERMIONS.choose(Math.floor(-id/10), (-id-1)%10, true)
+				if (id > 0) CHALS_NEW.enter(Math.ceil(id / 4) - 1, id)
+				else FERMIONS.choose(Math.floor(-id/10), (-id-1)%10, true)
 			}
 		}
 	} else delete player.supernova.auto.list
+
+	//Exotic
+	if (hasExtMilestone("qol", 5) && tmp.supernova.bulk.gt(player.supernova.times)) {
+		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
+		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
+	}
 }
 
 function updateSupernovaTemp() {
@@ -198,7 +200,6 @@ function updateSupernovaTemp() {
         }
     }
     tmp.supernova.star_gain = SUPERNOVA.starGain()
-    tmp.supernova.timeMult = hasExtMilestone("boost", 1) ? D(5) : D(1)
 }
 
 function updateSupernovaEndingHTML() {
@@ -250,7 +251,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (mode == "all" || mode == "chal") {
 		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
-			if ((!CHALS[x].unl || CHALS[x].unl()) && tier.gte(c_thres) && tier.lt(CHALS.getMax(x))) ret.push(x)
+			if ((!CHALS[x].unl || CHALS[x].unl()) && tier.gte(c_thres) && tier.lt(CHALS_NEW.max(x))) ret.push(x)
 		}
 	}
 

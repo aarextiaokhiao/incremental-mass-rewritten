@@ -144,3 +144,7 @@ class Element {
 		new Element(id).appendHTML(child)
 	}
 }
+
+function reloadAppendChild() {
+	for (var el of Object.values(elm)) delete el.parent
+}

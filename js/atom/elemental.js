@@ -75,7 +75,7 @@ const ELEMENTS = {
             cost: D(5e18),
             effect() {
                 let x = D(0)
-                for (let i = 1; i <= CHALS.cols; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
+                for (let i = 1; i <= CHAL_NUM; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
                 if (hasElement(7)) x = x.mul(tmp.elements.effect[7])
                 return x.div(100).add(1).max(1)
             },

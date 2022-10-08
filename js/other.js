@@ -2,35 +2,16 @@ function gameStarted() {
 	return player.ranks.rank.gt(0) || player.ranks.tier.gt(0) || (inNGM() ? MAGIC.unl() : player.rp.unl)
 }
 
-function notify(text, duration) {
-    addNotify(text, duration)
-}
+let notifyTimeout
+function notify(text, duration = 3) {
+	elm.notify.setHTML(text)
+	elm.notify.setVisible(true)
+	elm.notify.setClasses({hide: false})
 
-function addNotify(text, duration=3) {
-    tmp.notify.push({text: text, duration: duration});
-    if (tmp.notify.length == 1) updateNotify()
-}
-
-function removeNotify() {
-    if (tmp.saving > 0 && tmp.notify[0]?tmp.notify[0].text="Game Saving":false) tmp.saving--
-    if (tmp.notify.length <= 1) tmp.notify = []
-    let x = []
-    for (let i = 1; i < tmp.notify.length; i++) x.push(tmp.notify[i])
-    tmp.notify = x
-    elm.notify.setVisible(false)
-    updateNotify()
-}
-
-function updateNotify() {
-    if (tmp.notify.length > 0) {
-        elm.notify.setHTML(tmp.notify[0].text)
-        elm.notify.setVisible(true)
-        elm.notify.setClasses({hide: false})
-        setTimeout(_=>{
-            elm.notify.setClasses({hide: true})
-            setTimeout(removeNotify, 750)
-        }, tmp.notify[0].duration*1000)
-    }
+	clearTimeout(notifyTimeout)
+	notifyTimeout = setTimeout(_=>{
+		elm.notify.setClasses({hide: true})
+	}, duration*1000)
 }
 
 let popup = []

@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "9/13/22"
-let betaVerNum = 220913
+let betaVer = "10/8/22a"
+let betaVerNum = 221004
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -24,10 +24,18 @@ function loadAPPlayer() {
 }
 
 function deleteAPWaste() {
+	delete player.chal.active
 	if (player.ext) {
 		delete player.ext.ch
 		delete player.ext.pr
 	}
+
+	delete player.offline.active
+	delete player.options.tetr
+	delete player.options.pure
+	delete player.options.noChroma
+	delete player.confirms.ec
+	delete player.aarex
 }
 
 function skipToRadiation() {
@@ -108,11 +116,8 @@ function checkAPVers() {
 			player.ext.unl = true
 
 			player.supernova.tree = ["c"]
-			delete player.chal.comps[13]
-			delete player.chal.comps[14]
-			delete player.chal.comps[15]
-			delete player.chal.comps[16]
-
+			CHALS_NEW.clear(3)
+			
 			resetTemp()
 			EXT.reset(true)
 		}
@@ -121,11 +126,10 @@ function checkAPVers() {
 			player.options.notation_tetr = player.options.tetr
 			player.options.notation_mass = player.options.pure
 			player.options.chroma = !player.options.noChroma
-
-			delete player.offline.active
-			delete player.options.tetr
-			delete player.options.pure
-			delete player.options.noChroma
+		}
+		if (player.ap_build < 221004) {
+			player.confirms.chal = player.confirms.ec
+			player.options.aarTheme = player.aarex
 		}
 	}
 	if (gtAPVer(currentAPVer, player.ap_ver)) addPopup(POPUP_GROUPS.ap_update)
@@ -139,6 +143,7 @@ function setupAltraHTML() {
 	//setupGlueballHTML()
 
 	//Others
+	setupShortcuts()
 	setupCompressionHTML()
 }
 
@@ -147,9 +152,9 @@ function updateAarex(toggle) {
 		if (e.href.includes("aarex.css")) e.remove();
 	});
 
-	if (toggle) player.aarex = !player.aarex
+	if (toggle) player.options.aarTheme = !player.options.aarTheme
 
-	if (player.aarex) {
+	if (player.options.aarTheme) {
 		var head = document.head;
 		var link = document.createElement('link');
 		
@@ -160,7 +165,18 @@ function updateAarex(toggle) {
 		head.appendChild(link);
 	}
 
-	document.getElementById("aarex_active").textContent = player.aarex ? "ON" : "OFF"
+	document.getElementById("aarex_active").textContent = player.options.aarTheme ? "ON" : "OFF"
+}
+
+function updateResourceLayout(toggle) {
+	if (toggle) {
+		if (player.options.resLayout.num >= 4) {
+			player.options.resLayout.col = !player.options.resLayout.col
+			player.options.resLayout.num = 2
+		} else player.options.resLayout.num++
+		reloadAppendChild()
+	}
+	document.getElementById("res_layout").textContent = player.options.resLayout.num + (player.options.resLayout.col ? " columns" : " rows")
 }
 
 //OTHERS
@@ -296,10 +312,7 @@ function updateCompressionHTML() {
 //TEMP
 function updateAltraTemp() {
 	//Exotic
-	//updateGlueballTemp()
-	updateAxionTemp()
-	updatePolarizeTemp()
-	updateExtraBuildingTemp()
+	EXT.updateTmp()
 }
 
 //TECHNICAL / FUTURE
