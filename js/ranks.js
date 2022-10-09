@@ -1063,7 +1063,6 @@ function updateRanksTemp() {
     }
 
     // Prestige
-
     tmp.prestiges.baseMul = PRESTIGES.base()
     tmp.prestiges.baseExp = PRESTIGES.baseExponent()
     tmp.prestiges.base = tmp.prestiges.baseMul.pow(tmp.prestiges.baseExp)
@@ -1089,74 +1088,83 @@ function updateRanksTemp() {
 }
 
 function updateRanksHTML() {
-    tmp.el.rank_tabs.setDisplay(hasUpgrade('br',9))
-    for (let x = 0; x < 2; x++) {
-        tmp.el["rank_tab"+x].setDisplay(tmp.rank_tab == x)
-    }
+	for (let x = 0; x < RANKS.names.length; x++) {
+		let rn = RANKS.names[x]
+		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
+		tmp.el["ranks_div_"+x].setDisplay(unl)
+		if (unl) {
+			let keys = Object.keys(RANKS.desc[rn])
+			let desc = ""
+			for (let i = 0; i < keys.length; i++) {
+				if (player.ranks[rn].lt(keys[i])) {
+					desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+					break
+				}
+			}
 
-    if (tmp.rank_tab == 0) {
-        for (let x = 0; x < RANKS.names.length; x++) {
-            let rn = RANKS.names[x]
-            let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
-            tmp.el["ranks_div_"+x].setDisplay(unl)
-            if (unl) {
-                let keys = Object.keys(RANKS.desc[rn])
-                let desc = ""
-                for (let i = 0; i < keys.length; i++) {
-                    if (player.ranks[rn].lt(keys[i])) {
-                        desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
-                        break
-                    }
-                }
-    
-                tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
-                tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
-                tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
-                tmp.el["ranks_desc_"+x].setTxt(desc)
-                tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
-                tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-                tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
-            }
-        }
-    }
-    if (tmp.rank_tab == 1) {
-        tmp.el.pres_base.setHTML(`${tmp.prestiges.baseMul.format(0)}<sup>${format(tmp.prestiges.baseExp)}</sup> = ${tmp.prestiges.base.format(0)}`)
-
-        for (let x = 0; x < PRES_LEN; x++) {
-            let unl = PRESTIGES.unl[x]?PRESTIGES.unl[x]():true
-
-            tmp.el["pres_div_"+x].setDisplay(unl)
-
-            if (unl) {
-                let p = player.prestiges[x] || E(0)
-                let keys = Object.keys(PRESTIGES.rewards[x])
-                let desc = ""
-                for (let i = 0; i < keys.length; i++) {
-                    if (p.lt(keys[i])) {
-                        desc = ` At ${PRESTIGES.fullNames[x]} ${format(keys[i],0)}, ${PRESTIGES.rewards[x][keys[i]]}`
-                        break
-                    }
-                }
-
-                tmp.el["pres_scale_"+x].setTxt(getScalingName("prestige"+x))
-                tmp.el["pres_amt_"+x].setTxt(format(p,0))
-                tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.prestiges.base.lt(tmp.prestiges.req[x]):player.prestiges[x-1].lt(tmp.prestiges.req[x])})
-                tmp.el["pres_desc_"+x].setTxt(desc)
-                tmp.el["pres_req_"+x].setTxt(x==0?format(tmp.prestiges.req[x],0)+" of Prestige Base":PRESTIGES.fullNames[x-1]+" "+format(tmp.prestiges.req[x],0))
-                tmp.el["pres_auto_"+x].setDisplay(false)
-                tmp.el["pres_auto_"+x].setTxt(false?"ON":"OFF")
-            }
-        }
-		
-		if (player.prestiges[1].gte(10)){
-			tmp.el["pres_mass"].setDisplay(true);
-			tmp.el["pres_mass2"].setTxt(formatMass(player.prestigeMass,0)+" "+formatGain(player.prestigeMass, tmp.prestigeMassGain, true))
-			tmp.el["pres_mass3"].setTxt(format(E(1).sub(prestigeMassEffect()).mul(100))+"%");
-			tmp.el["pres_mass4"].setDisplay(hasPrestige(2,1));
-		}else{
-			tmp.el["pres_mass"].setDisplay(false);
+			tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
+			tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
+			tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
+			tmp.el["ranks_desc_"+x].setTxt(desc)
+			tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
+			tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
+			tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
 		}
-    }
+	}
+}
+
+function updatePrestigeHTML() {
+	tmp.el.pres_base.setHTML(`${tmp.prestiges.baseMul.format(0)}<sup>${format(tmp.prestiges.baseExp)}</sup> = ${tmp.prestiges.base.format(0)}`)
+
+	for (let x = 0; x < PRES_LEN; x++) {
+		let unl = PRESTIGES.unl[x]?PRESTIGES.unl[x]():true
+
+		tmp.el["pres_div_"+x].setDisplay(unl)
+
+		if (unl) {
+			let p = player.prestiges[x] || E(0)
+			let keys = Object.keys(PRESTIGES.rewards[x])
+			let desc = ""
+			for (let i = 0; i < keys.length; i++) {
+				if (p.lt(keys[i])) {
+					desc = ` At ${PRESTIGES.fullNames[x]} ${format(keys[i],0)}, ${PRESTIGES.rewards[x][keys[i]]}`
+					break
+				}
+			}
+
+			tmp.el["pres_scale_"+x].setTxt(getScalingName("prestige"+x))
+			tmp.el["pres_amt_"+x].setTxt(format(p,0))
+			tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.prestiges.base.lt(tmp.prestiges.req[x]):player.prestiges[x-1].lt(tmp.prestiges.req[x])})
+			tmp.el["pres_desc_"+x].setTxt(desc)
+			tmp.el["pres_req_"+x].setTxt(x==0?format(tmp.prestiges.req[x],0)+" of Prestige Base":PRESTIGES.fullNames[x-1]+" "+format(tmp.prestiges.req[x],0))
+			tmp.el["pres_auto_"+x].setDisplay(false)
+			tmp.el["pres_auto_"+x].setTxt(false?"ON":"OFF")
+		}
+	}
+
+	if (player.prestiges[1].gte(10)) {
+		tmp.el["pres_mass"].setDisplay(true);
+		tmp.el["pres_mass2"].setTxt(formatMass(player.prestigeMass,0)+" "+formatGain(player.prestigeMass, tmp.prestigeMassGain, true))
+		tmp.el["pres_mass3"].setTxt(format(E(1).sub(prestigeMassEffect()).mul(100))+"%");
+		tmp.el["pres_mass4"].setDisplay(hasPrestige(2,1));
+	} else {
+		tmp.el["pres_mass"].setDisplay(false);
+	}
+
+	for (let x = 1; x <= UPGS.prestigeMass.cols; x++) {
+		let upg = UPGS.prestigeMass[x]
+		tmp.el["prestigeMassUpg_div_"+x].setDisplay(upg.unl())
+		if (upg.unl()) {
+			tmp.el["prestigeMassUpg_scale_"+x].setTxt("")
+			tmp.el["prestigeMassUpg_lvl_"+x].setTxt(format(player.prestigeMassUpg[x]||0,0))
+			tmp.el["prestigeMassUpg_btn_"+x].setClasses({btn: true, locked: player.prestigeMass.lt(tmp.upgs.prestigeMass[x].cost)})
+			tmp.el["prestigeMassUpg_cost_"+x].setTxt(formatMass(tmp.upgs.prestigeMass[x].cost)+" Prestige Mass")
+			tmp.el["prestigeMassUpg_step_"+x].setTxt(tmp.upgs.prestigeMass[x].effDesc.step)
+			tmp.el["prestigeMassUpg_eff_"+x].setHTML(tmp.upgs.prestigeMass[x].effDesc.eff)
+			tmp.el["prestigeMassUpg_auto_"+x].setDisplay(true)
+			tmp.el["prestigeMassUpg_auto_"+x].setTxt(player.autoprestigeMassUpg[x]?"ON":"OFF")
+		}
+	}
 }
 
 function prestigeMassGain(){

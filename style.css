@@ -319,6 +319,34 @@ button {
 	background-color: #3157be;
 }
 
+.btn_tab.dilation {
+	color: #25ff30;
+	border-color: #25ff30;
+}
+
+.btn_tab.dilation:not(.choosed):hover {
+	background-color: #0a470d;
+}
+
+.btn_tab.dilation.choosed {
+	color: black;
+	background-color: #25ff30;
+}
+
+.btn_tab.star {
+	color: orange;
+	border-color: orange;
+}
+
+.btn_tab.star:not(.choosed):hover {
+	background-color: brown;
+}
+
+.btn_tab.star.choosed {
+	color: black;
+	background-color: orange;
+}
+
 .btn_tab.sn {
 	color: #ff009d;
 	border-color: #ff009d;
@@ -347,20 +375,6 @@ button {
 	background-color: lightgreen;
 }
 
-.btn_tab.dilation {
-	color: #25ff30;
-	border-color: #25ff30;
-}
-
-.btn_tab.dilation:not(.choosed):hover {
-	background-color: #0a470d;
-}
-
-.btn_tab.dilation.choosed {
-	color: black;
-	background-color: #25ff30;
-}
-
 .btn_tab.break_dilation {
 	color: #00cea1;
 	border-color: #00cea1;
@@ -373,6 +387,48 @@ button {
 .btn_tab.break_dilation.choosed {
 	color: black;
 	background-color: #00cea1;
+}
+
+.btn_tab.pm {
+	color: #b3f;
+	border-color: #b3f;
+}
+
+.btn_tab.pm:not(.choosed):hover {
+	background-color: #307;
+}
+
+.btn_tab.pm.choosed {
+	color: black;
+	background-color: #b3f;
+}
+
+.btn_tab.et {
+	color: #b0b;
+	border-color: #b0b;
+}
+
+.btn_tab.et:not(.choosed):hover {
+	background-color: #505;
+}
+
+.btn_tab.et.choosed {
+	color: black;
+	background-color: #b0b;
+}
+
+.btn_tab.gal {
+	color: #f07;
+	border-color: #f07;
+}
+
+.btn_tab.gal:not(.choosed):hover {
+	background-color: #703;
+}
+
+.btn_tab.gal.choosed {
+	color: black;
+	background-color: #f07;
 }
 
 .btn_tab:not(.choosed):hover {

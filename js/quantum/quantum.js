@@ -356,7 +356,9 @@ function updateQuantumHTML() {
             tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
         }
         if (tmp.stab[6] == 3) updatePrimordiumHTML()
-        if (tmp.stab[6] == 4) updateEntropyHTML()
+        if (tmp.stab[6] == 4) updateQCHTML()
+        if (tmp.stab[6] == 5) updateEntropyHTML()
+        if (tmp.stab[6] == 6) updateBDHTML()
     }
 }
 

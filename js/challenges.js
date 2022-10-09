@@ -42,12 +42,6 @@ function updateChalHTML() {
             tmp.el.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[player.chal.choosed]))
         }
     }
-    if (tmp.stab[3]==1){
-        updateQCHTML()
-    }
-    if (tmp.stab[3]==2){
-        updateGCHTML()
-    }
 }
 
 function updateChalTemp() {

@@ -11,12 +11,20 @@ const SUPERNOVA_GALAXY = {
 		return player.supernova.times.div(1e6).log(1.246).scaleEvery('superGal',true).add(1).floor();
 	},
 	reset(force=false){
-		if(!force)if(player.supernova.times.lt(SUPERNOVA_GALAXY.req()))return;
-		if(!force)if((confirm("Are you sure to reset for a Supernova Galaxy? It will reset all previous, including Prestiges.")?!confirm("ARE YOU SURE ABOUT IT???"):true)) return
-		if(!force && hasElement(291))player.superGal = player.superGal.max(SUPERNOVA_GALAXY.bulk());
-		else if(!force)player.superGal = player.superGal.add(1);
-		if(player.superGal.lt(11))player.prestiges=[E(0),E(0),E(0),E(0)];
-		if(player.superGal.lt(6))player.supernova.tree=[];
+		if(!force) {
+			if (player.supernova.times.lt(SUPERNOVA_GALAXY.req())) return;
+
+			if (player.confirms.gal) {
+				if (!confirm("Are you sure to reset for a Supernova Galaxy? It will reset all previous, including Prestiges.")) return
+				if (!confirm("ARE YOU SURE ABOUT IT???")) return
+			}
+
+			if (hasElement(291)) player.superGal = player.superGal.max(SUPERNOVA_GALAXY.bulk());
+			else player.superGal = player.superGal.add(1)
+		}
+
+		if(player.superGal.lt(11)) player.prestiges=[E(0),E(0),E(0),E(0)];
+		if(player.superGal.lt(6)) player.supernova.tree=[];
 		player.chal.comps[9] = E(0)
 		player.chal.comps[10] = E(0)
 		player.chal.comps[11] = E(0)
@@ -62,7 +70,6 @@ const SUPERNOVA_GALAXY = {
 		player.supernova.fermions.tiers[0]=[E(0),E(0),E(0),E(0),E(0),E(0)];
 		player.supernova.fermions.tiers[1]=[E(0),E(0),E(0),E(0),E(0),E(0)];
 		if(!hasElement(291))TABS.choose(0);
-		if(!hasElement(291))tmp.rank_tab = 0;
 		if(!hasElement(291))TABS.choose(5);
 	},
 	effects:{

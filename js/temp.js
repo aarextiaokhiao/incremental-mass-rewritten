@@ -18,7 +18,6 @@ function resetTemp() {
         notify: [],
         popup: [],
         saving: 0,
-        rank_tab: 0,
 
         scaling_qc8: [],
 

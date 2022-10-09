@@ -1,10 +1,12 @@
 function setupHTML() {
-	let sn_stabs = new Element("sn_stabs")
 	let tabs = new Element("tabs")
 	let stabs = new Element("stabs")
+	let sn_stabs = new Element("sn_stabs")
+	let sgal_stabs = new Element("sgal_stabs")
 	let table = ""
 	let table2 = ""
 	let table3 = ""
+	let table4 = ""
 	for (let x = 0; x < TABS[1].length; x++) {
 		table += `<div style="width: 145px">
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
@@ -17,13 +19,15 @@ function setupHTML() {
 				</div>`
 			}
 			a += `</div>`
-			if (x == 5) table3 += a
+			if (x == 7) table4 += a
+			else if (x == 5) table3 += a
 			else table2 += a
 		}
 	}
 	tabs.setHTML(table)
 	stabs.setHTML(table2)
 	sn_stabs.setHTML(table3)
+	sgal_stabs.setHTML(table4)
 
 	let ranks_table = new Element("ranks_table")
 	table = ""
@@ -261,7 +265,7 @@ function updateUpperHTML() {
 function updateMassUpgradesHTML() {
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
 		let upg = UPGS.mass[x]
-		tmp.el["massUpg_div_"+x].setDisplay(upg.unl() && tmp.rank_tab == 0)
+		tmp.el["massUpg_div_"+x].setDisplay(upg.unl())
 		if (upg.unl()) {
 			tmp.el["massUpg_scale_"+x].setTxt(getScalingName("massUpg", x))
 			tmp.el["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bonus.gt(0)?" + "+format(tmp.upgs.mass[x].bonus,0):""))
@@ -273,25 +277,11 @@ function updateMassUpgradesHTML() {
 			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"ON":"OFF")
 		}
 	}
-	for (let x = 1; x <= UPGS.prestigeMass.cols; x++) {
-		let upg = UPGS.prestigeMass[x]
-		tmp.el["prestigeMassUpg_div_"+x].setDisplay(upg.unl() && tmp.rank_tab == 1)
-		if (upg.unl()) {
-			tmp.el["prestigeMassUpg_scale_"+x].setTxt("")
-			tmp.el["prestigeMassUpg_lvl_"+x].setTxt(format(player.prestigeMassUpg[x]||0,0))
-			tmp.el["prestigeMassUpg_btn_"+x].setClasses({btn: true, locked: player.prestigeMass.lt(tmp.upgs.prestigeMass[x].cost)})
-			tmp.el["prestigeMassUpg_cost_"+x].setTxt(formatMass(tmp.upgs.prestigeMass[x].cost)+" Prestige Mass")
-			tmp.el["prestigeMassUpg_step_"+x].setTxt(tmp.upgs.prestigeMass[x].effDesc.step)
-			tmp.el["prestigeMassUpg_eff_"+x].setHTML(tmp.upgs.prestigeMass[x].effDesc.eff)
-			tmp.el["prestigeMassUpg_auto_"+x].setDisplay(true)
-			tmp.el["prestigeMassUpg_auto_"+x].setTxt(player.autoprestigeMassUpg[x]?"ON":"OFF")
-		}
-	}
 }
 
 function updateTickspeedHTML() {
 	let unl = player.rp.unl
-	tmp.el.tickspeed_div.setDisplay(unl && tmp.rank_tab == 0)
+	tmp.el.tickspeed_div.setDisplay(unl)
 	if (unl) {
 		let teff = tmp.tickspeedEffect
 		tmp.el.tickspeed_scale.setTxt(getScalingName('tickspeed'))
@@ -307,7 +297,7 @@ function updateTickspeedHTML() {
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
 		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"ON":"OFF")
 	}
-	tmp.el.accel_div.setDisplay(unl && hasElement(134) && tmp.rank_tab == 0);
+	tmp.el.accel_div.setDisplay(unl && hasElement(134));
 	if(hasElement(134)){
 		let eff = tmp.accelEffect
 		//tmp.el.accel_scale.setTxt(getScalingName('accel'))
@@ -431,8 +421,6 @@ function updateOptionsHTML() {
 	tmp.el.show_supernova.setTxt(player.show_supernova==1?"Hidden":"Shown")
 	tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
 	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
-
-	tmp.el.omega_badge.setDisplay(localStorage.getItem("imr_secret_badge1") == "1")
 }
 
 function updateHTML() {
@@ -442,10 +430,10 @@ function updateHTML() {
 	
 	tmp.el.offlineSpeed.setTxt(format(tmp.offlineMult))
 	tmp.el.loading.setDisplay(tmp.offlineActive)
-    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && tmp.tab != 5))
+    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && tmp.tab != 5 && tmp.tab != 7))
 	updateSupernovaEndingHTML()
 	updateTabsHTML()
-	if ((!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5) {
+	if ((!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5 && tmp.tab != 7) {
 		updateUpperHTML()
 		updateInfinityHTML()
 		updateQuantumHTML()
@@ -454,8 +442,7 @@ function updateHTML() {
 				updateRanksHTML()
 				updateMassUpgradesHTML()
 				updateTickspeedHTML()
-				
-				tmp.el.mass_softcaps.setDisplay(tmp.rank_tab == 0);
+
 				tmp.el.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain) && player.ranks.hex.lt(1))
 				tmp.el.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
 				tmp.el.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2) && player.ranks.hex.lt(4))
@@ -492,6 +479,9 @@ function updateHTML() {
 			if (tmp.stab[0] == 3) {
 				updateStarsHTML()
 			}
+			if (tmp.stab[0] == 5) {
+				updatePrestigeHTML()
+			}
 		}
 		if (tmp.tab == 1) {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
@@ -508,10 +498,8 @@ function updateHTML() {
 			if (tmp.stab[4] == 0) updateAtomHTML()
 			if (tmp.stab[4] == 1) updateElementsHTML()
 			if (tmp.stab[4] == 2) updateMDHTML()
-			if (tmp.stab[4] == 3) updateBDHTML()
-			if (tmp.stab[4] == 4) updateAtomHTML()
 		}
-		if (tmp.tab == 7) {
+		if (tmp.tab == 8) {
 			updateOptionsHTML()
 		}
 	}
