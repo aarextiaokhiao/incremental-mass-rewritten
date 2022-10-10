@@ -1,14 +1,21 @@
 let GLUBALL = {
 	unl: () => player.ext?.gb?.unl,
-
 	setup() {
 		return {
 			unl: false,
+			rot: [] //array of rotations
 		}
 	},
-	calc(dt) {
-		
+
+	//FEATURE
+	canSwitch() {
 	},
+	rotate(type) {
+	},
+
+	//CALC
+	calc(dt) {
+	}
 }
 
 function updateGlueballTemp() {

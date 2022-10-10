@@ -94,8 +94,10 @@ const POPUP_GROUPS = {
 			<b style='font-size: 24px'>Mass</b><br>
 			<button class="btn" onclick="player.options.notation_mass = 1">Off</button>
 			<button class="btn" onclick="player.options.notation_mass = 0">On</button>
+			<button class="btn" onclick="player.options.notation_mass = 3" tooltip="Only includes g, mlt, and arvs">Significant only</button>
 			`+(player.stats.maxMass.gte(mlt(1))?`<button class="btn" onclick="player.options.notation_mass = 2" tooltip='1e1e9 mlt = 1 mgv (log)'>Large-scale</button>`:``)
 		,
+        width: 700,
     },
     supernova10: {
         html: `

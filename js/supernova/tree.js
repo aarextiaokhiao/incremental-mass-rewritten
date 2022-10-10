@@ -64,6 +64,10 @@ const TREE_UPGS = {
 	ids: {
         c: {
             desc: `Start generating 0.1 Neutron Stars per second. (no offline)`,
+			req() {
+				return player.supernova.times.gte(1)
+			},
+            reqDesc() { return `1 Supernova.` },
             cost: D(0),
         },
         sn1: {
@@ -114,10 +118,6 @@ const TREE_UPGS = {
         m1: {
             branch: ["c"],
             desc: `Neutron Stars boost Mass.`,
-			req() {
-				return player.supernova.times.gte(1)
-			},
-            reqDesc() { return `1 Supernova.` },
             cost: D(100),
             effect() {
                 let x = D(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -153,10 +153,6 @@ const TREE_UPGS = {
         rp1: {
             branch: ["c"],
             desc: `Neutron Stars boost Rage Power.`,
-			req() {
-				return player.supernova.times.gte(1)
-			},
-            reqDesc() { return `1 Supernova.` },
             cost: D(200),
             effect() {
                 let x = D(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -167,10 +163,6 @@ const TREE_UPGS = {
         bh1: {
             branch: ["c"],
             desc: `Neutron Stars boost Dark Matter.`,
-			req() {
-				return player.supernova.times.gte(1)
-			},
-            reqDesc() { return `1 Supernova.` },
             cost: D(400),
             effect() {
                 let x = D(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
@@ -477,7 +469,7 @@ const TREE_UPGS = {
         },
         chal6: {
             branch: ["chal5"],
-            desc: `Unlock new challenge and reduce auto-sweep threshold to 10.`,
+            desc: `Unlock new challenge and reduce auto-Sweep threshold to 10.`,
             cost: D(1e94),
         },
         sn5: {

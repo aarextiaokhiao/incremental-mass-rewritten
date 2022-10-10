@@ -11,7 +11,7 @@ const SUPERNOVA = {
 				if (player.supernova.times.gt(20) && tmp.supernova.bulk.sub(player.supernova.times).lt(5)) player.ext.chal.f8 = false
 				if (player.supernova.times.gt(100) && tmp.supernova.bulk.div(player.supernova.times).gte(1.1) && player.supernova.fermions.choosed && player.supernova.fermions.choosed2) player.ext.chal.f10 = true
 			}
-			if (hasExtMilestone("qol", 6)) player.ranks.pent = player.ranks.pent.max(tmp.ranks.pent.bulk)
+			if (hasExtMilestone("qol", 4)) player.ranks.pent = player.ranks.pent.max(tmp.ranks.pent.bulk)
 			player.supernova.times = player.supernova.post_10 ? player.supernova.times.max(tmp.supernova.bulk) : player.supernova.times.add(1)
 		}
 		this.doReset()
@@ -39,6 +39,7 @@ const SUPERNOVA = {
         if (hasTree("qol1")) list_keep.push(14,18)
         if (hasTree("qol2")) list_keep.push(24)
         if (hasTree("qol3")) list_keep.push(43)
+        if (hasExtMilestone("qol", 1)) list_keep.push(11)
         keep = []
         for (let x = 0; x < player.atom.elements.length; x++) if (list_keep.includes(player.atom.elements[x])) keep.push(player.atom.elements[x])
         player.atom.elements = keep
@@ -163,10 +164,10 @@ function calcSupernova(dt, dt_offline) {
 	} else delete player.supernova.auto.list
 
 	//Exotic
-	if (hasExtMilestone("qol", 5) && tmp.supernova.bulk.gt(player.supernova.times)) {
+	/*if (hasExtMilestone("qol", 5) && tmp.supernova.bulk.gt(player.supernova.times)) {
 		if (player.supernova.auto.on > -2) player.supernova.times = tmp.supernova.bulk
 		else if (tmp.supernova.bulk.div(player.supernova.times).gte(1.3)) SUPERNOVA.reset(false, false, false, false, true)
-	}
+	}*/
 }
 
 function updateSupernovaTemp() {
@@ -200,6 +201,9 @@ function updateSupernovaTemp() {
         }
     }
     tmp.supernova.star_gain = SUPERNOVA.starGain()
+
+    tmp.supernova.mult = D(tmp.extMult)
+    if (hasExtMilestone("boost", 1)) tmp.supernova.mult = tmp.supernova.mult.mul(5)
 }
 
 function updateSupernovaEndingHTML() {
@@ -245,9 +249,13 @@ function getSupernovaAutoTemp(mode = "all") {
 
 	let c_thres = 50
 	if (hasTree("chal6")) c_thres = 15
-	if (hasExtMilestone("qol", 2)) c_thres = 10
+	if (hasExtMilestone("qol", 1)) c_thres = 10
 	if (hasTree("feat4")) c_thres = 7
-	if (hasExtMilestone("qol", 7)) c_thres = 0
+	if (hasExtMilestone("qol", 2)) c_thres = 5
+	if (hasExtMilestone("qol", 3)) c_thres = 3
+	if (hasExtMilestone("qol", 4)) c_thres = 2
+	if (hasExtMilestone("qol", 5)) c_thres = 1
+	if (hasExtMilestone("qol", 6)) c_thres = 0
 	if (mode == "all" || mode == "chal") {
 		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
@@ -256,8 +264,12 @@ function getSupernovaAutoTemp(mode = "all") {
 	}
 
 	let f_thres = 15
-	if (hasExtMilestone("qol", 2)) f_thres = 10
+	if (hasExtMilestone("qol", 1)) f_thres = 10
 	if (hasTree("feat4")) f_thres = 7
+	if (hasExtMilestone("qol", 2)) f_thres = 5
+	if (hasExtMilestone("qol", 3)) f_thres = 3
+	if (hasExtMilestone("qol", 4)) f_thres = 2
+	if (hasExtMilestone("qol", 5)) f_thres = 1
 	if (hasExtMilestone("qol", 6)) f_thres = 0
 	if (mode == "all" || mode == "ferm") {
 		for (var y = 0; y < 2; y++) {

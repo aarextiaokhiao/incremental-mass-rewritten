@@ -32,7 +32,7 @@ const MASS_DILATION = {
         if (hasElement(34)) x = x.mul(tmp.elements.effect[34])
         if (hasElement(45)) x = x.mul(tmp.elements.effect[45])
         x = x.mul(tmp.fermions.effs[0][1]||1)
-        x = x.mul(tmp.extMult)
+        x = x.mul(tmp.supernova.mult)
         return x
     },
 	RPbasegain(m=player.mass) {
@@ -57,7 +57,7 @@ const MASS_DILATION = {
         if (hasElement(35)) x = x.mul(tmp.elements.effect[35])
         if (hasElement(40)) x = x.mul(tmp.elements.effect[40])
         if (hasElement(32)) x = x.pow(1.05)
-        x = x.mul(tmp.extMult)
+        x = x.mul(tmp.supernova.mult)
         return x
     },
     mass_req() {

@@ -71,8 +71,8 @@ let EXOTIC = {
 		player.supernova.stars = D(0)
 
 		let list = []
-		if (hasExtMilestone("qol", 1)) list.push("c")
-		if (hasExtMilestone("qol", 2)) list.push("qol8")
+		if (hasExtMilestone("qol", 2)) list.push("c", "m1", "qol8", "qol10")
+		if (hasExtMilestone("qol", 3)) list.push("chal4", "chal4a", "chal5", "chal6", "chal7")
 
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
@@ -191,23 +191,23 @@ function updateExoticHeader() {
 const EXT_MILESTONES = {
 	qol: [
 		{
-			req: 1,
-			desc: "Keep Main Upgrades and Elements you would start on Supernova. Keep [c] upgrade. Neutron Stars can generate in offline progress."
+			req: 0,
+			desc: "Keep everything you start on Supernovae, and Na-11 upgrade. Neutron Stars can generate in offline progress. Auto-Sweeper threshold is reduced to 10."
 		}, {
 			req: 3,
-			desc: "Keep [qol8] upgrade. Automate Neutron Tree upgrades. Auto-Sweeper threshold is reduced to 10."
+			desc: "Keep [c], [m1], [qol8], and [qol10] upgrades. Automate Neutron Tree upgrades. Auto-Sweeper threshold is reduced to 5."
 		}, {
 			req: 10,
-			desc: "Automate Radiation Boosters at 100,000 radiation. Buildings don't spend anything."
+			desc: "Keep [chal4] - [chal7] upgrades. Automate Radiation Boosters at 100,000 Radiation. Auto-Sweeper threshold is reduced to 3."
 		}, {
 			req: 30,
-			desc: "You can bulk Pent."
+			desc: "You can bulk Pent. Going Supernovae automatically gives Pent. Auto-Sweeper threshold is reduced to 2."
 		}, {
 			req: 100,
-			desc: "Automate Supernovae at where you would gain 30% more."
+			desc: "Buildings don't spend anything. Auto-Sweeper threshold is reduced to 1."
 		}, {
 			req: 300,
-			desc: "Going Supernovae automatically gives Pent."
+			desc: "Auto-Sweeper threshold is reduced to 0."
 		}, {
 			req: 1e3,
 			desc: "You can automatically sweep Fermions without requirements."
@@ -225,7 +225,7 @@ const EXT_MILESTONES = {
 	boost: [
 		{
 			req: 0,
-			desc: "Gain 5x more pre-Exotic resources."
+			desc: "Gain 5x more pre-Supernovae resources and 5x more pre-Exotic resources."
 		}, {
 			req: 100,
 			desc: "Argon-18 raises Tickspeed Power instead."
@@ -249,28 +249,28 @@ const EXT_MILESTONES = {
 	axion: [
 		{
 			req: 1,
-			desc: "Unlock X-Axions. X-Axions raise Challenge 12 reward."
+			desc: "Unlock X-Axions. Axion Catalysts raise Challenge 12 reward."
 		}, {
 			req: 30,
-			desc: "Unlock Y-Axions. Y-Axions make [s3] raise M-Type Stars."
+			desc: "Unlock Y-Axions. Axion Catalysts make [s3] raise M-Type Stars."
 		}, {
 			req: 1e3,
-			desc: "X-Axions raise Challenge 10 reward."
+			desc: "Axion Catalysts raise Challenge 10 reward."
 		}, {
 			req: 1e5,
-			desc: "Y-Axions subtract Radiation Booster's cost scaling exponent."
+			desc: "Axion Catalysts subtract Radiation Booster's cost scaling exponent."
 		}, {
 			req: 1e8,
-			desc: "Unlock Z-Axions. Z-Axions make Tickspeed Power multiplies Star Booster Base."
+			desc: "Unlock Z-Axions. Axion Catalysts make Tickspeed Power multiplies Star Booster Base."
 		}, {
 			req: 1e10,
-			desc: "X-Axions multiply Neutron Condensers."
+			desc: "Axion Catalysts multiply Neutron Condensers."
 		}, {
 			req: 1e15,
-			desc: "Y-Axions multiply Hawking Radiation."
+			desc: "Axion Catalysts multiply Hawking Radiation."
 		}, {
 			req: 1e20,
-			desc: "Z-Axions add Polarizer Base."
+			desc: "Axion Catalysts add Polarizer Base."
 		}
 	],
 	unl: [

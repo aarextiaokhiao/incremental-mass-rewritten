@@ -6,7 +6,7 @@ const ATOM = {
         x = x.root(5)
         if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:D(1))
         if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
-        x = x.mul(tmp.extMult)
+        x = x.mul(tmp.supernova.mult)
 
         if (hasElement(17)) x = x.pow(1.1)
         if (FERMIONS.onActive("10")) x = expMult(x,0.625)
@@ -21,11 +21,12 @@ const ATOM = {
         if (hasUpgrade('atom',8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:D(1))
         if (hasRank("rank", 300)) x = x.mul(RANKS.effect.rank[300]())
         if (hasElement(6)) x = x.mul(tmp.elements.effect[6])
+        if (hasElement(7)) x = x.mul(tmp.elements.effect[7])
         if (hasElement(42)) x = x.mul(tmp.elements.effect[42])
         if (hasElement(67)) x = x.mul(tmp.elements.effect[67])
         if (player.md.upgs[6].gte(1)) x = x.mul(tmp.md.upgs[6].eff)
         x = x.mul(tmp.md.upgs[9].eff)
-        x = x.mul(tmp.extMult)
+        x = x.mul(tmp.supernova.mult)
 
         if (hasElement(47)) x = x.pow(1.1)
         return x.floor()
@@ -57,6 +58,8 @@ const ATOM = {
             if (hasElement(3)) x = x.mul(tmp.elements.effect[3])
             if (hasElement(52)) x = x.mul(tmp.elements.effect[52])
             if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+            x = x.mul(tmp.supernova.mult)
+
             if (FERMIONS.onActive("00")) x = expMult(x,0.6)
             if (tmp.md.active) x = MASS_DILATION.applyDil(x)
             return x
@@ -78,7 +81,7 @@ const ATOM = {
         buy() {
 			if (CHALS_NEW.in(14)) return
             if (tmp.atom.gamma_ray_can) {
-                if (!hasExtMilestone("qol", 3)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                if (!hasExtMilestone("qol", 5)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
                 player.atom.gamma_ray = player.atom.gamma_ray.add(1)
             }
         },
@@ -86,7 +89,7 @@ const ATOM = {
 			if (CHALS_NEW.in(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
-                if (!hasExtMilestone("qol", 3)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                if (!hasExtMilestone("qol", 5)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
             }
 			buyExtraBuildings("ag",2)
 			buyExtraBuildings("ag",3)
@@ -121,7 +124,7 @@ const ATOM = {
             let m = player.atom.ratio
             let spent = m > 0 ? player.atom.quarks.mul(RATIO_MODE[m]).ceil() : D(1)
             player.atom.quarks = player.atom.quarks.sub(spent).max(0)
-            player.atom.particles[x] = player.atom.particles[x].add(spent)
+            player.atom.particles[x] = player.atom.particles[x].add(spent.mul(tmp.supernova.mult))
         },
         assignAll() {
             let sum = player.atom.dRatio[0]+player.atom.dRatio[1]+player.atom.dRatio[2]
@@ -130,18 +133,14 @@ const ATOM = {
             for (let x = 0; x < 3; x++) {
                 let add = spent.mul(player.atom.dRatio[x])
                 player.atom.quarks = player.atom.quarks.sub(add).max(0)
-                player.atom.particles[x] = player.atom.particles[x].add(add)
+                player.atom.particles[x] = player.atom.particles[x].add(add.mul(tmp.supernova.mult))
             }
         },
 		mg12(p) {
 			if (!p) p = player.atom.particles[0].max(player.atom.particles[1].max(player.atom.particles[2]))
-			let e, m = [D(1), D(1)]
-			if (tmp.chal) {
-				let c9 = CHALS_NEW.eff(9)
-				e = c9.exp.div(4)
-				m = c9.mul
-			}
-			return p.add(1).log10().add(1).pow(e).mul(m) //Maximum of ^1.325
+
+			let c9 = CHALS_NEW.eff(9)
+			return p.add(1).log10().add(1).pow(c9.exp.div(4)).mul(c9.mul) //Maximum of ^1.325
 		},
         effect(i) {
             let p = player.atom.particles[i]
@@ -154,6 +153,7 @@ const ATOM = {
         gain(i) {
             let x = tmp.atom.particles[i]?tmp.atom.particles[i].effect:D(0)
             if (hasUpgrade('atom',7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:D(1))
+            x = x.mul(tmp.supernova.mult)
             return x
         },
         powerEffect: [
@@ -207,7 +207,7 @@ function calcAtoms(dt, dt_offline) {
 	if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
 
 	//ELEMENTS
-	if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
+	if (hasTree("qol1")) ELEMENTS.buyAll()
 
 	//MASS DILATION
 	if (hasElement(21)) {

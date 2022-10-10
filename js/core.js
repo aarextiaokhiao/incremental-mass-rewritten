@@ -69,7 +69,7 @@ const FORMS = {
 		x = x.mul(tmp.stars.effect.eff)
 		if (hasTree("m1")) x = x.mul(treeEff("m1"))
 		x = x.mul(tmp.bosons.effect.pos_w[0])
-		x = x.mul(tmp.extMult)
+		x = x.mul(tmp.supernova.mult)
 
 		return x
 	},
@@ -187,7 +187,7 @@ const FORMS = {
 			if (hasUpgrade('bh',6)) gain = gain.mul(tmp.upgs.main?tmp.upgs.main[2][6].effect:D(1))
 			gain = gain.mul(tmp.atom.particles[1].powerEffect.eff1)
 			if (hasTree("rp1")) gain = gain.mul(treeEff("rp1"))
-			gain = gain.mul(tmp.extMult)
+			gain = gain.mul(tmp.supernova.mult)
 
 			if (hasUpgrade('bh',8)) gain = gain.pow(1.15)
 			gain = gain.pow(CHALS_NEW.eff(4))
@@ -223,7 +223,7 @@ const FORMS = {
 
 			if (hasTree("bh1")) gain = gain.mul(treeEff("bh1"))
 			if (!bosonsMastered()) gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
-			gain = gain.mul(tmp.extMult)
+			gain = gain.mul(tmp.supernova.mult)
 
 			if (CHALS_NEW.in(7)) gain = gain.root(6)
 			gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
@@ -245,7 +245,7 @@ const FORMS = {
 			if (hasUpgrade('bh',14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:D(1))
 			if (hasElement(46)) x = x.mul(tmp.elements.effect[46])
 			if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.photon[0].effect)
-			x = x.mul(tmp.extMult)
+			x = x.mul(tmp.supernova.mult)
 
 			if (CHALS_NEW.in(8)) x = x.root(8)
 			x = x.pow(CHALS_NEW.eff(8).bh)
@@ -289,14 +289,14 @@ const FORMS = {
 			buy() {
 				if (CHALS_NEW.in(14)) return
 				if (this.can()) {
-					if (!hasExtMilestone("qol", 3)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone("qol", 5)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
 				if (CHALS_NEW.in(14)) return
 				if (this.can()) {
-					if (!hasExtMilestone("qol", 3)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone("qol", 5)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
 				}
 				buyExtraBuildings("bh",2)

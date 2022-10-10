@@ -234,7 +234,7 @@ const FORMATS = {
     mix: {
       format(ex, acc, color) {
         ex = D(ex)
-        return format(ex,acc,ex.lt(1e63)?"st":"sc",color)
+        return format(ex,acc,ex.lt(1e36)?"st":"sc",color)
       }
     },
 	sc: {
@@ -426,44 +426,45 @@ function formatMultiply(a) {
 //MASS
 function formatMass(ex, color) {
 	let f = color ? formatColored : format
-    ex = D(ex)
-    if (player.options.notation_mass == 1) return f(ex)
+	ex = D(ex)
+	if (player.options.notation_mass == 1) return f(ex)
 
-    if (ex.gte(EINF)) return f(ex)
-    if (ex.gte(mlt(1))) return formatArv(ex.div(1.5e56).log10().div(1e9), color)
-    if (ex.gte(uni(1))) return f(ex.div(uni(1))) + ' uni'
-    if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'
-    if (ex.gte(1.989e33)) return f(ex.div(1.989e33)) + ' M☉'
-    if (ex.gte(5.972e27)) return f(ex.div(5.972e27)) + ' M⊕'
-    if (ex.gte(1.619e20)) return f(ex.div(1.619e20)) + ' MME'
-    if (ex.gte(5.2e10)) return f(ex.div(5.2e10)) + ' MTI'
-    if (ex.gte(1e6)) return f(ex.div(1e6)) + ' tonne'
-    if (ex.gte(1e3)) return f(ex.div(1e3)) + ' kg'
-    return f(ex) + ' g'
+	if (ex.gte(EINF)) return f(ex)
+	if (ex.gte(mlt(1))) return formatArv(ex.div(1.5e56).log10().div(1e9), color)
+	if (player.options.notation_mass != 3) {
+		if (ex.gte(uni(1))) return f(ex.div(uni(1))) + ' uni'
+		if (ex.gte(2.9835e45)) return f(ex.div(2.9835e45)) + ' MMWG'
+		if (ex.gte(1.989e33)) return f(ex.div(1.989e33)) + ' M☉'
+		if (ex.gte(5.972e27)) return f(ex.div(5.972e27)) + ' M⊕'
+		if (ex.gte(1.619e20)) return f(ex.div(1.619e20)) + ' MME'
+		if (ex.gte(5.2e10)) return f(ex.div(5.2e10)) + ' MTI'
+		if (ex.gte(1e6)) return f(ex.div(1e6)) + ' tonne'
+		if (ex.gte(1e3)) return f(ex.div(1e3)) + ' kg'
+	}
+	return f(ex) + ' g'
 }
 
 const ARV = ['mlt','mgv','giv','tev','pev','exv','zev','yov',"xvr","wkv"]
 function formatArv(mlt, color) {
-	mlt = D(mlt)
-
-    let arv = D(0)
-	let div = mlt
+	let arv = D(0)
+	let arv_mant = D(mlt)
 	if (player.options.notation_mass == 2) {
-		while (mlt.gte("ee9")) {
-			mlt = mlt.log("ee9")
+		while (D(mlt).gte("ee9")) {
+			mlt = D(mlt).log("ee9")
 			arv = arv.add(1).round()
 		}
 	} else {
 		//if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
 
-		arv = mlt.log10().div(15).floor()
-		mlt = mlt.div(D(10).pow(arv.mul(15)))
+		arv = arv_mant.log10().div(15).floor()
+		arv_mant = arv_mant.div(D(10).pow(arv.mul(15)))
 	}
 
 	let f = color ? formatColored : format
-    let postArv = arv.gte(ARV.length)
-    if (arv.gte(1e3)) return format(arv, 0) + " " + colorize("arvs", color, "magenta")
-    return f(mlt) + " " + colorize(postArv ? "arv^" + format(arv.add(2),0) : ARV[arv.toNumber()], color, postArv ? "magenta" : "red")
+	let postArv = arv.gte(ARV.length)
+	if (arv.gte(1e3)) return format(arv, 0) + " " + colorize("arvs", color, "magenta")
+	if (player.options.notation_mass == 3) return f(mlt) + " " + colorize("mlt", color, "red")
+	return f(arv_mant) + " " + colorize(postArv ? "arv^" + format(arv.add(2), 0) : ARV[arv.toNumber()], color, postArv ? "magenta" : "red")
 }
 
 //TIME

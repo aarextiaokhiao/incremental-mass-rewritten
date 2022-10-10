@@ -19,7 +19,7 @@ const UPGS = {
         buy(x, manual=false) {
             let cost = manual ? this.getData(x).cost : tmp.upgs.mass[x].cost
             if (player.mass.gte(cost)) {
-                if (!hasUpgrade('bh', 1) && !hasExtMilestone("qol", 3)) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh', 1) && !hasExtMilestone("qol", 5)) player.mass = player.mass.sub(cost)
                 if (!player.massUpg[x]) player.massUpg[x] = D(0)
                 player.massUpg[x] = player.massUpg[x].add(1)
             }
@@ -30,7 +30,7 @@ const UPGS = {
             if (player.mass.gte(cost)) {
                 if (!player.massUpg[x]) player.massUpg[x] = D(0)
                 player.massUpg[x] = player.massUpg[x].max(bulk.floor().max(player.massUpg[x].plus(1)))
-                if (!hasUpgrade('bh', 1) && !hasExtMilestone("qol", 3)) player.mass = player.mass.sub(cost)
+                if (!hasUpgrade('bh', 1) && !hasExtMilestone("qol", 5)) player.mass = player.mass.sub(cost)
             }
         },
         getData(i) {

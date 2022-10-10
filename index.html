@@ -189,13 +189,66 @@
 		<div id="ext_bar" style="position: absolute; right: 6px; top: 18px; height: 2px; width: calc(100% - 200px); background: #ff7f3f">
 			<div id="ext_stabs" style="position: absolute; left: 0; top: -10px; width: 100%; min-height: 40px;"></div>
 		</div>
-		<div style="position: absolute; height: calc(100% - 54px); width: calc(100% - 200px); bottom: 6px; right: 6px; border: 3px solid #ff3f00; background: rgba(0, 0, 0, 0.9); overflow-y: auto">
+		<div id="app_ext_div">
 			<br>
 			<div id="stab_frame6_0">
-				New Axions soon. (with Dark Energy)
+				You have <span id="ax_dark_eng">0</span> Dark Energy.<br>
+				<span style="font-size: 8px">(Next: <span></span> Dark Matter)</span>
+				<div id="ax_instab">
+					<span id="ax_instab_progress"></span>
+					<b id="ax_instab_amt">1.66 / 5 instability</b>
+				</div><br>
+
+				<b class="scarlet">You have <span id="ax_cata">0.00</span> Axion Catalysts, which provide boosts at "Milestones" tab.</b><br>
+				<div class="table_center">
+					<span style="margin: 3px">
+						X: 0<br>
+						<button class="btn square">+10</button>
+						<button class="btn square">-1</button>
+					</span><span style="margin: 3px">
+						Y: 0<br>
+						<button class="btn square">+10</button>
+						<button class="btn square">-1</button>
+					</span><span style="margin: 3px">
+						Z: 0<br>
+						<button class="btn square">+10</button>
+						<button class="btn square">-1</button>
+					</span>
+				</div><br>
+				<button class="btn">Reset</button>
 			</div>
 			<div id="stab_frame6_1">
-				Glueball soon.
+				You need to rotate 2 more times to switch.<br>
+
+				<button class="btn locked">Rotate CW</button>
+				<button class="btn">Rotate CCW</button>
+				<button class="btn">Reset</button>
+				<br><br>
+
+				<table class="table_fix" align=center>
+					<tr>
+						<td></td>
+						<td style="border: 2px solid red">Red: 0</td>
+						<td style="border: 2px solid green">Green: 0</td>
+						<td style="border: 2px solid blue">Blue: 0</td>
+					</tr><tr>
+						<td>Normalcy</td>
+						<td>Boost something by ???x</td>
+						<td>Boost something by ???x</td>
+						<td>Boost something by ???x</td>
+					</tr><tr>
+						<td>Clockwise</td>
+						<td>5 clockwises left</td>
+						<td>5 clockwises left</td>
+						<td>5 clockwises left</td>
+					</tr><tr>
+						<td>Counterclockwise</td>
+						<td>5 clockwises left</td>
+						<td>5 clockwises left</td>
+						<td>5 clockwises left</td>
+					</tr>
+				</table>
+				
 			</div>
 			<div id="stab_frame6_2">
 				Primordiums soon.
@@ -448,11 +501,14 @@
 				</div>
 				<div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
 			</div><div id="stab_frame4_1">
+				You have <span id="elem_quark">X</span> unassigned Quarks<br><br>
 				<div id="elem_ch_div" style="min-height: 70px;">
 					<span id="elem_desc" class='sky'>X</span><br>
 					Cost: <span id="elem_cost">X</span> Quarks<br>
 					<span id="elem_eff" class='green'>X</span>
-				</div><br><div id="elements_table"></div>
+				</div><br>
+				<button class="btn" onclick="ELEMENTS.buyAll()">Buy All</button>
+				<div id="elements_table"></div>
 			</div><div id="stab_frame4_2">
 				You have <span id="md_particles">X</span> Relativistic particles<br>
 				You have <span id="md_mass">X</span> of dilated mass<br>

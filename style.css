@@ -474,6 +474,12 @@ button {
 	text-decoration: none;
 }
 
+.btn.square {
+	width: 48px;
+	height: 48px;
+	padding: 0
+}
+
 .btn.full {
 	width: 250px;
 	height: 120px;
@@ -699,6 +705,16 @@ h2 {
 	height: 100%;
 	background: repeating-linear-gradient(45deg, transparent, #ff003f, #ff3f00, transparent 75%);
 }
+#app_ext_div {
+	position: absolute;
+	height: calc(100% - 54px);
+	width: calc(100% - 200px);
+	bottom: 6px;
+	right: 6px;
+	border: 3px solid #ff3f00;
+	background: rgba(0, 0, 0, 0.9);
+	overflow-y: auto
+}
 
 .milestones div {
 	position: relative;
@@ -737,6 +753,35 @@ h2 {
 
 .milestones div.bought .milestoneReq {
 	color: #ff3f00
+}
+
+#ax_instab {
+	position: relative;
+	margin: auto;
+
+	width: 360px;
+	height: 24px;
+
+	border: 2px solid #b0f;
+	border-radius: 0
+}
+#ax_instab_progress {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 80px;
+	height: 24px;
+
+	background: #507
+}
+#ax_instab_amt {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 360px;
+	height: 24px;
 }
 
 .ch_color {

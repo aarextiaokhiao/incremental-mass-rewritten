@@ -3,7 +3,7 @@ const STARS = {
     gain() {
         let x = player.stars.generators[0]
         if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
-        x = x.mul(tmp.extMult)
+        x = x.mul(tmp.supernova.mult)
 
         if (CHALS_NEW.in(14)) x = x.pow(.01)
         return x.softcap(tmp.stars.softGain,tmp.stars.softPower,0)
@@ -54,7 +54,7 @@ const STARS = {
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
             if (hasElement(54)) x = x.mul(tmp.elements.effect[54])
             if (!scalingToned("supernova")) x = x.mul(tmp.bosons.upgs.photon[3].effect)
-            x = x.mul(tmp.extMult)
+            x = x.mul(tmp.supernova.mult)
 
             return x.mul(tmp.stars.gb_eff)
         },

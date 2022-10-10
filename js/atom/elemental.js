@@ -38,6 +38,9 @@ const ELEMENTS = {
             player.atom.elements.push(x)
         }
     },
+    buyAll() {
+        for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
+    },
     upgs: [
         null,
         {
@@ -71,18 +74,17 @@ const ELEMENTS = {
             cost: D(1e18),
         },
         {
-            desc: `Gain 1% more quarks for each challenge completion.`,
+            desc: `Gain 1% more Quarks per challenge completion.`,
             cost: D(5e18),
             effect() {
                 let x = D(0)
                 for (let i = 1; i <= CHAL_NUM; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
-                if (hasElement(7)) x = x.mul(tmp.elements.effect[7])
                 return x.div(100).add(1).max(1)
             },
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Elements multiply Carbon-6.`,
+            desc: `Elements boost Quarks.`,
             cost: D(1e20),
             effect() {
                 let x = D(player.atom.elements.length+1)
@@ -598,6 +600,8 @@ function setupElementsHTML() {
 }
 
 function updateElementsHTML() {
+    elm.elem_quark.setHTML(format(player.atom.quarks, 0))
+
     let ch = tmp.elements.choosed
     elm.elem_ch_div.setVisible(ch>0)
     if (ch) {

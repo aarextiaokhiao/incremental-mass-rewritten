@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "10/8/22a"
-let betaVerNum = 221004
+let betaVer = "10/9/22"
+let betaVerNum = 221009
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -13,14 +13,19 @@ function switchSave(id) {
 	load(localStorage.getItem(saveId))
 }
 
+function fixAPPlayer() {
+	if (player.mg) player.mg = deepUndefinedAndDecimal(player.mg, MAGIC.setup())
+	if (player.ext) player.ext = deepUndefinedAndDecimal(player.ext, EXT.setup())
+}
+
 function loadAPPlayer() {
+	deleteAPWaste()
+	fixAPPlayer()
+
 	//versions
 	if (player.ap_ver) checkAPVers()
 	player.ap_ver = currentAPVer
 	player.ap_build = betaVerNum
-
-	//delete waste
-	deleteAPWaste()
 }
 
 function deleteAPWaste() {
@@ -28,6 +33,9 @@ function deleteAPWaste() {
 	if (player.ext) {
 		delete player.ext.ch
 		delete player.ext.pr
+	}
+	if (player.ext?.ax) {
+		delete player.ext.ax.upgs
 	}
 
 	delete player.offline.active
