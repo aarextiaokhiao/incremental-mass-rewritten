@@ -60,7 +60,7 @@ body.ngm {
 	background: radial-gradient(ellipse at top, #03fb, #03f3) !important;
 	box-shadow: 0 0 3px #0000ff;
 
-	color: #bfcfff;
+	color: #7bf;
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 
 	transition-duration: 0.5s
@@ -77,7 +77,7 @@ body.ngm {
 	background: radial-gradient(ellipse at top, #03fb, #03f7) !important;
 	box-shadow: inset 0 0 3px #0000ff, 0 3px 6px rgba(0, 0, 191, 0.5);
 
-	color: #001f2f !important;
+	color: #bbf !important;
 	font-weight: bold;
 	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
 }
@@ -148,13 +148,22 @@ body.ngm {
 	text-shadow: 0 0 3px #cb01fd
 }
 
-/* BLACK HOLE */
+/* -=- MAGIC -=- */
+.btn_tab.magic {
+	background: radial-gradient(ellipse at top, #507, #005) !important;
+	border-color: #b0f;
+
+	color: #b0f;
+	text-shadow: 0 2px 4px #507
+}
+
+/* -=- BLACK HOLE -=- */
 .btn_tab.bh {
 	background: radial-gradient(ellipse at top, #ff9f00, #ffbf00) !important;
 	border-color: #ff9f00;
 	box-shadow: 0 0 3px #bf9f00, 0 0 24px #ffbf00;
 
-	color: #ffdf7f;
+	color: #bf3f00;
 	text-shadow: 0 2px 4px #ffdf7f
 }
 #stab_frame0_1 .btn {
@@ -174,7 +183,7 @@ body.ngm {
 	color: #7fffff;
 	text-shadow: 0 2px 4px #7fffff
 }
-#stab_frame0_2 .btn {
+#stab_frame2_1 .btn {
 	background: rgba(0, 255, 255, 0.75) !important;
 	box-shadow: 0 0 3px #007fbf;
 
@@ -211,7 +220,7 @@ body.ngm {
 	background: radial-gradient(ellipse at top, #00ff00, #7fff00) !important;
 	box-shadow: 0 0 3px #7fff00, 0 0 24px #7fff00;
 
-	color: #bfffbf;
+	color: #007f00;
 	text-shadow: 0 2px 4px #bfffbf
 }
 .btn.md {
@@ -231,7 +240,7 @@ body.ngm {
 	color: #3f3f00 !important;
 	text-shadow: 0 2px 4px #1f1f00
 }
-#stab_frame0_3 .btn {
+#stab_frame1_3 .btn {
 	background: rgba(255, 63, 0, 0.75) !important;
 	box-shadow: 0 0 3px #ff3f00;
 
@@ -248,7 +257,7 @@ body.ngm {
 	text-shadow: 0 2px 4px #3f0000
 }
 
-#tab5 {
+.btn_tab.sn {
 	background: radial-gradient(#ffbfdf, #ff7fbf, #7f003f) !important;
 	box-shadow: 0 0 3px #ff003f, 0 0 6px #ff003f;
 
@@ -305,7 +314,7 @@ body.ngm {
 	text-shadow: 0 0 3px #00ff00, 0 0 3px #00bf00, 0 0 3px #00bf00
 }
 
-#tab6 {
+.btn_tab.ext {
 	background: radial-gradient(ellipse at top, #ff3f00, #ffbf00, #ff7f00) !important;
 	box-shadow: 0 0 3px #ff3f00, 0 0 6px #ff3f00, 0 0 24px #ff3f00;
 
@@ -313,7 +322,7 @@ body.ngm {
 	text-shadow: 0 0 6px #ff3f00
 }
 
-#stab6_1 {
+/*#stab6_1 {
 	background: radial-gradient(ellipse at top, #ff0000, #7fff00, #003fff) !important;
 	box-shadow: 0 -3px 6px #ff0000, 0 0 6px #7fff00, 0 3px 6px #003fff, 0 0 60px #efbfff;
 
@@ -321,7 +330,7 @@ body.ngm {
 	text-shadow: 0 0 3px rgba(255, 255, 255, 0.5)
 }
 
-/*#stab6_2 {
+#stab6_2 {
 	background: radial-gradient(ellipse at top, #ffff00, #7f7f00, #bfff00) !important;
 	box-shadow: 0 -3px 6px #ffbf00, 0 0 6px #dfffbf, 0 3px 6px #7fff00;
 

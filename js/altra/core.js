@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "10/9/22"
-let betaVerNum = 221009
+let betaVer = "10/10/22a"
+let betaVerNum = 221010
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"

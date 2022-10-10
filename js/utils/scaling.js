@@ -330,7 +330,7 @@ function getScalingStart(type, name) {
 	if (type=="super") {
 		if (name=="rank") {
 			if (CHALS_NEW.in(1)) return D(25)
-			start = start.add(CHALS_NEW.eff(1))
+			start = start.add(CHALS_NEW.eff(1).rank)
 		}
 		if (name=="tier") {
 			if (hasUpgrade('atom',5)) start = start.add(10)

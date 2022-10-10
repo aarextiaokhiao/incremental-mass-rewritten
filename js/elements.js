@@ -7,8 +7,7 @@ function setupHTML() {
 	let table2 = ""
 	let table3 = ""
 	let table4 = ""
-	for (let i = 0; i < TABS.order.length; i++) {
-		let x = TABS.order[i]
+	for (let x = 0; x < TABS[1].length; x++) {
 		table += `<div style="width: 130px" id="tab${x}_div">
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
 		</div>`
@@ -20,8 +19,8 @@ function setupHTML() {
 				</div>`
 			}
 			a += `</div>`
-			if (x == 6) table4 += a
-			else if (x == 5) table3 += a
+			if (x == 4) table4 += a
+			else if (x == 3) table3 += a
 			else table2 += a
 		}
 	}
@@ -130,7 +129,6 @@ function updateTabsHTML() {
 	elm.tabs.setDisplay(gameStarted())
 	elm.tab_header.setDisplay(gameStarted())
 	for (let x = 0; x < TABS[1].length; x++) {
-		if (x != 5 && tmp.tab == 5) continue
 		let tab = TABS[1][x]
 		elm["tab"+x+"_div"].setDisplay(tab.unl ? tab.unl() : true)
 		elm["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
@@ -147,7 +145,7 @@ function updateTabsHTML() {
 				if (unl) unls++
 			}
 			elm["stabs"+x].setDisplay(x == tmp.tab && unls > 1)
-			if (x ==6) elm["ext_bar"].setDisplay(x == tmp.tab && unls > 1)
+			if (x == 6) elm["ext_bar"].setDisplay(x == tmp.tab && unls > 1)
 		}
 	}
 }
@@ -389,20 +387,21 @@ function updateHTML() {
 		)
 	}
 
-	document.body.style.backgroundColor = tmp.tab == 5 ? "#000" : inNGM() ? "#101" : "#111"
+	document.body.style.backgroundColor = tmp.tab == 3 ? "#000" : inNGM() ? "#101" : "#111"
 	document.body.className = inNGM() ? "ngm" : ""
 	elm.loading.setDisplay(tmp.offlineActive)
 	elm.offlineGainDiv.setDisplay(tmp.offlineActive)
-    elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 5 && (!tmp.supernova.reached || player.supernova.unl))
+    elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 3 && (!tmp.supernova.reached || player.supernova.unl))
 	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | " + getSaveTitle())
 	if (tmp.offlineActive) return
 
-	updateSupernovaEndingHTML()
+	updateSupernovaHTML()
 	updateExoticHTML()
 	updateTabsHTML()
-	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 5) {
+	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 3) {
 		elm.beginning.setDisplay(!gameStarted())
 		elm.beginning2.setDisplay(!gameStarted() && !inNGM() && player.mass.gt(15))
+		updateTabsHTML()
 		updateUpperHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
@@ -423,31 +422,28 @@ function updateHTML() {
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
 			}
-			if (tmp.stab[0] == 2) {
-				updateAtomicHTML()
-			}
-			if (tmp.stab[0] == 3) {
-				updateStarsHTML()
-			}
-		}
-		if (tmp.tab == 1) {
-			if (tmp.stab[1] == 0) updateStatsHTML()
-			if (tmp.stab[1] == 1) updateRanksRewardHTML()
-			if (tmp.stab[1] == 2) updateScalingHTML()
-			if (tmp.stab[1] == 3) updateCompressionHTML()
 		}
 		if (tmp.tab == 2) {
-			updateMainUpgradesHTML()
+			if (tmp.stab[2] == 0) updateAtomHTML()
+			if (tmp.stab[2] == 1) updateAtomicHTML()
+			if (tmp.stab[2] == 2) updateMDHTML()
+			if (tmp.stab[2] == 3) updateStarsHTML()
 		}
-		if (tmp.tab == 3) {
-			if (tmp.stab[3] == 0) updateChalHTMLNew()
+
+		if (tmp.tab == 5) {
+			if (tmp.stab[5] == 0) updateMainUpgradesHTML()
+			if (tmp.stab[5] == 1) updateElementsHTML()
 		}
-		if (tmp.tab == 4) {
-			if (tmp.stab[4] == 0) updateAtomHTML()
-			if (tmp.stab[4] == 1) updateElementsHTML()
-			if (tmp.stab[4] == 2) updateMDHTML()
+		if (tmp.tab == 6) {
+			if (tmp.stab[6] == 0) updateChalHTMLNew()
 		}
 		if (tmp.tab == 7) {
+			if (tmp.stab[7] == 0) updateStatsHTML()
+			if (tmp.stab[7] == 1) updateRanksRewardHTML()
+			if (tmp.stab[7] == 2) updateScalingHTML()
+			if (tmp.stab[7] == 3) updateCompressionHTML()
+		}
+		if (tmp.tab == 8) {
 			updateConfirmHTML()
 			updateOptionsHTML()
 		}

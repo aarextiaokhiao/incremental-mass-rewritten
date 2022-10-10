@@ -139,7 +139,7 @@ function updateTemp() {
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
 	//Tab Forcing
-	if (toned() == 5 && tmp.stab[1] == 2) tmp.stab[1] = 0
+	if (toned() == 5 && tmp.stab[7] == 2) tmp.stab[7] = 0
 
 	updateAltraTemp()
 

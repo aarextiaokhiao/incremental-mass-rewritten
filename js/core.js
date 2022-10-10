@@ -77,7 +77,7 @@ const FORMS = {
 		let exp = D(1)
 		if (hasRank("tier", 2)) exp = exp.mul(1.15)
 		if (hasRank("rank", 180)) exp = exp.mul(1.025)
-		if (!CHALS_NEW.in(3)) exp = exp.mul(CHALS_NEW.eff(3))
+		if (!CHALS_NEW.inDirect(3)) exp = exp.mul(CHALS_NEW.eff(3))
 		if (tmp.md.active && hasElement(28)) exp = exp.mul(1.5)
 
 		let x = this.baseMassGain().pow(exp)

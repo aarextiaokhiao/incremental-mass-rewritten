@@ -3,6 +3,9 @@ const CHALS_NEW = {
 	in(x) {
 		return tmp.chal_new.inForce.includes(x)
 	},
+	inDirect(x) {
+		return tmp.chal_new.in.includes(x)
+	},
 	inAny() {
 		return tmp.chal_new.in.length || player.md.active || player.supernova.fermions.choosed
 	},
@@ -446,11 +449,7 @@ const CHALS_NEW = {
 
 			reward: `Raise the RP formula. [can't apply in this challenge]<br><span class="yellow">At first completion, unlock Fermions!</span>`,
 			effect(x) {
-				let exp = D(1/1.75)
-				let mul = D(0.01)
-				exp = exp.mul(CHALS_NEW.eff(14).c10)
-				
-				let ret = x.pow(exp).mul(mul).add(1)
+				let ret = x.root(1.75).div(100).add(1)
 				return ret
 			},
 			effDesc(x) { return "^"+format(x,3) },

@@ -20,7 +20,7 @@ const MASS_DILATION = {
 		return expMult(x, tmp.md.penalty).min(x)
 	},
     RPexpgain() {
-        let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS_NEW.in(10) ? 1 : CHALS_NEW.eff(10))
+        let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS_NEW.inDirect(10) ? 1 : CHALS_NEW.eff(10))
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
         return x
@@ -231,7 +231,7 @@ function updateMDTemp() {
 }
 
 function updateMDHTML() {
-	let exp = hasExtMilestone("boost", 7) ? false : D(1)
+	let exp = D(1)
     elm.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
     elm.md_eff.setTxt(exp.gt(1)?"^"+format(exp,3):tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
     elm.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))

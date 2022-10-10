@@ -100,7 +100,7 @@
 		</div>
 		<div class="tab_header" style="width: 100%; border-bottom: solid 2px white; height: 5px; margin-bottom: 13px;"></div>
 		<div id="sn_stabs" style="min-height: 40px;"></div><br>
-		<div id="stab_frame5_0">
+		<div id="stab_frame3_0">
 			<div style="height: 130px;">
 				You have <span id="neutronStar">X</span> Neutron Stars.<br>
 				<div id="tree_desc" style="margin-top: 3px;">
@@ -111,7 +111,7 @@
 			<div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
 			<span id="feat_warn" class="red">Feats provide optional challenges that reward permanent boosts.</span>
 			<div id="tree_table"></div>
-		</div><div id="stab_frame5_1">
+		</div><div id="stab_frame3_1">
 			<div class="bosons">
 				<div class="table_center">
 					<div class="graviton sub_b">
@@ -140,7 +140,7 @@
 					</div>
 				</div>
 			</div>
-		</div><div id="stab_frame5_2">
+		</div><div id="stab_frame3_2">
 			<div id="f_hint">Note: Choosing any fermion will reset this run!</div>
 			<div id="f_shrt">Note: Choosing a specific fermion will add a Shortcut!</div><br><br>
 			<button class="btn" onclick="FERMIONS.backNormal()" id="f_normal">Back to Normal</button>
@@ -156,7 +156,7 @@
 					<div id="fermions_lepton_table" class="table_center"></div>
 				</div>
 			</div>
-		</div><div id="stab_frame5_3">
+		</div><div id="stab_frame3_3">
 			Your frequency is <span id="frequency">0</span> Hz.
 			(<span id="frequency_eff">1</span>x Fermions)<br>
 			<div id="radiation_unl">(Unlock <span id="unl_radiation">X</span> at <span id="next_radiation">0</span>)</div><br><br>
@@ -191,7 +191,7 @@
 		</div>
 		<div id="app_ext_div">
 			<br>
-			<div id="stab_frame6_0">
+			<div id="stab_frame4_0">
 				You have <span id="ax_dark_eng">0</span> Dark Energy.<br>
 				<span style="font-size: 8px">(Next: <span></span> Dark Matter)</span>
 				<div id="ax_instab">
@@ -217,7 +217,7 @@
 				</div><br>
 				<button class="btn">Reset</button>
 			</div>
-			<div id="stab_frame6_1">
+			<div id="stab_frame4_1">
 				You need to rotate 2 more times to switch.<br>
 
 				<button class="btn locked">Rotate CW</button>
@@ -250,10 +250,10 @@
 				</table>
 				
 			</div>
-			<div id="stab_frame6_2">
+			<div id="stab_frame4_2">
 				Primordiums soon.
 			</div>
-			<div id="stab_frame6_3">
+			<div id="stab_frame4_3">
 				<div id="ext_milestone_view">
 					<button id="extMilestone_qol_tab" class="btn_tab normal" onclick="tmp.ext_ms_view = 'qol'">Quality of Life</button>
 					<button id="extMilestone_boost_tab" class="btn_tab normal" onclick="tmp.ext_ms_view = 'boost'">Boosts</button>
@@ -264,6 +264,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div id='app' style='display: none'>
 		<div id="star"></div>
 		<div id="chroma_bg" style='display: none'>
@@ -401,7 +402,48 @@
 				</div><br><div>
 					<span id="bhSoft" class="red">Black Hole mass is <b class="soft1">(softcapped)</b> at <b id="bhSoftStart">X</b>!</span>
 				</div>
-			</div><div id="stab_frame0_2">
+			</div>
+		</div>
+	
+		<!-- NG- TABS -->
+		<div id="tab_frame1">
+			<div id="stab_frame1_0">
+				<span class="red">Soon.</span>
+			</div><div id="stab_frame1_1">
+				<span class="red">Soon.</span>
+			</div><div id="stab_frame1_2">
+				<span class="red">Soon.</span>
+			</div><div id="stab_frame1_3">
+				<span class="red">Soon.</span>
+			</div><div id="stab_frame1_4">
+				This is it... Retrieve back the power and dominate the game!<br>
+				<button class="btn">
+					<b>Perform a Supernova, but...</b><br>
+					+ Nerfs in Magic Chart will be less severe.<br>
+					- But will also nerf upgrades in Magic Chart!<br><br>
+					<b>Level: 0</b><br>
+					<b>(requires 1 Supernovae to level up)</b><br>
+				</button>
+			</div>
+		</div>
+
+		<!-- LAYER TABS -->
+		<div id="tab_frame2">
+			<div id="stab_frame2_0">
+				<div id="particles_assign">
+					You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
+					<div>
+						<button class="btn" onclick="ATOM.particles.assignAll()">Distribute</button><br><br>
+						<input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
+						<input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
+						<input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
+					</div>
+					<br><br>
+					Ratio Mode: <span id="atom_ratio">X</span><br>
+					<button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
+				</div>
+				<div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
+			</div><div id="stab_frame2_1">
 				You have <span id="atomicAmt">X</span> Atomic Power<br>
 				<span class="green">(+<span id="atomicEff">X</span> free Tickspeed)</span><br><br>
 				<div style="width: 100%; margin-bottom: 5px;" class="table_center">
@@ -440,27 +482,57 @@
 						Radiation Power: +<span id="ag_b3_pow">X</span> boosters<br>
 					</div>
 				</div>
-			</div><div id="stab_frame0_3">
+			</div><div id="stab_frame2_2">
+				You have <span id="md_particles">X</span> Relativistic particles<br>
+				You have <span id="md_mass">X</span> of dilated mass<br>
+				<span class='green'>(<span id="md_eff">X</span> Tickspeed power)</span><br><br>
+				<b class="red" id="md_undercapacity">To prevent temporal anomalies, base RP has been undercapacitied to X!<br></b>
+				<button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="When dilating mass, will reset for atom. While mass is dilated: all pre-atom resources, atomic power gains get multiplier's exponent raised to 0.8;">Dilate Mass</button><br><br>
+				<div class="table_center">
+					<div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
+				</div>
+			</div><div id="stab_frame2_3">
 				You have collapsed <span id="stars_Amt">X</span> stars. <span class="green">(<span id="stars_eff">X</span>x mass)</span><br>
 				<span class="yellow" id="stars_exp"></span><br><br>
 				<button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
 				<div id="stars_table" class="table_center"></div><br><br>
 				<span id="starSoft" class="red">Stars are <b class="soft1">(softcapped)</b> at <b id="starSoftStart">X</b>!</span><br>
 			</div>
-		</div><div id="tab_frame1">
-			<div id="stab_frame1_0">
+		</div>
+
+		<div id="tab_frame5">
+			<div id="stab_frame5_0">
+				<div id="main_upg_msg" style="min-height: 100px;"></div>
+				<div id="main_upgs_table" class="table_center"></div>
+			</div><div id="stab_frame5_1">
+				You have <span id="elem_quark">X</span> unassigned Quarks<br><br>
+				<div id="elem_ch_div" style="min-height: 70px;">
+					<span id="elem_desc" class='sky'>X</span><br>
+					Cost: <span id="elem_cost">X</span> Quarks<br>
+					<span id="elem_eff" class='green'>X</span>
+				</div><br>
+				<button class="btn" onclick="ELEMENTS.buyAll()">Buy All</button>
+				<div id="elements_table"></div>
+			</div>
+		</div><div id="tab_frame6">
+			<div id="stab_frame6_0">
+				<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
+				<div id="chal_table"></div>
+			</div>
+		</div><div id="tab_frame7">
+			<div id="stab_frame7_0">
 				Time played: <span id="total_time">X</span><br>
 				Best mass: <span id="best_mass">X</span>
 				<br><br>
 				Layers: <span id="progress_layers_stats">X</span><br>
 				Stages: <span id="progress_stages_stats">X</span>
-			</div><div id="stab_frame1_1">
+			</div><div id="stab_frame7_1">
 				<button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn" id="ranks_left_arrow"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn" id="ranks_right_arrow">--></button><br><br>
 				<div id="ranks_rewards_table"></div>
-			</div><div id="stab_frame1_2">
+			</div><div id="stab_frame7_2">
 				<button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn" id="scaling_left_arrow"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1)))" class="btn" id="scaling_right_arrow">--></button><br><br>
 				<div id="scaling_table"></div>
-			</div><div id="stab_frame1_3">
+			</div><div id="stab_frame7_3">
 				Compression: Reduce first before the amount gets added. Then, do the opposite.
 				<br><br>
 				<table class="table_fix" id="compress_table" align="center">
@@ -477,49 +549,7 @@
 					</tr>
 				</table>
 			</div>
-		</div><div id="tab_frame2">
-			<div id="main_upg_msg" style="min-height: 100px;"></div>
-			<div id="main_upgs_table" class="table_center"></div>
-		</div><div id="tab_frame3">
-			<div id="stab_frame3_0">
-				<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
-				<div id="chal_table"></div>
-			</div>
-		</div><div id="tab_frame4">
-			<div id="stab_frame4_0">
-				<div id="particles_assign">
-					You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
-					<div>
-						<button class="btn" onclick="ATOM.particles.assignAll()">Distribute</button><br><br>
-						<input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
-						<input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
-						<input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
-					</div>
-					<br><br>
-					Ratio Mode: <span id="atom_ratio">X</span><br>
-					<button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
-				</div>
-				<div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
-			</div><div id="stab_frame4_1">
-				You have <span id="elem_quark">X</span> unassigned Quarks<br><br>
-				<div id="elem_ch_div" style="min-height: 70px;">
-					<span id="elem_desc" class='sky'>X</span><br>
-					Cost: <span id="elem_cost">X</span> Quarks<br>
-					<span id="elem_eff" class='green'>X</span>
-				</div><br>
-				<button class="btn" onclick="ELEMENTS.buyAll()">Buy All</button>
-				<div id="elements_table"></div>
-			</div><div id="stab_frame4_2">
-				You have <span id="md_particles">X</span> Relativistic particles<br>
-				You have <span id="md_mass">X</span> of dilated mass<br>
-				<span class='green'>(<span id="md_eff">X</span> Tickspeed power)</span><br><br>
-				<b class="red" id="md_undercapacity">To prevent temporal anomalies, base RP has been undercapacitied to X!<br></b>
-				<button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="When dilating mass, will reset for atom. While mass is dilated: all pre-atom resources, atomic power gains get multiplier's exponent raised to 0.8;">Dilate Mass</button><br><br>
-				<div class="table_center">
-					<div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
-				</div>
-			</div>
-		</div><div id="tab_frame7">
+		</div><div id="tab_frame8">
 			<h2>Saving</h2><br>
 			<button class="btn" onclick="save(true)">Save</button>
 			<button class="btn" onclick="export_save()">Export</button>
@@ -568,10 +598,7 @@
 				<button id="beta" class="btn" onclick="window.open('http://raw.githack.com/aarextiaokhiao/incremental-mass-rewritten/'+betaLink+'/')">Test Server</button>
 			</div>
 		</div>
-		<!-- NG- TABS -->
-		<div id="tab_frame8">
-			<span class="red">Soon.</span>
-		</div>
+
 		<b id="beginning" style="opacity: 0.05; font-size: 8px">At the beginning, there's just mass. No nature, which leads to a monotonic universe.<br>Altar awaits your recall, defying you from nothing.<br><br>Rank up to proceed!</b>
 		<b id="beginning2" style="font-size: 8px">
 			<br><br>

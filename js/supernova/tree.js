@@ -46,7 +46,7 @@ const TREE_IDS = [
 	],
 ]
 
-var tree_canvas,tree_ctx,tree_update=true
+var tree_canvas,tree_ctx=true
 
 const TREE_UPGS = {
 	buy(x) {
@@ -717,13 +717,6 @@ function resizeCanvas() {
 	tree_canvas.height = tree_canvas.clientHeight
 }
 
-function drawTreeHTML() {
-    if (tmp.tab == 5) {
-        if (tree_canvas.width == 0 || tree_canvas.height == 0) resizeCanvas()
-        drawTree()
-    }
-}
-
 function drawTree() {
 	if (!retrieveCanvasData()) return;
 	tree_ctx.clearRect(0, 0, tree_canvas.width, tree_canvas.height);
@@ -815,8 +808,9 @@ function updateTreeHTML() {
 			if (unl) elm["treeUpg_"+id].setClasses({btn_tree: true, locked: !tmp.supernova.tree_afford[id], failed: TREE_UPGS.ids[id].failed && TREE_UPGS.ids[id].failed(id), bought: hasTree(id), perm: hasTree(id) && TREE_UPGS.ids[id].perm, choosed: id == tmp.supernova.tree_choosed})
 		}
 	}
-    tree_update = true
-	drawTreeHTML()
+
+    if (tree_canvas.width == 0 || tree_canvas.height == 0) resizeCanvas()
+    drawTree()
 
 	elm.feat_warn.setDisplay(tmp.tree_tab == 5)
 }

@@ -206,7 +206,7 @@ function updateSupernovaTemp() {
     if (hasExtMilestone("boost", 1)) tmp.supernova.mult = tmp.supernova.mult.mul(5)
 }
 
-function updateSupernovaEndingHTML() {
+function updateSupernovaHTML() {
 	let scene = tmp.supernova.reached && !player.supernova.unl
 	let reached = player.supernova.unl
     if (scene) {
@@ -221,8 +221,8 @@ function updateSupernovaEndingHTML() {
         elm.sns5.setOpacity(Math.max(Math.min(tmp.supernova.time-5,1),0))
     }
 
-    elm.app_supernova.setDisplay(reached && tmp.tab == 5)
-    if (tmp.tab == 5) {
+    elm.app_supernova.setDisplay(reached && tmp.tab == 3)
+    if (tmp.tab == 3) {
         elm.supernova_sweep.setTxt("Auto-Sweep: " + (player.supernova.auto.toggle ? "ON" : "OFF"))
         elm.supernova_sweep.setDisplay(hasTree("qol8"))
         elm.supernova_title.setTxt("Supernova" + (player.supernova.times.eq(1) ? "" : "e"))
@@ -230,13 +230,13 @@ function updateSupernovaEndingHTML() {
         elm.supernova_rank.setTxt(format(player.supernova.times,0))
         elm.supernova_next.setTxt("Next Supernova at " + format(tmp.supernova.maxlimit,2) + " stars")
         elm.supernova_restart.setDisplay(player.supernova.times.gte(2))
-        if (tmp.stab[5] == 0) {
+        if (tmp.stab[3] == 0) {
             elm.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain))
             updateTreeHTML()
         }
-        if (tmp.stab[5] == 1) updateBosonsHTML()
-        if (tmp.stab[5] == 2) updateFermionsHTML()
-        if (tmp.stab[5] == 3) updateRadiationHTML()
+        if (tmp.stab[3] == 1) updateBosonsHTML()
+        if (tmp.stab[3] == 2) updateFermionsHTML()
+        if (tmp.stab[3] == 3) updateRadiationHTML()
 		if (player.supernova.auto.on > -2 && player.supernova.auto.t < Infinity) {
 			elm.supernova_next.setTxt("You are currently sweeping through challenges and fermions! Next in " + (1.5 - player.supernova.auto.t).toFixed(2) + " seconds, ending in " + (1.5 * player.supernova.auto.list.length - 1.5 * player.supernova.auto.on - player.supernova.auto.t).toFixed(2) + " seconds")
 		}
@@ -259,7 +259,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (mode == "all" || mode == "chal") {
 		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
-			if ((!CHALS[x].unl || CHALS[x].unl()) && tier.gte(c_thres) && tier.lt(CHALS_NEW.max(x))) ret.push(x)
+			if (CHALS_NEW.chals[x].unl() && tier.gte(c_thres) && tier.lt(CHALS_NEW.max(x))) ret.push(x)
 		}
 	}
 
@@ -284,7 +284,7 @@ function getSupernovaAutoTemp(mode = "all") {
 }
 
 function leastManualChal() {
-	return hasExtMilestoneQ10() ? 11 : 0
+	return 0 //hasExtMilestoneQ10() ? 11 : 0
 }
 
 function updateSupernovaSweep() {

@@ -71,8 +71,8 @@ let EXOTIC = {
 		player.supernova.stars = D(0)
 
 		let list = []
-		if (hasExtMilestone("qol", 2)) list.push("c", "m1", "qol8", "qol10")
-		if (hasExtMilestone("qol", 3)) list.push("chal4", "chal4a", "chal5", "chal6", "chal7")
+		if (hasExtMilestone("qol", 2)) list.push("c", "m1", "qol1", "qol2", "qol8", "qol10")
+		if (hasExtMilestone("qol", 3)) list.push("qol3", "qol4", "qol5", "qol6", "qol7", "chal4", "chal4a", "chal5", "chal6", "chal7")
 
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
@@ -163,16 +163,16 @@ let EXT = EXOTIC
 
 //HTML
 function updateExoticHTML() {
-	elm.app_ext.setDisplay(tmp.tab == 6)
-	if (tmp.tab == 6) {
+	elm.app_ext.setDisplay(tmp.tab == 4)
+	if (tmp.tab == 4) {
 		updateExoticHeader()
-		if (tmp.stab[6] == 0) updateAxionHTML()
-		if (tmp.stab[6] == 3) updateExtMilestonesHTML()
+		if (tmp.stab[4] == 0) updateAxionHTML()
+		if (tmp.stab[4] == 3) updateExtMilestonesHTML()
 	}
 }
 
 function updateExoticHeader() {
-	elm.extDiv2.setDisplay(tmp.stab[6] == 0 || tmp.stab[6] == 3)
+	elm.extDiv2.setDisplay(tmp.stab[4] == 0 || tmp.stab[4] == 3)
 	elm.extAmt2.setHTML(format(EXT.rawAmt(),1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(EXT.rawAmt(), player.ext.gain):""))
 
 	elm.polarDiv.setDisplay(false)
@@ -195,19 +195,19 @@ const EXT_MILESTONES = {
 			desc: "Keep everything you start on Supernovae, and Na-11 upgrade. Neutron Stars can generate in offline progress. Auto-Sweeper threshold is reduced to 10."
 		}, {
 			req: 3,
-			desc: "Keep [c], [m1], [qol8], and [qol10] upgrades. Automate Neutron Tree upgrades. Auto-Sweeper threshold is reduced to 5."
+			desc: "Keep [c], [m1], [qol1] - [qol3], [qol8], and [qol10] upgrades. Automate Neutron Tree upgrades. Auto-Sweeper threshold is reduced to 5."
 		}, {
 			req: 10,
-			desc: "Keep [chal4] - [chal7] upgrades. Automate Radiation Boosters at 100,000 Radiation. Auto-Sweeper threshold is reduced to 3."
+			desc: "Keep [qol3] - [qol7] and [chal4] - [chal10]. Automate Radiation Boosters at 100,000 Radiation. Auto-Sweeper threshold is reduced to 3."
 		}, {
 			req: 30,
 			desc: "You can bulk Pent. Going Supernovae automatically gives Pent. Auto-Sweeper threshold is reduced to 2."
 		}, {
 			req: 100,
-			desc: "Buildings don't spend anything. Auto-Sweeper threshold is reduced to 1."
+			desc: "Neutron Tree doesn't require anything except Supernovae requirements. Auto-Sweeper threshold is reduced to 1."
 		}, {
 			req: 300,
-			desc: "Auto-Sweeper threshold is reduced to 0."
+			desc: "Buildings don't spend anything. Auto-Sweeper threshold is reduced to 0."
 		}, {
 			req: 1e3,
 			desc: "You can automatically sweep Fermions without requirements."

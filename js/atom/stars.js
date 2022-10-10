@@ -86,7 +86,7 @@ function updateStarsTemp() {
 	ts.gb_str = D(1)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
     if (bosonsMastered()) ts.gb_base = ts.gb_base.mul(tmp.bosons.upgs.photon[1].effect)
-	if (tmp.chal) ts.gb_str = ts.gb_str.mul(CHALS_NEW.eff(11))
+	ts.gb_str = ts.gb_str.mul(CHALS_NEW.eff(11))
 
 	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:D(0)
 	ts.gb_eff = ts.gb_base.pow(player.stars.boost.add(ts.gb_bonus).mul(ts.gb_str))
