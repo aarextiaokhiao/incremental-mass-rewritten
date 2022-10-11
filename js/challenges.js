@@ -189,7 +189,6 @@ const CHALS = {
         let x = this[i].max
         if (i <= 4) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
         if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
-        if (hasElement(75) && (i==5||i==6)) x = x.add(tmp.elements.effect[75])
         if (hasElement(20) && (i==7)) x = x.add(50)
         if (hasElement(41) && (i==7)) x = x.add(50)
         if (hasElement(60) && (i==7)) x = x.add(100)
@@ -368,7 +367,7 @@ const CHALS = {
 		effect(x) {
 			if (hasElement(64)) x = x.mul(1.5)
 			let ret = x.root(1.5).mul(0.01).add(1)
-			let cap = D(2.4).add(tmp.radiation && tmp.radiation.bs.eff[19])
+			let cap = D(2.4)
 			if (hasTree("feat5")) {
 				ret = ret.add(0.05)
 				cap = cap.add(0.05)

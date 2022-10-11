@@ -294,7 +294,6 @@ const RANKS = {
         pent() {
             let f = D(5/6)
             //if (AXION.unl()) f = f.mul(tmp.ax.eff[15].div)
-            if (hasElement(81)) f = f.div(0.88)
             return f
         },
     },

@@ -454,21 +454,33 @@ button {
 	font-size: 18px;
 	width: 50px;
 	height: 50px;
-	background-color: #444;
+	background: #444;
 }
 
-.elements.final:hover {
+.elements.bought.star {
+	background: #310;
+	border-color: orange;
+	color: gold;
+}
+
+.elements.bought.sn {
+	background: #303;
+	border-color: #f37;
+	color: #fbf;
+}
+
+.elements.bought.final:hover {
 	transform: scale(1.3);
 }
 
-.elements.final {
+.elements.bought.final {
 	background: radial-gradient(circle, #555555 0%, #aaa 70%, #ffffff 100%);
 	box-shadow: 0 0 10px #fff;
 	color: black;
 	font-weight: bold;
 }
 
-#final_81 {
+.final_elem {
 	color: white;
 	text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 	font-weight: bold;

@@ -96,7 +96,6 @@ const ATOM = {
         },
         effect() {
             let t = player.atom.gamma_ray
-            if (!scalingToned("gamma_ray")) t = t.mul(tmp.radiation.bs.eff[10])
             let pow = D(2)
             if (hasUpgrade('atom',4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:D(0))
             if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))

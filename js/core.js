@@ -123,7 +123,6 @@ const FORMS = {
 	massSoftGain3() {
 		let s = uni("ee8")
 		if (hasTree("m3")) s = s.pow(treeEff("m3"))
-		s = s.pow(tmp.radiation.bs.eff[2])
 		return s
 	},
 	massSoftPower3() {
@@ -148,7 +147,6 @@ const FORMS = {
 		effect() {
 			let t = player.tickspeed
 			if (!scalingToned("tickspeed") && hasElement(63)) t = t.mul(25)
-			t = t.mul(tmp.radiation.bs.eff[1])
 
 			let bonus = D(0)
 			if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
@@ -164,7 +162,7 @@ const FORMS = {
 			//if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
 			if (hasExtMilestone("boost", 1) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
-			let ss = D(1e50).mul(tmp.radiation.bs.eff[13])
+			let ss = D(1e50)
 			if (scalingToned("tickspeed")) ss = EINF
 			else if (scalingToned("tickspeed")) step = step.softcap(ss,0.1,0)
 			
@@ -236,7 +234,6 @@ const FORMS = {
 			let x = D(0.33)
 			if (FERMIONS.onActive("11")) return D(-1)
 			if (hasElement(59)) x = D(0.45)
-			x = x.add(tmp.radiation.bs.eff[4])
 			return x
 		},
 		massGain() {
@@ -304,7 +301,6 @@ const FORMS = {
 			},
 			effect() {
 				let t = player.bh.condenser
-				if (!scalingToned("bh_condenser")) t = t.mul(tmp.radiation.bs.eff[5])
 				let pow = D(2)
 					pow = pow.add(CHALS_NEW.eff(6))
 					if (hasUpgrade('bh',2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:D(1))
@@ -330,7 +326,6 @@ const FORMS = {
 			//if (AXION.unl()) exp += tmp.ax.eff[18]
 
 			r = expMult(r, exp).pow(1e3)
-			if (hasElement(80)) r = r.pow(2)
 			//if (AXION.unl()) r = r.pow(tmp.ax.eff[8])
 			return r
 		}

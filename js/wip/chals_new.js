@@ -258,7 +258,7 @@ const CHALS_NEW = {
 			effect(x) {
 				if (hasElement(64)) x = x.mul(1.5)
 				let ret = x.root(1.5).mul(0.01).add(1)
-				let cap = D(2.4).add(tmp.radiation && tmp.radiation.bs.eff[19])
+				let cap = D(2.4)//.add(tmp.radiation && tmp.radiation.bs.eff[19])
 				if (hasTree("feat5")) {
 					ret = ret.add(0.05)
 					cap = cap.add(0.05)
@@ -305,7 +305,6 @@ const CHALS_NEW = {
 			max() {
 				let r = D(50)
 				if (hasElement(13)) r = r.add(tmp.elements.effect[13])
-				if (hasElement(75)) r = r.add(tmp.elements.effect[75])
 				return r.floor()
 			},
 			scale: {
@@ -331,7 +330,6 @@ const CHALS_NEW = {
 			max() {
 				let r = D(50)
 				if (hasElement(13)) r = r.add(tmp.elements.effect[13])
-				if (hasElement(75)) r = r.add(tmp.elements.effect[75])
 				return r.floor()
 			},
 			scale: {

@@ -428,7 +428,6 @@ function updateFermionsTemp() {
             tf.tiers[i][x] = f.calcTier()
 
 			let t = player.supernova.fermions.tiers[i][x]
-			if (tmp.radiation && i == 1) t = t.mul(tmp.radiation.bs.eff[16])
             tf.effs[i][x] = f.eff(player.supernova.fermions.points[i], t)
         }
     }

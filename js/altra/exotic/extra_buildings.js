@@ -58,7 +58,7 @@ let EXTRA_BUILDINGS = {
 		eff(x) {
 			if (x.eq(0)) return D(0)
 			let exp = x.add(1).log(3).div(100)
-			return D(tmp.atom ? tmp.atom.atomicEff : D(0)).add(1).pow(exp.min(1/20)).sub(1).mul(hasTree("rad4")?1:2/3)
+			return D(tmp.atom ? tmp.atom.atomicEff : D(0)).add(1).pow(exp.min(1/20)).sub(1).mul(2/3)
 		}
 	}
 }

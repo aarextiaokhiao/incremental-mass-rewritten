@@ -69,8 +69,6 @@ const SUPERNOVA = {
         if (hasTree("sn2")) x = x.mul(treeEff("sn2"))
         if (hasTree("sn3")) x = x.mul(treeEff("sn3"))
         if (hasTree("bs3")) x = x.mul(treeEff("bs3"))
-        if (hasElement(74)) x = x.mul(tmp.elements && tmp.elements.effect[74])
-        x = x.mul(tmp.radiation.bs.eff[11])
         x = x.mul(tmp.extMult)
         return x
     },

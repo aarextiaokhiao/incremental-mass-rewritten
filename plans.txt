@@ -22,12 +22,73 @@ TO-DO LIST:
 	3f. External
 		Experiment things subjecting to mass.
 
-Axions:
--
--
+Post-Radiation [my version]:
+- There won't be Meta Rank.
+- There won't be Ultra Supernovae.
 
-Chroma:
-- Rotate through 3 primary colors.
-- Boost a color by going into it.
-- You can go clockwise / counterclockwise after 1 revolution.
-- Clockwise / Counterclockwise connections unlock at level X.
+Elements:
+- Mass Upgrades always scale at ^1.25 rate.
+- Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
+- Tickspeed Power adds Stronger Power, but nullify Stronger Power's softcaps and boosts.
+- Tickspeed Power multiplies BHC Power.
+- Tickspeed Power multiplies Booster Power.
+- BH Condensers always scale at ^1.25 rate.
+- Cosmic Rays always scale at ^1.25 rate.
+- Cosmic Ray's Power raises Tickspeed Power.
+- Nullify Particle Powers' softcaps and boosts.
+
+Neutron Tree:
+- [m4]   Musclers and Boosters raise their amounts.
+- [gr3]  Cosmic Ray effect softcap is removed.
+- [s5]   Star Exponent also raises Tickspeed Power.
+- [sn5]  Stars boost Neutron Stars.
+- [rad1] Supernovae boosts Frequency.
+- [rad2] Velocity scales at same rate as Amplitude.
+- [rad3] Fermions boost Frequency.
+  After unlocking Gamma.
+- [rad4] Neutron Stars boost Radiation.
+  After unlocking Gamma.
+- [rad5] Z0 Bosons boost Radiation.
+  After unlocking Gamma.
+
+Pent Rewards:
+- Pent 1: Pent raises Stars.
+- Pent ?: Pent weakens Super Tier.
+- Pent ?: Supernovae weakens Super Tier.
+- Pent ?: Pent weakens Radiation Boosters. (minimum of ^1.25)
+- Pent ?: Pent boosts Radiation.
+
+Radio: Boosts Frequency.
+ - Boosts Radio based on Frequency.
+ - Raise Neutron Stars.
+ - All mass softcaps start later.
+
+Microwave: Boosts Radio.
+ - Boosts Microwave based on Radio.
+ - Raise Black Hole formula.
+ - Tickspeed power's softcap starts later.
+
+Infrared: Boosts Microwave.
+ - Boosts Infrared based on Microwave.
+ - Strengthen 1st Photon and Gluon upgrades.
+ - Add X levels to boosts above.
+
+Visible: Boosts Infrared.
+ - Boosts Visible based on Infrared.
+ - Raise Relativistic Particles.
+ - Raise Challenge 10 Reward.
+
+Ultraviolet: Boosts Visible.
+ - Boosts Ultraviolet based on Visible.
+ - Strengthen U-Quark boosts.
+ - Strengthen U-Lepton boosts.
+
+X-Ray: Boosts Ultraviolet.
+ - Boosts X-Ray based on Ultraviolet.
+ - Raise Mass exponent cap.
+ - Add X levels to boosts above.
+
+Gamma: Boosts X-Ray.
+ - Boosts Gamma based on X-Ray.
+ - Weaken Ultra Supernovae.
+ - Weaken Super Tetr.

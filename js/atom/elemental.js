@@ -370,7 +370,7 @@ const ELEMENTS = {
             cost: D('e4600'),
         },
         {
-            desc: `<b id="final_81">[Final Atomic Element]</b> Collapsed stars boost all-star resources at a reduced rate.`,
+            desc: `<b class="final_elem">[Final Atomic Element]</b> Collapsed stars boost all-star resources at a reduced rate.`,
             cost: D('e5200'),
             effect() {
                 let x = player.mass.max(1).log10().root(2)
@@ -451,98 +451,69 @@ const ELEMENTS = {
             },
             effDesc(x) { return format(x)+"x" },
         },
+
         {
-            desc: `Meta-Tickspeed scales 2x later.`,
-            cost: D('e4.8e6'),
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
         },
+
         {
-            desc: `Gain 1 level to Radiation boosts up to Visible.`,
-            cost: D('e1.6e7'),
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
         },
+
         {
-            desc: `Gain 10x more Visible.`,
-            cost: D('e2e7'),
-        },
-        {
-            desc: `Mass scales Supernovae scalings later.`,
-            cost: D('e3e7'),
-            effect() {
-				let [m1, m2] = [player.mass.max(10).log10().log10().times(4), player.mass.max(1).log10().pow(1/5).div(3)]
-				let exp = D(0.5)
-				if (hasElement(73)) exp = exp.mul(tmp.elements.effect[73]||1)
-                return m1.max(m2).pow(exp).softcap(50,0.5,0).softcap(100,16/105,0)
-            },
-            effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,50,100) },
-        },
-        {
-            desc: `Ranks scales Meta-Tickspeed later.`,
-            cost: D('e4e7'),
-            effect() {
-                let x = player.ranks.rank
-                x = x.div(2e4).add(1)
-				return x.min(2).pow(x.div(1.5).max(1))
-            },
-            effDesc(x) { return format(x)+"x" },
-        },
-        {
-            desc: `Neutron Stars raise Lutetium-71.`,
-            cost: D('e5e7'),
-            effect() {
-				let r = player.supernova.stars.max(1).log10().div(75).max(1)
-				if (hasTree("feat2")) r = r.add(0.015)
-				return r.min(1.75)
-            },
-            effDesc(x) { return "^"+format(x) },
-        },
-        {
-            desc: `Collapsed stars boost Neutron Stars.`,
-            cost: D('e1e8'),
-            effect() {
-				let log = player.stars.points.add(1).log10()
-				return log.div(5e6).add(1).log(2).min(5).div(1e5).add(1).pow(log.pow(0.8))
-            },
-            effDesc(x) { return format(x)+"x" },
-        },
-        {
-            desc: `Supernovae adds C5-6 completions.`,
-            cost: D('e1.6e8'),
-            effect() {
-				return player.supernova.times.times(3)
-            },
-            effDesc(x) { return "+"+format(x) },
-        },
-        {
-            desc: `Tau and Neut-Muon boost Frequency.`,
-            cost: D('e3.5e8'),
-			effect() {
-				return player.supernova.fermions.tiers[1][2].div(40).add(1).pow(player.supernova.fermions.tiers[1][4].div(2).pow(2))
-			},
-            effDesc(x) { return format(x)+"x" },
-        },
-        {
-            desc: `Pent boosts Axions.`,
-            cost: D('e2e9'),
-            effect() {
-				return player.ranks.pent.add(1)
-            },
-            effDesc(x) { return format(x)+"x" },
-        },
-        {
-            desc: `Velocity scales 15% slower.`,
-            cost: D('e4e9'),
-        },
-        {
-            desc: `Strengthen U-Lepton Boost.`,
-            cost: D('e8e9'),
-        },
-        {
-            desc: `Hawking Radiation evaporates ^2 later.`,
-            cost: D('e1.6e10')
-        },
-        {
-            desc: `<b id="final_81">[Final Element]</b> Pent requires 15% less.`,
-            cost: D('e3.2e10'),
-        },
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `Placeholder.`,
+            cost: EINF
+        }, {
+            desc: `<b class="final_elem">[Final Supernovae Element]</b> Placeholder.`,
+            cost: EINF
+        }
     ],
     /*
     {
@@ -558,12 +529,12 @@ const ELEMENTS = {
 	getUnlLength() {
 		let u = 4
 		if (EXT.unl()) {
-			u = 81
+			u = 86
 		} else if (player.supernova.unl) {
-			u = 49+5
-			if (player.supernova.post_10) u += 3
-			if (player.supernova.fermions.unl) u += 10
-			if (tmp.radiation.unl) u += 16
+			u = 54
+			if (player.supernova.post_10) u = 57
+			if (player.supernova.fermions.unl) u = 67
+			if (tmp.radiation.unl) u = 86
 		} else {
 			if (player.chal.comps[8].gte(1)) u += 14
 			if (hasElement(18)) u += 3
@@ -618,7 +589,8 @@ function updateElementsHTML() {
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {
-                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), sn: x > 54 && x <= 81, final: hasElement(x) && (x == 54 || x == 81)})
+                let has = hasElement(x)
+                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: has, star: has && x > 36 && x < 54, sn: has && x > 54 && x < 86, final: has && (x == 54 || x == 86)})
             }
         }
     }

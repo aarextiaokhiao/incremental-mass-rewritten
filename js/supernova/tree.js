@@ -23,7 +23,7 @@ const TREE_IDS = [
 		['s2','m2','t1','d1','bh2','gr1','sn2'],
 		['qol8','qol9','qol10'],
 		['chal4'],
-		['fn3','fn4','fn2','fn5','','','rad4',''],
+		['fn3','fn4','fn2','fn5','','','rad4','rad5'],
 		['feat11','feat12'],
 	],[
 		['s3','m3','gr2','sn3'],
@@ -32,7 +32,7 @@ const TREE_IDS = [
 		['','fn6','fn7','fn8','','','',''],
 		[],
 	],[
-		['s4','sn5','sn4'],
+		['s4','','sn4'],
 		[],
 		[],
 		['eb1', 'eb2'],
@@ -424,36 +424,6 @@ const TREE_UPGS = {
             desc: `Generating Relativistic particles outside Mass dilation is 25% stronger.`,
             cost: D(1e51),
         },
-        unl1: {
-            unl() { return hasTree("qol7") },
-            req() { return player.supernova.times.gte(44) },
-            reqDesc: `44 Supernovae.`,
-            desc: `Unlock Radiation.`,
-            cost: D(5e52),
-        },
-        rad1: {
-            branch: ["unl1"],
-            unl() { return tmp.radiation.unl },
-            desc: `Gain more frequency based on Supernova, any more radiation if you unlocked next radiation.`,
-            cost: D(1e54),
-            effect() {
-                let x = player.supernova.times.add(1)
-                return x
-            },
-            effDesc(x) { return format(x)+"x" },
-        },
-        rad2: {
-            branch: ["rad1"],
-            desc: `Gain more Radiation based on Supernovae.`,
-            cost: D(1e72),
-            effect() {
-				let sn = player.supernova.times
-				let b = sn.div(300).add(1)
-				let e = sn.sub(40).max(0)
-                return b.pow(e).sub(1).div(10).add(1)
-            },
-            effDesc(x) { return format(x)+"x" },
-        },
         qol8: {
             branch: ["qol6"],
             req() { return player.supernova.times.gte(20) },
@@ -472,21 +442,10 @@ const TREE_UPGS = {
             desc: `Unlock new challenge and reduce auto-Sweep threshold to 10.`,
             cost: D(1e94),
         },
-        sn5: {
-            branch: ["sn4"],
-            unl() { return hasTree("rad1") },
-            desc: `Supernova scalings are no longer rounded down to a integer.`,
-            cost: D(1e90),
-        },
         fn8: {
             branch: ["fn7"],
             desc: `Unlock 2 final types of U-Quark & U-Fermion.`,
             cost: D(1e128),
-        },
-        rad3: {
-            branch: ["rad1"],
-            desc: `Extra levels are raised based on radiation types.`,
-            cost: D(4.56789e123),
         },
         qol9: {
             branch: ["qol8"],
@@ -503,11 +462,64 @@ const TREE_UPGS = {
             desc: `You can manually sweep Challenges or Fermions.`,
             cost: D(1e120),
         },
+
+        unl1: {
+            unl() { return hasTree("qol7") },
+            req() { return player.supernova.times.gte(44) },
+            reqDesc: `44 Supernovae.`,
+            desc: `Unlock Radiation.`,
+            cost: D(5e52),
+        },
+        rad1: {
+            branch: ["unl1"],
+            unl() { return tmp.radiation.unl },
+            icon: 'placeholder',
+            desc: `Placeholder.`,
+            cost: EINF,
+            effect() {
+                return D(1)
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
+        rad2: {
+            branch: ["rad1"],
+            icon: 'placeholder',
+            desc: `Placeholder.`,
+            cost: EINF,
+            effect() {
+                return D(1)
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
+        rad3: {
+            branch: ["rad1"],
+            icon: 'placeholder',
+            desc: `Placeholder.`,
+            cost: EINF,
+            effect() {
+                return D(1)
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
         rad4: {
-            unl() { return EXT.unl() },
             branch: ["rad2"],
-            desc: `All Radiation Meta-Boosts are 50% stronger.`,
-            cost: D(1e190),
+            icon: 'placeholder',
+            desc: `Placeholder.`,
+            cost: EINF,
+            effect() {
+                return D(1)
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
+        rad5: {
+            branch: ["rad3"],
+            icon: 'placeholder',
+            desc: `Placeholder.`,
+            cost: EINF,
+            effect() {
+                return D(1)
+            },
+            effDesc(x) { return format(x)+"x" },
         },
 
 		/* EXOTIC */

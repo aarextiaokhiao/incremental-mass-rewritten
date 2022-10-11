@@ -90,7 +90,7 @@ const BOSONS = {
 				effect(x) {
 					if (FERMIONS.onActive(15)) return D(1)
 					if (bosonsMastered()) return x.add(1).log10().div(20).add(1)
-					return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
+					return player.supernova.bosons.photon.add(1).pow(x.pow(0.8).mul(100))
 				},
                 effDesc(x) { return bosonsMastered() ? "^"+format(x) : format(x)+"x" },
             },{
@@ -134,7 +134,7 @@ const BOSONS = {
 				effect(x) {
 					if (FERMIONS.onActive(15)) return D(1)
 					if (bosonsMastered()) return x.add(1).log10().div(10).add(1)
-					return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)).min("e3e13")
+					return player.supernova.bosons.gluon.add(1).pow(x.pow(0.8).mul(100)).min("e3e13")
 				},
                 effDesc(x) { return format(x)+"x" },
             },{

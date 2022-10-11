@@ -126,10 +126,8 @@ const SCALE_START = {
 		tickspeed: D(700),
 		bh_condenser: D(750),
 		gamma_ray: D(800),
-		supernova: D(60),
 	},
 	meta: {
-		rank: D(1e4),
 		tickspeed: D(5e4),
 
 		chal0: D(1/0),
@@ -172,10 +170,8 @@ const SCALE_POWER = {
 		tickspeed: 7,
 		bh_condenser: 4,
 		gamma_ray: 6,
-		supernova: 5,
 	},
 	meta: {
-		rank: 1.0025,
 		tickspeed: 1.001,
 
 		chal0: 2,
@@ -187,10 +183,6 @@ const SCALE_FP = {
 	tickspeed() { return [1,1,1,tmp.tickspeedFP] },
 	massUpg() { return [1,1,1,tmp.upgs.fp] },
 	bh_condenser() { return [1,1,1,tmp.upgs.fp] },
-}
-
-const SCALE_FLOORS = {
-	supernova() { return !hasTree("sn5") },
 }
 
 const SCALE_TONE = {
@@ -347,7 +339,6 @@ function getScalingStart(type, name) {
 			if (CHALS_NEW.in(1)) return D(50)
 		}
 		if (name=='supernova') {
-			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
 			if (hasTree("feat6")) start = start.add(1)
 			if (hasTree("feat8")) start = start.add(2)
 		}
@@ -361,7 +352,6 @@ function getScalingStart(type, name) {
 			if (hasUpgrade('atom',10)) start = start.add(tmp.upgs?tmp.upgs.main?tmp.upgs.main[3][10].effect:0:0)
 		}
 		if (name=='supernova') {
-			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
 			if (hasTree("feat6")) start = start.add(1)
 			if (hasTree("feat8")) start = start.add(2)
 		}
@@ -373,25 +363,13 @@ function getScalingStart(type, name) {
 		if (name=="tickspeed") {
 			if (hasRank("tetr", 5)) start = start.add(RANKS.effect.tetr[5]())
 		}
-		if (name=='supernova') {
-			if (tmp.elements && hasElement(71)) start = start.add(tmp.elements.effect[71])
-			if (hasTree("feat8")) start = start.add(2)
-		}
 	}
 	if (type=="meta") {
-		if (name=="rank") {
-			if (tmp.fermions) start = start.mul(tmp.fermions.effs[1][4])
-			start = start.min(3e6)
-		}
 		if (name=="tickspeed") {
-			if (hasElement(68)) start = start.mul(2)
-			if (hasElement(72)) start = start.mul(tmp.elements.effect[72])
 			if (hasRank("tetr", 18)) start = start.mul(RANKS.effect.tetr[18]())
-			if (tmp.radiation) start = start.mul(tmp.radiation.bs.eff[14])
 			start = start.min(2e8)
 		}
 	}
-	if (SCALE_FLOORS[name] && !SCALE_FLOORS[name]()) return start
 	return start.floor()
 }
 
@@ -468,15 +446,8 @@ function getScalingPower(type, name) {
 		if (name=='gamma_ray') {
 			if (hasElement(55)) power = power.mul(0.75)
 		}
-		if (name=='supernova') {
-			if (tmp.radiation) power = power.mul(tmp.radiation.bs.eff[20].eff)
-		}
 	}
 	if (type=="meta") {
-		if (name=="rank") {
-			if (hasRank("pent", 4)) power = power.mul(RANKS.effect.pent[4]())
-			//if (AXION.unl()) power = power.div(tmp.ax.eff[6].eff)
-		}
 		if (name=='tickspeed') {
 			if (hasRank("pent", 5)) power = power.mul(RANKS.effect.pent[5]())
 			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
