@@ -151,13 +151,13 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
-	upperResources = 1
-	elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+getProdDisp(player.mass, "mass", true, true))
-
-	//RESET
+	upperResources = 0
 	elm.reset_desc.setHTML(player.reset_msg)
 
 	let preExt = !EXT.unl()
+	updateUpperRes("mass_div", true, () => {
+		elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+getProdDisp(player.mass, "mass", true, true))
+	})
 	updateUpperRes("mg_div", gameStarted() && inNGM(), () => {
 		elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
 	})

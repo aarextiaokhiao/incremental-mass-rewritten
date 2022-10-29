@@ -289,7 +289,10 @@
 				</div>
 				<span id="reset_desc"></span>
 			</div><div class="table_center" style="margin: 5px 0px">
-				<div class="resources sml purple" id="mg_div">
+				<div class="resources sml" id="mass_div">
+					<div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
+					<span style="margin-left: 5px; text-align: left;" id="mass">X</span>
+				</div><div class="resources sml purple" id="mg_div">
 					<div tooltip="Magic" t-size="small"><img class="res_img" src="images/ngm/magic.png" onclick="MAGIC.reset()" onmousemove="FORMS.reset_msg.set('mg')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
 					<span style="margin-left: 5px; text-align: left;" id="mgAmt">X</span>
 				</div><div class="resources sml red" id="rp_div">
@@ -324,13 +327,11 @@
 					<span style="margin-left: 5px; text-align: left;" id="extAmt">X</span>
 				</div>
 
-				<div id="res_col1"><div class="resources sml">
-					<div tooltip="Mass" t-size="small"><img class="res_img" src="images/mass.png"></div>
-					<span style="margin-left: 5px; text-align: left;" id="mass">X</span>
-				</div></div>
+				<div id="res_col1"></div>
 				<div id="res_col2"></div>
 				<div id="res_col3"></div>
 				<div id="res_col4"></div>
+				<div id="res_col5"></div>
 			</div><div class="table_center" id="shrt_div">
 				<div id="shrt_list"></div>
 
