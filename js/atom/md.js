@@ -23,6 +23,7 @@ const MASS_DILATION = {
         let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS_NEW.inDirect(10) ? 1 : CHALS_NEW.eff(10))
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
+        x = x.mul(getRadiationEff(10))
         return x
     },
     RPmultgain() {
@@ -47,7 +48,7 @@ const MASS_DILATION = {
 		return x.sub(player.md.particles).max(0).floor()
 	},
 	undercapacity() {
-		return player.mass.pow(1e-3).max("ee15")
+		return player.mass.pow(1e-3).max("ee5")
 	},
     massGain() {
         let pow = D(2)
@@ -128,7 +129,6 @@ const MASS_DILATION = {
                     let s = D(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
                     if (hasElement(53)) x = x.mul(1.75)
-                    if (hasRank("pent", 75)) return x.softcap(1e3,6/7,0).softcap(1e3,x.log10(),1)
                     return x.softcap(1e3,0.6,0)
                 },
                 effDesc(x) { return "+^"+format(x)+getSoftcapHTML(x,1e3) },

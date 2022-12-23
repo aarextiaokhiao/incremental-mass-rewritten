@@ -1,7 +1,7 @@
 const SUPERNOVA = {
     reset(force=false) {
         if (!force && !tmp.supernova.reached) return
-        if (force && toConfirm('supernova')) return
+        if (force && !toConfirm('sn')) return
 
 		if (hasTree("qol8") && player.supernova.auto.toggle && player.supernova.auto.on == -2 && !force) startSupernovaSweep()
 
@@ -68,14 +68,16 @@ const SUPERNOVA = {
         if (hasTree("sn1")) x = x.mul(treeEff("sn1"))
         if (hasTree("sn2")) x = x.mul(treeEff("sn2"))
         if (hasTree("sn3")) x = x.mul(treeEff("sn3"))
+        if (hasTree("sn5")) x = x.mul(treeEff("sn5"))
         if (hasTree("bs3")) x = x.mul(treeEff("bs3"))
+        x = x.pow(getRadiationEff(1))
         x = x.mul(tmp.extMult)
         return x
     },
     req(x=player.supernova.times) {
-        ml_fp = D(scalingToned("supernova")?1:tmp.bosons.upgs.gluon[3].effect)
+        ml_fp = D(isScalingToned("supernova")?1:tmp.bosons.upgs.gluon[3].effect)
         ml_fp2 = D(1)
-        exp = scalingInitPower("supernova")
+        exp = getScalingBasePower("supernova")
         maxlimit = D(1e20).pow(x.scaleEvery("supernova").div(ml_fp).pow(exp)).mul(1e90).root(ml_fp2)
         bulk = player.stars.points.pow(ml_fp2).div(1e90).max(1).log(1e20).max(0).root(exp).mul(ml_fp).scaleEvery("supernova",1).add(1).floor()
         if (player.stars.points.lt(maxlimit)) bulk = D(0)

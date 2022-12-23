@@ -5,7 +5,7 @@ const ATOM = {
         if (x.lt(1)) return D(0)
         x = x.root(5)
         if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:D(1))
-        if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+        x = x.mul(tmp.bosons.upgs.gluon[0].effect)
         x = x.mul(tmp.supernova.mult)
 
         if (hasElement(17)) x = x.pow(1.1)
@@ -57,7 +57,7 @@ const ATOM = {
             let x = tmp.atom.gamma_ray_eff?tmp.atom.gamma_ray_eff.eff:D(0)
             if (hasElement(3)) x = x.mul(tmp.elements.effect[3])
             if (hasElement(52)) x = x.mul(tmp.elements.effect[52])
-            if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+            x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             x = x.mul(tmp.supernova.mult)
 
             if (FERMIONS.onActive("00")) x = expMult(x,0.6)
@@ -73,7 +73,7 @@ const ATOM = {
 			if (CHALS_NEW.in(14)) return D(0)
 			let sc = ATOM.atomic.softcap()
 			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75)
-			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0).softcap(sc.mul(800),0.25,0)
+			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0)
 			return x.floor()
 		},
     },
@@ -100,7 +100,7 @@ const ATOM = {
             if (hasUpgrade('atom',4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:D(0))
             if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
             if (hasTree("gr1")) pow = pow.mul(treeEff("gr1"))
-            if (!bosonsMastered()) pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
+            pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             if (hasTree("gr2")) pow = pow.pow(1.25)
             pow = pow.softcap(tmp.atom.gamma_ray_ss,10,3)
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
@@ -109,7 +109,6 @@ const ATOM = {
         bonus() {
 			if (CHALS_NEW.in(14)) return D(0)
             let x = tmp.fermions.effs[0][0]||D(0)
-            if (bosonsMastered()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             return x
         },
     },
@@ -232,10 +231,10 @@ function updateAtomTemp() {
     tmp.atom.atomicGain = ATOM.atomic.gain()
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
-	let fp = scalingToned("gamma_ray") ? D(30) : D(1)
+	let fp = isScalingToned("gamma_ray") ? D(30) : D(1)
 	//polarizer synergy
 
-	let scale = scalingInitPower("gamma_ray")
+	let scale = getScalingBasePower("gamma_ray")
     tmp.atom.gamma_ray_cost = D(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
     tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).root(scale).div(fp).scaleEvery("gamma_ray", 1).add(1).floor()
     if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = D(0)
@@ -243,7 +242,6 @@ function updateAtomTemp() {
     tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)
     tmp.atom.gamma_ray_bonus = ATOM.gamma_ray.bonus()
     tmp.atom.gamma_ray_ss = D(1e20)
-    if (bosonsMastered()) tmp.atom.gamma_ray_ss = tmp.atom.gamma_ray_ss.mul(tmp.bosons.upgs.gluon[1].effect)
     tmp.atom.gamma_ray_eff = ATOM.gamma_ray.effect()
 
     for (let x = 0; x < ATOM.particles.names.length; x++) {
@@ -274,7 +272,7 @@ function setupAtomHTML() {
 
 function updateAtomicHTML() {
     elm.atomicAmt.setHTML(format(player.atom.atomic)+" "+formatGain(player.atom.atomic, tmp.atom.atomicGain))
-	elm.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+getSoftcapHTML(tmp.atom.atomicEff,ATOM.atomic.softcap(),ATOM.atomic.softcap().mul(800)))
+	elm.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+getSoftcapHTML(tmp.atom.atomicEff,ATOM.atomic.softcap()))
 	elm.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):""))
 	elm.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
 	elm.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))

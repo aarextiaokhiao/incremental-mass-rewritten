@@ -5,6 +5,8 @@ const RADIATION = {
 		if (CHALS_NEW.in(14)) return D(0)
 
         let x = D(1)
+        if (hasTree("rad1")) x = x.mul(treeEff("rad1"))
+        if (hasTree("rad3")) x = x.mul(treeEff("rad3"))
         x = x.mul(tmp.radiation.ds_eff[0])
         x = x.mul(tmp.extMult)
         return x
@@ -13,15 +15,16 @@ const RADIATION = {
         let x = player.supernova.radiation.hz.add(1).root(3)
         return x
     },
-	ds_gains: ["1", "1", "1", "1", "0.005", "0.00002", "1e-7"],
     ds_gain(i) {
 		if (CHALS_NEW.in(14)) return D(0)
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return D(0)
 
-        let x = D(RADIATION.ds_gains[i])
+        let x = D(1)
         if (hasTree('feat1')) x = x.mul(3)
+        if (hasTree("rad4")) x = x.mul(treeEff("rad4"))
+        if (hasTree("rad5")) x = x.mul(treeEff("rad5"))
         if (i<RAD_LEN-1) x = x.mul(tmp.radiation.ds_eff[i+1])
-        x = x.mul(tmp.radiation.bs.eff[3*i])
+        x = x.mul(getRadiationEff(i*3))
         x = x.mul(tmp.extMult)
         return x
     },
@@ -46,7 +49,9 @@ const RADIATION = {
 		return f4
     },
     getBoostScalingExp(i) {
+		if (hasTree("rad2") && i % 2 == 0) i -= 0.05
 		let f2 = 1.3+i*0.05
+		if (future) f2 = 1.25
 		return Math.max(f2,1.25)
     },
     getLevelEffect(i) {
@@ -57,6 +62,8 @@ const RADIATION = {
 		if (CHALS_NEW.in(14)) return D(0)
 
         let x = D(0)
+        if (i < 8) x = x.add(getRadiationEff(8, 0))
+        if (i < 17) x = x.add(getRadiationEff(17, 0))
         return x
     },
     applyBonus(x=D(0)) {
@@ -77,13 +84,15 @@ const RADIATION = {
 			RADIATION.buyBoost(x*2+1)
 		}
 	},
-	selfBoost(x, b) {
-		let r
-		if (x == 0) r = player.supernova.radiation.hz
-		else r = player.supernova.radiation.ds[x-1]
-        r = r.add(1).log10().div(3).add(1)
+	selfBoost(x, exp) {
+		let res
+		if (x == 0) res = player.supernova.radiation.hz
+		else res = player.supernova.radiation.ds[x-1]
 
-		return r.pow(b)
+        let b = res.add(1).log10().div(3).add(1)
+        if (hasTree("rad6")) b = expMult(res, 0.15).pow(.1).mul(b)
+
+		return b.pow(exp)
 	},
     boosts: [
         {
@@ -93,17 +102,17 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x Radio. (based on Frequency)` },
         },{
-            title: `Placeholder`,
+            title: `Neutron Boost`,
 			eff(b) {
-				return D(1)
+				return b.div(10).add(1).pow(.1).min(5)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Raise Neutron Stars by ^${format(x, 3)}.` },
         },{
-            title: `Placeholder`,
+            title: `Softcap Boost`,
 			eff(b) {
-				return D(1)
+				return b.div(30).add(1).pow(.5)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Mass softcaps scale ^${format(x, 3)} later.` },
         },{
             title: `Microwave Boost`,
             eff(b) {
@@ -111,17 +120,17 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x Microwave. (based on Radio)` },
         },{
-            title: `Placeholder`,
+            title: `Black Hole Boost`,
 			eff(b) {
-				return D(1)
+				return b.add(1).log10().div(10).min(.5)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Raise Black Hole formula by +^${format(x, 3)}.` },
         },{
-            title: `Placeholder`,
+            title: `Tickspeed Boost`,
 			eff(b) {
-				return D(1)
+				return D(2).pow(b)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Tickspeed Power's softcap scales ${format(x)}x later.` },
         },{
             title: `Infrared Boost`,
             eff(b) {
@@ -129,15 +138,15 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x Infrared. (based on Microwave)` },
         },{
-            title: `Placeholder`,
+            title: `Impossible Boost`,
 			eff(b) {
-				return D(1)
+				return D(b).add(1).log10().pow(.5).add(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Impossible Challenges scale ${formatMultiply(x)} slower.` },
         },{
             title: `Meta-Boost I`,
             eff(b) {
-                let x = b.root(2.5).div(1.75)
+                let x = b.div(2).mul(b.add(1).log10())
                 return x
             },
             desc(x) { return `Add ${format(x)} levels to all above boosts` },
@@ -148,17 +157,17 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x Visible. (based on Infrared)` },
         },{
-            title: `Placeholder`,
+            title: `Relativistic Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Raise Relativistic Particles by ^${format(x, 3)}.` },
         },{
-            title: `Placeholder`,
+            title: `Reality Exponent`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Raise Challenge 10 reward by ^${format(x, 3)}.` },
         },{
             title: `Ultraviolet Boost`,
             eff(b) {
@@ -166,17 +175,17 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x Ultraviolet. (based on Visible)` },
         },{
-            title: `Placeholder`,
+            title: `U-Quark Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Strengthen U-Quark Tiers by ${format(x)}x.` },
         },{
-            title: `Placeholder`,
+            title: `U-Lepton Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Strengthen U-Lepton Tiers by ${format(x)}x.` },
         },{
             title: `X-Ray Boost`,
             eff(b) {
@@ -184,15 +193,15 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x X-Rays. (based on Ultraviolet)` },
         },{
-            title: `Placeholder`,
+            title: `Supernovae Boost`,
 			eff(b) {
-				return D(1)
+				return D(9).sub(b.add(1).log10()).max(4).log(9)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Supernovae scalings scale ${format(D(1).sub(x).mul(100))}% slower.` },
         },{
             title: `Meta Boost II`,
             eff(b) {
-                let x = b.root(2.5).div(1.75)
+                let x = b.div(2).mul(b.add(1).log10())
                 return x
             },
             desc(x) { return `Add ${format(x)} levels to all above boosts` },
@@ -205,18 +214,18 @@ const RADIATION = {
             desc(x) { return `Gain more ${format(x)}x Gamma. (based on X-Rays)` },
         },
         {
-            title: `Placeholder`,
+            title: `Tetr Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Weaken Super Tetr scaling by ${format(x)}x.` },
         },
         {
-            title: `Placeholder`,
+            title: `Meta-Tickspeed Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Placeholder.` },
+            desc(x) { return `Meta-Tickspeed starts ${format(x)}x later.` },
         },
 
         /*
@@ -233,6 +242,11 @@ const RADIATION = {
 }
 
 const RAD_LEN = 7
+
+function getRadiationEff(x, def = 1) {
+	if (!tmp.radiation) return def
+	return tmp.radiation.bs.eff[x] ?? def
+}
 
 function updateRadiationTemp() {
 	let tr = tmp.radiation
@@ -264,7 +278,7 @@ function setupRadiationHTML() {
         table += `
         <div id="${id}_div" class="table_center radiation">
             <div class="sub_rad" style="width: 450px">
-                ${name} wave is currently <span id="${id}_distance">0</span> m long.
+                ${name} wave is <span id="${id}_distance">0</span> m long.
 				<span id="${id}_disGain">0</span><br>
 				(<span id="${id}_disEff">1</span>x ${x==0?"Frequency":RADIATION.names[x-1]})
             </div><div class="table_center sub_rad" style="align-items: center">

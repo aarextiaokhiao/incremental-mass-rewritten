@@ -153,10 +153,10 @@ const ELEMENTS = {
 			effect() {
 				let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
 				if (EXT.unl()) x = x.add(player.ext.ar39)
-				return x.softcap(1.3,0.1,0).softcap(100,0.3,0)
+				return x.softcap(2,0.05,0)
 			},
 			effDesc(x) {
-				return "^"+format(x)+getSoftcapHTML(x,1.3,100)
+				return "^"+format(x)+getSoftcapHTML(x,2)
 			},
 		},
         {

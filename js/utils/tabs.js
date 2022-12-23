@@ -66,7 +66,7 @@ const TABS = {
 			{ id: "General" },
 			{ id: "Rewards" },
 			{ id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
-			{ id: "Compression", unl() { return EXT.unl() } },
+			{ id: "Compression", unl() { return false } },
 		],
 	},
 }

@@ -8,12 +8,12 @@ Decimal.prototype.scale = function (s, b, p, mode, rev=false) {
 }
 
 Decimal.prototype.scaleName = function (type, id, rev=false) {
-	if (scalingToned(id)) return this.clone()
+	if (isScalingToned(id)) return this.clone()
 
     var x = this.clone()
-    if (SCALE_START[type][id] && SCALE_POWER[type][id]) {
-        let s = getScalingStart(type,id)
-        let p = getScalingPower(type,id)
+    if (isScalingActive(id, x, type)) {
+        let s = tmp.scaling_start[type][id]
+        let p = tmp.scaling_power[type][id]
 
         x = x.scale(s,SCALE_POWER[type][id],p,SCALE_MODE[type],rev)
     }
@@ -34,6 +34,19 @@ Decimal.prototype.scaleEvery = function (id, rev=false) {
 
 //Technical
 const SCALE_INIT_POWERS = {
+	rank: {
+		normal: 1.15,
+		toned: 3
+	},
+	tier: {
+		normal: 2
+	},
+	tetr: {
+		normal: 2
+	},
+	pent: {
+		normal: 1.25
+	},
 	massUpg: {
 		normal: 1
 	},
@@ -45,10 +58,6 @@ const SCALE_INIT_POWERS = {
 	},
 	gamma_ray: {
 		normal: 1
-	},
-	rank: {
-		normal: 1.15,
-		toned: 3
 	},
 	supernova: {
 		normal: 1.25,
@@ -72,9 +81,13 @@ const SCALE_MODE = {
 
 const SCALE_FUNCS = {
 	0: {
+		// Power
+		eff(b, p) {
+			return D(b).pow(p).toNumber()
+		},
 		func(x, s, b, p, rev) { // Power
-			p = D(b).pow(p)
-			if (p.eq(1)) return x
+			p = this.eff(b, p)
+			if (p == 1) return x
 			return rev ? x.div(s).root(p).mul(s) : x.div(s).pow(p).mul(s)
 		},
 		desc(x, p) {
@@ -82,11 +95,13 @@ const SCALE_FUNCS = {
 		}
 	},
 	1: {
-		func(x, s, b, p, rev) { // Exponent
+		// Exponent
+		func(x, s, b, p, rev) {
 			return rev ? x.div(s).max(1).log(b).div(p).add(s) : D(b).pow(x.sub(s).mul(p)).mul(s)
 		},
 		desc(x, p) {
-			return "^" + format(x,3) + (p.gte(1) ? "" : p.lt(0.01) ? ", /" + format(D(1).div(p)) : ", " + format(p.mul(100)) + "%")
+			let b = D(x).pow(p)
+			return formatMultiply(b) + " / level"
 		}
 	}
 }
@@ -128,6 +143,7 @@ const SCALE_START = {
 		gamma_ray: D(800),
 	},
 	meta: {
+		rank: D(1e5),
 		tickspeed: D(5e4),
 
 		chal0: D(1/0),
@@ -172,6 +188,7 @@ const SCALE_POWER = {
 		gamma_ray: 6,
 	},
 	meta: {
+		rank: 1+1e-5,
 		tickspeed: 1.001,
 
 		chal0: 2,
@@ -183,18 +200,6 @@ const SCALE_FP = {
 	tickspeed() { return [1,1,1,tmp.tickspeedFP] },
 	massUpg() { return [1,1,1,tmp.upgs.fp] },
 	bh_condenser() { return [1,1,1,tmp.upgs.fp] },
-}
-
-const SCALE_TONE = {
-	massUpg() { return toned() >= 1 },
-	tickspeed() { return toned() >= 1 },
-	rank() { return toned() >= 4 },
-	tier() { return toned() >= 4 },
-	tetr() { return toned() >= 4 },
-	bh_condenser() { return toned() >= 2 },
-	gamma_ray() { return toned() >= 3 },
-	supernova() { return toned() >= 5 },
-	fTier() { return toned() >= 5 },
 }
 
 const SCALE_RES = {
@@ -233,11 +238,12 @@ const NAME_FROM_RES = {
 
 function updateScalingHTML() {
 	let s = SCALE_TYPE[player.scaling_ch]
-	elm.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
 
-	if (player.scaling_ch === 0) {
+	if (player.scaling_ch === -1) {
+		elm.scaling_name.setTxt("Effects")
 		elm.scaling_left_arrow.addClass("locked")
 	} else {
+		elm.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
 		elm.scaling_left_arrow.removeClass("locked")
 	}
 
@@ -260,61 +266,74 @@ function updateScalingHTML() {
 				let have = tmp.scaling[SCALE_TYPE[x]].includes(key[y])
 				elm['scaling_'+x+'_'+id+'_div'].setDisplay(have)
 				if (have) {
-					elm['scaling_'+x+'_'+id+'_power'].setTxt(SCALE_FUNCS[mode].desc(SCALE_POWER[type][id], getScalingPower(type, id)))
 					elm['scaling_'+x+'_'+id+'_start'].setTxt(format(getScalingStart(type, id), 0))
+					elm['scaling_'+x+'_'+id+'_eff'].setTxt(SCALE_FUNCS[mode].desc(SCALE_POWER[type][id], tmp.scaling_power[type][id]))
 				}
+			}
+		}
+	}
+
+	elm["scaling_eff"].setDisplay(player.scaling_ch == -1)
+	if (player.scaling_ch == -1) {
+		for (let key of Object.keys(SCALE_INIT_POWERS)) {
+			let shown = SCALE_RES[key]().gt(0)
+			elm[`scaling_eff_${key}_div`].setDisplay(shown)
+			if (shown) {
+				elm[`scaling_eff_${key}`].setHTML(format(getScalingFullPower(key)))
+				elm[`scaling_eff_${key}_base`].setHTML(format(getScalingBasePower(key)))
 			}
 		}
 	}
 }
 
 function updateScalingTemp() {
-	if (!tmp.scaling) tmp.scaling = {}
 	for (let x = 0; x < SCALE_TYPE.length; x++) {
-		tmp.scaling[SCALE_TYPE[x]] = []
-		let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
-		for (let y = 0; y < key.length; y++) {
-			if (scalingActive(key[y], SCALE_RES[key[y]](), SCALE_TYPE[x])) tmp.scaling[SCALE_TYPE[x]].push(key[y])
+		let st = SCALE_TYPE[x]
+		tmp.scaling[st] = []
+
+		let ss = {}
+		let sp = {}
+		tmp.scaling_start[st] = ss
+		tmp.scaling_power[st] = sp
+
+		for (let [sc, start] of Object.entries(SCALE_START[SCALE_TYPE[x]])) {
+			ss[sc] = getScalingStart(st, sc)
+			sp[sc] = getScalingPower(st, sc)
+			if (isScalingActive(sc, SCALE_RES[sc](), st)) tmp.scaling[st].push(sc)
 		}
 	}
 }
 
-function scalingToned(name) {
-	return SCALE_TONE[name] && SCALE_TONE[name]()
+function getScalingBasePower(name) {
+	if (BUILDINGS.includes(name) && isScalingToned(name)) return TONES.power(1)
+	if (name == "tetr" && hasElement(44)) return 1.75
+	return SCALE_INIT_POWERS[name][isScalingToned(name) ? "toned" : "normal"]
 }
 
-function scalingInitPower(name) {
-	if (name == "tier") {
-		return 2
+function getScalingFullPower(name) {
+	let r = getScalingBasePower(name)
+	let cap = SCALE_TYPE.length
+	for (let n = 0; n < cap; n++) {
+		let type = SCALE_TYPE[n]
+		if (tmp.scaling[type].includes(name)) {
+			if (SCALE_MODE[type] == 0) r *= SCALE_FUNCS[0].eff(SCALE_POWER[type][name], tmp.scaling_power[type][name])
+			if (SCALE_MODE[type] == 1) r = D(SCALE_POWER[type][name]).pow(tmp.scaling_power[type][name].mul(SCALE_RES[name]().sub(tmp.scaling_start[type][name]))).mul(r)
+		}
 	}
-	if (name == "tetr") {
-		if (hasElement(44)) return 1.75
-		return 2
-	}
-	if (name == "pent") {
-		//if (AXION.unl()) return tmp.ax.eff[15].exp
-		return 1.25
-	}
-	if (BUILDINGS.includes(name) && scalingToned(name)) return TONES.power(1)
-	return SCALE_INIT_POWERS[name][scalingToned(name) ? "toned" : "normal"]
-}
-
-function scalingActive(name, amt, type) {
-	if (SCALE_START[type][name] === undefined) return false
-	if (scalingToned(name)) return false
-	amt = D(amt);
-	return amt.gte(getScalingStart(type, name)) && getScalingPower(type, name).gt(0);
+	return r
 }
 
 function getScalingName(name, x=0, y=0) {
-	let cap = Object.keys(SCALE_START).length;
-	let current = "";
-	let amt = SCALE_RES[name](x,y);
+	let cap = SCALE_TYPE.length
 	for (let n = cap - 1; n >= 0; n--) {
-		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-			return capitalFirst(Object.keys(SCALE_START)[n]) + (Object.keys(SCALE_START)[n]=="meta"?"-":" ");
+		if (tmp.scaling[SCALE_TYPE[n]].includes(name)) return getScalingPrefix(n)
 	}
-	return current;
+	return ""
+}
+
+function getScalingPrefix(id) {
+	let name = FULL_SCALE_NAME[id]
+	return name + (name == "Meta" ? "-" : " ")
 }
 
 function getScalingStart(type, name) {
@@ -329,7 +348,6 @@ function getScalingStart(type, name) {
 		}
 		if (name=="tetr") {
 			if (hasRank("tier", 100)) start = start.add(5)
-			if (hasRank("pent", 2)) start = start.add(player.supernova.times.pow(1.5).div(200))
 		}
 		if (name=="massUpg") {
 			if (CHALS_NEW.in(1)) return D(25)
@@ -367,10 +385,18 @@ function getScalingStart(type, name) {
 	if (type=="meta") {
 		if (name=="tickspeed") {
 			if (hasRank("tetr", 18)) start = start.mul(RANKS.effect.tetr[18]())
+			start = start.mul(getRadiationEff(20))
 			start = start.min(2e8)
 		}
 	}
 	return start.floor()
+}
+
+function isScalingActive(name, amt, type) {
+	if (!tmp.scaling_start[type]?.[name]) return false
+	if (isScalingToned(name)) return false
+	amt = D(amt);
+	return amt.gte(tmp.scaling_start[type][name]) && tmp.scaling_power[type][name].gt(0);
 }
 
 function getScalingPower(type, name) {
@@ -385,7 +411,7 @@ function getScalingPower(type, name) {
 			if (hasElement(37)) power = power.mul(tmp.elements.effect[37])
 		}
 		if (name=="tetr") {
-			if (hasRank("pent", 4)) power = power.mul(RANKS.effect.pent[4]())
+			power = power.div(getRadiationEff(19))
 		}
 		if (name=="massUpg") {
 			if (hasUpgrade('rp',8)) power = power.mul(tmp.upgs.main?tmp.upgs.main[1][8].effect:1)
@@ -400,6 +426,9 @@ function getScalingPower(type, name) {
 		}
 		if (name=='gamma_ray') {
 			if (hasElement(15)) power = power.mul(0.8)
+		}
+		if (name=='supernova') {
+			power = power.mul(getRadiationEff(16))
 		}
 		if (name=="fTier") {
 			if (hasTree("fn3")) power = power.mul(0.925)
@@ -426,6 +455,9 @@ function getScalingPower(type, name) {
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
 		}
+		if (name=='supernova') {
+			power = power.mul(getRadiationEff(16))
+		}
 		if (name=='gamma_ray') {
 			if (hasElement(55)) power = power.mul(0.75)
 		}
@@ -449,7 +481,6 @@ function getScalingPower(type, name) {
 	}
 	if (type=="meta") {
 		if (name=='tickspeed') {
-			if (hasRank("pent", 5)) power = power.mul(RANKS.effect.pent[5]())
 			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}

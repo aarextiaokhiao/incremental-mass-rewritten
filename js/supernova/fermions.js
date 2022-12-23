@@ -51,7 +51,7 @@ const FERMIONS = {
 		return r
 	},
 	getScalingExp(x) {
-		if (scalingToned("fTier")) x *= 4
+		if (isScalingToned("fTier")) x *= 4
 		return x
 	},
 	maxTier(i, x) {
@@ -130,7 +130,6 @@ const FERMIONS = {
 					if (FERMIONS.onActive(05)) return D(1)
 					let total = i.add(1).log10().pow(1.75).mul(t.pow(0.8))
 					let x = total.div(100).add(1).softcap(5,0.75,0).softcap(100,4,3)
-					if (future) x = x.max(expMult(total.div(100).add(1),0.6).cbrt())
 					return x
 				},
 				desc(x) {
@@ -274,11 +273,11 @@ const FERMIONS = {
                 eff(i, t) {
 					if (FERMIONS.onActive(14)) return D(1)
                     let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
-					if (scalingToned("tickspeed")) x = x.add(1).log10().add(1).log10().add(1).root(3)
+					if (isScalingToned("tickspeed")) x = x.add(1).log10().add(1).log10().add(1).root(3)
                     return x.min(1e6)
                 },
                 desc(x) {
-                    return `Weaken Tickspeed by ${format(x)}x.` + (scalingToned("tickspeed") ? "" : " (before Meta scaling)")
+                    return `Weaken Tickspeed by ${format(x)}x.` + (isScalingToned("tickspeed") ? "" : " (before Meta scaling)")
                 },
                 inc: "Dark Matter",
                 res: () => player.bh.dm,
@@ -428,6 +427,8 @@ function updateFermionsTemp() {
             tf.tiers[i][x] = f.calcTier()
 
 			let t = player.supernova.fermions.tiers[i][x]
+			if (i == 0) t = t.mul(getRadiationEff(13))
+			if (i == 1) t = t.mul(getRadiationEff(14))
             tf.effs[i][x] = f.eff(player.supernova.fermions.points[i], t)
         }
     }

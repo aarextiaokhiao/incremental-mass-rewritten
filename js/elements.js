@@ -93,17 +93,22 @@ function setupHTML() {
 	}
 	main_upgs_table.setHTML(table)
 
-	let scaling_table = new Element("scaling_table")
 	table = ""
 	for (let x = 0; x < SCALE_TYPE.length; x++) {
 		table += `<div id="scaling_div_${x}">`
 		let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
 		for (let y = 0; y < key.length; y++) {
-			table += `<div id="scaling_${x}_${key[y]}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key[y]]}</b> (<span id="scaling_${x}_${key[y]}_power"></span>): Starts at <span id="scaling_${x}_${key[y]}_start"></span></div>`
+			table += `<div id="scaling_${x}_${key[y]}_div" style="margin-bottom: 10px;"><b>${getScalingPrefix(x) + NAME_FROM_RES[key[y]]}</b>: Starts at <span id="scaling_${x}_${key[y]}_start"></span>, <span id="scaling_${x}_${key[y]}_eff"></span></div>`
 		}
 		table += `</div>`
 	}
-	scaling_table.setHTML(table)
+	new Element("scaling_table").setHTML(table)
+
+	table = ""
+	for (let key of Object.keys(SCALE_INIT_POWERS)) {
+		table += `<div id="scaling_eff_${key}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key]}</b>: Exponential, ^<span id="scaling_eff_${key}"></span> (base: ^<span id="scaling_eff_${key}_base"></span>)</div>`
+	}
+	new Element("scaling_eff").setHTML(table)
 
 	setupChalHTMLNew()
 	setupAtomHTML()
@@ -145,7 +150,7 @@ function updateTabsHTML() {
 				if (unl) unls++
 			}
 			elm["stabs"+x].setDisplay(x == tmp.tab && unls > 1)
-			if (x == 6) elm["ext_bar"].setDisplay(x == tmp.tab && unls > 1)
+			if (x == 4) elm["ext_bar"].setDisplay(unls > 1)
 		}
 	}
 }
@@ -366,7 +371,7 @@ function updateStatsHTML() {
 }
 
 function updateOptionsHTML() {
-	elm.offline_active.setTxt(player.offline.active?"ON":"OFF")
+	elm.offline_active.setTxt(player.options.offline?"ON":"OFF")
 	elm.minus_active.setTxt(metaSave.ngm?"ON":"OFF")
 	elm.help.setDisplay(player.options.notation_mass !== 1)
 	elm.progress_active.setTxt(player.options.progress?"ON":"OFF")

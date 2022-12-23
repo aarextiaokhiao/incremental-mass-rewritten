@@ -1,53 +1,691 @@
-function setupChalHTML() {
-	let chals_table = new Element("chals_table")
-	let table = ""
-	for (let x = 1; x <= CHALS.cols; x++) {
-		table += `<div id="chal_div_${x}" style="width: 120px; margin: 5px;"><img id="chal_btn_${x}" onclick="CHALS.choose(${x})" class="img_chal" src="images/chal_${x}.png"><br><span id="chal_comp_${x}">X</span></div>`
+const CHALS_NEW = {
+	//In
+	in(x) {
+		return tmp.chal.inForce.includes(x)
+	},
+	inDirect(x) {
+		return tmp.chal.in.includes(x)
+	},
+	inAny() {
+		return tmp.chal.in.length || player.md.active || player.supernova.fermions.choosed
+	},
+
+	//Entering
+	canBulk() {
+		return false
+	},
+	enter(layer, x) {
+		if (CHALS_NEW.in(x)) return
+		if (tmp.chal.lastLayer == layer && !toConfirm('chal')) return
+
+		if (!player.chal.progress[layer]) player.chal.progress[layer] = [x]
+		else if (!CHALS_NEW.canBulk()) {
+			for (const c of player.chal.progress[layer]) gainChalComp(c)
+			player.chal.progress[layer] = [x]
+		} else player.chal.progress[layer].push(x)
+		player.chal.lastComps[x] = player.chal.comps[x]
+		player.chal.bulkComps[x] = player.chal.comps[x]
+
+		CHALS_NEW.layers[layer].doReset()
+	},
+	exit(layer) {
+		if (tmp.chal.lastLayer == layer && player.confirms.chal && !confirm("Exit this challenge? You won't gain additional completions until you return!")) return
+		for (const c of player.chal.progress[layer]) gainChalComp(c)
+		delete player.chal.progress[layer]
+	},
+	clear(layer) {
+		for (let c = layer * 4 + 1; c <= layer * 4 + 4; c++) player.chal.comps[c] = D(0)
+
+		if (player.chal.active >= layer * 4 + 1 && player.chal.active <= layer * 4 + 4) player.chal.active = 0
+		delete player.chal.progress[layer]
+	},
+
+	//Choosing
+	choose(x) {
+		const layer = Math.ceil(x / 4) - 1
+		if (tmp.chal.choosed == x) CHALS_NEW.enter(layer, x)
+		else tmp.chal.choosed = x
+	},
+
+	//Scalings
+	goal(i, comp) {
+		comp = D(comp || player.chal.comps[i])
+
+		if (i < 9) {
+			let start3 = CHALS_NEW.getPower3Start(i)
+			if (comp.gte(start3)) comp = D(1).div(start3).add(1).pow(comp.sub(start3).mul(CHALS_NEW.getPower3(i))).mul(start3)
+		}
+		if (i < 12) {
+			let start2 = CHALS_NEW.getPower2Start(i)
+			if (comp.gte(start2)) comp = comp.div(start2).pow(D(4.5).pow(CHALS_NEW.getPower2(i))).mul(start2)
+
+			let start1 = CHALS_NEW.getPower1Start(i)
+			if (comp.gte(start1)) comp = comp.div(start1).pow(D(3).pow(CHALS_NEW.getPower1(i))).mul(start1)
+		}
+
+		let scale = CHALS_NEW.chals[i].scale
+		let pow = D(scale.pow)
+		if (hasElement(10) && (i == 3 || i == 4)) pow = pow.mul(0.95)
+
+		if (scale.sexp) return D(scale.start).pow(D(scale.inc).pow(comp.pow(pow)))
+		else return D(scale.start).mul(D(scale.inc).pow(comp.pow(pow)))
+	},
+	bulk(i, res) {
+		res = D(res || CHALS_NEW.layers[Math.ceil(i / 4) - 1].res())
+
+		let scale = CHALS_NEW.chals[i].scale
+		let pow = D(scale.pow)
+		if (hasElement(10) && (i == 3 || i == 4)) pow = pow.mul(0.95)
+
+		let comp = D(0)
+		if (scale.sexp) comp = D(res).log(scale.start).log(scale.inc).root(pow)
+		else comp = D(res).div(scale.start).log(scale.inc).root(pow)
+		if (D(res).lt(scale.start)) return D(0)
+
+		if (i < 12) {
+			let start1 = CHALS_NEW.getPower1Start(i)
+			if (D(comp).gte(start1)) comp = comp.div(start1).root(D(3).pow(CHALS_NEW.getPower1(i))).mul(start1)
+
+			let start2 = CHALS_NEW.getPower2Start(i)
+			if (D(comp).gte(start2)) comp = comp.div(start2).root(D(4.5).pow(CHALS_NEW.getPower2(i))).mul(start2)
+		}
+		if (i < 9) {
+			let start3 = CHALS_NEW.getPower3Start(i)
+			if (D(comp).gte(start3)) comp = comp.div(start3).log(D(1).div(start3).add(1)).div(CHALS_NEW.getPower3(i)).add(start3)
+		}
+
+		return comp.floor().add(1).min(CHALS_NEW.max(i))
+	},
+
+    getScalingName(i, comp) {
+		comp = D(comp || player.chal.comps[i])
+
+        if (i >= 12) return ""
+        if (i < 9 && comp.gte(CHALS_NEW.getPower3Start(i))) return "Impossible "
+        if (comp.gte(CHALS_NEW.getPower2Start(i))) return "Insane "
+        if (comp.gte(CHALS_NEW.getPower1Start(i))) return "Hardened "
+        return ""
+    },
+	getPower1(i) {
+		let x = D(1)
+		if (hasElement(2)) x = x.mul(0.75)
+		if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
+		if (hasTree("feat7")) x = x.mul(0.96)
+		return x
+	},
+	getPower1Start(i) {
+		return i > 8 ? 10 : 75
+	},
+	getPower2(i) {
+		let x = D(1)
+		//if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
+		return x
+	},
+	getPower2Start(i) {
+		return i > 8 ? 50 : i == 8 ? 200 : 300
+	},
+	getPower3(i) {
+		return getRadiationEff(7)
+	},
+	getPower3Start(i) {
+		return i > 8 ? EINF : 1000
+	},
+
+	//Others
+	max(x) {
+		let r = x > 8 ? CHALS_NEW.chals[x].max : CHALS_NEW.chals[x].max()
+		if (x == 3) r = r.min(2e3)
+		return r
+	},
+	eff(x, def = D(1)) {
+		return tmp.chal.eff[x] || CHALS_NEW.chals[x].effect(player.chal.comps[x])
+	},
+
+	//4 per layer
+	layers: [
+		{
+			title: "Black Hole",
+			unl: () => player.bh.unl,
+			doReset: () => FORMS.bh.doReset(),
+
+			resName: "mass",
+			res: () => player.mass,
+
+			autoGain: () => true,
+			mustExit: () => true,
+			mustReset: () => true,
+		},
+		{
+			title: "Atom",
+			unl: () => player.atom.unl,
+			doReset: () => ATOM.doReset(true),
+
+			resName: "mass of black hole",
+			res: () => player.bh.mass,
+
+			autoGain: () => true,
+			mustExit: () => true,
+			mustReset: () => true,
+		},
+		{
+			title: "Supernovae",
+			unl: () => hasTree("chal4"),
+			doReset: () => SUPERNOVA.doReset(true),
+
+			resName: "mass",
+			res: () => player.mass,
+
+			autoGain: () => true,
+			mustExit: () => true,
+			mustReset: () => true,
+		},
+		{
+			title: "Exotic",
+			unl: () => hasExtMilestone("unl", 2),
+			doReset: () => EXT.reset(true),
+
+			resName: "mass",
+			res: () => player.mass,
+
+			autoGain: () => true,
+			mustExit: () => true,
+			mustReset: () => true,
+		},
+	],
+	chals: [
+		null,
+
+		{
+			unl: () => true,
+			force: () => CHALS_NEW.in(10),
+
+			title: "Instant Scale",
+			desc: "Super Rank and Mass Upgrades start at 25. Additionally, Super Tickspeed starts at 50.",
+
+			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			scale: {
+				inc: D(5),
+				pow: D(1.3),
+				start: D(1.5e58),
+			},
+
+			reward: `Super Rank scales later, and weaken Super Tickspeed.`,
+			effect(x) {
+				let rank = x.softcap(20,4,1).floor()
+				let tick = D(0.96).pow(x.root(2))
+				return {rank: rank, tick: tick}
+			},
+			effDesc(x) { return "+"+format(x.rank,0)+" to Super Rank, "+format(D(1).sub(x.tick).mul(100))+"% weaker to Super Tickspeed" },
+		},
+		{
+			unl: () => player.atom.unl || player.chal.comps[1].gt(0),
+			force: () => CHALS_NEW.in(10),
+
+			title: "Anti-Tickspeed",
+			desc: "You can't buy Tickspeed.",
+
+			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			scale: {
+				inc: D(10),
+				pow: D(1.3),
+				start: D(1.989e40),
+			},
+
+			reward: `Add Tickspeed Power.`,
+			effect(x) {
+				let sp = D(0.5)
+				if (hasElement(8)) sp = sp.pow(0.25)
+				if (hasElement(39)) sp = D(1)
+				let ret = x.mul(0.075).add(1).softcap(1.3,sp,0).sub(1)
+				return ret
+			},
+			effDesc(x) { return "+"+format(x.mul(100))+"%"+getSoftcapHTML(x,0.3) },
+		},
+		{
+			unl: () => player.atom.unl || player.chal.comps[2].gt(0),
+			force: () => CHALS_NEW.in(10),
+
+			title: "Melted Mass",
+			desc: "Mass softcap scales /1e150 earlier, and is stronger.",
+
+			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			scale: {
+				inc: D(25),
+				pow: D(1.25),
+				start: D(2.9835e49),
+			},
+
+			reward: `Raise Mass. [can't apply in this challenge]`,
+			effect(x) {
+				if (hasElement(64)) x = x.mul(1.5)
+				return x.root(1.5).mul(0.01).add(1)
+			},
+			effDesc(x) { return "^"+format(x) },
+		},
+		{
+			unl: () => player.atom.unl || player.chal.comps[3].gt(0),
+			force: () => CHALS_NEW.in(10),
+
+			title: "Weakened Rage",
+			desc: "Reduce Rage Power. Additionally, mass softcap scales /1e100 earlier.",
+
+			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			scale: {
+				inc: D(30),
+				pow: D(1.25),
+				start: D(1.736881338559743e133),
+			},
+
+			reward: `Raise Rage Power.`,
+			effect(x) {
+				if (hasElement(64)) x = x.mul(1.5)
+				return x.root(1.5).mul(0.01).add(1)
+			},
+			effDesc(x) { return "^"+format(x) },
+		},
+
+		{
+			unl: () => player.atom.unl,
+			force: () => CHALS_NEW.in(10),
+
+			title: "No Rank",
+			desc: "You can't rank up.",
+
+			max() {
+				let r = D(50)
+				if (hasElement(13)) r = r.add(tmp.elements.effect[13])
+				return r.floor()
+			},
+			scale: {
+				inc: D(50),
+				pow: D(1.25),
+				start: D(1.5e136),
+			},
+
+			reward: `Weaken Rank.`,
+			effect(x) {
+				let ret = D(0.97).pow(x.root(2).softcap(5,0.5,0)).max(.5)
+				return ret
+			},
+			effDesc(x) { return format(D(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(x.log(0.97),5) },
+		},
+		{
+			unl: () => player.supernova.unl || player.chal.comps[5].gt(0),
+			force: () => CHALS_NEW.in(10),
+
+			title: "No Tickspeed & Condenser",
+			desc: "You cannot buy Tickspeed & BH Condenser.",
+
+			max() {
+				let r = D(50)
+				if (hasElement(13)) r = r.add(tmp.elements.effect[13])
+				return r.floor()
+			},
+			scale: {
+				inc: D(64),
+				pow: D(1.25),
+				start: D(1.989e38),
+			},
+
+			reward: `Add Tickspeed & BH Condenser Power.`,
+			effect(x) {
+				let ret = x.mul(0.1).add(1).softcap(1.5,hasElement(39)?1:0.5,0).sub(1)
+				return ret
+			},
+			effDesc(x) { return "+"+format(x)+"x"+getSoftcapHTML(x,0.5) },
+		},
+		{
+			unl: () => player.supernova.unl || player.chal.comps[6].gt(0),
+			force: () => CHALS_NEW.in(10),
+
+			title: "No Rage Power",
+			desc: "You can't gain Rage Power, but gain Dark Matter by mass. Additionally, strengthen mass softcap.",
+
+			max() {
+				let r = D(50)
+				if (hasElement(20)) r = r.add(50)
+				if (hasElement(41)) r = r.add(50)
+				if (hasElement(60)) r = r.add(100)
+				if (hasElement(65)) r = r.add(200)
+				if (hasTree("chal1")) r = r.add(100)
+				return r.floor()
+			},
+			scale: {
+				inc: D(64),
+				pow: D(1.25),
+				start: D(1.5e76),
+			},
+
+			reward: `Add maximum completions to C1-4.<br><span class="yellow">At 16th completion, unlock Element Upgrades!</span>`,
+			effect(x) {
+				let ret = x.mul(2)
+				if (hasElement(5)) ret = ret.mul(2)
+				return ret.floor()
+			},
+			effDesc(x) { return "+"+format(x,0) },
+		},
+		{
+			unl: () => player.supernova.unl || player.chal.comps[7].gt(0),
+			force: () => CHALS_NEW.in(10),
+
+			title: "White Hole",
+			desc: "Reduce Dark Matter and Black Hole mass.",
+
+			max() {
+				let r = D(50)
+				if (hasElement(33)) r = r.add(50)
+				if (hasElement(56)) r = r.add(200)
+				if (hasElement(65)) r = r.add(200)
+				if (hasTree("chal1")) r = r.add(100)
+				return r.floor()
+			},
+			scale: {
+				inc: D(80),
+				pow: D(1.3),
+				start: D(1.989e38),
+			},
+
+			reward: `Raise Dark Matter and Black Hole mass.<br><span class="yellow">At first completion, unlock 3 rows of Elements!</span>`,
+			effect(x) {
+				let dm = x
+				if (hasElement(64)) dm = dm.mul(1.5)
+				dm = dm.root(1.75).mul(0.02).add(1)
+
+				let bh = x.min(600)
+				if (hasElement(64)) bh = bh.mul(1.5)
+				bh = bh.root(1.75).mul(0.02).add(1)
+
+				return { dm: dm, bh: bh }
+			},
+			effDesc(x) { return "^"+format(x.dm,3) },
+		},
+
+		{
+			unl: () => hasTree("chal4"),
+			force: () => FERMIONS.onActive("12"),
+
+			title: "No Particles",
+			desc: "You can't assign quarks. Additionally, dilate mass by ^0.9!",
+
+			max: D(100),
+			scale: {
+				inc: D('e500'),
+				pow: D(2),
+				start: D('e9.9e4').mul(1.5e56),
+			},
+
+			reward: `Improve Magnesium-12 better.`,
+			effect(x) {
+				let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
+				return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(1.5) }
+			},
+			effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", "+formatMultiply(x.mul):"") },
+		},
+		{
+			unl: () => hasTree("chal5"),
+
+			title: "The Reality I",
+			desc: "Challenges 1 - 8, but you are trapped in Mass Dilation!",
+
+			max: D(100),
+			scale: {
+				inc: D('e2000'),
+				pow: D(2),
+				start: D('e3e4').mul(1.5e56),
+			},
+
+			reward: `Raise the RP formula. [can't apply in this challenge]<br><span class="yellow">At first completion, unlock Fermions!</span>`,
+			effect(x) {
+				let ret = x.root(1.75).div(100).add(1)
+				ret = ret.pow(getRadiationEff(11))
+				return ret
+			},
+			effDesc(x) { return "^"+format(x,3) },
+		},
+		{
+			unl: () => hasTree("chal6"),
+
+			title: "Absolutism",
+			desc: "You can't gain relativistic particles. Additionally, you are trapped in Mass Dilation!",
+
+			max: D(100),
+			scale: {
+				inc: D(1.15),
+				pow: D(1),
+				start: uni("e1e6"),
+				sexp: true
+			},
+
+			reward: `Strengthen Star Boosters.<br><span class="yellow">On first completion, unlock Pent!</span>`,
+			effect(x) {
+				return x.div(20).add(1)
+			},
+			effDesc(x) { return format(x)+"x stronger" },
+		},
+		{
+			unl: () => hasTree("chal7"),
+
+			title: "Wormhole Devourer",
+			desc: "You are stuck in Mass Dilation, with ^0.428 penalty. Black Hole stays normal.",
+
+			max: D(100),
+			scale: {
+				inc: D(1.15),
+				pow: D(1),
+				start: uni("e47250"),
+				sexp: true
+			},
+
+			reward: `Radiation Boosters scale slower.<br><span class="yellow">On first completion, unlock a new prestige layer!</span>`,
+			effect(x) {
+				//c12 boost - closer to linear inflation
+				return D(1/0.985).pow(x)
+			},
+			effDesc(x) { return formatMultiply(x)+" slower" },
+		},
+
+		{
+			unl: () => hasExtMilestone("unl", 2),
+
+			title: "Decay of Atom",
+			desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
+
+			max: D(100),
+			scale: {
+				inc: D(1),
+				pow: D(1),
+				start: EINF,
+				sexp: true
+			},
+
+			reward: `???`,
+			effect(x) {
+				return D(1)
+			},
+			effDesc(x) { return formatMultiply(x)+"x" },
+		},
+		{
+			unl: () => player.chal.comps[13].gt(0),
+
+			title: "Monochromatic Mass",
+			desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
+
+			max: D(100),
+			scale: {
+				inc: D(1),
+				pow: D(1),
+				start: EINF,
+				sexp: true
+			},
+
+			reward: `???`,
+			effect(x) {
+				return D(1)
+			},
+			effDesc(x) { return formatMultiply(x)+"x" },
+		},
+		{
+			unl: () => player.chal.comps[14].gt(0),
+
+			title: "The Reality II",
+			desc: `Challenges 11 - 12, but Temporal Supernovae do nothing.`,
+
+			max: D(50),
+			scale: {
+				inc: D(1),
+				pow: D(1),
+				start: EINF,
+				sexp: true
+			},
+
+			reward: `???`,
+			effect(x) {
+				return D(1)
+			},
+			effDesc(x) { return formatMultiply(x)+"x" },
+		},
+		{
+			unl: () => player.chal.comps[15].gt(0),
+
+			title: "Subspatial Normalcy",
+			desc: "Liquate pre-Supernovae!",
+
+			max: D(80),
+			scale: {
+				inc: D(1),
+				pow: D(1),
+				start: EINF,
+				sexp: true
+			},
+
+			reward: `???`,
+			effect(x) {
+				return D(1)
+			},
+			effDesc(x) { return formatMultiply(x)+"x" },
+		},
+	]
+}
+const CHAL_NUM = CHALS_NEW.layers.length * 4
+
+function chalTick() {
+	if (player.mass.gte(1.5e136)) player.chal.unl = true
+	if (!player.chal.unl) return
+
+	for (const i of tmp.chal.in) {
+		let layer = Math.ceil(i / 4) - 1
+		if (CHALS_NEW.bulk(i).gt(player.chal.bulkComps[i])) player.chal.bulkComps[i] = CHALS_NEW.bulk(i)
+		if (hasTree("qol6")) player.chal.comps[i] = player.chal.bulkComps[i]
 	}
-	chals_table.setHTML(table)
 }
 
-function updateChalHTML() {
-    for (let x = 1; x <= CHALS.cols; x++) {
-        let max = player.chal.comps[x].gte(tmp.chal.max[x])
-        let chal = CHALS[x]
-        let unl = chal.unl ? chal.unl() : true
-        if (x <= leastManualChal()) unl = false
-
-        elm["chal_div_"+x].setDisplay(unl)
-        elm["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: max})
-        if (unl) {
-            elm["chal_comp_"+x].setTxt(max?"Completed":format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
-        }
-    }
-
-	let shrt = SHORTCUT_EDIT.mode == 1
-    elm.chal_enter.setVisible(!CHALS.inChal(player.chal.choosed))
-    elm.chal_exit.setVisible(CHALS.lastActive())
-    elm.chal_exit.setTxt(tmp.chal.canFinish && !hasTree("qol6") ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : CHALS.lastActive() > 12 ? "Exit Exotic Challenge" : "Exit Challenge")
-    elm.chal_desc_div.setDisplay(player.chal.choosed && !shrt)
-    elm.chal_hint.setDisplay(!shrt)
-    elm.chal_shrt.setDisplay(shrt)
-
-    if (player.chal.choosed != 0 && !shrt) {
-        let x = player.chal.choosed
-        let chal = CHALS[x]
-        let max = player.chal.comps[x].gte(tmp.chal.max[x])
-        elm.chal_ch_title.setTxt(`[${x}]${CHALS.getScaleName(x)} ${chal.title} [${format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0)} Completions]`)
-        elm.chal_ch_desc.setHTML(chal.desc)
-        elm.chal_ch_reset.setTxt(CHALS.getReset(x))
-        elm.chal_ch_goal.setTxt(max ? "" : "Goal: "+CHALS.getFormat(x)(tmp.chal.goal[x])+CHALS.getResName(x))
-        elm.chal_ch_reward.setHTML("Reward: "+chal.reward)
-        elm.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[x]))
-    }
+function gainChalComp(x) {
+	player.chal.comps[x] = player.chal.comps[x].max(player.chal.bulkComps[x] || CHALS_NEW.bulk(i))
 }
 
-function updateChalHeader() {
-	elm.chal_upper.setDisplay(CHALS.inChals())
+function updateChalTempNew() {
+	//In
+	let lastLayer = 0
+	for (let [l, d] of Object.entries(CHALS_NEW.layers)) {
+		if (d.unl()) lastLayer = i
+	}
+	tmp.chal.lastLayer = lastLayer
 
-	let chal = CHALS.lastActive()
+	let inChal = []
+	let inLastLayer = Infinity
+	for (let [l, d] of Object.entries(player.chal.progress)) {
+		for (let c of d) inChal.push(c)
+		inLastLayer = Math.min(l, inLastLayer)
+	}
+	tmp.chal.in = [...inChal]
+	tmp.chal.inLastLayer = inLastLayer
+
+	for (let c = CHAL_NUM; c > 0; c--) {
+		let force = CHALS_NEW.chals[c].force
+		if (force && force() && !inChal.includes(c)) inChal.push(c)
+	}
+	tmp.chal.inForce = inChal
+
+	//Eff
+	tmp.chal.eff = {}
+	for (let c = CHAL_NUM; c > 0; c--) {
+		tmp.chal.eff[c] = CHALS_NEW.chals[c].effect(player.chal.comps[c])
+	}
+}
+
+//HTML
+function setupChalHTMLNew() {
+	let html = ""
+	for (let layer = CHALS_NEW.layers.length - 1; layer >= 0; layer--) {
+		html += `<div class='table_center' id="chals_${layer}">`
+		for (let c = layer * 4 + 1; c <= layer * 4 + 4; c++) {
+			html += `<div id="chal_${c}" style="width: 120px; margin: 5px;"><img id="chal_${c}_btn" onclick="CHALS_NEW.choose(${c})" class="img_chal" src="images/chals/chal_${c}.png"><br><span id="chal_${c}_comp">0 / 0</span></div>`
+		}
+		html += `
+			<button id="chals_${layer}_start" class="btn" onclick="CHALS_NEW.enter(${layer}, tmp.chal.choosed[${layer}])">Start</button>
+			<button id="chals_${layer}_exit" class="btn" onclick="CHALS_NEW.exit(${layer})">Exit</button>
+		</div><div id="chals_${layer}_chosen" style='display: none'>
+			<b class="yellow" id="chals_${layer}_title"></b><br>
+			<span class="red" id="chals_${layer}_desc"></span><br>
+			Goal: <span id="chals_${layer}_goal"></span><br><br>
+
+			<b class='green'>
+				Reward: <span id="chals_${layer}_reward"></span><br>
+				Currently: <span id="chals_${layer}_eff"></span>
+			</b>
+		</div>`
+	}
+	new Element("chal_table").setHTML(html)
+}
+
+function updateChalHTMLNew() {
+	for (const [id, layer] of Object.entries(CHALS_NEW.layers)) {
+		const unl = layer.unl()
+		elm[`chals_${id}`].setDisplay(unl)
+		if (!unl) {
+			elm[`chals_${id}_chosen`].setDisplay(false)
+			continue
+		}
+
+		const chooseNum = tmp.chal.choosed
+		let choosed = false
+		for (let c = id * 4 + 1; c <= id * 4 + 4; c++) {
+			let inChal = CHALS_NEW.in(c)
+			let comp = D(player.chal.comps[c]).gte(CHALS_NEW.max(c))
+			elm[`chal_${c}`].setDisplay(CHALS_NEW.chals[c].unl())
+			elm[`chal_${c}_comp`].setHTML(
+				comp ? "<b class='green'>Completed</b>" :
+				tmp.chal.in.includes(c) ? "+" + format(player.chal.bulkComps[c].sub(player.chal.lastComps[c]), 0) :
+				format(player.chal.comps[c] || 0, 0) + " / " + format(CHALS_NEW.max(c), 0))
+			elm[`chal_${c}_btn`].setClasses({img_chal: true, ch_choosed: chooseNum == c, ch_in: inChal && tmp.chal.in.includes(c), ch_force: inChal && !tmp.chal.in.includes(c), ch_comp: comp && !inChal })
+
+			if (chooseNum == c) choosed = true
+		}
+
+		elm[`chals_${id}_start`].setDisplay(choosed && !CHALS_NEW.in(choosed))
+		elm[`chals_${id}_exit`].setDisplay(player.chal.progress[id])
+
+		elm[`chals_${id}_chosen`].setDisplay(choosed)
+		if (choosed) {
+			elm[`chals_${id}_title`].setTxt(`[${chooseNum}] ${CHALS_NEW.getScalingName(chooseNum) + CHALS_NEW.chals[chooseNum].title}`)
+			elm[`chals_${id}_desc`].setTxt(CHALS_NEW.chals[chooseNum].desc)
+			elm[`chals_${id}_goal`].setTxt(`${formatMass(CHALS_NEW.goal(chooseNum))} ${layer.resName}`)
+			elm[`chals_${id}_reward`].setHTML(CHALS_NEW.chals[chooseNum].reward)
+			elm[`chals_${id}_eff`].setHTML(CHALS_NEW.chals[chooseNum].effDesc(tmp.chal.eff[chooseNum]))
+		}
+	}
+
+    elm.chal_sweep.setDisplay(!CHALS_NEW.inAny() && hasTree("qol10"))
+}
+
+function updateChalHeaderNew() {
+	let layer = tmp.chal.inLastLayer
+	let chal = player.chal.progress[layer] || []
 	let md = player.md.active
 	let f = player.supernova.fermions.choosed
+
+	elm.chal_upper.setDisplay(CHALS_NEW.inAny() && !player.reset_msg)
+
 	if (md) {
 		elm.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
 	} else if (f) {
@@ -69,549 +707,22 @@ function updateChalHeader() {
 				"<br>Go over "+ff(fm.res())+" / "+ff(fm.nextTierAt(ft))+" "+fm.inc+" to complete."
 			)
 		)
-	} else if (chal) {
-		let data = CHALS.getChalData(chal, tmp.chal.bulk[chal].max(player.chal.comps[chal]))
+	} else if (chal.length > 1) {
 		elm.chal_upper.setHTML(
-			`You are in [${CHALS[chal].title}] Challenge!<br>` + (
-				player.chal.comps[chal].gte(tmp.chal.max[chal]) ? `` :
-				tmp.chal.gain.gt(0) ? `+${format(tmp.chal.gain,0)} (Next: ${tmp.chal.format(data.goal)+CHALS.getResName(chal)})` :
-				`Get ${tmp.chal.format(tmp.chal.goal[chal])+CHALS.getResName(chal)} to complete.`
+			`You are in Challenges [${chal.join(", ")}]!`
+		)
+	} else if (chal.length == 1) {
+		chal = chal[0]
+
+		let layer_data = CHALS_NEW.layers[layer]
+		elm.chal_upper.setHTML(
+			`You are in [${CHALS_NEW.chals[chal].title}] Challenge!<br>` + (
+				player.chal.comps[chal].gte(CHALS_NEW.max(chal)) ? `` :
+				player.chal.bulkComps[chal].gt(player.chal.lastComps[chal]) ? `+${format(player.chal.bulkComps[chal].sub(player.chal.lastComps[chal]),0)} (Next: ${format(layer_data.res())} / ${format(CHALS_NEW.goal(chal, player.chal.bulkComps[chal]))} ${layer_data.resName})` :
+				`Get ${format(layer_data.res())} / ${format(CHALS_NEW.goal(chal))} ${layer_data.resName} to complete.`
 			)
 		)
+	} else {
+		elm.chal_upper.setTxt("[ ERROR ]")
 	}
-}
-
-function updateChalTemp() {
-    if (!tmp.chal) tmp.chal = {
-        goal: {},
-        max: {},
-        eff: {},
-        bulk: {},
-        canFinish: false,
-        gain: D(0),
-    }
-    for (let x = 1; x <= CHALS.cols; x++) {
-        let data = CHALS.getChalData(x)
-        tmp.chal.max[x] = CHALS.getMax(x)
-        tmp.chal.goal[x] = data.goal
-        tmp.chal.bulk[x] = data.bulk
-        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive(04) ? D(0) : player.chal.comps[x])
-    }
-
-	let active = CHALS.lastActive()
-    tmp.chal.format = active != 0 ? CHALS.getFormat() : format
-    tmp.chal.gain = active != 0 ? tmp.chal.bulk[active].min(tmp.chal.max[active]).sub(player.chal.comps[active]).max(0).floor() : D(0)
-    tmp.chal.canFinish = active != 0 ? tmp.chal.gain.gt(0) : false
-	tmp.chal.outside = active == 0 && !player.md.active && player.supernova.fermions.choosed == ""
-}
-
-const CHALS = {
-    choose(x) {
-        if (SHORTCUT_EDIT.mode) {
-            player.shrt.order[SHORTCUT_EDIT.pos] = [1,x]
-            SHORTCUT_EDIT.mode = 0
-            return
-        }
-        if (player.chal.choosed == x) {
-            this.enter()
-        }
-        player.chal.choosed = x
-    },
-    choosed(x) {
-        if (x > 12) player.ext.ec = x
-		else player.chal.active = x
-    },
-    lastActive(x) {
-		return player.chal.active || player.ext?.ec || 0
-    },
-    getActive(x) {
-		let r = player.chal.active
-        if (x > 12) r = player.ext?.ec
-		return r || 0
-    },
-
-    inChals() {
-		return player.chal.active || player.md.active || player.supernova.fermions.choosed || player.ext?.ec
-    },
-    inChal(x) { return this.getActive(x) == x },
-    reset(x, chal_reset=true) {
-        if (x <= 4) FORMS.bh.doReset()
-        else if (x <= 8) ATOM.doReset(chal_reset)
-        else if (x <= 12) SUPERNOVA.reset(true, true)
-        else EXT.reset(true)
-    },
-	exit(auto=false, noExt) {
-		let active = this.lastActive()
-		if (active > 0) {
-			if (tmp.chal.canFinish) player.chal.comps[active] = player.chal.comps[active].add(tmp.chal.gain)
-			if (!auto) {
-				if (active <= 12) {
-					player.chal.active = 0
-					this.reset(active)
-					player.supernova.auto.t = Infinity
-				}
-				if (!noExt && active > 12) {
-					if (player.confirms.ec && !confirm("You won't lose progress, but you won't recieve completions anymore. Proceed?")) return
-					delete player.ext.ec
-				}
-			}
-		}
-	},
-    enter() {
-		let x = player.chal.choosed
-		let act = this.getActive(x)
-
-		if (act == x) return
-		if (x > 12) {
-			if (player.confirms.ec && !confirm("Make sure to sweep before starting! Are you sure?")) return
-			player.chal.active = 0
-		}
-		if (act > 0) this.exit(false, true)
-		this.choosed(x)
-		this.reset(player.chal.choosed, false)
-    },
-    getResource(x) {
-        if (x < 5 || x > 8) return player.mass
-        return player.bh.mass
-    },
-    getResName(x) {
-        if (x < 5 || x > 8) return ''
-        return ' of Black Hole'
-    },
-    getFormat(x) {
-        return formatMass
-    },
-    getReset(x) {
-		if (x > 12 && x <= 16) return "Entering challenge will rise Exotic, and will lose your progress! (Recommended to sweep)"
-        return "Entering challenge will lose your progress."
-    },
-    getMax(i) {
-        let x = this[i].max
-        if (i <= 4) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
-        if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
-        if (hasElement(20) && (i==7)) x = x.add(50)
-        if (hasElement(41) && (i==7)) x = x.add(50)
-        if (hasElement(60) && (i==7)) x = x.add(100)
-        if (hasElement(33) && (i==8)) x = x.add(50)
-        if (hasElement(56) && (i==8)) x = x.add(200)
-        if (hasElement(65) && (i==7||i==8)) x = x.add(200)
-        if (hasTree("chal1") && (i==7||i==8)) x = x.add(100)
-        //if (AXION.unl() && (i==7||i>=9&&i<=12)) x = x.add(tmp.ax.eff[13])
-		//if (AXION.unl() && i==8) x = x.add(tmp.ax.eff[17])
-        return x.floor()
-    },
-    getScaleName(i) {
-        if (i >= 12) return ""
-        if (player.chal.comps[i].gte(CHALS.getPower3Start(i))) return " Impossible"
-        if (player.chal.comps[i].gte(CHALS.getPower2Start(i))) return " Insane"
-        if (player.chal.comps[i].gte(CHALS.getPower1Start(i))) return " Hardened"
-        return ""
-    },
-    getPower(i) {
-        let x = D(1)
-        if (hasElement(2)) x = x.mul(0.75)
-        if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
-        if (hasTree("feat7")) x = x.mul(0.96)
-        return x
-    },
-    getPower1Start(i) {
-        return i > 8 ? 10 : 75
-    },
-    getPower2(i) {
-        let x = D(1)
-        //if (AXION.unl()) x = x.mul(tmp.ax.eff[14])
-        return x
-    },
-    getPower2Start(i) {
-        return i > 8 ? 50 : i == 8 ? 200 : 300
-    },
-    getPower3(i) {
-        return D(1)
-    },
-    getPower3Start(i) {
-        return i > 8 ? EINF : 1000
-    },
-    getChalData(x, r=D(-1), a) {
-		let res = CHALS.inChal(x)||a?this.getResource(x):D(0)
-		let chal = this[x]
-
-		let lvl = r.lt(0)?player.chal.comps[x]:r
-		let pow = chal.pow
-		if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
-		if (x >= 12) {
-			//Instant Exponential Scale.
-			let goal = chal.start.pow(chal.inc.pow(lvl.pow(pow)))
-			let bulk = res.log(chal.start).log(chal.inc).root(pow).add(1).floor()
-			if (res.lt(chal.start)) bulk = D(0)
-			return {goal: goal, bulk: bulk}
-		}
-
-        let goal = chal.inc.pow(lvl.pow(pow)).mul(chal.start)
-        let bulk = res.div(chal.start).max(1).log(chal.inc).root(pow).add(1).floor()
-        if (res.lt(chal.start)) bulk = D(0)
-
-        let s1 = CHALS.getPower1Start(x)
-        let s2 = CHALS.getPower2Start(x)
-        let s3 = CHALS.getPower3Start(x)
-
-        if (lvl.max(bulk).gte(s1)) {
-            let start = D(s1);
-            let exp = D(3).pow(this.getPower());
-            goal =
-            chal.inc.pow(
-                    lvl.pow(exp).div(start.pow(exp.sub(1))).pow(pow)
-                ).mul(chal.start)
-            bulk = res
-                .div(chal.start)
-                .max(1)
-                .log(chal.inc)
-                .root(pow)
-                .times(start.pow(exp.sub(1)))
-                .root(exp)
-                .add(1)
-                .floor();
-        }
-        if (lvl.max(bulk).gte(s2)) {
-            let start = D(s1);
-            let exp = D(3).pow(this.getPower());
-            let start2 = D(s2);
-            let exp2 = D(4.5).pow(this.getPower2())
-            goal =
-            chal.inc.pow(
-                    lvl.pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
-                ).mul(chal.start)
-            bulk = res
-                .div(chal.start)
-                .max(1)
-                .log(chal.inc)
-                .root(pow)
-                .times(start.pow(exp.sub(1)))
-                .root(exp)
-                .times(start2.pow(exp2.sub(1)))
-                .root(exp2)
-                .add(1)
-                .floor();
-        }
-        if (lvl.max(bulk).gte(s3)) {
-            let start = D(s1);
-            let exp = D(3).pow(this.getPower());
-            let start2 = D(s2);
-            let exp2 = D(4.5).pow(this.getPower2())
-            let start3 = D(s3);
-            let exp3_base = D(1).div(s3).add(1).pow(this.getPower3())
-            goal =
-            chal.inc.pow(
-                    exp3_base.pow(lvl.sub(start3)).mul(start3)
-                    .pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
-                ).mul(chal.start)
-            bulk = res
-                .div(chal.start)
-                .max(1)
-                .log(chal.inc)
-                .root(pow)
-                .times(start.pow(exp.sub(1)))
-                .root(exp)
-                .times(start2.pow(exp2.sub(1)))
-                .root(exp2)
-                .div(start3)
-			    .max(1)
-			    .log(exp3_base)
-			    .add(start3)
-                .add(1)
-                .floor();
-        }
-        return {goal: goal, bulk: bulk}
-    },
-    1: {
-        title: "Instant Scale",
-        desc: "Super Rank and Mass Upgrades start at 25. Additionally, Super Tickspeed starts at 50.",
-        reward: `Super Rank scales later, and weaken Super Tickspeed.`,
-        max: D(100),
-        inc: D(5),
-        pow: D(1.3),
-        start: D(1.5e58),
-        effect(x) {
-            let rank = x.softcap(20,4,1).floor()
-            let tick = D(0.96).pow(x.root(2))
-            return {rank: rank, tick: tick}
-        },
-        effDesc(x) { return "+"+format(x.rank,0)+" to Super Rank, "+format(D(1).sub(x.tick).mul(100))+"% weaker to Super Tickspeed" },
-    },
-    2: {
-        unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
-        title: "Anti-Tickspeed",
-        desc: "You can't buy Tickspeed.",
-        reward: `Add Tickspeed Power.`,
-        max: D(100),
-        inc: D(10),
-        pow: D(1.3),
-        start: D(1.989e40),
-        effect(x) {
-            let sp = D(0.5)
-            if (hasElement(8)) sp = sp.pow(0.25)
-            if (hasElement(39)) sp = D(1)
-            let ret = x.mul(0.075).add(1).softcap(1.3,sp,0).sub(1)
-            return ret
-        },
-        effDesc(x) { return "+"+format(x.mul(100))+"%"+getSoftcapHTML(x,0.3) },
-    },
-    3: {
-        unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
-        title: "Melted Mass",
-        desc: "Mass softcap scales /1e150 earlier, and is stronger.",
-        reward: `Raise Mass. [can't apply in this challenge]`,
-        max: D(100),
-        inc: D(25),
-        pow: D(1.25),
-        start: D(2.9835e49),
-		effect(x) {
-			if (hasElement(64)) x = x.mul(1.5)
-			let ret = x.root(1.5).mul(0.01).add(1)
-			let cap = D(2.4)
-			if (hasTree("feat5")) {
-				ret = ret.add(0.05)
-				cap = cap.add(0.05)
-			}
-			return ret.min(cap)
-		},
-        effDesc(x) { return "^"+format(x) },
-    },
-    4: {
-        unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
-        title: "Weakened Rage",
-        desc: "Reduce Rage Power. Additionally, mass softcap scales /1e100 earlier.",
-        reward: `Raise Rage Power.`,
-        max: D(100),
-        inc: D(30),
-        pow: D(1.25),
-        start: D(1.736881338559743e133),
-		effect(x) {
-			if (hasElement(64)) x = x.mul(1.5)
-			let ret = x.root(1.5).mul(0.01).add(1)
-			let cap = D(2.4).add(tmp.fermions && tmp.fermions.effs[1][5])
-			if (hasTree("feat5")) {
-				ret = ret.add(0.05)
-				cap = cap.add(0.05)
-			}
-			return ret.min(cap)
-		},
-        effDesc(x) { return "^"+format(x) },
-    },
-    5: {
-        unl() { return player.atom.unl },
-        title: "No Rank",
-        desc: "You can't rank up.",
-        reward: `Weaken Rank.`,
-        max: D(50),
-        inc: D(50),
-        pow: D(1.25),
-        start: D(1.5e136),
-        effect(x) {
-            let ret = D(0.97).pow(x.root(2).softcap(5,0.5,0)).max(.5)
-            return ret
-        },
-        effDesc(x) { return format(D(1).sub(x).mul(100))+"% weaker"+getSoftcapHTML(x.log(0.97),5) },
-    },
-    6: {
-        unl() { return player.chal.comps[5].gte(1) || player.supernova.unl },
-        title: "No Tickspeed & Condenser",
-        desc: "You cannot buy Tickspeed & BH Condenser.",
-        reward: `Add Tickspeed & BH Condenser Power.`,
-        max: D(50),
-        inc: D(64),
-        pow: D(1.25),
-        start: D(1.989e38),
-        effect(x) {
-            let ret = x.mul(0.1).add(1).softcap(1.5,hasElement(39)?1:0.5,0).sub(1)
-            return ret
-        },
-        effDesc(x) { return "+"+format(x)+"x"+getSoftcapHTML(x,0.5) },
-    },
-    7: {
-        unl() { return player.chal.comps[6].gte(1) || player.supernova.unl },
-        title: "No Rage Power",
-        desc: "You can't gain Rage Power, but gain Dark Matter by mass.<br>Additionally, strengthen mass softcap.",
-        reward: `Add maximum completions to C1-4.<br><span class="yellow">At 16th completion, unlock Element Upgrades!</span>`,
-        max: D(50),
-        inc: D(64),
-        pow: D(1.25),
-        start: D(1.5e76),
-        effect(x) {
-            let ret = x.mul(2)
-            if (hasElement(5)) ret = ret.mul(2)
-            return ret.floor()
-        },
-        effDesc(x) { return "+"+format(x,0) },
-    },
-    8: {
-        unl() { return player.chal.comps[7].gte(1) || player.supernova.unl },
-        title: "White Hole",
-        desc: "Reduce Dark Matter and Black Hole mass.",
-        reward: `Raise Dark Matter and Black Hole mass.<br><span class="yellow">At first completion, unlock 3 rows of Elements!</span>`,
-        max: D(50),
-        inc: D(80),
-        pow: D(1.3),
-        start: D(1.989e38),
-		effect(x) {
-			let dm = x
-			if (hasElement(64)) dm = dm.mul(1.5)
-			dm = dm.root(1.75).mul(0.02).add(1)
-
-			let bh = x.min(600)
-			if (hasElement(64)) bh = bh.mul(1.5)
-			bh = bh.root(1.75).mul(0.02).add(1)
-
-			return { dm: dm, bh: bh }
-		},
-        effDesc(x) { return "^"+format(x.dm,3) },
-    },
-    9: {
-        unl() { return hasTree("chal4") },
-        title: "No Particles",
-        desc: "You can't assign quarks. Additionally, dilate mass by ^0.9!",
-        reward: `Improve Magnesium-12 better.`,
-        max: D(100),
-        inc: D('e500'),
-        pow: D(2),
-        start: D('e9.9e4').mul(1.5e56),
-        effect(x) {
-            let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
-            return {exp: ret.min(1.3), mul: ret.sub(1.3).max(0).mul(3).add(1).pow(1.5) }
-        },
-        effDesc(x) { return "^"+format(x.exp)+(x.mul.gt(1)?", "+formatMultiply(x.mul):"") },
-    },
-    10: {
-        unl() { return hasTree("chal5") },
-        title: "The Reality I",
-        desc: "Challenges 1 - 8, but you are trapped in Mass Dilation!",
-        reward: `Raise the RP formula. [can't apply in this challenge]<br><span class="yellow">At first completion, unlock Fermions!</span>`,
-        max: D(100),
-        inc: D('e2000'),
-        pow: D(2),
-        start: D('e3e4').mul(1.5e56),
-		effect(x) {
-			let exp = D(1/1.75)
-			let mul = D(0.01)
-			if (player.chal.comps[14].gte(0)) {
-				let c14 = CHALS[14].effect(player.chal.comps[14])
-				exp = exp.mul(c14.c10)
-			}
-			let ret = x.pow(exp).mul(mul).add(1)
-			return ret
-		},
-        effDesc(x) { return "^"+format(x,3) },
-    },
-    11: {
-        unl() { return hasTree("chal6") },
-        title: "Absolutism",
-        desc: "You can't gain relativistic particles. Additionally, you are trapped in Mass Dilation!",
-        reward: `Strengthen Star Boosters.<br><span class="yellow">On first completion, unlock Pent!</span>`,
-        max: D(100),
-        inc: D("e1e6"),
-        pow: D(1.45),
-        start: uni("e8.5e7"),
-        effect(x) {
-            let ret = x.div(100).sqrt().add(1)
-            return ret.softcap(2, 2/3, 2)
-        },
-        effDesc(x) { return format(x)+"x stronger"+getSoftcapHTML(x,2) },
-    },
-	12: {
-		unl() { return hasTree("chal7") },
-		title: "Wormhole Devourer",
-		desc: "You are stuck in Mass Dilation, with ^0.428 penalty. Black Hole stays normal.",
-		reward: `Radiation Boosters scale slower.<br><span class="yellow">On first completion, unlock a new prestige layer!</span>`,
-		max: D(100),
-		inc: D(1.15),
-		pow: D(1),
-		start: uni("e47250"),
-		effect(x) {
-            //c12 boost - closer to linear inflation
-            return D(1/0.985).pow(x)
-		},
-		effDesc(x) { return formatMultiply(x)+" slower" },
-	},
-	13: {
-		unl() { return hasExtMilestone("unl", 2) || PORTAL.unl() },
-		title: "Decay of Atom",
-		desc: "You can't gain Atoms and Quarks. Additionally, start with Bosons unlocked.",
-		reward: `Weaken Axion penalties.<br><span class="ch_color">On 9th completion, unlock Glueball and Chroma Tonings!</span>`,
-		max: D(100),
-		inc: D(11/9),
-		pow: D(1.15),
-		start: uni("e4e4"),
-		effect(x) {
-            return x.div(6).add(1)
-		},
-		effDesc(x) { return formatMultiply(x)+" slower" },
-	},
-	14: {
-		unl() { return player.chal.comps[13].gt(0) || PORTAL.unl() },
-		title: "Monochromatic Mass",
-		desc: "You can't gain non-Mass Buildings and Radiation. Additionally, you can't dilate mass and Stars are reduced.",
-		reward: `Raise Challenge 10 and add Free Gluons.`,
-		max: D(100),
-		inc: D(1.2),
-		pow: D(1.5),
-		start: uni("e2e5"),
-		effect(x) {
-			return {
-				c10: D(1).add(x.div(20).sqrt().min(.6)),
-				fg_add: x,
-				fg_mul: x.div(10).max(1)
-			}
-		},
-        effDesc(x) { return "C10: ^"+format(x.c10)+", FG: +"+format(x.fg_add)+", "+formatMultiply(x.fg_mul) },
-	},
-	15: {
-		unl() { return player.chal.comps[14].gt(0) || PORTAL.unl() },
-		title: "The Reality II",
-		desc: `Challenges 11 - 12, but Temporal Supernovae do nothing.`,
-		reward: `Extending Glueball Upgrades cheapens faster.<br><span class='gray'>On ???th completion, unlock Entropic Banks, Entropic Grid, and Virtual! [soon]</span>`,
-		max: D(50),
-		inc: D(1.3),
-		pow: D(1.25),
-		start: D(1e100),
-		effect(x) {
-			return x.add(1).log10().add(1).sqrt()
-		},
-		effDesc(x) { return formatMultiply(x) },
-	},
-	16: {
-		unl() { return player.chal.comps[15].gt(0) || PORTAL.unl() },
-		title: "Subspatial Normalcy",
-		desc: "Liquate pre-Supernovae!",
-		reward: `???<br><span class='red'>On ???th completion, unlock Vacuum Decay!</span>`,
-		max: D(80),
-		inc: D(1),
-		pow: D(1),
-		start: EINF,
-		effect(x) {
-			return x.div(20).add(1).toNumber()
-		},
-		effDesc(x) { return "^"+format(x,3) },
-	},
-    cols: 16,
-}
-
-/*
-3: {
-    unl() { return player.chal.comps[2].gte(1) },
-    title: "Placeholder",
-    desc: "Placeholder.",
-    reward: `Placeholder.`,
-    max: D(50),
-    inc: D(10),
-    pow: D(1.25),
-    start: EINF,
-    effect(x) {
-        let ret = D(1)
-        return ret
-    },
-    effDesc(x) { return format(x)+"x" },
-},
-*/
-
-function chalOutside() {
-	return tmp.chal ? tmp.chal.outside : player.chal.active == 0 && !player.md.active && player.supernova.fermions.choosed == ""
 }

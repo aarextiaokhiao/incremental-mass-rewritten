@@ -23,25 +23,30 @@ TO-DO LIST:
 		Experiment things subjecting to mass.
 
 Post-Radiation [my version]:
-- There won't be Meta Rank.
 - There won't be Ultra Supernovae.
 
 Elements:
+- Stronger always give +^??? without softcaps.
 - Mass Upgrades always scale at ^1.25 rate.
-- Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
-- Tickspeed Power adds Stronger Power, but nullify Stronger Power's softcaps and boosts.
-- Tickspeed Power multiplies BHC Power.
-- Tickspeed Power multiplies Booster Power.
 - BH Condensers always scale at ^1.25 rate.
-- Cosmic Rays always scale at ^1.25 rate.
-- Cosmic Ray's Power raises Tickspeed Power.
+- Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
+- Tickspeed Power multiplies BHC Power.
+- Cosmic Rays scale at ^1.25 rate.
+- Cosmic Ray Power weakens Mass Upgrades and Star Boosters.
+- Atomic Power adds Tickspeed without softcaps.
 - Nullify Particle Powers' softcaps and boosts.
+- Argon-18's effect is squared.
+- Stars boost its effect at a reduced rate.
+- Strengthen Photon Upgrade 1, but it is no longer affected by levels.
+- Strengthen Gluon Upgrade 1, but it is no longer affected by levels.
 
 Neutron Tree:
-- [m4]   Musclers and Boosters raise their amounts.
-- [gr3]  Cosmic Ray effect softcap is removed.
-- [s5]   Star Exponent also raises Tickspeed Power.
+- [s5]   Tickspeed Power multiplies Star Booster power at a reduced rate. ((1/(1.25-1)+1)/(1/(1.13-1)+1))
 - [sn5]  Stars boost Neutron Stars.
+- [sn6]  Starting at X, Supernovae adds exponent after softcaps.
+- [bs5]  W Bosons boost each other more.
+- [bs6]  Neutron Stars boost Gravitons.
+- [bs7]  3rd Boson Upgrades scale linear, but nothing else affects them.
 - [rad1] Supernovae boosts Frequency.
 - [rad2] Velocity scales at same rate as Amplitude.
 - [rad3] Fermions boost Frequency.
@@ -50,13 +55,21 @@ Neutron Tree:
   After unlocking Gamma.
 - [rad5] Z0 Bosons boost Radiation.
   After unlocking Gamma.
+- [rad6] Strengthen Radiation Self-Boosts. ((10^log(x)^0.15)^l, scales at ^1.25 minimum.)
+  After unlocking Gamma.
 
 Pent Rewards:
-- Pent 1: Pent raises Stars.
-- Pent ?: Pent weakens Super Tier.
-- Pent ?: Supernovae weakens Super Tier.
-- Pent ?: Pent weakens Radiation Boosters. (minimum of ^1.25)
-- Pent ?: Pent boosts Radiation.
+- Pent ?: Tickspeed Power multiplies Booster Power.
+- Pent ?: Stronger raises Muscler efficiency.
+- Pent ?: Stronger raises Booster efficiency.
+- Pent ?: Muscler and Boosters add their efficiency exponents.
+- Pent ?: Cosmic Ray Power weakens Mass Upgrades and Tickspeed.
+- Pent ?: Atomic Power adds Star Boosters.
+- Pent ?: Pent boosts Frequency.
+- Pent ?: Pent weakens Rank Scalings.
+- Pent ?: Remove Rank scalings, Rank scales at ^1.5 rate.
+- Pent ?: Pent weakens Tier Scalings.
+- Pent ?: Tickspeed Power multiplies Tier 6 base.
 
 Radio: Boosts Frequency.
  - Boosts Radio based on Frequency.
@@ -70,7 +83,7 @@ Microwave: Boosts Radio.
 
 Infrared: Boosts Microwave.
  - Boosts Infrared based on Microwave.
- - Strengthen 1st Photon and Gluon upgrades.
+ - ???
  - Add X levels to boosts above.
 
 Visible: Boosts Infrared.

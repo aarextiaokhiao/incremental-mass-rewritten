@@ -309,6 +309,36 @@ const FORMATS = {
 		tier3(x, color, mode) {
 			return colorize(ST_NAMES[3][0][x], color, "magenta")
 		}
+	},
+	cst: {
+		format(ex, acc, color) {
+			let st = FORMATS.st
+			ex = D(ex)
+			if (ex.lt("1e3003")) return st.format(ex, acc, color)
+
+			let tier = 2
+			let ill = ex.log10().div(3).sub(1)
+			let ill_2 = ill.log10().div(3)
+			while (ill_2.gte(1e3)) {
+				ill = ill_2
+				ill_2 = ill_2.log10().div(3)
+				tier++
+			}
+			ill_2 = ill_2.floor().toNumber()
+			ill = ill.div(D(10).pow(ill_2*3)).toNumber()
+
+			let m = Math.floor(ill)
+			let d = Math.floor((ill * 1e3) % 1e3)
+			return (
+					ill_2 > 2 ? "[" + format(ill) + "]" :
+					m > 1 ? st["tier"+(tier-1)](m, color, "mul") :
+					""
+				) + st["tier"+tier](ill_2, color) +
+				(ill_2 <= 2 && m < 100 && d ?
+					ST_CONNECTIONS[tier] +
+					(ill_2 == 2 || m >= 10 ? "[" + d + "]" : st["tier"+(tier-1)](d, color))
+				: "")
+		}
 	}
 }
 
@@ -454,17 +484,37 @@ function formatArv(mlt, color) {
 			arv = arv.add(1).round()
 		}
 	} else {
-		//if (mlt.gte("ee3")) return format(mlt.log10().div(1e3),3) + " omni"
+		arv = arv_mant.log10().div(15)
+		if (arv.gte(100)) return formatHighArv(arv)
 
-		arv = arv_mant.log10().div(15).floor()
+		arv = arv.floor()
 		arv_mant = arv_mant.div(D(10).pow(arv.mul(15)))
 	}
 
 	let f = color ? formatColored : format
 	let postArv = arv.gte(ARV.length)
-	if (arv.gte(1e3)) return format(arv, 0) + " " + colorize("arvs", color, "magenta")
 	if (player.options.notation_mass == 3) return f(mlt) + " " + colorize("mlt", color, "red")
 	return f(arv_mant) + " " + colorize(postArv ? "arv^" + format(arv.add(2), 0) : ARV[arv.toNumber()], color, postArv ? "magenta" : "red")
+}
+
+function formatHighArv(arv) {
+	arv = D(arv)
+	if (arv.gte("ee6")) return formatOmv(arv.log10().div(1e9), 3)
+	if (arv.gte(1e45)) return format(arv.div(1e45),3) + " hyv"
+	if (arv.gte(1e30)) return format(arv.div(1e30),3) + " xev"
+	if (arv.gte(1e15)) return format(arv.div(1e15),3) + " mtv"
+	return format(arv,3) + " arvs"
+}
+
+function formatOmv(omv, color) {
+	omv = D(omv)
+	if (omv.gte(1e30)) return format(omv.div(1e30), 3) + " ldv"
+	if (omv.gte(1e15)) return format(omv.div(1e15), 3) + " sec"
+	if (omv.gte(1e12)) return format(omv.div(1e12), 3) + " tdm"
+	if (omv.gte(1e9)) return format(omv.div(1e9), 3) + " byn"
+	if (omv.gte(1e6)) return format(omv.div(1e6), 3) + " bar"
+	if (omv.gte(1)) return format(omv, 3) + " omv"
+	return format(omv.mul(1e3), 3) + " ulv"
 }
 
 //TIME

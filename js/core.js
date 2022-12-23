@@ -95,6 +95,7 @@ const FORMS = {
 		if (CHALS_NEW.in(4)) s = s.div(1e100)
 		if (hasUpgrade('bh',7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:D(1))
 		if (hasUpgrade('rp',13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:D(1))
+		s = s.pow(getRadiationEff(2))
 		if (tmp.massSoftGain2) s = s.min(tmp.massSoftGain2)
 		return s
 	},
@@ -112,6 +113,7 @@ const FORMS = {
 		if (hasTree("m2")) s = s.pow(treeEff("m3"))
 		if (hasRank("tetr", 8)) s = s.pow(1.5)
 		s = s.pow(tmp.bosons.effect.neg_w[0])
+		s = s.pow(getRadiationEff(2))
 		if (tmp.massSoftGain3) s = s.min(tmp.massSoftGain3)
 		return s
 	},
@@ -123,6 +125,7 @@ const FORMS = {
 	massSoftGain3() {
 		let s = uni("ee8")
 		if (hasTree("m3")) s = s.pow(treeEff("m3"))
+		s = s.pow(getRadiationEff(2))
 		return s
 	},
 	massSoftPower3() {
@@ -146,7 +149,7 @@ const FORMS = {
 		},
 		effect() {
 			let t = player.tickspeed
-			if (!scalingToned("tickspeed") && hasElement(63)) t = t.mul(25)
+			if (!isScalingToned("tickspeed") && hasElement(63)) t = t.mul(25)
 
 			let bonus = D(0)
 			if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
@@ -163,12 +166,12 @@ const FORMS = {
 			if (hasExtMilestone("boost", 1) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = D(1e50)
-			if (scalingToned("tickspeed")) ss = EINF
-			else if (scalingToned("tickspeed")) step = step.softcap(ss,0.1,0)
+			ss = ss.mul(getRadiationEff(5))
+			if (isScalingToned("tickspeed")) ss = EINF
+			else if (isScalingToned("tickspeed")) step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
 			if (!hasExtMilestone("boost", 1) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
-            if (bosonsMastered()) eff = eff.pow(tmp.bosons.upgs.photon[0].effect)
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
 		},
@@ -220,7 +223,7 @@ const FORMS = {
 			gain = gain.root(4)
 
 			if (hasTree("bh1")) gain = gain.mul(treeEff("bh1"))
-			if (!bosonsMastered()) gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
+			gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
 			gain = gain.mul(tmp.supernova.mult)
 
 			if (CHALS_NEW.in(7)) gain = gain.root(6)
@@ -234,6 +237,7 @@ const FORMS = {
 			let x = D(0.33)
 			if (FERMIONS.onActive("11")) return D(-1)
 			if (hasElement(59)) x = D(0.45)
+			x = x.add(getRadiationEff(4, 0))
 			return x
 		},
 		massGain() {
@@ -241,7 +245,7 @@ const FORMS = {
 			if (hasUpgrade('rp',11)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][11].effect:D(1))
 			if (hasUpgrade('bh',14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:D(1))
 			if (hasElement(46)) x = x.mul(tmp.elements.effect[46])
-			if (!bosonsMastered()) x = x.mul(tmp.bosons.upgs.photon[0].effect)
+			x = x.mul(tmp.bosons.upgs.photon[0].effect)
 			x = x.mul(tmp.supernova.mult)
 
 			if (CHALS_NEW.in(8)) x = x.root(8)
@@ -306,9 +310,8 @@ const FORMS = {
 					if (hasUpgrade('bh',2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:D(1))
 					pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
 					if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
-					if (!bosonsMastered()) pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
+					pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
 					if (hasTree("bh2")) pow = pow.pow(1.15)
-					if (hasRank("pent", 50)) pow = pow.pow(RANKS.effect.pent[50]())
 				let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
 				return {pow: pow, eff: eff}
 			},

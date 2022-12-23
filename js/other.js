@@ -39,9 +39,23 @@ const POPUP_GROUPS = {
         ytv (mass of Yottaverse): ` + POPUP_GROUPS.help.arvSect(7) + `<br>
         xvr (mass of Xennaverse): ` + POPUP_GROUPS.help.arvSect(8) + `<br>
         wkv (mass of Wekaverse): ` + POPUP_GROUPS.help.arvSect(9) + `<br>
-        arv-11 (mass of 11th Archverse): ` + POPUP_GROUPS.help.arvSect(10) + `<br><br>
+        arv^11 (mass of 11th Archverse): ` + POPUP_GROUPS.help.arvSect(10) + `<br><br>
 		`+
-        (player.options.notation_mass == 2 ? `` : `omni (mass of Omniverse): 1e1,000 mlt = 1e1e1,009 uni<br>`),
+        (player.options.notation_mass == 2 ? `` : `
+        arvs (mass of Archverses): x arvs = 1 arv^x (log)<br>
+		mtv (mass of Metaverse): 1e15 arvs<br>
+		xev (mass of Xenoverse): 1e15 mtv = 1e30 arvs<br>
+		hyv (mass of Hyperverse): 1e15 xev = 1e30 arvs<br><br>
+
+		ulv (mass of Ultraverse): 1e1e6 arvs (log)<br>
+		omv (mass of Omniverse): 1,000 ulv<br>
+		out (mass of The Outside): 1,000 omv<br>
+		bar (mass of The Barrel): 1,000 out = 1,000,000 omv<br>
+		byn (mass of Beyond): 1,000 bar = 1,000,000,000 omv<br>
+		tdm (mass of Transcendentem): 1,000 byn = 1e12 omv<br>
+		sec (mass of Secode): 1,000 tdm = 1e30 omv<br>
+		ldv (mass of Lodeverse): 1e15 sec = 1e30 omv<br>
+		`),
 		arvSect(x) {
 			if (player.options.notation_mass == 2) return "1e1e9 " + ARV[x - 1] + " (log)"
 			return "1e15 " + ARV[x - 1] + " = 1e1e" + (x * 15 + 9) + " uni"
@@ -76,6 +90,7 @@ const POPUP_GROUPS = {
 			<button class="btn" onclick="player.options.notation = 'log'">Logarithm</button><br><br>
 
 			<b style='font-size: 18px'>Non-Scientific</b><br>
+			<button class="btn" onclick="player.options.notation = 'cst'">Condensed Standard</button>
 			<button class="btn" onclick="player.options.notation = 'st'">Standard</button>
 			<button class="btn" onclick="player.options.notation = 'elemental'">Elemental</button>
 			`+(player.stats.maxMass.gte(Number.MAX_VALUE)?`<button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>`:``)+`

@@ -22,10 +22,15 @@ const STARS = {
         return p
     },
     effect() {
-		let p = STARS.rankStr()
-		let [s,r,t1,t2,pt] = [player.stars.points.mul(p),player.ranks.rank.mul(p),player.ranks.tier.mul(p),player.ranks.tetr.mul(p).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0),player.ranks.pent.mul(p)]
-		let b = s.max(1).log10().add(1).max(s.root(1e9))
-		let e = r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).min(1)).mul(RANKS.effect.pent[1](pt)).softcap(1e12,1e3,3)
+		let rank_str = STARS.rankStr()
+		let star = player.stars.points
+
+		let rank = player.ranks.rank.mul(rank_str)
+		let tier = player.ranks.tier.mul(rank_str)
+		let tetr = player.ranks.tetr.mul(rank_str).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0)
+
+		let b = star.max(1).log10().add(1)
+		let e = rank.mul(tier.pow(2)).add(1).pow(tetr.add(1).pow(5/9).mul(0.25).min(1)).min(2e8)
 		return { eff: b.pow(e), exp: e }
 	},
     generators: {
@@ -53,7 +58,7 @@ const STARS = {
             if (hasTree("s1") && i==4) x = x.mul(treeEff("s1"))
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
             if (hasElement(54)) x = x.mul(tmp.elements.effect[54])
-            if (!scalingToned("supernova")) x = x.mul(tmp.bosons.upgs.photon[3].effect)
+            if (!isScalingToned("supernova")) x = x.mul(tmp.bosons.upgs.photon[3].effect)
             x = x.mul(tmp.supernova.mult)
 
             return x.mul(tmp.stars.gb_eff)
@@ -85,7 +90,7 @@ function updateStarsTemp() {
 	ts.gb_base = D(2)
 	ts.gb_str = D(1)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
-    if (bosonsMastered()) ts.gb_base = ts.gb_base.mul(tmp.bosons.upgs.photon[1].effect)
+    if (hasTree("s5")) ts.gb_base = ts.gb_base.mul(treeEff("s5"))
 	ts.gb_str = ts.gb_str.mul(CHALS_NEW.eff(11))
 
 	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:D(0)
@@ -146,7 +151,7 @@ function updateStarsHTML() {
 	elm.starSoftStart.setTxt(format(tmp.stars.softGain))
     elm.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
     elm.stars_eff.setTxt(format(tmp.stars.effect.eff))
-    elm.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)" + getSoftcapHTML(tmp.stars.effect.exp, 1e12))
+    elm.stars_exp.setHTML("(^"+format(tmp.stars.effect.exp)+", based on all types of Rank)")
 
 	let boost_unl = STARS.generators.booster_unl()
     elm.star_btn.setDisplay(player.stars.unls < 5 || boost_unl)

@@ -63,6 +63,24 @@ let TONES = {
 function tone() {
 	TONES.tone()
 }
+
 function toned() {
 	return TONES.amt()
+}
+
+//SCALINGS
+const SCALE_TONE = {
+	massUpg() { return toned() >= 1 },
+	tickspeed() { return toned() >= 1 },
+	rank() { return toned() >= 4 },
+	tier() { return toned() >= 4 },
+	tetr() { return toned() >= 4 },
+	bh_condenser() { return toned() >= 2 },
+	gamma_ray() { return toned() >= 3 },
+	supernova() { return toned() >= 5 },
+	fTier() { return toned() >= 5 },
+}
+
+function isScalingToned(name) {
+	return SCALE_TONE[name] && SCALE_TONE[name]()
 }

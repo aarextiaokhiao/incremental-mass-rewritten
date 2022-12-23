@@ -31,7 +31,7 @@
 	<!-- FEATURES -->
 	<script src="js/ranks.js"></script>
 	<script src="js/upgrades.js"></script>
-	<script src="js/wip/chals_new.js"></script>
+	<script src="js/challenges.js"></script>
 
 	<script src="js/atom/core.js"></script>
 	<script src="js/atom/elemental.js"></script>
@@ -131,9 +131,9 @@
 					</div>
 				</div><div class="table_center">
 					<div class="w_boson sub_b">
-						You have <span id="pos_w_amt">X</span> W<sup>+</sup> Boson, which multiplies Mass gain by <span id="pos_w_eff0">Y</span>,<br> multiplies W<sup>-</sup> Bosons gain by <span id="pos_w_eff1">Y</span>
+						You have <span id="pos_w_amt">X</span> W<sup>+</sup> Boson, which boosts mass by <span id="pos_w_eff0">Y</span>,<br> multiplies W<sup>-</sup> Bosons gain by <span id="pos_w_eff1">Y</span>
 						<br><br>
-						You have <span id="neg_w_amt">X</span> W<sup>-</sup> Boson, which makes Mass gains softcap^2 starts ^<span id="neg_w_eff0">Y</span> later,<br> multiplies W<sup>+</sup> Bosons gain by <span id="neg_w_eff1">Y</span>
+						You have <span id="neg_w_amt">X</span> W<sup>-</sup> Boson, which makes mass softcap^2 scales ^<span id="neg_w_eff0">Y</span> later,<br> multiplies W<sup>+</sup> Bosons gain by <span id="neg_w_eff1">Y</span>
 					</div>
 					<div class="z_boson sub_b">
 						You have <span id="z_boson_amt">X</span> Z<sup>0</sup> Boson, which multiplies Tickspeed Power by <span id="z_boson_eff0">Y</span>,<br> multiplies W Bosons gain by <span id="z_boson_eff1">Y</span>
@@ -531,7 +531,8 @@
 				<button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn" id="ranks_left_arrow"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn" id="ranks_right_arrow">--></button><br><br>
 				<div id="ranks_rewards_table"></div>
 			</div><div id="stab_frame7_2">
-				<button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn" id="scaling_left_arrow"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1)))" class="btn" id="scaling_right_arrow">--></button><br><br>
+				<button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,-1)" class="btn" id="scaling_left_arrow"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1)))" class="btn" id="scaling_right_arrow">--></button><br><br>
+				<div id="scaling_eff"></div>
 				<div id="scaling_table"></div>
 			</div><div id="stab_frame7_3">
 				Compression: Reduce first before the amount gets added. Then, do the opposite.
@@ -593,7 +594,7 @@
 			Hint 1: Hover a image to show description...
 			<div style="position: fixed; left: 3px; bottom: 3px; text-align: left">
 				<button class="btn" id="help" onclick="addPopup(POPUP_GROUPS.help)">Help</button><br>
-				<button class="btn locked">Discord (Soon)</button>
+				<button class="btn" onclick="window.open('http://aarextiaokhiao.github.io/chat.html')">Discord</button>
 				<button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">IM:R Discord</button>
 				<button class="btn" onclick="window.open('https://aarextiaokhiao.github.io')">Home</button>
 				<button id="beta" class="btn" onclick="window.open('http://raw.githack.com/aarextiaokhiao/incremental-mass-rewritten/'+betaLink+'/')">Test Server</button>

@@ -29,19 +29,19 @@ const TREE_IDS = [
 		['s3','m3','gr2','sn3'],
 		[],
 		['chal5','chal6','chal7'],
-		['','fn6','fn7','fn8','','','',''],
+		['','fn6','','','','','','rad6'],
 		[],
 	],[
-		['s4','','sn4'],
+		['s4','sn5','sn4'],
 		[],
 		[],
-		['eb1', 'eb2'],
+		['fn7','fn8','bs5','bs6','','','',''],
 		[],
 	],[
+		['s5', 'sn6'],
 		[],
 		[],
-		[],
-		[],
+		['','','','bs7','','','eb1','eb2'],
 		[],
 	],
 ]
@@ -85,8 +85,10 @@ const TREE_UPGS = {
             desc: `Supernovae boost Neutron Stars.`,
             cost: D(350),
             effect() {
-                let x = D(2).add(hasTree("sn4")?treeEff("sn4"):0).pow(player.supernova.times.softcap(15,0.8,0).softcap(25,0.5,0))
-                return x
+                let b = D(2).add(hasTree("sn4")?treeEff("sn4"):0)
+                let e = player.supernova.times.softcap(15,0.8,0).softcap(25,0.5,0)
+                if (hasTree("sn6")) e = e.add(treeEff("sn6", 0))
+                return b.pow(e)
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -114,6 +116,30 @@ const TREE_UPGS = {
                 return x
             },
             effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,1.5) },
+        },
+        sn5: {
+            branch: ["sn4"],
+            desc: `Stars boost Neutron Stars.`,
+            icon: 'placeholder',
+            cost: EINF,
+            req() { return player.supernova.times.gte(EINF) },
+            reqDesc: `??? Supernovae.`,
+            effect() {
+                return expMult(player.stars.points, 0.2).pow(.01)
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
+        sn6: {
+            branch: ["sn4"],
+            desc: `Starting at X, Supernovae adds sn2 exponent after softcaps.`,
+            icon: 'placeholder',
+            cost: EINF,
+            req() { return player.supernova.times.gte(EINF) },
+            reqDesc: `??? Supernovae.`,
+            effect() {
+                return player.supernova.times.sub(50).div(2).max(0)
+            },
+            effDesc(x) { return "+^"+format(x,1) },
         },
         m1: {
             branch: ["c"],
@@ -210,9 +236,9 @@ const TREE_UPGS = {
                 return player.supernova.times.max(0).root(10).mul(0.1).add(1)
                 //Toned Supernovae: ^0.2
                 //S3 Reduction: ^0.1
-                //Star Generators: ^5 (w/ milestone)
-                //Product: ^0.1
-                //Left: ^1.25 - ^1.1 = ^0.15
+                //Star Generators: ^4
+                //Product: ^0.08
+                //Left: ^1.25 - ^1.08 = ^1.13
             },
             effDesc(x) { return "^"+format(x) },
         },
@@ -222,6 +248,14 @@ const TREE_UPGS = {
             reqDesc: `6 Supernovae.`,
             desc: `Beyond unlocking stars, Star Unlocker will transform into Booster.`,
             cost: D(1e5),
+        },
+        s5: {
+            branch: ["s4"],
+            desc: `Tickspeed Power boosts Star Booster power at a reduced rate.`,
+            icon: 'placeholder',
+            cost: EINF,
+            req() { return player.supernova.times.gte(EINF) },
+            reqDesc: `??? Supernovae.`,
         },
         qol1: {
             req() { return player.supernova.times.gte(2) },
@@ -372,6 +406,27 @@ const TREE_UPGS = {
             desc: `Raise Z Bosons by ^1.5.`,
             cost: D(1e24),
         },
+        bs5: {
+            unl() { return hasTree("rad1") },
+            branch: ["fn6"],
+            desc: `W Bosons boost each other more.`,
+            icon: "placeholder",
+            cost: EINF,
+        },
+        bs6: {
+            unl() { return hasTree("rad1") },
+            branch: ["bs5"],
+            desc: `Neutron Stars boost Gravitons.`,
+            icon: "placeholder",
+            cost: EINF,
+        },
+        bs7: {
+            unl() { return hasTree("rad1") },
+            branch: ["bs6"],
+            desc: `3rd Boson Upgrades scale linear, but nothing else affects them.`,
+            icon: "placeholder",
+            cost: EINF,
+        },
         fn1: {
             unl() { return player.supernova.fermions.unl },
             branch: ["bs1"],
@@ -474,52 +529,60 @@ const TREE_UPGS = {
             branch: ["unl1"],
             unl() { return tmp.radiation.unl },
             icon: 'placeholder',
-            desc: `Placeholder.`,
+            desc: `Supernovae boosts Frequency.`,
             cost: EINF,
             effect() {
-                return D(1)
+                return D(5).pow(player.supernova.times.div(10).sub(4))
             },
             effDesc(x) { return format(x)+"x" },
         },
         rad2: {
             branch: ["rad1"],
             icon: 'placeholder',
-            desc: `Placeholder.`,
-            cost: EINF,
-            effect() {
-                return D(1)
-            },
-            effDesc(x) { return format(x)+"x" },
+            desc: `Ampitudes scales as fast as Velocity.`,
+            cost: EINF
         },
         rad3: {
             branch: ["rad1"],
             icon: 'placeholder',
-            desc: `Placeholder.`,
+            desc: `Fermions boost Frequency.`,
             cost: EINF,
+            req() { return player.supernova.radiation.bs[6].gt(0) },
+            reqDesc: `Get a Gamma Wave.`,
             effect() {
-                return D(1)
+                return player.supernova.fermions.points[0].add(player.supernova.fermions.points[1]).add(1).pow(.01)
             },
             effDesc(x) { return format(x)+"x" },
         },
         rad4: {
             branch: ["rad2"],
             icon: 'placeholder',
-            desc: `Placeholder.`,
+            desc: `Neutron Stars boost Radiation.`,
             cost: EINF,
+            req() { return player.supernova.radiation.bs[6].gt(0) },
+            reqDesc: `Get a Gamma Wave.`,
             effect() {
-                return D(1)
+                return player.supernova.stars.add(1).log10().div(100).add(1)
             },
             effDesc(x) { return format(x)+"x" },
         },
         rad5: {
             branch: ["rad3"],
             icon: 'placeholder',
-            desc: `Placeholder.`,
+            desc: `Z0 Bosons boost Radiation.`,
             cost: EINF,
+            req() { return player.supernova.radiation.bs[6].gt(0) },
+            reqDesc: `Get a Gamma Wave.`,
             effect() {
-                return D(1)
+                return player.supernova.stars.add(1).log10().div(100).add(1)
             },
             effDesc(x) { return format(x)+"x" },
+        },
+        rad6: {
+            branch: ["rad5"],
+            icon: 'placeholder',
+            desc: `Strengthen Radiation Self-Boosts.`,
+            cost: EINF,
         },
 
 		/* EXOTIC */
