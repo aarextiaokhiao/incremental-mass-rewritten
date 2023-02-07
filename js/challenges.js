@@ -1,4 +1,4 @@
-const CHALS_NEW = {
+const CHALS = {
 	//In
 	in(x) {
 		return tmp.chal.inForce.includes(x)
@@ -15,23 +15,27 @@ const CHALS_NEW = {
 		return false
 	},
 	enter(layer, x) {
-		if (CHALS_NEW.in(x)) return
+		if (CHALS.in(x)) return
 		if (tmp.chal.lastLayer == layer && !toConfirm('chal')) return
 
 		if (!player.chal.progress[layer]) player.chal.progress[layer] = [x]
-		else if (!CHALS_NEW.canBulk()) {
+		else if (!CHALS.canBulk()) {
 			for (const c of player.chal.progress[layer]) gainChalComp(c)
 			player.chal.progress[layer] = [x]
 		} else player.chal.progress[layer].push(x)
 		player.chal.lastComps[x] = player.chal.comps[x]
 		player.chal.bulkComps[x] = player.chal.comps[x]
 
-		CHALS_NEW.layers[layer].doReset()
+		CHALS.layers[layer].doReset()
 	},
-	exit(layer) {
-		if (tmp.chal.lastLayer == layer && player.confirms.chal && !confirm("Exit this challenge? You won't gain additional completions until you return!")) return
+	exit(layer, noConf) {
+		if (tmp.chal.lastLayer == layer && player.confirms.chal && !noConf && !confirm("Exit this challenge? You won't gain additional completions until you return!")) return
 		for (const c of player.chal.progress[layer]) gainChalComp(c)
 		delete player.chal.progress[layer]
+	},
+	exitAll() {
+		if (player.confirms.chal && !confirm("Exit all challenges? You won't gain additional completions until you return!")) return
+		for (const layer in player.chal.progress) CHALS.exit(layer, true)
 	},
 	clear(layer) {
 		for (let c = layer * 4 + 1; c <= layer * 4 + 4; c++) player.chal.comps[c] = D(0)
@@ -43,7 +47,7 @@ const CHALS_NEW = {
 	//Choosing
 	choose(x) {
 		const layer = Math.ceil(x / 4) - 1
-		if (tmp.chal.choosed == x) CHALS_NEW.enter(layer, x)
+		if (tmp.chal.choosed == x) CHALS.enter(layer, x)
 		else tmp.chal.choosed = x
 	},
 
@@ -52,18 +56,18 @@ const CHALS_NEW = {
 		comp = D(comp || player.chal.comps[i])
 
 		if (i < 9) {
-			let start3 = CHALS_NEW.getPower3Start(i)
-			if (comp.gte(start3)) comp = D(1).div(start3).add(1).pow(comp.sub(start3).mul(CHALS_NEW.getPower3(i))).mul(start3)
+			let start3 = CHALS.getPower3Start(i)
+			if (comp.gte(start3)) comp = D(1).div(start3).add(1).pow(comp.sub(start3).mul(CHALS.getPower3(i))).mul(start3)
 		}
 		if (i < 12) {
-			let start2 = CHALS_NEW.getPower2Start(i)
-			if (comp.gte(start2)) comp = comp.div(start2).pow(D(4.5).pow(CHALS_NEW.getPower2(i))).mul(start2)
+			let start2 = CHALS.getPower2Start(i)
+			if (comp.gte(start2)) comp = comp.div(start2).pow(D(4.5).pow(CHALS.getPower2(i))).mul(start2)
 
-			let start1 = CHALS_NEW.getPower1Start(i)
-			if (comp.gte(start1)) comp = comp.div(start1).pow(D(3).pow(CHALS_NEW.getPower1(i))).mul(start1)
+			let start1 = CHALS.getPower1Start(i)
+			if (comp.gte(start1)) comp = comp.div(start1).pow(D(3).pow(CHALS.getPower1(i))).mul(start1)
 		}
 
-		let scale = CHALS_NEW.chals[i].scale
+		let scale = CHALS.chals[i].scale
 		let pow = D(scale.pow)
 		if (hasElement(10) && (i == 3 || i == 4)) pow = pow.mul(0.95)
 
@@ -71,9 +75,9 @@ const CHALS_NEW = {
 		else return D(scale.start).mul(D(scale.inc).pow(comp.pow(pow)))
 	},
 	bulk(i, res) {
-		res = D(res || CHALS_NEW.layers[Math.ceil(i / 4) - 1].res())
+		res = D(res || CHALS.layers[Math.ceil(i / 4) - 1].res())
 
-		let scale = CHALS_NEW.chals[i].scale
+		let scale = CHALS.chals[i].scale
 		let pow = D(scale.pow)
 		if (hasElement(10) && (i == 3 || i == 4)) pow = pow.mul(0.95)
 
@@ -83,27 +87,27 @@ const CHALS_NEW = {
 		if (D(res).lt(scale.start)) return D(0)
 
 		if (i < 12) {
-			let start1 = CHALS_NEW.getPower1Start(i)
-			if (D(comp).gte(start1)) comp = comp.div(start1).root(D(3).pow(CHALS_NEW.getPower1(i))).mul(start1)
+			let start1 = CHALS.getPower1Start(i)
+			if (D(comp).gte(start1)) comp = comp.div(start1).root(D(3).pow(CHALS.getPower1(i))).mul(start1)
 
-			let start2 = CHALS_NEW.getPower2Start(i)
-			if (D(comp).gte(start2)) comp = comp.div(start2).root(D(4.5).pow(CHALS_NEW.getPower2(i))).mul(start2)
+			let start2 = CHALS.getPower2Start(i)
+			if (D(comp).gte(start2)) comp = comp.div(start2).root(D(4.5).pow(CHALS.getPower2(i))).mul(start2)
 		}
 		if (i < 9) {
-			let start3 = CHALS_NEW.getPower3Start(i)
-			if (D(comp).gte(start3)) comp = comp.div(start3).log(D(1).div(start3).add(1)).div(CHALS_NEW.getPower3(i)).add(start3)
+			let start3 = CHALS.getPower3Start(i)
+			if (D(comp).gte(start3)) comp = comp.div(start3).log(D(1).div(start3).add(1)).div(CHALS.getPower3(i)).add(start3)
 		}
 
-		return comp.floor().add(1).min(CHALS_NEW.max(i))
+		return comp.floor().add(1).min(CHALS.max(i))
 	},
 
     getScalingName(i, comp) {
 		comp = D(comp || player.chal.comps[i])
 
         if (i >= 12) return ""
-        if (i < 9 && comp.gte(CHALS_NEW.getPower3Start(i))) return "Impossible "
-        if (comp.gte(CHALS_NEW.getPower2Start(i))) return "Insane "
-        if (comp.gte(CHALS_NEW.getPower1Start(i))) return "Hardened "
+        if (i < 9 && comp.gte(CHALS.getPower3Start(i))) return "Impossible "
+        if (comp.gte(CHALS.getPower2Start(i))) return "Insane "
+        if (comp.gte(CHALS.getPower1Start(i))) return "Hardened "
         return ""
     },
 	getPower1(i) {
@@ -133,12 +137,12 @@ const CHALS_NEW = {
 
 	//Others
 	max(x) {
-		let r = x > 8 ? CHALS_NEW.chals[x].max : CHALS_NEW.chals[x].max()
+		let r = x > 8 ? CHALS.chals[x].max : CHALS.chals[x].max()
 		if (x == 3) r = r.min(2e3)
 		return r
 	},
 	eff(x, def = D(1)) {
-		return tmp.chal.eff[x] || CHALS_NEW.chals[x].effect(player.chal.comps[x])
+		return tmp.chal.eff[x] || CHALS.chals[x].effect(player.chal.comps[x])
 	},
 
 	//4 per layer
@@ -197,12 +201,12 @@ const CHALS_NEW = {
 
 		{
 			unl: () => true,
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "Instant Scale",
 			desc: "Super Rank and Mass Upgrades start at 25. Additionally, Super Tickspeed starts at 50.",
 
-			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			max: () => D(100).add(CHALS.eff(7)).floor(),
 			scale: {
 				inc: D(5),
 				pow: D(1.3),
@@ -219,12 +223,12 @@ const CHALS_NEW = {
 		},
 		{
 			unl: () => player.atom.unl || player.chal.comps[1].gt(0),
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "Anti-Tickspeed",
 			desc: "You can't buy Tickspeed.",
 
-			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			max: () => D(100).add(CHALS.eff(7)).floor(),
 			scale: {
 				inc: D(10),
 				pow: D(1.3),
@@ -243,12 +247,12 @@ const CHALS_NEW = {
 		},
 		{
 			unl: () => player.atom.unl || player.chal.comps[2].gt(0),
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "Melted Mass",
 			desc: "Mass softcap scales /1e150 earlier, and is stronger.",
 
-			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			max: () => D(100).add(CHALS.eff(7)).floor(),
 			scale: {
 				inc: D(25),
 				pow: D(1.25),
@@ -264,12 +268,12 @@ const CHALS_NEW = {
 		},
 		{
 			unl: () => player.atom.unl || player.chal.comps[3].gt(0),
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "Weakened Rage",
 			desc: "Reduce Rage Power. Additionally, mass softcap scales /1e100 earlier.",
 
-			max: () => D(100).add(CHALS_NEW.eff(7)).floor(),
+			max: () => D(100).add(CHALS.eff(7)).floor(),
 			scale: {
 				inc: D(30),
 				pow: D(1.25),
@@ -286,7 +290,7 @@ const CHALS_NEW = {
 
 		{
 			unl: () => player.atom.unl,
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "No Rank",
 			desc: "You can't rank up.",
@@ -311,7 +315,7 @@ const CHALS_NEW = {
 		},
 		{
 			unl: () => player.supernova.unl || player.chal.comps[5].gt(0),
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "No Tickspeed & Condenser",
 			desc: "You cannot buy Tickspeed & BH Condenser.",
@@ -336,7 +340,7 @@ const CHALS_NEW = {
 		},
 		{
 			unl: () => player.supernova.unl || player.chal.comps[6].gt(0),
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "No Rage Power",
 			desc: "You can't gain Rage Power, but gain Dark Matter by mass. Additionally, strengthen mass softcap.",
@@ -366,7 +370,7 @@ const CHALS_NEW = {
 		},
 		{
 			unl: () => player.supernova.unl || player.chal.comps[7].gt(0),
-			force: () => CHALS_NEW.in(10),
+			force: () => CHALS.in(10),
 
 			title: "White Hole",
 			desc: "Reduce Dark Matter and Black Hole mass.",
@@ -566,7 +570,7 @@ const CHALS_NEW = {
 		},
 	]
 }
-const CHAL_NUM = CHALS_NEW.layers.length * 4
+const CHAL_NUM = CHALS.layers.length * 4
 
 function chalTick() {
 	if (player.mass.gte(1.5e136)) player.chal.unl = true
@@ -574,19 +578,19 @@ function chalTick() {
 
 	for (const i of tmp.chal.in) {
 		let layer = Math.ceil(i / 4) - 1
-		if (CHALS_NEW.bulk(i).gt(player.chal.bulkComps[i])) player.chal.bulkComps[i] = CHALS_NEW.bulk(i)
+		if (CHALS.bulk(i).gt(player.chal.bulkComps[i])) player.chal.bulkComps[i] = CHALS.bulk(i)
 		if (hasTree("qol6")) player.chal.comps[i] = player.chal.bulkComps[i]
 	}
 }
 
 function gainChalComp(x) {
-	player.chal.comps[x] = player.chal.comps[x].max(player.chal.bulkComps[x] || CHALS_NEW.bulk(i))
+	player.chal.comps[x] = player.chal.comps[x].max(player.chal.bulkComps[x] || CHALS.bulk(i))
 }
 
 function updateChalTempNew() {
 	//In
 	let lastLayer = 0
-	for (let [l, d] of Object.entries(CHALS_NEW.layers)) {
+	for (let [l, d] of Object.entries(CHALS.layers)) {
 		if (d.unl()) lastLayer = i
 	}
 	tmp.chal.lastLayer = lastLayer
@@ -601,7 +605,7 @@ function updateChalTempNew() {
 	tmp.chal.inLastLayer = inLastLayer
 
 	for (let c = CHAL_NUM; c > 0; c--) {
-		let force = CHALS_NEW.chals[c].force
+		let force = CHALS.chals[c].force
 		if (force && force() && !inChal.includes(c)) inChal.push(c)
 	}
 	tmp.chal.inForce = inChal
@@ -609,21 +613,21 @@ function updateChalTempNew() {
 	//Eff
 	tmp.chal.eff = {}
 	for (let c = CHAL_NUM; c > 0; c--) {
-		tmp.chal.eff[c] = CHALS_NEW.chals[c].effect(player.chal.comps[c])
+		tmp.chal.eff[c] = CHALS.chals[c].effect(player.chal.comps[c])
 	}
 }
 
 //HTML
 function setupChalHTMLNew() {
 	let html = ""
-	for (let layer = CHALS_NEW.layers.length - 1; layer >= 0; layer--) {
+	for (let layer = CHALS.layers.length - 1; layer >= 0; layer--) {
 		html += `<div class='table_center' id="chals_${layer}">`
 		for (let c = layer * 4 + 1; c <= layer * 4 + 4; c++) {
-			html += `<div id="chal_${c}" style="width: 120px; margin: 5px;"><img id="chal_${c}_btn" onclick="CHALS_NEW.choose(${c})" class="img_chal" src="images/chals/chal_${c}.png"><br><span id="chal_${c}_comp">0 / 0</span></div>`
+			html += `<div id="chal_${c}" style="width: 120px; margin: 5px;"><img id="chal_${c}_btn" onclick="CHALS.choose(${c})" class="img_chal" src="images/chals/chal_${c}.png"><br><span id="chal_${c}_comp">0 / 0</span></div>`
 		}
 		html += `
-			<button id="chals_${layer}_start" class="btn" onclick="CHALS_NEW.enter(${layer}, tmp.chal.choosed[${layer}])">Start</button>
-			<button id="chals_${layer}_exit" class="btn" onclick="CHALS_NEW.exit(${layer})">Exit</button>
+			<button id="chals_${layer}_start" class="btn" onclick="CHALS.enter(${layer}, tmp.chal.choosed)">Start</button>
+			<button id="chals_${layer}_exit" class="btn" onclick="CHALS.exit(${layer})">Exit</button>
 		</div><div id="chals_${layer}_chosen" style='display: none'>
 			<b class="yellow" id="chals_${layer}_title"></b><br>
 			<span class="red" id="chals_${layer}_desc"></span><br>
@@ -639,7 +643,7 @@ function setupChalHTMLNew() {
 }
 
 function updateChalHTMLNew() {
-	for (const [id, layer] of Object.entries(CHALS_NEW.layers)) {
+	for (const [id, layer] of Object.entries(CHALS.layers)) {
 		const unl = layer.unl()
 		elm[`chals_${id}`].setDisplay(unl)
 		if (!unl) {
@@ -650,32 +654,32 @@ function updateChalHTMLNew() {
 		const chooseNum = tmp.chal.choosed
 		let choosed = false
 		for (let c = id * 4 + 1; c <= id * 4 + 4; c++) {
-			let inChal = CHALS_NEW.in(c)
-			let comp = D(player.chal.comps[c]).gte(CHALS_NEW.max(c))
-			elm[`chal_${c}`].setDisplay(CHALS_NEW.chals[c].unl())
+			let inChal = CHALS.in(c)
+			let comp = D(player.chal.comps[c]).gte(CHALS.max(c))
+			elm[`chal_${c}`].setVisible(CHALS.chals[c].unl())
 			elm[`chal_${c}_comp`].setHTML(
 				comp ? "<b class='green'>Completed</b>" :
 				tmp.chal.in.includes(c) ? "+" + format(player.chal.bulkComps[c].sub(player.chal.lastComps[c]), 0) :
-				format(player.chal.comps[c] || 0, 0) + " / " + format(CHALS_NEW.max(c), 0))
+				format(player.chal.comps[c] || 0, 0) + " / " + format(CHALS.max(c), 0))
 			elm[`chal_${c}_btn`].setClasses({img_chal: true, ch_choosed: chooseNum == c, ch_in: inChal && tmp.chal.in.includes(c), ch_force: inChal && !tmp.chal.in.includes(c), ch_comp: comp && !inChal })
 
 			if (chooseNum == c) choosed = true
 		}
 
-		elm[`chals_${id}_start`].setDisplay(choosed && !CHALS_NEW.in(choosed))
-		elm[`chals_${id}_exit`].setDisplay(player.chal.progress[id])
+		elm[`chals_${id}_start`].setVisible(choosed && !CHALS.in(choosed))
+		elm[`chals_${id}_exit`].setVisible(player.chal.progress[id])
 
 		elm[`chals_${id}_chosen`].setDisplay(choosed)
 		if (choosed) {
-			elm[`chals_${id}_title`].setTxt(`[${chooseNum}] ${CHALS_NEW.getScalingName(chooseNum) + CHALS_NEW.chals[chooseNum].title}`)
-			elm[`chals_${id}_desc`].setTxt(CHALS_NEW.chals[chooseNum].desc)
-			elm[`chals_${id}_goal`].setTxt(`${formatMass(CHALS_NEW.goal(chooseNum))} ${layer.resName}`)
-			elm[`chals_${id}_reward`].setHTML(CHALS_NEW.chals[chooseNum].reward)
-			elm[`chals_${id}_eff`].setHTML(CHALS_NEW.chals[chooseNum].effDesc(tmp.chal.eff[chooseNum]))
+			elm[`chals_${id}_title`].setTxt(`[${chooseNum}] ${CHALS.getScalingName(chooseNum) + CHALS.chals[chooseNum].title}`)
+			elm[`chals_${id}_desc`].setTxt(CHALS.chals[chooseNum].desc)
+			elm[`chals_${id}_goal`].setTxt(`${formatMass(CHALS.goal(chooseNum))} ${layer.resName}`)
+			elm[`chals_${id}_reward`].setHTML(CHALS.chals[chooseNum].reward)
+			elm[`chals_${id}_eff`].setHTML(CHALS.chals[chooseNum].effDesc(tmp.chal.eff[chooseNum]))
 		}
 	}
 
-    elm.chal_sweep.setDisplay(!CHALS_NEW.inAny() && hasTree("qol10"))
+    elm.chal_sweep.setDisplay(!CHALS.inAny() && hasTree("qol10"))
 }
 
 function updateChalHeaderNew() {
@@ -684,7 +688,7 @@ function updateChalHeaderNew() {
 	let md = player.md.active
 	let f = player.supernova.fermions.choosed
 
-	elm.chal_upper.setDisplay(CHALS_NEW.inAny() && !player.reset_msg)
+	elm.chal_upper.setDisplay(CHALS.inAny())
 
 	if (md) {
 		elm.chal_upper.setHTML(`You are in Mass Dilation!<br>Go over ${formatMass(MASS_DILATION.mass_req())} to gain Relativistic Particles!`)
@@ -714,12 +718,12 @@ function updateChalHeaderNew() {
 	} else if (chal.length == 1) {
 		chal = chal[0]
 
-		let layer_data = CHALS_NEW.layers[layer]
+		let layer_data = CHALS.layers[layer]
 		elm.chal_upper.setHTML(
-			`You are in [${CHALS_NEW.chals[chal].title}] Challenge!<br>` + (
-				player.chal.comps[chal].gte(CHALS_NEW.max(chal)) ? `` :
-				player.chal.bulkComps[chal].gt(player.chal.lastComps[chal]) ? `+${format(player.chal.bulkComps[chal].sub(player.chal.lastComps[chal]),0)} (Next: ${format(layer_data.res())} / ${format(CHALS_NEW.goal(chal, player.chal.bulkComps[chal]))} ${layer_data.resName})` :
-				`Get ${format(layer_data.res())} / ${format(CHALS_NEW.goal(chal))} ${layer_data.resName} to complete.`
+			`You are in [${CHALS.chals[chal].title}] Challenge!<br>` + (
+				player.chal.comps[chal].gte(CHALS.max(chal)) ? `` :
+				player.chal.bulkComps[chal].gt(player.chal.lastComps[chal]) ? `+${format(player.chal.bulkComps[chal].sub(player.chal.lastComps[chal]),0)} (Next: ${format(layer_data.res())} / ${format(CHALS.goal(chal, player.chal.bulkComps[chal]))} ${layer_data.resName})` :
+				`Get ${format(layer_data.res())} / ${format(CHALS.goal(chal))} ${layer_data.resName} to complete.`
 			)
 		)
 	} else {

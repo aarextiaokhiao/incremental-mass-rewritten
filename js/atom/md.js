@@ -1,17 +1,17 @@
 const MASS_DILATION = {
     unlocked() { return hasElement(21) },
     onactive() {
-		if (CHALS_NEW.in(14)) return
+		if (CHALS.in(14)) return
         if (player.md.active) player.md.particles = player.md.particles.add(tmp.md.rp_gain)
         player.md.active = !player.md.active
         ATOM.doReset()
         updateMDTemp()
     },
 	isActive() {
-		return player.md.active || CHALS_NEW.in(11) || CHALS_NEW.in(12) || CHALS_NEW.in(15) || FERMIONS.onActive("02")
+		return player.md.active || CHALS.in(11) || CHALS.in(12) || CHALS.in(15) || FERMIONS.onActive("02")
 	},
 	getPenalty() {
-		if (CHALS_NEW.in(12) || CHALS_NEW.in(15)) return 3/7
+		if (CHALS.in(12) || CHALS.in(15)) return 3/7
 		var exp = 1
 		if (tmp.fermions) exp /= tmp.fermions.effs[0][4]
 		return Math.pow(FERMIONS.onActive("02") ? 0.64 : 0.8, exp)
@@ -20,7 +20,7 @@ const MASS_DILATION = {
 		return expMult(x, tmp.md.penalty).min(x)
 	},
     RPexpgain() {
-        let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS_NEW.inDirect(10) ? 1 : CHALS_NEW.eff(10))
+        let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS.inDirect(10) ? 1 : CHALS.eff(10))
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
         x = x.mul(getRadiationEff(10))
@@ -40,7 +40,7 @@ const MASS_DILATION = {
 		return m.div(uni(1)).max(1).log10().div(40).sub(14)
 	},
 	RPmassgain(m=player.mass) {
-		if (CHALS_NEW.in(11) || CHALS_NEW.in(15)) return D(0)
+		if (CHALS.in(11) || CHALS.in(15)) return D(0)
 		return this.RPbasegain(m).pow(tmp.md.rp_exp_gain)
 	},
 	RPgain(m=player.mass) {

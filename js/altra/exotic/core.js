@@ -65,7 +65,7 @@ let EXOTIC = {
 		tmp.pass = true
 
 		player.ranks.pent = D(0)
-		CHALS_NEW.clear(2)
+		CHALS.clear(2)
 
 		player.supernova.times = D(0)
 		player.supernova.stars = D(0)
@@ -129,7 +129,7 @@ let EXOTIC = {
 
 		//FEATS
 		if (player.mass.lt(uni("ee10")) && tmp.supernova.bulk.sub(player.supernova.times).round().gte(15)) player.ext.chal.f6 = true
-		if (!CHALS_NEW.inAny()) player.ext.chal.f7 = false
+		if (!CHALS.inAny()) player.ext.chal.f7 = false
 		if (player.supernova.fermions.choosed == "") player.ext.chal.f9 = false
 		player.ext.gain = D(player.ext.gain).max(this.gain())
 

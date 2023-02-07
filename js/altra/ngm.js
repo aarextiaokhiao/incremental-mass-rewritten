@@ -6,8 +6,8 @@ function inNGM() {
 	return metaSave.ngm == 1
 }
 function toggleMinus(start) {
-	if (!confirm("Do you wish the altar to switch? You'll be at: " + (metaSave.ngm ? "IM:A" : "IM:A-"))) return
-	if (!metaSave.ngm && !confirm("Warning! IM:A Minus is really work in progress, and has a little content balanced! Are you sure?")) return
+	if (!confirm("Call the altar? The world will be oriented towards: " + (metaSave.ngm ? "IM:A" : "IM:A-"))) return
+	if (!metaSave.ngm && !confirm("Warning! IM:A Minus is in alpha, and has balanced a little! Are you sure?")) return
 
 	metaSave.ngm = (metaSave.ngm + 1) % 2
 	if (start) RANKS.reset("rank")

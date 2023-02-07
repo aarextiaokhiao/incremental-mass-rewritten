@@ -5,7 +5,7 @@ const STARS = {
         if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
         x = x.mul(tmp.supernova.mult)
 
-        if (CHALS_NEW.in(14)) x = x.pow(.01)
+        if (CHALS.in(14)) x = x.pow(.01)
         return x.softcap(tmp.stars.softGain,tmp.stars.softPower,0)
     },
     softGain() {
@@ -91,7 +91,7 @@ function updateStarsTemp() {
 	ts.gb_str = D(1)
 	if (hasElement(57)) ts.gb_base = ts.gb_base.mul(tmp.elements.effect[57])
     if (hasTree("s5")) ts.gb_base = ts.gb_base.mul(treeEff("s5"))
-	ts.gb_str = ts.gb_str.mul(CHALS_NEW.eff(11))
+	ts.gb_str = ts.gb_str.mul(CHALS.eff(11))
 
 	ts.gb_bonus = tmp.eb.ag2?tmp.eb.ag2.eff:D(0)
 	ts.gb_eff = ts.gb_base.pow(player.stars.boost.add(ts.gb_bonus).mul(ts.gb_str))

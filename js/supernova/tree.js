@@ -468,7 +468,7 @@ const TREE_UPGS = {
         },
         fn6: {
             branch: ["fn2"],
-            req() { return player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS_NEW.in(5) },
+            req() { return player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS.in(5) },
             reqDesc() { return `Reach ${formatMass(uni("e4e4"))} while in [Charm] & Challenge 5.` },
             desc: `Unlock 2 new more types of U-Quark & U-Fermion.`,
             cost: D(1e48),
@@ -704,8 +704,8 @@ const TREE_UPGS = {
 		},
 		feat12: {
 			unl() { return GLUBALL.unl() },
-			req() { return player.mass.lt(10) && CHALS_NEW.in(10) },
-			failed() { return !player.mass.gte(10) || !CHALS_NEW.in(10) },
+			req() { return player.mass.lt(10) && CHALS.in(10) },
+			failed() { return !player.mass.gte(10) || !CHALS.in(10) },
 			reqDesc() { return `Get your mass less than 10 g in Reality I.` },
 			desc: `Luminosity starts 1,000x earlier.`,
 			cost: D(0)

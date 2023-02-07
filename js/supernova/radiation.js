@@ -2,7 +2,7 @@ const RADIATION = {
     names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma"],
     unls: ["0","1e6","1e13","1e20","5e26","5e29","1e35"],
     hz_gain() {
-		if (CHALS_NEW.in(14)) return D(0)
+		if (CHALS.in(14)) return D(0)
 
         let x = D(1)
         if (hasTree("rad1")) x = x.mul(treeEff("rad1"))
@@ -16,7 +16,7 @@ const RADIATION = {
         return x
     },
     ds_gain(i) {
-		if (CHALS_NEW.in(14)) return D(0)
+		if (CHALS.in(14)) return D(0)
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return D(0)
 
         let x = D(1)
@@ -45,7 +45,7 @@ const RADIATION = {
     getBoostScalingMul(i) {
 		let f4 = D(1)
 		if (tmp.fermions) f4 = f4.div(tmp.fermions.effs[0][5]||1)
-		f4 = f4.div(CHALS_NEW.eff(12))
+		f4 = f4.div(CHALS.eff(12))
 		return f4
     },
     getBoostScalingExp(i) {
@@ -59,7 +59,7 @@ const RADIATION = {
         return x
     },
     getBonusLevel(i) {
-		if (CHALS_NEW.in(14)) return D(0)
+		if (CHALS.in(14)) return D(0)
 
         let x = D(0)
         if (i < 8) x = x.add(getRadiationEff(8, 0))

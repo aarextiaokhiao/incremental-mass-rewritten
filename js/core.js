@@ -77,7 +77,7 @@ const FORMS = {
 		let exp = D(1)
 		if (hasRank("tier", 2)) exp = exp.mul(1.15)
 		if (hasRank("rank", 180)) exp = exp.mul(1.025)
-		if (!CHALS_NEW.inDirect(3)) exp = exp.mul(CHALS_NEW.eff(3))
+		if (!CHALS.inDirect(3)) exp = exp.mul(CHALS.eff(3))
 		if (tmp.md.active && hasElement(28)) exp = exp.mul(1.5)
 
 		let x = this.baseMassGain().pow(exp)
@@ -85,14 +85,14 @@ const FORMS = {
 			x = MASS_DILATION.applyDil(x)
 			if (hasElement(28)) x = x.pow(1.5)
 		}
-		if (CHALS_NEW.in(9)) x = expMult(x,0.9)
+		if (CHALS.in(9)) x = expMult(x,0.9)
 
 		return x.softcap(tmp.massSoftGain1,tmp.massSoftPower1,0).softcap(tmp.massSoftGain2,tmp.massSoftPower2,0).softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
 	},
 	massSoftGain() {
 		let s = D(1.5e156)
-		if (CHALS_NEW.in(3)) s = s.div(1e150)
-		if (CHALS_NEW.in(4)) s = s.div(1e100)
+		if (CHALS.in(3)) s = s.div(1e150)
+		if (CHALS.in(4)) s = s.div(1e100)
 		if (hasUpgrade('bh',7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:D(1))
 		if (hasUpgrade('rp',13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:D(1))
 		s = s.pow(getRadiationEff(2))
@@ -101,8 +101,8 @@ const FORMS = {
 	},
 	massSoftPower() {
 		let p = D(1/3)
-		if (CHALS_NEW.in(3)) p = p.mul(4)
-		if (CHALS_NEW.in(7)) p = p.mul(6)
+		if (CHALS.in(3)) p = p.mul(4)
+		if (CHALS.in(7)) p = p.mul(6)
 		if (hasUpgrade('bh',11)) p = p.mul(0.9)
 		if (hasRank("rank", 800)) p = p.mul(RANKS.effect.rank[800]())
 		return D(1).div(p.add(1))
@@ -134,7 +134,7 @@ const FORMS = {
 	},
 	tickspeed: {
 		cost(x=player.tickspeed) { return D(2).pow(x).floor() },
-		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS_NEW.in(2) && !CHALS_NEW.in(6) && !CHALS_NEW.in(10) },
+		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.in(2) && !CHALS.in(6) && !CHALS.in(10) },
 		buy() {
 			if (this.can()) {
 				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 3)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
@@ -154,8 +154,8 @@ const FORMS = {
 			let bonus = D(0)
 			if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
 			let step = D(1.5)
-				step = step.add(CHALS_NEW.eff(6))
-				step = step.add(CHALS_NEW.eff(2))
+				step = step.add(CHALS.eff(6))
+				step = step.add(CHALS.eff(2))
 				step = step.add(tmp.atom.particles[0].powerEffect.eff2)
 				if (hasRank("tier", 4)) step = step.add(RANKS.effect.tier[4]())
 				if (hasRank("rank", 40)) step = step.add(RANKS.effect.rank[40]())
@@ -180,7 +180,7 @@ const FORMS = {
 	},
 	rp: {
 		gain() {
-			if (player.mass.lt(1e15) || CHALS_NEW.in(7)) return D(0)
+			if (player.mass.lt(1e15) || CHALS.in(7)) return D(0)
 			let gain = player.mass.div(1e15).root(3)
 			if (hasRank("rank", 14)) gain = gain.mul(2)
 			if (hasRank("rank", 45)) gain = gain.mul(RANKS.effect.rank[45]())
@@ -191,8 +191,8 @@ const FORMS = {
 			gain = gain.mul(tmp.supernova.mult)
 
 			if (hasUpgrade('bh',8)) gain = gain.pow(1.15)
-			gain = gain.pow(CHALS_NEW.eff(4))
-			if (CHALS_NEW.in(4)) gain = gain.root(10)
+			gain = gain.pow(CHALS.eff(4))
+			if (CHALS.in(4)) gain = gain.root(10)
 			if (tmp.md.active) gain = MASS_DILATION.applyDil(gain)
 			return gain.floor()
 		},
@@ -218,7 +218,7 @@ const FORMS = {
 		see() { return player.rp.unl },
 		DM_gain() {
 			let gain = player.rp.points.div(1e20)
-			if (CHALS_NEW.in(7)) gain = player.mass.div(1e180)
+			if (CHALS.in(7)) gain = player.mass.div(1e180)
 			if (gain.lt(1)) return D(0)
 			gain = gain.root(4)
 
@@ -226,11 +226,11 @@ const FORMS = {
 			gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
 			gain = gain.mul(tmp.supernova.mult)
 
-			if (CHALS_NEW.in(7)) gain = gain.root(6)
+			if (CHALS.in(7)) gain = gain.root(6)
 			gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
-			if (CHALS_NEW.in(8)) gain = gain.root(8)
-			gain = gain.pow(CHALS_NEW.eff(8).dm)
-			if (tmp.md.active && !CHALS_NEW.in(12) && !CHALS_NEW.in(15)) gain = MASS_DILATION.applyDil(gain)
+			if (CHALS.in(8)) gain = gain.root(8)
+			gain = gain.pow(CHALS.eff(8).dm)
+			if (tmp.md.active && !CHALS.in(12) && !CHALS.in(15)) gain = MASS_DILATION.applyDil(gain)
 			return gain.floor()
 		},
 		massPowerGain() {
@@ -248,9 +248,9 @@ const FORMS = {
 			x = x.mul(tmp.bosons.upgs.photon[0].effect)
 			x = x.mul(tmp.supernova.mult)
 
-			if (CHALS_NEW.in(8)) x = x.root(8)
-			x = x.pow(CHALS_NEW.eff(8).bh)
-			if (tmp.md.active && !CHALS_NEW.in(12) && !CHALS_NEW.in(15)) x = MASS_DILATION.applyDil(x)
+			if (CHALS.in(8)) x = x.root(8)
+			x = x.pow(CHALS.eff(8).bh)
+			if (tmp.md.active && !CHALS.in(12) && !CHALS.in(15)) x = MASS_DILATION.applyDil(x)
 			return x.softcap(tmp.bh.massSoftGain, tmp.bh.massSoftPower, 0)
 		},
 		massSoftGain() {
@@ -286,16 +286,16 @@ const FORMS = {
 		condenser: {
 			autoSwitch() { player.bh.autoCondenser = !player.bh.autoCondenser },
 			autoUnl() { return hasUpgrade('atom',2) },
-			can() { return player.bh.dm.gte(tmp.bh.condenser_cost) && !CHALS_NEW.in(6) && !CHALS_NEW.in(10) },
+			can() { return player.bh.dm.gte(tmp.bh.condenser_cost) && !CHALS.in(6) && !CHALS.in(10) },
 			buy() {
-				if (CHALS_NEW.in(14)) return
+				if (CHALS.in(14)) return
 				if (this.can()) {
 					if (!hasExtMilestone("qol", 5)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
-				if (CHALS_NEW.in(14)) return
+				if (CHALS.in(14)) return
 				if (this.can()) {
 					if (!hasExtMilestone("qol", 5)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
@@ -306,7 +306,7 @@ const FORMS = {
 			effect() {
 				let t = player.bh.condenser
 				let pow = D(2)
-					pow = pow.add(CHALS_NEW.eff(6))
+					pow = pow.add(CHALS.eff(6))
 					if (hasUpgrade('bh',2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:D(1))
 					pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
 					if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
@@ -316,7 +316,7 @@ const FORMS = {
 				return {pow: pow, eff: eff}
 			},
 			bonus() {
-				if (CHALS_NEW.in(14)) return D(0)
+				if (CHALS.in(14)) return D(0)
 				let x = D(0)
 				if (hasUpgrade('bh',15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:D(0))
 				return x
@@ -332,35 +332,81 @@ const FORMS = {
 			//if (AXION.unl()) r = r.pow(tmp.ax.eff[8])
 			return r
 		}
-	},
-	reset_msg: {
-		msgs: {
-			mg: () => "Require " + formatMass(2e4) + " to reset previous features for Magic",
-			rp: () => "Require " + formatMass(1e18) + " to reset previous features for Rage Power",
-			dm: () => "Require " + format(1e20, 0) + " Rage Power to reset all previous features for Dark Matter",
-			atom: () => "Require " + formatMass(uni(1e100)) + " black hole mass to reset all previous features for Atoms & Quarks",
-			md: () => "Dilate mass, then cancel",
-			sn: () => "Reach over "+format(tmp.supernova.maxlimit)+" collapsed stars to be Supernova",
-			ext: () => "Require Challenge 12 to rise the exotic particles!",
-			portal: () => "Call the Altar to teleport!",
-		},
-		set(id) {
-			player.reset_msg = this.msgs[id]()
-		},
-		reset() { player.reset_msg = "" },
-	},
+	}
 }
 
-function capitalFirst(str) {
-	if (str=="" || str==" ") return str
-	return str
-		.split(" ")
-		.map(x => x[0].toUpperCase() + x.slice(1))
-		.join(" ");
+const TOOLTIPS = {
+	mass: {
+		full: "Mass",
+		desc: () => `You have pushed <b>${formatMass(player.mass)}</b> of existence.<br>
+		Your strongest object holds <b>${formatMass(player.stats.maxMass)}</b>.`
+	},
+	mg: {
+		full: "Magic",
+		desc: () => `<i class="purple">IM:A- Exclusive</i><br>
+		You have summoned <b>${format(MAGIC.amt())}</b> magic.<br><br>
+		Require ${formatMass(2e4)} to reset prior features`
+	},
+	rp: {
+		full: "Rage",
+		desc: () => `<i class="red">Layer 1 resource</i><br>
+		You have enraged <b>${format(player.rp.points)}</b> Rage Power.<br><br>
+		Require ${formatMass(1e18)} to reset prior features`
+	},
+	dm: {
+		full: "Dark Matter",
+		desc: () => `<i class="yellow">Layer 2 resource</i><br>
+		You have extracted <b>${format(player.bh.dm)}</b> Dark Matter.<br><br>
+		Require ${format(1e20, 0)} Rage Power to reset prior features`
+	},
+	bh: {
+		full: "Black Hole",
+		desc: () => `<i class="yellow">Layer 2 resource</i><br>
+		Your Black Hole consumed <b>${formatMass(player.bh.mass)}</b>.`
+	},
+	atom: {
+		full: "Atomic",
+		desc: () => `<i>Layer 3 resource</i><br>
+		You have composed <b>${format(player.atom.points)}</b> Atoms.
+		<br><br>
+		Require ${formatMass(uni(1e100))} black hole mass to reset prior features`
+	},
+	qk: {
+		full: "Quarks",
+		desc: () => `<i>Layer 3 resource</i><br>
+		You have <b>${format(player.atom.quarks)}</b> unassigned Quarks.<br><br>
+		Require ${formatMass(uni(1e100))} black hole mass to reset prior features`
+	},
+	md: {
+		full: "Dilation",
+		desc: () => `<i>Layer 3 resource</i><br>
+		You have <b>${format(player.md.particles)}</b> Relativistic Particles<br>
+		You have <b>${format(player.md.mass)}</b> dilated mass<br><br>
+		Click to ${player.md.active?'undo mass dilation':'dilate mass'}.`
+	},
+	star: {
+		full: "Stars",
+		desc: () => `<i>Layer 3 resource</i><br>
+		You have collapsed <b>${format(player.stars.points)}</b> stars.`
+	},
+	sn: {
+		full: "Supernovae",
+		desc: () => `<i class='magenta'>Layer 4 resource</i><br>
+		You became <b>${format(player.supernova.times, 0)}</b> Supernovae.<br><br>
+		Reach ${format(tmp.supernova.maxlimit)} collapsed stars to be a Supernova.`
+	},
+	ns: {
+		full: "Neutron Stars",
+		desc: () => `<i class='magenta'>Layer 4 resource</i><br>
+		You have unravelled <b>${format(player.supernova.stars)}</b> Neutron Stars from nebulae remnants.`
+	},
+	ext: {
+		full: "Exotic",
+		desc: () => `<i class='scarlet'>Layer 5 resource</i><br>
+		You risen up <b>${format(EXT.amt())}</b> Exotic Matter.<br><br>
+		Require Challenge 12 to rise the exotic particles!`
+	}
 }
-
-function expMult(a,b,base=10) { return D(a).gte(1) ? D(base).pow(D(a).log(base).pow(b)) : a }
-
 
 function changeFont(x) {
 	if (x) player.options.font = x

@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "12/22/22"
-let betaVerNum = 221222.00
+let betaVer = "2/6/23"
+let betaVerNum = 230206.00
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -124,7 +124,7 @@ function checkAPVers() {
 			player.ext.unl = true
 
 			player.supernova.tree = ["c"]
-			CHALS_NEW.clear(3)
+			CHALS.clear(3)
 			
 			resetTemp()
 			EXT.reset(true)

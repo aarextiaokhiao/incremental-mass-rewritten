@@ -110,6 +110,7 @@ function setupHTML() {
 	}
 	new Element("scaling_eff").setHTML(table)
 
+	setupTooltips()
 	setupChalHTMLNew()
 	setupAtomHTML()
 	setupElementsHTML()
@@ -157,7 +158,6 @@ function updateTabsHTML() {
 
 function updateUpperHTML() {
 	upperResources = 0
-	elm.reset_desc.setHTML(player.reset_msg)
 
 	let preExt = !EXT.unl()
 	updateUpperRes("mass_div", true, () => {
@@ -166,7 +166,7 @@ function updateUpperHTML() {
 	updateUpperRes("mg_div", gameStarted() && inNGM(), () => {
 		elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
 	})
-	updateUpperRes("rp_div", (player.rp.unl || (inNGM() ? MAGIC.unl() : player.stats.maxMass.gte(1e9))) && !CHALS_NEW.in(7), () => {
+	updateUpperRes("rp_div", (player.rp.unl || (inNGM() ? MAGIC.unl() : player.stats.maxMass.gte(1e9))) && !CHALS.in(7), () => {
 		elm.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+formatGainOrGet(player.rp.points, tmp.rp.gain, hasUpgrade('bh',6)||hasUpgrade('atom',6)))
 	})
 	updateUpperRes("dm_div", player.rp.unl, () => {
@@ -188,7 +188,7 @@ function updateUpperHTML() {
 		elm.starAmt.setHTML(format(player.stars.points,2)+" / <br>"+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
 	})
 	updateUpperRes("sn_div", player.supernova.unl, () => {
-		elm.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
+		elm.snAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
 	})
 	updateUpperRes("ns_div", player.supernova.unl && !EXT.unl(), () => {
 		elm.nsAmt.setHTML(format(player.supernova.stars)+"<br>"+formatGain(player.supernova.stars,tmp.supernova.star_gain))
@@ -365,7 +365,6 @@ function updateBlackHoleHTML() {
 
 function updateStatsHTML() {
 	elm.total_time.setTxt(formatTime(player.time))
-	elm.best_mass.setTxt(formatMass(player.stats.maxMass))
 	elm.progress_stages_stats.setTxt(getStageProgress() + " / " + STAGE_AMT)
 	elm.progress_layers_stats.setTxt(getLayerProgress() + " / " + LAYER_AMT)
 }
@@ -391,12 +390,13 @@ function updateHTML() {
 			: format(player.stats.maxMass.div(player.offline.mass)) + "x mass gained!") + " " + getProdDisp(player.mass, "mass", true, true)
 		)
 	}
-
-	document.body.style.backgroundColor = tmp.tab == 3 ? "#000" : inNGM() ? "#101" : "#111"
-	document.body.className = inNGM() ? "ngm" : ""
 	elm.loading.setDisplay(tmp.offlineActive)
 	elm.offlineGainDiv.setDisplay(tmp.offlineActive)
     elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 3 && (!tmp.supernova.reached || player.supernova.unl))
+
+	document.body.style.backgroundColor = tmp.tab == 3 ? "#000" : inNGM() ? "#101" : "#111"
+	document.body.className = inNGM() ? "ngm" : ""
+
 	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | " + getSaveTitle())
 	if (tmp.offlineActive) return
 

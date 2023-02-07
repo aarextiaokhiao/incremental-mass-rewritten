@@ -181,7 +181,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `The Atomic Power effect is better.`,
+            desc: `Atomic Power effect is better.`,
             cost: D(1e65),
         },
         {

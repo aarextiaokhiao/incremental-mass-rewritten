@@ -135,6 +135,13 @@ class Element {
 		new Element(id).append(child)
 	}
 
+	setTooltip(input) {
+		this.setAttr("tooltip-html", input);
+	}
+	static setTooltip(id, input) {
+		new Element(id).setAttr("tooltip-html", input);
+	}
+
 	appendHTML(child) {
 		if (elm[child].parent == this.id) return
 		elm[child].parent = this.id

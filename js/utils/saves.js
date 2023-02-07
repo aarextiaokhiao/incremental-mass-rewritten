@@ -112,7 +112,6 @@ function getPlayerData() {
 		shrt: {
 			order: [[0, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]],
 		},
-		reset_msg: "",
 		main_upg_msg: [0,0],
 		tickspeed: D(0),
 		options: {
@@ -311,7 +310,6 @@ function loadPlayer(data) {
 }
 
 function onLoaded() {
-    player.reset_msg = ""
     player.main_upg_msg = [0,0]
     player.chal.choosed = 0
 

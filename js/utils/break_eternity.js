@@ -2749,6 +2749,7 @@ for (var i = 0; i < 10; ++i)
 const EINF = Decimal.dInf
 const D = Decimal.fromValue_noAlloc
 
+function expMult(a,b,base=10) { return D(a).gte(1) ? D(base).pow(D(a).log(base).pow(b)) : a }
 Decimal.prototype.modular=Decimal.prototype.mod=function (other){
     other=D(other);
     if (other.eq(0)) return D(0);

@@ -527,3 +527,11 @@ function formatTime(ex,type="s") {
     if (ex.gte(60)||type=="h") return (ex.div(60).gte(10)||type!="h"?"":"0")+format(ex.div(60).floor(),0)+":"+formatTime(ex.mod(60),'m')
     return (ex.gte(10)||type!="m"?"":"0")+format(ex,2)
 }
+
+//OTHERS
+function capitalFirst(str) {
+	if (str=="" || str==" ") return str
+	return str.split(" ")
+		.map(x => x[0].toUpperCase() + x.slice(1))
+		.join(" ");
+}

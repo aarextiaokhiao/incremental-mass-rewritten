@@ -1,6 +1,6 @@
 const ATOM = {
     gain() {
-        if (CHALS_NEW.in(13)) return D(0)
+        if (CHALS.in(13)) return D(0)
         let x = player.bh.mass.div(1.5e156)
         if (x.lt(1)) return D(0)
         x = x.root(5)
@@ -13,7 +13,7 @@ const ATOM = {
         return x.floor()
     },
     quarkGain() {
-        if (CHALS_NEW.in(13)) return D(0)
+        if (CHALS.in(13)) return D(0)
         if (tmp.atom.gain.lt(1)) return D(0)
         x = tmp.atom.gain.max(1).log10().pow(1.1).add(1)
         if (hasElement(1)) x = D(1.25).pow(tmp.atom.gain.max(1).log10())
@@ -49,7 +49,7 @@ const ATOM = {
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         player.mainUpg.bh = keep
-        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) CHALS_NEW.clear(0)
+        if (chal_reset && !hasUpgrade('atom',4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) CHALS.clear(0)
         FORMS.bh.doReset()
     },
     atomic: {
@@ -70,7 +70,7 @@ const ATOM = {
 			return r
 		},
 		effect() {
-			if (CHALS_NEW.in(14)) return D(0)
+			if (CHALS.in(14)) return D(0)
 			let sc = ATOM.atomic.softcap()
 			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75)
 			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0)
@@ -79,14 +79,14 @@ const ATOM = {
     },
     gamma_ray: {
         buy() {
-			if (CHALS_NEW.in(14)) return
+			if (CHALS.in(14)) return
             if (tmp.atom.gamma_ray_can) {
                 if (!hasExtMilestone("qol", 5)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
                 player.atom.gamma_ray = player.atom.gamma_ray.add(1)
             }
         },
         buyMax() {
-			if (CHALS_NEW.in(14)) return
+			if (CHALS.in(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
                 if (!hasExtMilestone("qol", 5)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
@@ -107,7 +107,7 @@ const ATOM = {
             return {pow: pow, eff: eff}
         },
         bonus() {
-			if (CHALS_NEW.in(14)) return D(0)
+			if (CHALS.in(14)) return D(0)
             let x = tmp.fermions.effs[0][0]||D(0)
             return x
         },
@@ -115,7 +115,7 @@ const ATOM = {
     particles: {
         names: ['Proton', 'Neutron', 'Electron'],
         disabled(x) {
-            return CHALS_NEW.in(9)
+            return CHALS.in(9)
         },
         assign(x) {
             if (player.atom.quarks.lt(1) || this.disabled()) return
@@ -137,7 +137,7 @@ const ATOM = {
 		mg12(p) {
 			if (!p) p = player.atom.particles[0].max(player.atom.particles[1].max(player.atom.particles[2]))
 
-			let c9 = CHALS_NEW.eff(9)
+			let c9 = CHALS.eff(9)
 			return p.add(1).log10().add(1).pow(c9.exp.div(4)).mul(c9.mul) //Maximum of ^1.325
 		},
         effect(i) {

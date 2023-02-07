@@ -54,7 +54,7 @@ const SUPERNOVA = {
         player.stars.points = D(0)
         player.stars.boost = D(0)
 
-        if (!hasTree("chal3")) CHALS_NEW.clear(1)
+        if (!hasTree("chal3")) CHALS.clear(1)
 
         ATOM.doReset()
 
@@ -157,7 +157,7 @@ function calcSupernova(dt, dt_offline) {
 			if (player.supernova.auto.on == list.length) player.supernova.auto.on = -2
 			else {
 				var id = list[player.supernova.auto.on]
-				if (id > 0) CHALS_NEW.enter(Math.ceil(id / 4) - 1, id)
+				if (id > 0) CHALS.enter(Math.ceil(id / 4) - 1, id)
 				else FERMIONS.choose(Math.floor(-id/10), (-id-1)%10, true)
 			}
 		}
@@ -259,7 +259,7 @@ function getSupernovaAutoTemp(mode = "all") {
 	if (mode == "all" || mode == "chal") {
 		for (var x = leastManualChal() + 1; x <= 12; x++) {
 			let tier = player.chal.comps[x]
-			if (CHALS_NEW.chals[x].unl() && tier.gte(c_thres) && tier.lt(CHALS_NEW.max(x))) ret.push(x)
+			if (CHALS.chals[x].unl() && tier.gte(c_thres) && tier.lt(CHALS.max(x))) ret.push(x)
 		}
 	}
 

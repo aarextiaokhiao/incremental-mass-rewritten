@@ -340,8 +340,8 @@ function getScalingStart(type, name) {
 	let start = D(SCALE_START[type][name])
 	if (type=="super") {
 		if (name=="rank") {
-			if (CHALS_NEW.in(1)) return D(25)
-			start = start.add(CHALS_NEW.eff(1).rank)
+			if (CHALS.in(1)) return D(25)
+			start = start.add(CHALS.eff(1).rank)
 		}
 		if (name=="tier") {
 			if (hasUpgrade('atom',5)) start = start.add(10)
@@ -350,11 +350,11 @@ function getScalingStart(type, name) {
 			if (hasRank("tier", 100)) start = start.add(5)
 		}
 		if (name=="massUpg") {
-			if (CHALS_NEW.in(1)) return D(25)
+			if (CHALS.in(1)) return D(25)
 			if (hasUpgrade('bh',3)) start = start.add(tmp.upgs?tmp.upgs.main?tmp.upgs.main[2][3].effect:0:0)
 		}
 		if (name=='tickspeed') {
-			if (CHALS_NEW.in(1)) return D(50)
+			if (CHALS.in(1)) return D(50)
 		}
 		if (name=='supernova') {
 			if (hasTree("feat6")) start = start.add(1)
@@ -417,9 +417,9 @@ function getScalingPower(type, name) {
 			if (hasUpgrade('rp',8)) power = power.mul(tmp.upgs.main?tmp.upgs.main[1][8].effect:1)
 		}
 		if (name=='tickspeed') {
-			power = power.mul(CHALS_NEW.eff(1).tick)
+			power = power.mul(CHALS.eff(1).tick)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(15)) power = power.mul(0.8)
@@ -450,7 +450,7 @@ function getScalingPower(type, name) {
 			if (hasUpgrade('bh',12)) power = power.mul(0.85)
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasTree("feat3")) power = power.mul(0.85)
-			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -470,7 +470,7 @@ function getScalingPower(type, name) {
 		if (name=='tickspeed') {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
-			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 		if (name=='bh_condenser') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -481,7 +481,7 @@ function getScalingPower(type, name) {
 	}
 	if (type=="meta") {
 		if (name=='tickspeed') {
-			//if (CHALS_NEW.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
+			//if (CHALS.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}
 	return power
