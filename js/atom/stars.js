@@ -3,7 +3,7 @@ const STARS = {
     gain() {
         let x = player.stars.generators[0]
         if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
-        x = x.mul(tmp.supernova.mult)
+		if (hasExtMilestone("boost", 0)) x = x.mul(25)
 
         if (CHALS.in(14)) x = x.pow(.01)
         return x.softcap(tmp.stars.softGain,tmp.stars.softPower,0)
@@ -30,6 +30,7 @@ const STARS = {
 		let tetr = player.ranks.tetr.mul(rank_str).softcap(5,hasTree("s2")?1.5:5,1).softcap(9,0.3,0)
 
 		let b = star.max(1).log10().add(1)
+		if (hasElement(69)) b = star.max(1).root(5e5).mul(b)
 		let e = rank.mul(tier.pow(2)).add(1).pow(tetr.add(1).pow(5/9).mul(0.25).min(1)).min(2e8)
 		return { eff: b.pow(e), exp: e }
 	},
@@ -58,7 +59,8 @@ const STARS = {
             if (hasTree("s1") && i==4) x = x.mul(treeEff("s1"))
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
             if (hasElement(54)) x = x.mul(tmp.elements.effect[54])
-            if (!isScalingToned("supernova")) x = x.mul(tmp.bosons.upgs.photon[3].effect)
+            if (!isScalingOff("supernova") && BOSONS.unl()) x = x.mul(tmp.bosons.upgs.photon[3].effect)
+			if (hasExtMilestone("boost", 0)) x = x.mul(25)
             x = x.mul(tmp.supernova.mult)
 
             return x.mul(tmp.stars.gb_eff)
@@ -81,7 +83,7 @@ function updateStarsTemp() {
 	}
 
 	let ts = tmp.stars
-	let exp = Math.max(TONES.power(1),1.25)
+	let exp = 1.25
 	ts.gen_req = player.stars.unls<5?STARS.generators.req[player.stars.unls]:EINF
 	ts.gb_req = D("e100").pow(player.stars.boost.pow(exp)).mul('e8000')
 	ts.gb_bulk = player.atom.quarks.div("e8000").log10().div(100).root(exp).floor().add(1)
@@ -120,7 +122,7 @@ function setupStarsHTML() {
 
 function updateScreensHTML() {
 	//STARS
-	let shown = (!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5 && !GLUBALL.unl()
+	let shown = (!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5
 	elm.star.setDisplay(shown)
 	if (shown) {
 		let g = tmp.supernova.bulk.sub(player.supernova.times).max(0)
@@ -141,9 +143,6 @@ function updateScreensHTML() {
 		elm.star.changeStyle('width',size+"px")
 		elm.star.changeStyle('height',size+"px")
 	}
-
-	//GLUEBALLS
-	updateChromaScreen()
 }
 
 function updateStarsHTML() {

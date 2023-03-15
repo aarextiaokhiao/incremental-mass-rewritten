@@ -39,7 +39,7 @@ const CONFIRMS = {
 	ext: {
 		unl: () => EXT.unl(),
 
-		msg: "Do you wish to rise Exotic?",
+		msg: "Do you wish to rise Exotic? This resets your progress for Exotic Matter. It takes a long time...",
 		tip: "Only works if you are restarting a Exotic run.",
 		img: "ext"
 	},

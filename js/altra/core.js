@@ -1,8 +1,8 @@
 //ON LOAD
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "2/6/23"
-let betaVerNum = 230206.00
+let betaVer = "3/14/23"
+let betaVerNum = 230314.00
 let betaSave = "testBeta"
 
 let globalSaveId = beta ? betaSave : "testSave"
@@ -146,11 +146,11 @@ function checkAPVers() {
 //HTML
 function setupAltraHTML() {
 	//Exotic
-	setupAxionHTML()
 	setupExtMilestonesHTML()
-	//setupGlueballHTML()
+	setupAxionHTML()
 
 	//Others
+	setupMilestonesHTML()
 	setupShortcuts()
 	setupCompressionHTML()
 }
@@ -321,28 +321,11 @@ function updateCompressionHTML() {
 function updateAltraTemp() {
 	//Exotic
 	EXT.updateTmp()
+
+	//Others
+	updateMilestoneTemp()
 }
 
 //TECHNICAL / FUTURE
 paused = false
 future = false
-
-let PORTAL = {
-	unl() {
-		return false
-	},
-	doReset() {
-		player.ext.amt = D(0)
-		player.ext.toned = 0
-
-		player.supernova.tree = ["c", "eb1", "eb2"]
-		for (var i = 1; i <= 11; i++) player.supernova.tree.push("feat"+i)
-		EXT.doReset(true)
-	},
-	story() {
-		addPopup(POPUP_GROUPS.pres_1)
-		addPopup(POPUP_GROUPS.pres_2)
-		addPopup(POPUP_GROUPS.pres_3)
-		addPopup(POPUP_GROUPS.pres_4)
-	}
-}

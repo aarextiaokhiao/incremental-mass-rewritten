@@ -1,7 +1,7 @@
 let EXTRA_BUILDINGS = {
 	unls: {
-		2: () => hasTree("eb1"),
-		3: () => hasTree("eb2")
+		2: () => hasExtMilestone("unl", 0),
+		3: () => hasExtMilestone("unl", 1),
 	},
 	max: 3,
 	kind: ["bh", "ag"],

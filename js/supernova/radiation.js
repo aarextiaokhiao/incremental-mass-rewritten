@@ -1,6 +1,6 @@
 const RADIATION = {
     names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma"],
-    unls: ["0","1e6","1e13","1e20","5e26","5e29","1e35"],
+    unls: ["0","1e6","1e10","1e20","5e26","5e29","1e35"],
     hz_gain() {
 		if (CHALS.in(14)) return D(0)
 
@@ -20,7 +20,9 @@ const RADIATION = {
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return D(0)
 
         let x = D(1)
+        if (i>1) x = x.div(10)
         if (hasTree('feat1')) x = x.mul(3)
+		if (hasElement(71)) x = x.mul(3)
         if (hasTree("rad4")) x = x.mul(treeEff("rad4"))
         if (hasTree("rad5")) x = x.mul(treeEff("rad5"))
         if (i<RAD_LEN-1) x = x.mul(tmp.radiation.ds_eff[i+1])
@@ -78,7 +80,7 @@ const RADIATION = {
             if (!auto) player.supernova.radiation.ds[j] = player.supernova.radiation.ds[j].sub(D(f1).pow(bulk.sub(1).pow(f2).mul(f4)).mul(f3)).max(0)
         }
     },
-	max(auto) {
+	max() {
 		for (let x = 0; x < RAD_LEN; x++) {
 			RADIATION.buyBoost(x*2)
 			RADIATION.buyBoost(x*2+1)
@@ -90,6 +92,7 @@ const RADIATION = {
 		else res = player.supernova.radiation.ds[x-1]
 
         let b = res.add(1).log10().div(3).add(1)
+        if (hasElement(73)) b = b.mul(1.05)
         if (hasTree("rad6")) b = expMult(res, 0.15).pow(.1).mul(b)
 
 		return b.pow(exp)
@@ -140,7 +143,7 @@ const RADIATION = {
         },{
             title: `Impossible Boost`,
 			eff(b) {
-				return D(b).add(1).log10().pow(.5).add(1)
+				return D(b).add(1).log10().add(1).sqrt()
 			},
             desc(x) { return `Impossible Challenges scale ${formatMultiply(x)} slower.` },
         },{

@@ -23,38 +23,37 @@ TO-DO LIST:
 		Experiment things subjecting to mass.
 
 Elements:
-1. Stronger always give +^??? without softcaps.
+-- 1. Stronger always give +^??? without softcaps.
 2. Mass Upgrades always scale at ^1.25 rate.
-3. BH Condensers always scale at ^1.25 rate.
-4. Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
+-- 3. BH Condensers always scale at ^1.25 rate.
+-- 4. Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
 5. Tickspeed Power multiplies BHC Power.
-6. Cosmic Rays scale at ^1.25 rate.
+-- 6. Cosmic Rays scale at ^1.25 rate.
 7. Cosmic Ray Power weakens Mass Upgrades and Star Boosters.
 8. Atomic Power adds Tickspeed without softcaps.
-9. Nullify Particle Powers' softcaps and boosts.
-10. Argon-18's effect is squared.
-11. Stars boost its effect at a reduced rate.
+-- 9. Nullify Particle Powers' softcaps and boosts.
+-- 10. Argon-18's effect is squared.
+-- 11. Stars boost its effect at a reduced rate.
 12. Strengthen Photon Upgrade 1, but doesn't affected by levels.
 13. Strengthen Gluon Upgrade 1, but doesn't affected by levels.
-14. Square Challenge 10 reward.
-15. Tickspeed Effect boosts Particle Powers.
-16. Mass multiplies Relativistic Particles at a sublinear rate instead.
-17. Dilated mass effect is better.
-18. Fermion Tiers scale slower.
-19. Double Radiation sources.
+-- 14. Dilated mass effect is better.
+15. Fermion Tiers scale slower.
+-- 16. Triple Radiation.
+-- 17. Radiation Self-Boosts are better.
+18. ???
+19. ???
 
 Pent Rewards:
 ?. Tickspeed Power multiplies Booster Power.
-?. Stronger raises Muscler efficiency.
-?. Stronger raises Booster efficiency.
-?. Muscler and Boosters add their efficiency exponents.
+-- ?. Stronger Effect raises Muscler efficiency.
+-- ?. Stronger Effect raises Booster efficiency.
 ?. Cosmic Ray Power weakens Mass Upgrades and Tickspeed.
 ?. Atomic Power adds Star Boosters.
 ?. Pent boosts Frequency.
 ?. Pent weakens Rank Scalings.
 ?. Rank always scales at ^1.5 rate.
 ?. Pent weakens Tier Scalings.
-?. Tickspeed Power multiplies Tier 6 base.
+-- ?. Tier 6 is better.
 
 Others:
 - C12 reward is replaced: Radiation Boost.

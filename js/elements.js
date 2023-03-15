@@ -29,34 +29,19 @@ function setupHTML() {
 	sn_stabs.setHTML(table3)
 	ext_stabs.setHTML(table4)
 
-	let ranks_table = new Element("ranks_table")
-	table = ""
-	for (let x = 0; x < RANKS.names.length; x++) {
-		let rn = RANKS.names[x]
-		table += `<div style="width: 300px" id="ranks_div_${x}">
-			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">OFF</button>
-			<span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]} <span id="ranks_amt_${x}">X</span><br><br>
-			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
-				<span id="ranks_reset_${x}">Reset your ${RANKS.resetDescs[x]}, but </span>${RANKS.fullNames[x]} up.<span id="ranks_desc_${x}"></span><br>
-				Req: <span id="ranks_req_${x}">X</span>
-			</button>
-		</div>`
-	}
-	ranks_table.setHTML(table)
-
 	let mass_upgs_table = new Element("mass_upgs_table")
 	table = ""
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
 		let upg = UPGS.mass[x]
-		table += `<div style="width: 100%; margin-bottom: 5px;" class="table_center" id="massUpg_div_${x}">
+		table += `<div class="building" id="massUpg_div_${x}">
 			<div style="width: 400px">
 				<div class="resources">
 					<img src="images/mass_upg${x}.png">
 					<span style="margin-left: 5px; text-align: left;"><span id="massUpg_scale_${x}"></span>${upg.title} [<span id="massUpg_lvl_${x}">X</span>]</span>
 				</div>
 			</div><button id="massUpg_btn_${x}" class="btn" style="width: 200px;" onclick="UPGS.mass.buy(${x}, true)">Cost: <span id="massUpg_cost_${x}">X</span></button>
-			<button class="btn" style="width: 120px;" onclick="UPGS.mass.buyMax(${x})">Buy Max</button>
-			<button id="massUpg_auto_${x}" class="btn" style="width: 80px;" onclick="UPGS.mass.autoSwitch(${x})">OFF</button>
+			<button class="btn" style="width: 100px;" onclick="UPGS.mass.buyMax(${x})">Max</button>
+			<button id="massUpg_auto_${x}" class="btn" style="width: 60px; padding: 0" onclick="UPGS.mass.autoSwitch(${x})">OFF</button>
 			<div style="margin-left: 5px; text-align: left; width: 400px">
 				${upg.title} Power: <span id="massUpg_step_${x}">X</span><br>
 				${upg.title} Effect: <span id="massUpg_eff_${x}">X</span>
@@ -65,31 +50,22 @@ function setupHTML() {
 	}
 	mass_upgs_table.setHTML(table)
 
-	let ranks_rewards_table = new Element("ranks_rewards_table")
-	table = ""
-	for (let x = 0; x < RANKS.names.length; x++) {
-		let rn = RANKS.names[x]
-		table += `<div id="ranks_reward_div_${x}">`
-		let keys = Object.keys(RANKS.desc[rn])
-		for (let y = 0; y < keys.length; y++) {
-			if (keys[y].includes("_")) break
-			table += `<span id="ranks_reward_${rn}_${y}"><b id="ranks_title_${rn}_${y}"></b>: <span id="ranks_desc_${rn}_${y}"></span>${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span>`:""}</span><br>`
-		}
-		table += `</div>`
-	}
-	ranks_rewards_table.setHTML(table)
-
 	let main_upgs_table = new Element("main_upgs_table")
 	table = ""
 	for (let x = 1; x <= UPGS.main.cols; x++) {
 		let id = UPGS.main.ids[x]
-		table += `<div id="main_upg_${x}_div" style="width: 230px; margin: 0px 10px;"><b>${UPGS.main[x].title}</b><br><br><div style="font-size: 13px; min-height: 50px" id="main_upg_${x}_res"></div><br><div class="table_center" style="justify-content: start;">`
+		table += `<div id="main_upg_${x}_div" style="width: 230px; margin: 0px 10px;">
+			<button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button>
+				<br><br>
+				<b>${UPGS.main[x].title}</b><br>
+				<div style="font-size: 12px" id="main_upg_${x}_res"></div><br>
+				<div class="table_center" style="justify-content: start;">`
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
 			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/upgrades/main_upg_${id+y}.png">`
 		}
-		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button></div>`
+		table += `</div></div>`
 	}
 	main_upgs_table.setHTML(table)
 
@@ -105,13 +81,14 @@ function setupHTML() {
 	new Element("scaling_table").setHTML(table)
 
 	table = ""
-	for (let key of Object.keys(SCALE_INIT_POWERS)) {
+	for (let key of Object.keys(SCALE_EXP)) {
 		table += `<div id="scaling_eff_${key}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key]}</b>: Exponential, ^<span id="scaling_eff_${key}"></span> (base: ^<span id="scaling_eff_${key}_base"></span>)</div>`
 	}
 	new Element("scaling_eff").setHTML(table)
 
 	setupTooltips()
-	setupChalHTMLNew()
+	setupRanksHTML()
+	setupChalHTML()
 	setupAtomHTML()
 	setupElementsHTML()
 	setupMDHTML()
@@ -136,7 +113,7 @@ function updateTabsHTML() {
 	elm.tab_header.setDisplay(gameStarted())
 	for (let x = 0; x < TABS[1].length; x++) {
 		let tab = TABS[1][x]
-		elm["tab"+x+"_div"].setDisplay(tab.unl ? tab.unl() : true)
+		elm["tab"+x+"_div"].setDisplay(TABS.unl(x))
 		elm["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
 
 		if (elm["tab_frame"+x]) elm["tab_frame"+x].setDisplay(x == tmp.tab)
@@ -144,7 +121,7 @@ function updateTabsHTML() {
 			let unls = 0
 			if (x == tmp.tab) for (let y = 0; y < TABS[2][x].length; y++)  {
 				let stab = TABS[2][x][y]
-				let unl = stab.unl ? stab.unl() : true
+				let unl = TABS.unl(x, y)
 				elm["stab"+x+"_"+y+"_div"].setDisplay(unl)
 				elm["stab"+x+"_"+y].setClasses({btn_tab: true, [stab.style ? stab.style : "normal"]: true, choosed: y == tmp.stab[x]})
 				if (elm["stab_frame"+x+"_"+y]) elm["stab_frame"+x+"_"+y].setDisplay(y == tmp.stab[x])
@@ -159,7 +136,7 @@ function updateTabsHTML() {
 function updateUpperHTML() {
 	upperResources = 0
 
-	let preExt = !EXT.unl()
+	let preExt = false //!EXT.unl()
 	updateUpperRes("mass_div", true, () => {
 		elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+getProdDisp(player.mass, "mass", true, true))
 	})
@@ -184,13 +161,13 @@ function updateUpperHTML() {
 	updateUpperRes("md_div", MASS_DILATION.unlocked() && !player.supernova.post_10, () => {
 		elm.mdAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?formatGet(player.md.particles,tmp.md.rp_gain):(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
 	})
-	updateUpperRes("star_div", (player.supernova.unl || STARS.unlocked()) && !EXT.unl(), () => {
+	updateUpperRes("star_div", STARS.unlocked() && !player.supernova.unl, () => {
 		elm.starAmt.setHTML(format(player.stars.points,2)+" / <br>"+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain))
 	})
 	updateUpperRes("sn_div", player.supernova.unl, () => {
 		elm.snAmt.setHTML(format(player.supernova.times,0)+"<br>"+formatGet(player.supernova.times, tmp.supernova.bulk.sub(player.supernova.times), true))
 	})
-	updateUpperRes("ns_div", player.supernova.unl && !EXT.unl(), () => {
+	updateUpperRes("ns_div", player.supernova.unl && player.chal.comps[12].eq(0), () => {
 		elm.nsAmt.setHTML(format(player.supernova.stars)+"<br>"+formatGain(player.supernova.stars,tmp.supernova.star_gain))
 	})
 	updateUpperRes("ext_div", EXT.unl() || player.chal.comps[12].gt(0), () => {
@@ -211,37 +188,6 @@ function updateUpperRes(id, unl, call) {
 		if (player.options.resLayout.col) elm["res_col"+((upperResources-1)%player.options.resLayout.num+1)].appendHTML(id)
 		else elm["res_col"+Math.ceil(upperResources/player.options.resLayout.num)].appendHTML(id)
 		call()
-	}
-}
-
-function updateRanksHTML() {
-	for (let x = 0; x < RANKS.names.length; x++) {
-		let rn = RANKS.names[x]
-		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
-		if (x == 0) unl = unl&&!RANKS.unl.pent()
-		elm["ranks_div_"+x].setDisplay(unl)
-		if (unl) {
-			let keys = Object.keys(RANKS.desc[rn])
-			let desc = ""
-			if (gameStarted()) {
-				for (let i = 0; i < keys.length; i++) {
-					if (keys[i].includes("_")) break
-					if (player.ranks[rn].lt(keys[i])) {
-						desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.getDesc(rn,keys[i])}`
-						break
-					}
-				}
-			}
-
-			elm["ranks_scale_"+x].setTxt(getScalingName(rn))
-			elm["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
-			elm["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
-			elm["ranks_desc_"+x].setTxt(desc)
-			elm["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
-			elm["ranks_reset_"+x].setDisplay(RANKS.mustReset(rn) && gameStarted())
-			elm["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-			elm["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
-		}
 	}
 }
 
@@ -327,7 +273,7 @@ function updateMainUpgradesHTML() {
 		let id = UPGS.main.ids[x]
 		let upg = UPGS.main[x]
 		let unl = upg.unl()
-		elm["main_upg_"+x+"_div"].changeStyle("visibility", unl?"visible":"hidden")
+		elm["main_upg_"+x+"_div"].setDisplay(unl)
 		elm["main_upg_"+x+"_res"].setTxt(`You have ${format(upg.getRes(),0)} ${upg.res}`)
 		if (unl) {
 			for (let y = 1; y <= upg.lens; y++) {
@@ -335,7 +281,7 @@ function updateMainUpgradesHTML() {
 				elm["main_upg_"+x+"_"+y].changeStyle("visibility", unl2?"visible":"hidden")
 				if (unl2) elm["main_upg_"+x+"_"+y].setClasses({img_btn: true, locked: !upg.can(y), bought: player.mainUpg[id].includes(y)})
 			}
-			elm["main_upg_"+x+"_auto"].setDisplay(upg.auto_unl ? upg.auto_unl() : false)
+			elm["main_upg_"+x+"_auto"].changeStyle("visibility", upg.auto_unl && upg.auto_unl() ? "visible" : "hidden")
 			elm["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"ON":"OFF")
 		}
 	}
@@ -363,12 +309,6 @@ function updateBlackHoleHTML() {
 	updateExtraBuildingHTML("bh", 3)
 }
 
-function updateStatsHTML() {
-	elm.total_time.setTxt(formatTime(player.time))
-	elm.progress_stages_stats.setTxt(getStageProgress() + " / " + STAGE_AMT)
-	elm.progress_layers_stats.setTxt(getLayerProgress() + " / " + LAYER_AMT)
-}
-
 function updateOptionsHTML() {
 	elm.offline_active.setTxt(player.options.offline?"ON":"OFF")
 	elm.minus_active.setTxt(metaSave.ngm?"ON":"OFF")
@@ -376,8 +316,6 @@ function updateOptionsHTML() {
 	elm.progress_active.setTxt(player.options.progress?"ON":"OFF")
 	elm.tree_ani_btn.setDisplay(player.supernova.unl)
 	elm.tree_ani.setTxt(TREE_ANIM[player.options.tree_animation])
-	elm.chroma_bg_btn.setDisplay(GLUBALL.unl() && !PORTAL.unl())
-	elm.chroma_bg_active.setTxt(player.options.chroma?"ON":"OFF")
 }
 
 function updateHTML() {
@@ -392,12 +330,13 @@ function updateHTML() {
 	}
 	elm.loading.setDisplay(tmp.offlineActive)
 	elm.offlineGainDiv.setDisplay(tmp.offlineActive)
-    elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 3 && (!tmp.supernova.reached || player.supernova.unl))
 
+	let inScene = SUPERNOVA.canPlayAnimation()
+    elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 3 && !inScene)
 	document.body.style.backgroundColor = tmp.tab == 3 ? "#000" : inNGM() ? "#101" : "#111"
 	document.body.className = inNGM() ? "ngm" : ""
 
-	elm.title.setTxt((tmp.supernova.reached && !player.supernova.unl ? "Supernova!" : formatMass(player.mass)) + " | " + getSaveTitle())
+	elm.title.setTxt((inScene ? "Supernova!" : formatMass(player.mass)) + " | " + getSaveTitle())
 	if (tmp.offlineActive) return
 
 	updateSupernovaHTML()
@@ -443,10 +382,9 @@ function updateHTML() {
 			if (tmp.stab[6] == 0) updateChalHTMLNew()
 		}
 		if (tmp.tab == 7) {
-			if (tmp.stab[7] == 0) updateStatsHTML()
-			if (tmp.stab[7] == 1) updateRanksRewardHTML()
-			if (tmp.stab[7] == 2) updateScalingHTML()
-			if (tmp.stab[7] == 3) updateCompressionHTML()
+			if (tmp.stab[7] == 0) updateRanksRewardHTML()
+			if (tmp.stab[7] == 1) updateScalingHTML()
+			if (tmp.stab[7] == 2) updateCompressionHTML()
 		}
 		if (tmp.tab == 8) {
 			updateConfirmHTML()

@@ -1,75 +1,63 @@
 //Functions
 Decimal.prototype.scale = function (s, b, p, mode, rev=false) {
-    s = D(s)
-    p = D(p)
-    var x = this.clone()
-    if (x.gte(s)) x = SCALE_FUNCS[mode].func(x, s, b, p, rev)
-    return x
+	s = D(s)
+	p = D(p)
+	var x = this.clone()
+	if (x.gte(s)) x = SCALE_FUNCS[mode].func(x, s, b, p, rev)
+	return x
 }
 
 Decimal.prototype.scaleName = function (type, id, rev=false) {
-	if (isScalingToned(id)) return this.clone()
+	var x = this.clone()
+	if (isScalingActive(id, x, type)) {
+		let s = tmp.scaling_start[type][id]
+		let p = tmp.scaling_power[type][id]
 
-    var x = this.clone()
-    if (isScalingActive(id, x, type)) {
-        let s = tmp.scaling_start[type][id]
-        let p = tmp.scaling_power[type][id]
-
-        x = x.scale(s,SCALE_POWER[type][id],p,SCALE_MODE[type],rev)
-    }
-    return x
+		x = x.scale(s,SCALE_POWER[type][id],p,SCALE_MODE[type],rev)
+	}
+	return x
 }
 
 Decimal.prototype.scaleEvery = function (id, rev=false) {
-    var x = this.clone()
-	var fp = SCALE_FP[id] ? SCALE_FP[id]() : [1,1,1,1]
-    for (let i = 0; i < (FERMIONS.onActive(14) ? 3 : 4); i++) {
-        let s = rev?i:3-i
-        let sc = SCALE_TYPE[s]
+	var x = this.clone()
+	var f = SCALE_FP[id]?.()
+	for (let i = 0; i < (FERMIONS.onActive(14) ? 3 : 4); i++) {
+		let s = rev?i:3-i
+		let sc = SCALE_TYPE[s]
+		let fp = f?.[s]??1
 
-        x = rev?x.mul(fp[s]).scaleName(sc,id,1):x.scaleName(sc,id).div(fp[s])
-    }
-    return x
+		x = rev?x.mul(fp).scaleName(sc,id,1):x.scaleName(sc,id).div(fp)
+	}
+	return x
+}
+
+//Initial
+const SCALE_EXP = {
+	rank: _ => 1.15,
+	tier: _ => 2,
+	tetr: _ => hasElement(44) ? 1.75 : 2,
+	pent: _ => 1.25,
+	massUpg: _ => 1,
+	tickspeed: _ => hasElement(75) ? 1.25 : 1,
+	bh_condenser: _ => hasElement(70) ? 1.25 : 1,
+	gamma_ray: _ => hasElement(77) ? 1.25 : 1,
+	supernova: _ => 1.25,
+	fTier: _ => 1
+}
+
+const SCALE_OFF = {
+	tickspeed: _ => hasElement(76),
+	gamma_ray: _ => hasElement(77),
+	bh_condenser: _ => hasElement(70),
+	//massUpg: _ => hasElement(79),
+}
+
+function isScalingOff(name) {
+	return SCALE_OFF[name]?.() ?? false
 }
 
 //Technical
-const SCALE_INIT_POWERS = {
-	rank: {
-		normal: 1.15,
-		toned: 3
-	},
-	tier: {
-		normal: 2
-	},
-	tetr: {
-		normal: 2
-	},
-	pent: {
-		normal: 1.25
-	},
-	massUpg: {
-		normal: 1
-	},
-	tickspeed: {
-		normal: 1
-	},
-	bh_condenser: {
-		normal: 1
-	},
-	gamma_ray: {
-		normal: 1
-	},
-	supernova: {
-		normal: 1.25,
-		toned: 5
-	},
-	fTier: {
-		normal: 1,
-		toned: 2
-	}
-}
-
-const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta'] // super, hyper, ultra, meta
+const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta']
 const FULL_SCALE_NAME = ['Super', 'Hyper', 'Ultra', 'Meta']
 
 const SCALE_MODE = {
@@ -107,21 +95,17 @@ const SCALE_FUNCS = {
 }
 
 const SCALE_START = {
-    super: {
-        rank: D(50),
+	super: {
+		rank: D(50),
 		tier: D(10),
 		tetr: D(7),
-        massUpg: D(100),
+		massUpg: D(100),
 		tickspeed: D(100),
 		bh_condenser: D(100),
 		gamma_ray: D(100),
 		supernova: D(15),
 		fTier: D(10),
-
-		chal0: D(1/0),
-		chal1: D(1/0),
-		chal2: D(1/0),
-    },
+	},
 	hyper: {
 		rank: D(120),
 		tier: D(200),
@@ -131,10 +115,6 @@ const SCALE_START = {
 		gamma_ray: D(300),
 		supernova: D(35),
 		fTier: D(50),
-
-		chal0: D(1/0),
-		chal1: D(1/0),
-		chal2: D(1/0),
 	},
 	ultra: {
 		rank: D(600),
@@ -145,14 +125,16 @@ const SCALE_START = {
 	meta: {
 		rank: D(1e5),
 		tickspeed: D(5e4),
-
-		chal0: D(1/0),
-		chal1: D(1/0),
 	},
 }
 
+const SCALE_FP = {
+	tickspeed: _ => [1,1,1,tmp.tickspeedFP],
+	bh_condenser: _ => [1,1,1,hasElement(70) ? 0.05 : 1],
+}
+
 const SCALE_POWER = {
-    super: {
+	super: {
 		rank: 1.5,
 		tier: 1.5,
 		tetr: 2,
@@ -162,11 +144,7 @@ const SCALE_POWER = {
 		gamma_ray: 2,
 		supernova: 3,
 		fTier: 2.5,
-
-		chal0: 1,
-		chal1: 1,
-		chal2: 1,
-    },
+	},
 	hyper: {
 		rank: 2.5,
 		tier: 2.5,
@@ -176,10 +154,6 @@ const SCALE_POWER = {
 		gamma_ray: 4,
 		supernova: 3,
 		fTier: 4,
-
-		chal0: 1,
-		chal1: 1,
-		chal2: 1,
 	},
 	ultra: {
 		rank: 4,
@@ -196,27 +170,17 @@ const SCALE_POWER = {
 	},
 }
 
-const SCALE_FP = {
-	tickspeed() { return [1,1,1,tmp.tickspeedFP] },
-	massUpg() { return [1,1,1,tmp.upgs.fp] },
-	bh_condenser() { return [1,1,1,tmp.upgs.fp] },
-}
-
 const SCALE_RES = {
-    rank(x=0) { return player.ranks.rank },
+	rank(x=0) { return player.ranks.rank },
 	tier(x=0) { return player.ranks.tier },
 	tetr(x=0) { return player.ranks.tetr },
 	pent(x=0) { return player.ranks.pent },
 	tickspeed(x=0) { return player.tickspeed },
-    massUpg(x=1) { return D(player.massUpg[x]||0) },
+	massUpg(x=1) { return D(player.massUpg[x]||0) },
 	bh_condenser(x=0) { return player.bh.condenser },
 	gamma_ray(x=0) { return player.atom.gamma_ray },
 	supernova(x=0) { return player.supernova.times },
 	fTier(x=0, y=0) { return player.supernova.fermions.tiers[x][y] },
-
-	chal0(x=1) { return player.chal.comps[x] },
-	chal1(x=5) { return player.chal.comps[x] },
-	chal2(x=9) { return player.chal.comps[x] },
 }
 
 const NAME_FROM_RES = {
@@ -275,12 +239,12 @@ function updateScalingHTML() {
 
 	elm["scaling_eff"].setDisplay(player.scaling_ch == -1)
 	if (player.scaling_ch == -1) {
-		for (let key of Object.keys(SCALE_INIT_POWERS)) {
+		for (let key of Object.keys(SCALE_EXP)) {
 			let shown = SCALE_RES[key]().gt(0)
 			elm[`scaling_eff_${key}_div`].setDisplay(shown)
 			if (shown) {
 				elm[`scaling_eff_${key}`].setHTML(format(getScalingFullPower(key)))
-				elm[`scaling_eff_${key}_base`].setHTML(format(getScalingBasePower(key)))
+				elm[`scaling_eff_${key}_base`].setHTML(format(getScalingExp(key)))
 			}
 		}
 	}
@@ -304,14 +268,12 @@ function updateScalingTemp() {
 	}
 }
 
-function getScalingBasePower(name) {
-	if (BUILDINGS.includes(name) && isScalingToned(name)) return TONES.power(1)
-	if (name == "tetr" && hasElement(44)) return 1.75
-	return SCALE_INIT_POWERS[name][isScalingToned(name) ? "toned" : "normal"]
+function getScalingExp(name) {
+	return SCALE_EXP[name]()
 }
 
 function getScalingFullPower(name) {
-	let r = getScalingBasePower(name)
+	let r = getScalingExp(name)
 	let cap = SCALE_TYPE.length
 	for (let n = 0; n < cap; n++) {
 		let type = SCALE_TYPE[n]
@@ -323,10 +285,10 @@ function getScalingFullPower(name) {
 	return r
 }
 
-function getScalingName(name, x=0, y=0) {
-	let cap = SCALE_TYPE.length
-	for (let n = cap - 1; n >= 0; n--) {
-		if (tmp.scaling[SCALE_TYPE[n]].includes(name)) return getScalingPrefix(n)
+function getScalingName(name, x, y) {
+	let amt = SCALE_RES[name](x, y)
+	for (let [i, type] of Object.entries(SCALE_TYPE).reverse()) {
+		if (x !== undefined ? isScalingActive(name, amt, type) : tmp.scaling[type].includes(name)) return getScalingPrefix(i)
 	}
 	return ""
 }
@@ -394,7 +356,7 @@ function getScalingStart(type, name) {
 
 function isScalingActive(name, amt, type) {
 	if (!tmp.scaling_start[type]?.[name]) return false
-	if (isScalingToned(name)) return false
+	if (isScalingOff(name)) return false
 	amt = D(amt);
 	return amt.gte(tmp.scaling_start[type][name]) && tmp.scaling_power[type][name].gt(0);
 }
@@ -489,14 +451,14 @@ function getScalingPower(type, name) {
 
 //SOFTCAPS
 Decimal.prototype.softcap = function (start, power, mode) {
-    var x = this.clone()
-    if (x.gte(start)) {
-        if ([0, "pow"].includes(mode)) x = x.div(start).pow(power).mul(start)
-        if ([1, "mul"].includes(mode)) x = x.sub(start).div(power).add(start)
-        if ([2, "exp"].includes(mode)) x = expMult(x.div(start), power).mul(start)
-        if ([3, "log"].includes(mode)) x = x.div(start).log(power).add(1).times(start)
-    }
-    return x
+	var x = this.clone()
+	if (x.gte(start)) {
+		if ([0, "pow"].includes(mode)) x = x.div(start).pow(power).mul(start)
+		if ([1, "mul"].includes(mode)) x = x.sub(start).div(power).add(start)
+		if ([2, "exp"].includes(mode)) x = expMult(x.div(start), power).mul(start)
+		if ([3, "log"].includes(mode)) x = x.div(start).log(power).add(1).times(start)
+	}
+	return x
 }
 
 function getSoftcapHTML(x, sc1, sc2, sc3) {

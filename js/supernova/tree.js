@@ -18,13 +18,13 @@ const TREE_IDS = [
 		['qol7','qol6','qol5'],
 		['chal2','chal4a','chal3'],
 		['bs4','bs2','fn1','bs3','','','rad2','rad3'],
-		['feat6','feat7','feat8','feat9','feat10'],
+		['feat6','feat7'],
 	],[
 		['s2','m2','t1','d1','bh2','gr1','sn2'],
 		['qol8','qol9','qol10'],
 		['chal4'],
 		['fn3','fn4','fn2','fn5','','','rad4','rad5'],
-		['feat11','feat12'],
+		[],
 	],[
 		['s3','m3','gr2','sn3'],
 		[],
@@ -41,7 +41,7 @@ const TREE_IDS = [
 		['s5', 'sn6'],
 		[],
 		[],
-		['','','','bs7','','','eb1','eb2'],
+		['','','','bs7','','','',''],
 		[],
 	],
 ]
@@ -121,11 +121,11 @@ const TREE_UPGS = {
             branch: ["sn4"],
             desc: `Stars boost Neutron Stars.`,
             icon: 'placeholder',
-            cost: EINF,
-            req() { return player.supernova.times.gte(EINF) },
-            reqDesc: `??? Supernovae.`,
+            cost: D(1e65),
+            req() { return player.supernova.times.gte(45) },
+            reqDesc: `45 Supernovae.`,
             effect() {
-                return expMult(player.stars.points, 0.2).pow(.01)
+                return expMult(player.stars.points,0.2).pow(.1)
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -134,8 +134,8 @@ const TREE_UPGS = {
             desc: `Starting at X, Supernovae adds sn2 exponent after softcaps.`,
             icon: 'placeholder',
             cost: EINF,
-            req() { return player.supernova.times.gte(EINF) },
-            reqDesc: `??? Supernovae.`,
+            req() { return player.supernova.times.gte(60) },
+            reqDesc: `60 Supernovae.`,
             effect() {
                 return player.supernova.times.sub(50).div(2).max(0)
             },
@@ -395,8 +395,7 @@ const TREE_UPGS = {
             desc: `Neutrons gain is affected by Graviton's effect at a reduced rate.`,
             cost: D(1e14),
             effect() {
-                let x = tmp.bosons.effect.graviton[0].add(1).root(2)
-                return x
+                return BOSONS.unl() ? tmp.bosons.effect.graviton[0].add(1).root(2) : D(1)
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -407,22 +406,28 @@ const TREE_UPGS = {
             cost: D(1e24),
         },
         bs5: {
-            unl() { return hasTree("rad1") },
+            unl() { return hasTree("unl1") },
             branch: ["fn6"],
             desc: `W Bosons boost each other more.`,
             icon: "placeholder",
-            cost: EINF,
+            cost: D(1e70),
         },
         bs6: {
-            unl() { return hasTree("rad1") },
+            unl() { return hasTree("unl1") },
             branch: ["bs5"],
             desc: `Neutron Stars boost Gravitons.`,
             icon: "placeholder",
-            cost: EINF,
+            cost: D(1e73),
+
+            effect() {
+                let x = player.supernova.stars.pow(0.05).max(1)
+                return x
+            },
+            effDesc(x) { return format(x)+"x" },
         },
         bs7: {
-            unl() { return hasTree("rad1") },
-            branch: ["bs6"],
+            unl() { return hasTree("unl1") },
+            branch: ["bs5"],
             desc: `3rd Boson Upgrades scale linear, but nothing else affects them.`,
             icon: "placeholder",
             cost: EINF,
@@ -488,14 +493,14 @@ const TREE_UPGS = {
         },
         fn7: {
             branch: ["fn6"],
-            unl() { return hasTree("rad1") },
+            unl() { return hasTree("unl1") },
             desc: `Unlock 2 even more types of U-Quark & U-Fermion.`,
-            cost: D(1e80),
+            cost: D(1e72),
         },
         chal6: {
             branch: ["chal5"],
             desc: `Unlock new challenge and reduce auto-Sweep threshold to 10.`,
-            cost: D(1e94),
+            cost: D(1e80),
         },
         fn8: {
             branch: ["fn7"],
@@ -528,11 +533,13 @@ const TREE_UPGS = {
         rad1: {
             branch: ["unl1"],
             unl() { return tmp.radiation.unl },
+            req() { return player.supernova.times.gte(51) },
+            reqDesc: `51 Supernovae.`,
             icon: 'placeholder',
             desc: `Supernovae boosts Frequency.`,
-            cost: EINF,
+            cost: D(1e69),
             effect() {
-                return D(5).pow(player.supernova.times.div(10).sub(4))
+                return D(1.5).pow(player.supernova.times.sub(50)).max(1)
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -540,7 +547,7 @@ const TREE_UPGS = {
             branch: ["rad1"],
             icon: 'placeholder',
             desc: `Ampitudes scales as fast as Velocity.`,
-            cost: EINF
+            cost: D(1e72)
         },
         rad3: {
             branch: ["rad1"],
@@ -583,20 +590,6 @@ const TREE_UPGS = {
             icon: 'placeholder',
             desc: `Strengthen Radiation Self-Boosts.`,
             cost: EINF,
-        },
-
-		/* EXOTIC */
-        eb1: {
-            unl() { return hasExtMilestone("unl", 1) },
-            desc: `Unlock Black Hole and Atomic Buildings #2.`,
-            cost: D(1e10),
-			perm: 1,
-        },
-        eb2: {
-			branch: ["eb1"],
-            desc: `Unlock Black Hole and Atomic Buildings #3.`,
-            cost: D(1e200),
-			perm: 1,
         },
 
 		/* FEATS */
@@ -671,45 +664,7 @@ const TREE_UPGS = {
 			reqDesc() { return `Reach ${formatMass(uni("ee11"))} mass, but always in a Challenge.` + failedHTML(player.ext?.chal?.f7) },
 			desc: `Hardened Challenges scaling is 4% weaker.`,
 			cost: D(0),
-		},
-		feat8: {
-			unl() { return GLUBALL.unl() },
-			req() { return player.mass.gte(mlt(100)) & player.ext?.chal?.f8 },
-			failed() { return !player.ext?.chal?.f8 },
-			reqDesc() { return `Get ${formatMass(mlt(100))} mass, but can only gain >= 5 Supernovae after 20.` + failedHTML(player.ext?.chal?.f8) },
-			desc: `Supernova scalings start 2 later.`,
-			cost: D(0),
-		},
-		feat9: {
-			unl() { return GLUBALL.unl() },
-			req() { return player.mass.gte(mlt(1e4)) & player.ext?.chal?.f9 },
-			failed() { return !player.ext?.chal?.f9 },
-			reqDesc() { return `Get ${formatMass(mlt(1e4))} mass, but in any U-Lepton.` + failedHTML(player.ext?.chal?.f9) },
-			desc: `???`,
-			cost: D(0)
-		},
-		feat10: {
-			unl() { return GLUBALL.unl() },
-			req() { return player.ext?.chal?.f10 },
-			reqDesc() { return `Gain 10% more Supernovae after 100 in Dual Fermions.` + failedHTML(player.ext?.chal?.f10, true) },
-			desc: `???`,
-			cost: D(0)
-		},
-		feat11: {
-			unl() { return GLUBALL.unl() },
-			req() { return player.ext?.chal?.f11 },
-			reqDesc() { return `Raise best mass in Mass Dilation.` },
-			desc: `Raise Exotic Matter by ^1.2.`,
-			cost: D(0)
-		},
-		feat12: {
-			unl() { return GLUBALL.unl() },
-			req() { return player.mass.lt(10) && CHALS.in(10) },
-			failed() { return !player.mass.gte(10) || !CHALS.in(10) },
-			reqDesc() { return `Get your mass less than 10 g in Reality I.` },
-			desc: `Luminosity starts 1,000x earlier.`,
-			cost: D(0)
-		},
+		}
 
         /*
         x: {

@@ -41,7 +41,7 @@ const UPGS = {
             if (i == 3 && hasRank("rank", 4)) inc = inc.pow(0.8)
             if (hasRank("tier", 3)) inc = inc.pow(0.8)
             let lvl = player.massUpg[i]||D(0)
-			let scale = getScalingBasePower("massUpg")
+			let scale = getScalingExp("massUpg")
             let cost = inc.pow(lvl.scaleEvery("massUpg").pow(scale)).mul(upg.start)
             let bulk = player.mass.div(upg.start).max(1).log(inc).root(scale).scaleEvery("massUpg", 1).add(1).floor()
             if (player.mass.lt(upg.start)) bulk = D(0)
@@ -58,6 +58,7 @@ const UPGS = {
                 if (hasRank("rank", 3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[1].bonus)
+                if (hasRank("pent", 2)) total = total.pow(RANKS.effect.pent[2]())
                 let ret = step.mul(total)
                 return {step: step, eff: ret}
             },
@@ -84,6 +85,7 @@ const UPGS = {
                 if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let total = x.add(tmp.upgs.mass[2].bonus)
+                if (hasRank("pent", 3)) total = total.pow(RANKS.effect.pent[3]())
                 let ret = step.mul(total).add(1)
                 return {step: step, eff: ret}
             },
@@ -110,7 +112,7 @@ const UPGS = {
 				let ss = D(10)
 				let sp = 0.5
 
-				if (false) step = D(1e4)
+				if (hasElement(74)) step = D(200)
 				else {
 					if (hasRank("tetr", 2)) step = step.add(RANKS.effect.tetr[2]())
 					if (hasUpgrade('rp',9)) step = step.add(0.25)
@@ -127,13 +129,13 @@ const UPGS = {
 				let total = x.add(tmp.upgs.mass[3].bonus)
 				let ret = step.mul(total).add(1)
 				if (inNGM()) ret = ret.pow(2/3)
-				else ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+				if (!hasElement(74)) ret = ret.softcap(ss,sp,0).softcap(1.8e5,0.5,0)
 				return {step: step, eff: ret, ss: ss}
 			},
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Booster Power"+(inNGM()?"":getSoftcapHTML(eff.eff,eff.ss,1.8e5))
+                    eff: "^"+format(eff.eff)+" to Booster Power"+(hasElement(74)?"":getSoftcapHTML(eff.eff,eff.ss,1.8e5))
                 }
             },
             bonus() {

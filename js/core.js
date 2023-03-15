@@ -13,7 +13,7 @@ function calc(dt, dt_offline) {
 	//PRE-DARK MATTER
 	player.mass = addProdWorth(player.mass, "mass", dt)
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
-	if (GLUBALL.unl() && tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
+	if (tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
 
 	if (hasUpgrade('rp',3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (hasRank("rank", x) || hasUpgrade('atom',1))) UPGS.mass.buyMax(x)
@@ -137,41 +137,42 @@ const FORMS = {
 		can() { return player.rp.points.gte(tmp.tickspeedCost) && !CHALS.in(2) && !CHALS.in(6) && !CHALS.in(10) },
 		buy() {
 			if (this.can()) {
-				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 3)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = player.tickspeed.add(1)
 			}
 		},
 		buyMax() { 
 			if (this.can()) {
-				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 3)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
+				if (!hasUpgrade('atom',2) && !hasExtMilestone("qol", 2)) player.rp.points = player.rp.points.sub(tmp.tickspeedCost).max(0)
 				player.tickspeed = tmp.tickspeedBulk
 			}
 		},
 		effect() {
 			let t = player.tickspeed
-			if (!isScalingToned("tickspeed") && hasElement(63)) t = t.mul(25)
+			if (hasElement(63) && !isScalingOff("tickspeed")) t = t.mul(25)
+
+			let step = D(1.5)
+			step = step.add(CHALS.eff(6))
+			step = step.add(CHALS.eff(2))
+			step = step.add(tmp.atom.particles[0].powerEffect.eff2)
+			if (hasRank("tier", 4)) step = step.add(RANKS.effect.tier[4]())
+			if (hasRank("rank", 40)) step = step.add(RANKS.effect.rank[40]())
+			if (!tmp.md.mass_eff.exp) step = step.mul(tmp.md.mass_eff.eff)
+			step = step.mul(tmp.bosons.effect.z_boson[0])
+			if (hasTree("t1")) step = step.pow(1.15)
+			if (tmp.md.mass_eff.exp) step = step.pow(tmp.md.mass_eff.eff)
+			//if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
+			if (hasExtMilestone("boost", 0) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let bonus = D(0)
 			if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
-			let step = D(1.5)
-				step = step.add(CHALS.eff(6))
-				step = step.add(CHALS.eff(2))
-				step = step.add(tmp.atom.particles[0].powerEffect.eff2)
-				if (hasRank("tier", 4)) step = step.add(RANKS.effect.tier[4]())
-				if (hasRank("rank", 40)) step = step.add(RANKS.effect.rank[40]())
-				step = step.mul(tmp.md.mass_eff)
-			step = step.mul(tmp.bosons.effect.z_boson[0])
-			if (hasTree("t1")) step = step.pow(1.15)
-			//if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
-			if (hasExtMilestone("boost", 1) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
 			let ss = D(1e50)
 			ss = ss.mul(getRadiationEff(5))
-			if (isScalingToned("tickspeed")) ss = EINF
-			else if (isScalingToned("tickspeed")) step = step.softcap(ss,0.1,0)
+			step = step.softcap(ss,0.1,0)
 			
 			let eff = step.pow(t.add(bonus))
-			if (!hasExtMilestone("boost", 1) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+			if (!hasExtMilestone("boost", 0) && hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
 			if (hasRank("tetr", 3)) eff = eff.pow(1.05)
 			return {step: step, eff: eff, bonus: bonus, ss: ss}
 		},
@@ -264,7 +265,7 @@ const FORMS = {
 		reset() {
 			if (tmp.bh.dm_can && toConfirm('bh')) {
 				player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain)
-				if (!player.bh.unl) addPopup(POPUP_GROUPS.layer_2)
+				if (!player.bh.unl && !EXT.unl()) addPopup(POPUP_GROUPS.layer_2)
 				player.bh.unl = true
 				this.doReset()
 			}
@@ -290,29 +291,28 @@ const FORMS = {
 			buy() {
 				if (CHALS.in(14)) return
 				if (this.can()) {
-					if (!hasExtMilestone("qol", 5)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone("qol", 4)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = player.bh.condenser.add(1)
 				}
 			},
 			buyMax() {
 				if (CHALS.in(14)) return
 				if (this.can()) {
-					if (!hasExtMilestone("qol", 5)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
+					if (!hasExtMilestone("qol", 4)) player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
 					player.bh.condenser = tmp.bh.condenser_bulk
 				}
 				buyExtraBuildings("bh",2)
 				buyExtraBuildings("bh",3)
 			},
 			effect() {
-				let t = player.bh.condenser
 				let pow = D(2)
-					pow = pow.add(CHALS.eff(6))
-					if (hasUpgrade('bh',2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:D(1))
-					pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
-					if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
-					pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
-					if (hasTree("bh2")) pow = pow.pow(1.15)
-				let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
+				pow = pow.add(CHALS.eff(6))
+				if (hasUpgrade('bh',2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:D(1))
+				pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
+				if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
+				pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
+				if (hasTree("bh2")) pow = pow.pow(1.15)
+				let eff = pow.pow(player.bh.condenser.add(tmp.bh.condenser_bonus))
 				return {pow: pow, eff: eff}
 			},
 			bonus() {
@@ -338,26 +338,28 @@ const FORMS = {
 const TOOLTIPS = {
 	mass: {
 		full: "Mass",
-		desc: () => `You have pushed <b>${formatMass(player.mass)}</b> of existence.<br>
+		desc: () => `You have pushed <b>${formatMass(player.mass)}</b> of existence.<br><br>
+		<h2>Stats</h2><br>
+		You started holding objects <b>${formatTime(player.time)}</b> ago.<br>
 		Your strongest object holds <b>${formatMass(player.stats.maxMass)}</b>.`
 	},
 	mg: {
 		full: "Magic",
 		desc: () => `<i class="purple">IM:A- Exclusive</i><br>
 		You have summoned <b>${format(MAGIC.amt())}</b> magic.<br><br>
-		Require ${formatMass(2e4)} to reset prior features`
+		Require ${formatMass(2e4)} to reset prior features.`
 	},
 	rp: {
 		full: "Rage",
 		desc: () => `<i class="red">Layer 1 resource</i><br>
 		You have enraged <b>${format(player.rp.points)}</b> Rage Power.<br><br>
-		Require ${formatMass(1e18)} to reset prior features`
+		Require ${formatMass(1e15)} to reset prior features.`
 	},
 	dm: {
 		full: "Dark Matter",
 		desc: () => `<i class="yellow">Layer 2 resource</i><br>
 		You have extracted <b>${format(player.bh.dm)}</b> Dark Matter.<br><br>
-		Require ${format(1e20, 0)} Rage Power to reset prior features`
+		Require ${format(1e20, 0)} Rage Power to reset prior features.`
 	},
 	bh: {
 		full: "Black Hole",
@@ -366,45 +368,46 @@ const TOOLTIPS = {
 	},
 	atom: {
 		full: "Atomic",
-		desc: () => `<i>Layer 3 resource</i><br>
+		desc: () => `<i class='cyan'>Layer 3 resource</i><br>
 		You have composed <b>${format(player.atom.points)}</b> Atoms.
 		<br><br>
-		Require ${formatMass(uni(1e100))} black hole mass to reset prior features`
+		Require ${formatMass(uni(1e100))} black hole mass to reset prior features.`
 	},
 	qk: {
 		full: "Quarks",
-		desc: () => `<i>Layer 3 resource</i><br>
+		desc: () => `<i class='cyan'>Layer 3 resource</i><br>
 		You have <b>${format(player.atom.quarks)}</b> unassigned Quarks.<br><br>
-		Require ${formatMass(uni(1e100))} black hole mass to reset prior features`
+		Require ${formatMass(uni(1e100))} black hole mass to reset prior features.`
 	},
 	md: {
 		full: "Dilation",
-		desc: () => `<i>Layer 3 resource</i><br>
+		desc: () => `<i class='cyan'>Layer 3 resource</i><br>
 		You have <b>${format(player.md.particles)}</b> Relativistic Particles<br>
 		You have <b>${format(player.md.mass)}</b> dilated mass<br><br>
 		Click to ${player.md.active?'undo mass dilation':'dilate mass'}.`
 	},
 	star: {
 		full: "Stars",
-		desc: () => `<i>Layer 3 resource</i><br>
-		You have collapsed <b>${format(player.stars.points)}</b> stars.`
+		desc: () => `<i class='cyan'>Layer 3 resource</i><br>
+		You have collapsed <b>${format(player.stars.points)}</b> stars.<br><br>
+		Collapse <b>${format(player.stars.points)} / ${format(tmp.supernova.maxlimit)}</b> stars to ${ player.supernova.unl || EXT.unl() ? 'be a Supernova' : '???' }.`
 	},
 	sn: {
 		full: "Supernovae",
 		desc: () => `<i class='magenta'>Layer 4 resource</i><br>
 		You became <b>${format(player.supernova.times, 0)}</b> Supernovae.<br><br>
-		Reach ${format(tmp.supernova.maxlimit)} collapsed stars to be a Supernova.`
+		Collapse <b>${format(player.stars.points)} / ${format(tmp.supernova.maxlimit)}</b> stars to be a Supernova.`
 	},
 	ns: {
 		full: "Neutron Stars",
 		desc: () => `<i class='magenta'>Layer 4 resource</i><br>
-		You have unravelled <b>${format(player.supernova.stars)}</b> Neutron Stars from nebulae remnants.`
+		You discovered <b>${format(player.supernova.stars)}</b> Neutron Stars from remnants.`
 	},
 	ext: {
 		full: "Exotic",
 		desc: () => `<i class='scarlet'>Layer 5 resource</i><br>
 		You risen up <b>${format(EXT.amt())}</b> Exotic Matter.<br><br>
-		Require Challenge 12 to rise the exotic particles!`
+		Require Challenge 12 to rise!`
 	}
 }
 

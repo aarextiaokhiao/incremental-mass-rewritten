@@ -1,7 +1,7 @@
 const RANKS = {
     names: ['rank', 'tier', 'tetr', 'pent'],
     fullNames: ['Rank', 'Tier', 'Tetr', 'Pent'],
-	resetDescs: ['mass and upgrades', 'Rank', 'Tier', 'pre-Atoms'],
+	resetDescs: ['mass and upgrades', 'Ranks', 'Tiers', 'pre-Atom features'],
 	mustReset(type) {
 		if (type == "rank" && hasUpgrade('rp',4)) return false
 		if (type == "tier" && hasUpgrade('bh',4)) return false
@@ -9,7 +9,7 @@ const RANKS = {
 		return true
 	},
     reset(type, bulk) {
-        if (type == "pent" && hasExtMilestone("qol", 4)) bulk = true
+        if (type == "pent" && hasExtMilestone("qol", 3)) bulk = true
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
             if (bulk) player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk)
@@ -96,7 +96,17 @@ const RANKS = {
             '18': "Meta-Tickspeed scales later based on Tiers.",
         },
         pent: {
-            '1': "Boost something...",
+            '1': "Tier 6 effect is better. (^0.5 -> ^0.8)",
+            '2': "Stronger Effect raises Muscler.",
+            '3': "Stronger Effect raises Booster.",
+            '4': "Muscler and Boosters add their exponents.",
+            '5': "Boost something...",
+            '6': "Boost something...",
+            '7': "Boost something...",
+            '8': "Boost something...",
+            '9': "Boost something...",
+            '10': "Boost something...",
+            '11': "Boost something...",
         }
     },
     getDesc(t, r) {
@@ -157,8 +167,8 @@ const RANKS = {
                 return ret
             },
             '8'() {
-                let ret = player.bh.dm.max(1).log10().add(1).root(2)
-                return ret
+                if (hasRank("pent", 1)) return player.bh.dm.max(1).log10().div(5).add(1).root(1.25)
+                return player.bh.dm.max(1).log10().add(1).root(2)
             },
             '55'() {
                 let ret = player.ranks.tier.max(1).log10().add(1).root(4).min(2)
@@ -184,10 +194,14 @@ const RANKS = {
             },
         },
 		pent: {
-			/*'2000'() {
-				if (!tmp.tickspeedEffect) return D(1)
-				return tmp.tickspeedEffect.step.log10().div(2e5).add(1).pow(27/20)
-			},*/
+			'2'() {
+				if (!tmp.upgs.mass[3]) return D(1)
+				return tmp.upgs.mass[3].eff.eff.div(5).max(1)
+			},
+			'3'() {
+				if (!tmp.upgs.mass[3]) return D(1)
+				return tmp.upgs.mass[3].eff.eff.div(5).max(1)
+			},
 		},
     },
     effDesc: {
@@ -214,13 +228,14 @@ const RANKS = {
             18(x) { return format(x)+"x" },
         },
         pent: {
-            /*2000(x) { return format(x)+"x" },*/
+            2(x) { return "^"+format(x) },
+            3(x) { return "^"+format(x) },
         },
     },
     fp: {
         rank() {
             let f = D(1)
-            if (isScalingToned("rank")) f = f.mul(2)
+            if (isScalingOff("rank")) f = f.mul(2)
             if (hasRank("tier", 1)) f = f.mul(1/0.8)
             f = f.mul(CHALS.eff(5).pow(-1))
             return f
@@ -258,7 +273,7 @@ function updateRanksTemp() {
     for (let x = 0; x < u.names.length; x++) if (!tmp.ranks[u.names[x]]) tmp.ranks[u.names[x]] = {}
 
     let fp = u.fp.rank()
-    let pow = getScalingBasePower("rank")
+    let pow = getScalingExp("rank")
     d.rank.req = D(10).pow(s.rank.scaleEvery("rank").div(fp).pow(pow)).mul(10)
     d.rank.bulk = player.mass.div(10).max(1).log10().root(pow).mul(fp).scaleEvery("rank", 1).add(1).floor()
     if (FERMIONS.onActive(14)) d.rank.bulk = D(2e4).min(d.rank.bulk)
@@ -267,17 +282,17 @@ function updateRanksTemp() {
 
 	let start = inNGM() ? 2.5 : 2
     fp = u.fp.tier()
-    pow = getScalingBasePower("tier")
+    pow = getScalingExp("tier")
     d.tier.req = s.tier.scaleEvery("tier").div(fp).add(start).pow(pow).floor()
     d.tier.bulk = s.rank.max(0).root(pow).sub(start).mul(fp).scaleEvery("tier", 1).add(1).floor();
 
     fp = u.fp.tetr()
-    pow = getScalingBasePower("tetr")
+    pow = getScalingExp("tetr")
     d.tetr.req = s.tetr.scaleEvery("tetr").div(fp).pow(pow).mul(3).add(10).floor()
     d.tetr.bulk = s.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery("tetr", 1).add(1).floor();
 
 	fp = u.fp.pent()
-    pow = getScalingBasePower("pent")
+    pow = getScalingExp("pent")
 	d.pent.req = s.pent.div(fp).pow(pow).add(15).floor()
 	d.pent.bulk = s.tetr.sub(15).max(0).root(pow).mul(fp).add(1).floor();
 
@@ -287,4 +302,67 @@ function updateRanksTemp() {
             d[rn].can = s[u.names[x-1]].gte(d[rn].req)
         }
     }
+}
+
+function setupRanksHTML() {
+	let ranks_table = new Element("ranks_table")
+	table = ""
+	for (let x = 0; x < RANKS.names.length; x++) {
+		let rn = RANKS.names[x]
+		table += `<div style="width: 250px" id="ranks_div_${x}">
+			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">OFF</button><br><br>
+			<span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]} <b id="ranks_amt_${x}"></b><br>
+			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
+				<b id="ranks_reset_${x}" style='font-size: 16px'></b><br>
+				(Requires <b id="ranks_req_${x}">X</b>)
+				<b id="ranks_desc_${x}"></b>
+			</button>
+		</div>`
+	}
+	ranks_table.setHTML(table)
+
+	let ranks_rewards_table = new Element("ranks_rewards_table")
+	table = ""
+	for (let x = 0; x < RANKS.names.length; x++) {
+		let rn = RANKS.names[x]
+		table += `<div id="ranks_reward_div_${x}">`
+		let keys = Object.keys(RANKS.desc[rn])
+		for (let y = 0; y < keys.length; y++) {
+			if (keys[y].includes("_")) break
+			table += `<span id="ranks_reward_${rn}_${y}"><b id="ranks_title_${rn}_${y}"></b>: <span id="ranks_desc_${rn}_${y}"></span>${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span>`:""}</span><br>`
+		}
+		table += `</div>`
+	}
+	ranks_rewards_table.setHTML(table)
+}
+
+function updateRanksHTML() {
+	for (let x = 0; x < RANKS.names.length; x++) {
+		let rn = RANKS.names[x]
+		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
+		if (x == 0) unl = unl&&!RANKS.unl.pent()
+		elm["ranks_div_"+x].setDisplay(unl)
+		if (unl) {
+			let keys = Object.keys(RANKS.desc[rn])
+			let desc = ""
+			if (gameStarted()) {
+				for (let i = 0; i < keys.length; i++) {
+					if (keys[i].includes("_")) break
+					if (player.ranks[rn].lt(keys[i])) {
+						desc = `<hr>At ${RANKS.fullNames[x]} ${format(keys[i],0)}: ${RANKS.getDesc(rn,keys[i])}`
+						break
+					}
+				}
+			}
+
+			elm["ranks_scale_"+x].setTxt(getScalingName(rn))
+			elm["ranks_amt_"+x].setTxt(`[${format(player.ranks[rn],0)}]`)
+			elm["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
+			elm["ranks_desc_"+x].setHTML(desc)
+			elm["ranks_req_"+x].setTxt(x==0?`[${formatMass(tmp.ranks[rn].req)}]`:RANKS.fullNames[x-1]+` [${format(tmp.ranks[rn].req,0)}]`)
+			elm["ranks_reset_"+x].setTxt(RANKS.mustReset(rn) && gameStarted() ? `Reset ${RANKS.resetDescs[x]} to ${RANKS.fullNames[x]} up.` : RANKS.fullNames[x] + " up.")
+			elm["ranks_auto_"+x].changeStyle("visibility", RANKS.autoUnl[rn]() ? "visible" : "hidden")
+			elm["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
+		}
+	}
 }

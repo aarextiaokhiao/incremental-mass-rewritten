@@ -1,127 +1,106 @@
-const LAYER_AMT = 5
-const LAYER_PROGRESS = {
-	1: {
-		req: () => formatMass(1e15) + " mass",
-		unl: "Rage"
-	}, 
-	2: {
-		req: () => format(1e20, 0) + " Rage Power",
-		unl: "Black Hole"
-	}, 
-	3: {
-		req: () => formatMass(uni(1e100)) + " black hole mass",
-		unl: "Atom"
-	}, 
-	4: {
-		req: () => format(1e210, 0) + " collapsed Stars",
-		unl: "Supernova"
-	}, 
-	5: {
-		req: () => "a Challenge 12 completion",
-		unl: "Exotic"
-	}
-}
-
 function getLayerProgress() {
-	return EXT.unl() ? 5 :
+	return (EXT.unl() ? 5 :
 		player.supernova.unl ? 4 :
 		player.atom.unl ? 3 :
 		player.bh.unl ? 2 :
-		player.rp.unl ? 1 : 0
+		player.rp.unl ? 1 : 0)
+		+ (MAGIC.unl() ? 1 : 0)
 }
 
-const STAGE_AMT = 13
-const STAGE_PROGRESS = {
-	1: {
-		req: () => "",
-		unl: "Beginning"
+const STAGE_PROGRESS = [
+	{
+		req: () => "Hold " + formatMass(10) + " mass",
+		unl: () => player.ranks.rank.gte(1),
+		disp: "Ranks"
 	},
-	2: {
-		req: () => "a Rage Power",
-		unl: "Tickspeed"
+	{
+		req: () => inNGM() ? "Hold " + formatMass(2e4) + " mass" : "Get Rank " + format(4, 0),
+		unl: () => inNGM() ? MAGIC.unl() : player.ranks.tier.gte(1),
+		disp: () => inNGM() ? "Magic" : "Tiers"
 	},
-	3: {
-		req: () => "a Dark Matter",
-		unl: "Black Hole"
+	{
+		req: () => "Hold " + formatMass(1e15) + " mass",
+		unl: () => player.rp.unl,
+		disp: "Rage",
+		layer: true
 	},
-	4: {
-		req: () => formatMass(1.5e136) + " mass",
-		unl: "Challenges"
+	{
+		req: () => "Enrage " + format(1e20, 0) + " Rage Power",
+		unl: () => player.bh.unl,
+		disp: "Black Hole",
+		layer: true
 	},
-	5: {
-		req: () => "an Atom",
-		unl: "Atomic Generators and Quarks"
+	{
+		req: () => "Hold " + formatMass(1.5e136) + " mass",
+		unl: () => player.chal.unl,
+		disp: "Challenges"
 	},
-	6: {
-		req: () => format(1e56) + " Quarks",
-		unl: "Mass Dilation"
+	{
+		req: () => "Hold" + formatMass(uni(1e100)) + " mass of black hole",
+		unl: () => player.atom.unl,
+		disp: "Atomic",
+		layer: true
 	},
-	7: {
-		req: () => format(1e225) + " Quarks",
-		unl: "Stars"
+	{
+		req: () => "Get " + format(1e56) + " Quarks",
+		unl: () => MASS_DILATION.unlocked(),
+		disp: "Mass Dilation"
 	},
-	8: {
-		req: () => format(1e210) + " collapsed Stars",
-		unl: "Neutron Tree"
+	{
+		req: () => "Get " + format(1e225) + " Quarks",
+		unl: () => STARS.unlocked(),
+		disp: "Stars"
 	},
-	9: {
-		req: () => format(10, 0) + " Supernovae",
-		unl: "Bosons"
+	{
+		req: () => "Collapse " + format(1e210) + " stars",
+		unl: () => player.supernova.unl,
+		disp: "Supernova",
+		layer: true
 	},
-	10: {
-		req: () => "a Challenge 10 completion",
-		unl: "Fermions"
+	{
+		req: () => "Get " + format(10, 0) + " Supernovae",
+		unl: () => player.supernova.post_10,
+		disp: "Bosons"
 	},
-	11: {
-		req: () => format(5e52) + " Neutron Stars",
-		unl: "Radiation"
+	{
+		req: () => "Complete Challenge 10",
+		unl: () => player.chal.comps[10].gte(1),
+		disp: "Fermions"
 	},
-	12: {
-		req: () => "a Challenge 12 completion",
-		unl: "Axions"
+	{
+		req: () => "Spend " + format(5e52) + " Neutron Stars",
+		unl: () => hasTree("unl1"),
+		disp: "Radiation"
 	},
-	13: {
-		req: () => "??? Challenge 13 completions",
-		unl: "Glueball"
+	{
+		req: () => "Complete Challenge 12 and rise up",
+		unl: () => EXT.unl(),
+		disp: "Exotic",
+		layer: true
+	}
+]
+const STAGE_AMT = STAGE_PROGRESS.length
+
+function updateStageProgress() {
+	tmp.stage = 0
+	for (var [i, stage] of Object.entries(STAGE_PROGRESS).reverse()) {
+		if (stage.unl()) {
+			tmp.stage = parseInt(i)+1
+			return
+		}
 	}
 }
 
-function getStageProgress() {
-	let layers = getLayerProgress()
-	switch(layers) {
-		case 5:
-			if (GLUBALL.unl()) return 13
-			return 12
-
-		case 4:
-			if (hasTree("unl1")) return 11
-			if (player.chal.comps[10].gte(1)) return 10
-			if (player.supernova.post_10) return 9
-			return 8
-
-		case 3:
-			if (STARS.unlocked()) return 7
-			if (MASS_DILATION.unlocked()) return 6
-			return 5
-
-		case 2:
-			if (player.chal.unl) return 4
-			return 3
-
-		case 1:
-			return 2
-
-		default:
-			return 1
-	} 
-}
-
 function updateProgressHeader() {
-	elm.progress_header.setDisplay(player.options.progress && gameStarted() && !CHALS.inAny())
+	let disp = player.options.progress && gameStarted() && !CHALS.inAny()
+	elm.progress_header.setDisplay(disp)
+	if (!disp) return
 
-	elm.progress_stages.setTxt(getStageProgress() + " / " + STAGE_AMT)
-	elm.progress_layers.setTxt(getLayerProgress() + " / " + LAYER_AMT)
+	elm.progress_stages.setTxt(tmp.stage + " / " + STAGE_AMT)
+	elm.progress_layers.setTxt(getLayerProgress())
 
-	elm.progress_stages_next.setTxt(getStageProgress() == STAGE_AMT ? "All features unlocked!" : "Get " + STAGE_PROGRESS[getStageProgress() + 1].req() + " to unlock " + STAGE_PROGRESS[getStageProgress() + 1].unl + ".")
-	elm.progress_layers_next.setTxt(getLayerProgress() == LAYER_AMT ? "All layers unlocked!" : "Get " + LAYER_PROGRESS[getLayerProgress() + 1].req() + " to unlock " + LAYER_PROGRESS[getLayerProgress() + 1].unl + ".")
+	let next = STAGE_PROGRESS[tmp.stage]
+	elm.progress_stages_next.setHTML(
+		(tmp.stage == STAGE_AMT ? "All features unlocked!" : next.req() + " to unlock " + (typeof next.disp == "function" ? next.disp() : next.disp) + ".") +
+		(next?.layer ? " <b class='green'>Next stage will unlock Layer " + (getLayerProgress()+1) + "!</b>" : ""))
 }

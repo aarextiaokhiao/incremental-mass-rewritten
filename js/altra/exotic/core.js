@@ -12,13 +12,12 @@ let EXOTIC = {
 			toned: 0,
 			ar39: D(0),
 
-			ax: AXION.setup(),
-			gb: GLUBALL.setup()
+			ax: AXION.setup()
 		}
 	},
 
 	unl(disp) {
-		return (disp && player.chal.comps[12].gte(1)) || player.ext?.unl || PORTAL.unl()
+		return (disp && player.chal.comps[12].gte(1)) || player.ext?.unl
 	},
 	gain() {
 		let s = player.supernova.times
@@ -45,7 +44,12 @@ let EXOTIC = {
 	reset(force, restart) {
 		let can = player.chal.comps[12].gt(0)
 		if (!force && !can) return
-		if ((!force || restart) && !toConfirm('ext')) return false
+		if (!can && restart) {
+			if (!confirm("Are you sure do you want to restart? There will be bare consequences!")) return
+			if (!confirm("ARE YOU REALLY SURE? IT TAKES A LONG TIME TO RECOVER!")) return
+		} else {
+			if (!toConfirm('ext')) return
+		}
 		if (can) {
 			if (!player.ext) player.ext = EXT.setup()
 			if (!EXT.unl()) {
@@ -56,7 +60,7 @@ let EXOTIC = {
 		}
 		EXT.doReset()
 	},
-	doReset(pres) {
+	doReset(order = "ext") {
 		player.ext.time = 0
 		player.ext.gain = D(1)
 		player.ext.chal.f7 = true
@@ -71,8 +75,8 @@ let EXOTIC = {
 		player.supernova.stars = D(0)
 
 		let list = []
-		if (hasExtMilestone("qol", 2)) list.push("c", "m1", "qol1", "qol2", "qol8", "qol10")
-		if (hasExtMilestone("qol", 3)) list.push("qol3", "qol4", "qol5", "qol6", "qol7", "chal4", "chal4a", "chal5", "chal6", "chal7")
+		if (hasExtMilestone("qol", 1)) list.push("c", "m1", "qol1", "qol2", "qol8", "qol10")
+		if (hasExtMilestone("qol", 2)) list.push("qol3", "qol4", "qol5", "qol6", "qol7", "chal4", "chal4a", "chal5", "chal6", "chal7")
 
 		let list_keep = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
@@ -82,6 +86,8 @@ let EXOTIC = {
 		}
 		player.supernova.tree = list_keep
 
+		player.supernova.post_10 = false
+		player.supernova.unl = false
 		player.supernova.bosons = {
 			pos_w: D(0),
 			neg_w: D(0),
@@ -114,10 +120,16 @@ let EXOTIC = {
 			t: 0
 		}
 
-		SUPERNOVA.doReset()
-		updateTemp()
+		player.bh.unl = false
+		player.chal.unl = false
+		player.atom.unl = false
+		player.mainUpg.rp = []
+		player.mainUpg.bh = []
+		player.mainUpg.atom = []
+		TABS.fix()
 
-		tmp.pass = false
+		SUPERNOVA.doReset(order)
+		updateTemp()
 	},
 
 	calc(dt) {
@@ -136,18 +148,12 @@ let EXOTIC = {
 		//AXIONS
 		if (AXION.unl()) AXION.calc(dt)
 
-		//GLUEBALLS
-		if (player.ext.gb.unl) GLUBALL.calc(dt)
-		else if (player.chal.comps[13].gte(9)) {
-			addPopup(POPUP_GROUPS.chroma)
-			player.ext.gb.unl = true
-		}
-
 		//EXTRA RESOURCES
 		player.ext.ar39 = D(player.ext.ar39).add(getCosmicArgonProd().mul(dt))
 	},
 	updateTmp() {
-		tmp.extMult = hasExtMilestone("boost", 1) ? D(5) : D(1)
+		tmp.extMult = D(1)
+		if (hasExtMilestone("boost", 0)) tmp.extMult = D(3)
 
 		//updateGlueballTemp()
 		updateAxionTemp()
@@ -167,12 +173,12 @@ function updateExoticHTML() {
 	if (tmp.tab == 4) {
 		updateExoticHeader()
 		if (tmp.stab[4] == 0) updateAxionHTML()
-		if (tmp.stab[4] == 3) updateExtMilestonesHTML()
+		if (tmp.stab[4] == 1) updateExtMilestonesHTML()
 	}
 }
 
 function updateExoticHeader() {
-	elm.extDiv2.setDisplay(tmp.stab[4] == 0 || tmp.stab[4] == 3)
+	elm.extDiv2.setDisplay(tmp.stab[4] == 0 || tmp.stab[4] == 1)
 	elm.extAmt2.setHTML(format(EXT.rawAmt(),1)+(player.chal.comps[12].gt(0)?"<br>"+formatGainOrGet(EXT.rawAmt(), player.ext.gain):""))
 
 	elm.polarDiv.setDisplay(false)
@@ -180,21 +186,23 @@ function updateExoticHeader() {
 
 	elm.ar39Div.setDisplay(false)
 	elm.ar39Eff.setHTML("+"+format(player.ext.ar39)+"x <sup>39</sup>Ar")
-
-	elm.toneDiv.setDisplay(GLUBALL.unl())
-	elm.extTone.setHTML(toned()==TONES.max?"Maxed!":format(player.ext.toned,0)+"<br>"+(TONES.can() ? "(+" + format(1,0) + ")":"(requires " + format(TONES.req()) + ")"))
 }
 
 /* [ EXOTIC ERA CONTENT ] */
 
 // MILESTONES
-const EXT_MILESTONES = {
-	qol: [
+const EXT_MILESTONES = ["ext_qol", "ext_boost", "ext_unl"]
+MILESTONE.ext_qol = {
+	title: "Quality of Life",
+	unl: _ => EXT.unl(),
+	res: _ => EXT.rawAmt(),
+	resDisp: i => format(i, 0) + " Exotic Matter",
+	data: [
 		{
 			req: 0,
-			desc: "Keep everything you start on Supernovae, and Na-11 upgrade. Neutron Stars can generate in offline progress. Auto-Sweeper threshold is reduced to 10."
+			desc: "Start with Na-11 upgrade. Neutron Stars can generate in offline progress. Auto-Sweeper threshold is reduced to 10."
 		}, {
-			req: 3,
+			req: 2,
 			desc: "Keep [c], [m1], [qol1] - [qol3], [qol8], and [qol10] upgrades. Automate Neutron Tree upgrades. Auto-Sweeper threshold is reduced to 5."
 		}, {
 			req: 10,
@@ -221,11 +229,17 @@ const EXT_MILESTONES = {
 			req: 1e8,
 			desc: "Outside of Exotic Challenges, automate Challenges 1 - 11 and Up - Top Quark Fermions without entering."
 		},
-	],
-	boost: [
+	]
+}
+MILESTONE.ext_boost = {
+	title: "Boosts",
+	unl: _ => EXT.unl(),
+	res: _ => EXT.rawAmt(),
+	resDisp: i => format(i, 0) + " Exotic Matter",
+	data: [
 		{
 			req: 0,
-			desc: "Gain 5x more pre-Supernovae resources and 5x more pre-Exotic resources."
+			desc: "2x pre-Supernovae resources, 25x Star Generators, and 3x Supernovae-layer resources."
 		}, {
 			req: 100,
 			desc: "Argon-18 raises Tickspeed Power instead."
@@ -245,106 +259,58 @@ const EXT_MILESTONES = {
 			req: 1e7,
 			desc: "Dilated mass raises Tickspeed Power instead."
 		}
-	],
-	axion: [
+	]
+}
+MILESTONE.ext_unl = {
+	title: "Unlocks",
+	unl: _ => EXT.unl(),
+	res: _ => EXT.rawAmt(),
+	resDisp: i => format(i, 0) + " Exotic Matter",
+	data: [
 		{
 			req: 1,
-			desc: "Unlock X-Axions. Axion Catalysts raise Challenge 12 reward."
+			desc: "Unlock 2nd Building for Black Hole and Atomic Generators."
 		}, {
-			req: 30,
-			desc: "Unlock Y-Axions. Axion Catalysts make [s3] raise M-Type Stars."
-		}, {
-			req: 1e3,
-			desc: "Axion Catalysts raise Challenge 10 reward."
-		}, {
-			req: 1e5,
-			desc: "Axion Catalysts subtract Radiation Booster's cost scaling exponent."
-		}, {
-			req: 1e8,
-			desc: "Unlock Z-Axions. Axion Catalysts make Tickspeed Power multiplies Star Booster Base."
-		}, {
-			req: 1e10,
-			desc: "Axion Catalysts multiply Neutron Condensers."
-		}, {
-			req: 1e15,
-			desc: "Axion Catalysts multiply Hawking Radiation."
-		}, {
-			req: 1e20,
-			desc: "Axion Catalysts add Polarizer Base."
-		}
-	],
-	unl: [
-		{
-			req: 1,
-			desc: "Unlock Extra Building Upgrades in Neutron Tree. [doesn't reset on Exotic]"
+			req: 2,
+			desc: "Unlock 3rd Building for Black Hole and Atomic Generators."
 		}, {
 			req: 1e4,
-			desc: "Unlock Exotic Challenges."
+			desc: "Unlock Exotic Challenges, starting at Challenge 13."
 		}
-	],
-	/*{
-		req: 2,
-		desc: "???",
-		eff: {
-			eff: () => 1,
-			disp: (x) => format(x)
-		}
-	}*/
+	]
 }
 
 function hasExtMilestone(type, index) {
-	return EXT.unl() && EXT.rawAmt().gte(EXT_MILESTONES[type][index - 1].req)
+	return hasMilestone("ext_"+type, index)
 }
 
-function hasExtMilestoneEff(type, index) {
-	return EXT_MILESTONES[type][index].eff.eff()
+function extMilestoneEff(type, index, def) {
+	return milestoneEff("ext_"+type, index, def)
+}
+
+function hasExtMilestoneQ9() {
+	return hasMilestone("ext_qol", 9) && !player.ext.ec
 }
 
 function setupExtMilestonesHTML() {
-	for (let [ti, type] of Object.entries(EXT_MILESTONES)) {
-		let html = document.createElement("div")
-		html.id = `extMilestone_${ti}`
-		html.className = "table_center milestones"
-
-		let dom = ""
-		for (let [msi, ms] of Object.entries(type)) {
-			dom += `<div id='extMilestone_${ti}_${msi}'>
-				<b class="milestoneReq" id='extMilestone_${ti}_${msi}_req'></b><br>
-				${ms.desc}
-				${ms.eff ? "<br><span class='milestoneEff'>Currently: <b id='extMilestone_${ti}_${msi}_eff'></b></span>" : ""}
-				<b class="milestoneId">${ti}${Number(msi)+1}</b>
-			</div>`
-		}
-		html.innerHTML = dom
-
-		new Element("extMilestones").append(html)
+	html1 = html2 = ``
+	for (let i of EXT_MILESTONES) {
+		html1 += `<button id="milestone_tab_${i}" onclick="tmp.ext_ms_view = '${i}'">${MILESTONE[i].title}</button>`
+		html2 += `<div id='milestones_${i}'></div>`
 	}
+	new Element("ext_milestones").setHTML(html1 + "<br>" + html2)
 }
 
 function updateExtMilestonesHTML() {
-	for (let [ti, type] of Object.entries(EXT_MILESTONES)) {
-		elm[`extMilestone_${ti}_tab`].setClasses({
+	for (let type of EXT_MILESTONES) {
+		elm[`milestone_tab_${type}`].setClasses({
 			btn_tab: true,
-			normal: true,
-			choosed: tmp.ext_ms_view == ti
+			ext: true,
+			choosed: tmp.ext_ms_view == type
 		})
-		elm[`extMilestone_${ti}`].setDisplay(tmp.ext_ms_view == ti)
-		if (tmp.ext_ms_view == ti) {
-			let gotBefore = true
-			for (let [msi, ms] of Object.entries(type)) {
-				let has = hasExtMilestone(ti, Number(msi) + 1)
-				elm[`extMilestone_${ti}_${msi}`].setDisplay(gotBefore)
-				elm[`extMilestone_${ti}_${msi}`].setClasses({ bought: has })
-				elm[`extMilestone_${ti}_${msi}_req`].setHTML(format(ms.req, 1) + " Exotic Matter")
-				if (ms.eff) elm[`extMilestone_${ti}_${msi}_eff`].setHTML(ms.eff.disp(ms.eff.eff))
-				if (!has) gotBefore = false
-			}
-		}
+		elm[`milestones_${type}`].setDisplay(tmp.ext_ms_view == type)
 	}
-}
-
-function hasExtMilestoneQ10() {
-	return hasExtMilestone("qol", 10) && !player.ext.ec
+	updateMilestoneHTML(tmp.ext_ms_view)
 }
 
 // POLARIZER

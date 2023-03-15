@@ -152,11 +152,12 @@ const ELEMENTS = {
 			cost: D(1e44),
 			effect() {
 				let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
+				if (hasElement(68)) x = x.pow(2)
 				if (EXT.unl()) x = x.add(player.ext.ar39)
-				return x.softcap(2,0.05,0)
+				return x.softcap(1.5,0.05,0)
 			},
 			effDesc(x) {
-				return "^"+format(x)+getSoftcapHTML(x,2)
+				return "^"+format(x)+getSoftcapHTML(x,1.5)
 			},
 		},
         {
@@ -452,32 +453,34 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
 
+		//Radiation
         {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Argon-18's effect is squared.`,
+            cost: D('e3e6')
         }, {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Stars boost its effect at a reduced rate.`,
+            cost: D('e4.5e6')
         }, {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `BH Condensers always scale at ^1.25 rate.`,
+            cost: D('e5.5e6')
         },
 
         {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Triple Radiation.`,
+            cost: D('e7.5e6')
         }, {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Dilated mass raises Tickspeed Power instead.`,
+            cost: D('e9e6')
         }, {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Radiation Self-Boosts are 5% better.`,
+            cost: D('e1e7')
         }, {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Stronger always give +^200 without softcaps.`,
+            cost: D('e5e8')
         }, {
-            desc: `Placeholder.`,
-            cost: EINF
+            desc: `Tickspeed always scale at ^1.25 rate.<br>
+				<b class='red'>Non-bonus Tickspeed boosts are disabled.</b>`,
+            cost: D('e1.25e8')
         }, {
             desc: `Placeholder.`,
             cost: EINF

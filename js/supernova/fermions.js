@@ -51,7 +51,7 @@ const FERMIONS = {
 		return r
 	},
 	getScalingExp(x) {
-		if (isScalingToned("fTier")) x *= 4
+		if (isScalingOff("fTier")) x *= 4
 		return x
 	},
 	maxTier(i, x) {
@@ -165,17 +165,17 @@ const FERMIONS = {
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
-                    return D("e1.75e7").pow(D(1.05).pow(t.pow(FERMIONS.getScalingExp(1))))
+                    return D("e7.5e7").pow(D(1.05).pow(t.pow(FERMIONS.getScalingExp(1))))
                 },
                 calcTier() {
                     let res = player.atom.points
-                    if (res.lt('e1.75e7')) return D(0)
-                    let x = res.log("e1.75e7").log(1.05).root(FERMIONS.getScalingExp(1))
+                    if (res.lt('e7.5e7')) return D(0)
+                    let x = res.log("e7.5e7").log(1.05).root(FERMIONS.getScalingExp(1))
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return D(1)
-                    return t.div(100).times(i.max(1).log(1e20).softcap(30,1e3,3)).add(1)
+                    return t.div(100).times(i.max(1).log(1e10).sqrt()).add(1)
                 },
                 desc(x) {
                     return `Reduce the penalty of Mass Dilation by ${format(D(100).sub(D(100).div(x)))}%.`
@@ -248,7 +248,6 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-					if (FERMIONS.onActive(14)) return D(1)
                     let x = t.pow(1.5).add(1).pow(i.add(1).log10().softcap(10,0.75,0)).softcap(1e6,0.75,0)
                     return x
                 },
@@ -271,13 +270,12 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-					if (FERMIONS.onActive(14)) return D(1)
                     let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
-					if (isScalingToned("tickspeed")) x = x.add(1).log10().add(1).log10().add(1).root(3)
+					if (isScalingOff("tickspeed")) x = x.add(1).log10().add(1).log10().add(1).root(3)
                     return x.min(1e6)
                 },
                 desc(x) {
-                    return `Weaken Tickspeed by ${format(x)}x.` + (isScalingToned("tickspeed") ? "" : " (before Meta scaling)")
+                    return `Weaken Tickspeed by ${format(x)}x.` + (isScalingOff("tickspeed") ? "" : " (before Meta scaling)")
                 },
                 inc: "Dark Matter",
                 res: () => player.bh.dm,
@@ -295,7 +293,6 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-					if (FERMIONS.onActive(14)) return D(1)
 					let sc = D(0.25)
 					//if (AXION.unl()) sc = sc.mul(tmp.ax.eff[11])
                     let x = i.max(1).log10().add(1).mul(t).div(200).add(1).softcap(1.5,0.5,0).softcap(20,sc,0)
@@ -313,28 +310,24 @@ const FERMIONS = {
                 maxTier: 100,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
-                    return D('e2e5').pow(t.pow(FERMIONS.getScalingExp(1.5))).mul("e1.5e6")
+                    return D('e5e4').pow(t.pow(FERMIONS.getScalingExp(1.5))).mul("e1.8e5")
                 },
                 calcTier() {
                     let res = player.md.mass
-                    if (res.lt('e1.5e6')) return D(0)
-                    let x = res.div('e1.5e6').max(1).log('e2e5').max(0).root(FERMIONS.getScalingExp(1.5))
+                    if (res.lt('e1.8e5')) return D(0)
+                    let x = res.div('e1.8e5').max(1).log('e5e4').max(0).root(FERMIONS.getScalingExp(1.5))
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-					if (FERMIONS.onActive(14)) return D(1)
-					if (t.eq(0)) return D(1)
-					let sc = D(0.25)
-					//if (AXION.unl()) sc = tmp.ax.eff[11].mul(sc)
-                    return t.add(1).times(i.div(1e30).add(1).log10()).div(400).add(1).softcap(2.5, sc, 0)
+					return D(1)
                 },
                 desc(x) {
-                    return `Meta-Rank scales ${format(x)}x later.`+getSoftcapHTML(x,2.5)
+                    return `Placeholder.`
                 },
 				isMass: true,
                 inc: "Dilated mass",
                 res: () => player.md.mass,
-                cons: "Cap Rank at 20,000 and U-Leptons do nothing. Additionally, there's no Meta scalings.",
+                cons: "Fermion rewards do nothing.",
             },
             {
                 maxTier: 20,
@@ -349,7 +342,6 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-					if (FERMIONS.onActive(14)) return D(0)
                     let x = i.add(1).log10().times(t.add(1).log10()).add(1).log10().div(20)
 			        //if (AXION.unl()) x = x.mul(tmp.ax.eff[5])
                     return x.softcap(2,4,3)
@@ -359,7 +351,7 @@ const FERMIONS = {
                 },
                 inc: "Tickspeed power",
                 res: () => tmp.tickspeedEffect.step,
-                cons: "Disable Boson Upgrades and W Bosons.",
+                cons: "Disable Bosons.",
             },
 
             /*
@@ -429,6 +421,7 @@ function updateFermionsTemp() {
 			let t = player.supernova.fermions.tiers[i][x]
 			if (i == 0) t = t.mul(getRadiationEff(13))
 			if (i == 1) t = t.mul(getRadiationEff(14))
+			if (FERMIONS.onActive(14)) t = D(0)
             tf.effs[i][x] = f.eff(player.supernova.fermions.points[i], t)
         }
     }
@@ -456,7 +449,7 @@ function updateFermionsHTML() {
             elm[id+"_div"].setDisplay(unl)
 
             if (unl) {
-                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasExtMilestoneQ10() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
+                elm[id+"_div"].setClasses({fermion_btn: true, [max ? "comp" : i == 0 && x < 5 && hasExtMilestoneQ9() ? "auto" : FERMIONS.names[i]]: true, choosed: active})
                 elm[id+"_nextTier"].setHTML(max ? "" : "Next at: " + fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])) + `<br>(Increased by ${f.inc})<br><br>`)
                 elm[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x))
                 elm[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(D(tmp.fermions.maxTier[i][x]).lt(EINF) && !max ? " / " + format(tmp.fermions.maxTier[i][x],0) : ""))

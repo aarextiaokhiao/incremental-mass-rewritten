@@ -341,6 +341,7 @@ const FORMATS = {
 		}
 	}
 }
+const NO_POSITIONAL = ["omega", "omega_short"]
 
 const ST_NAMES = [
 	null, [
@@ -523,9 +524,9 @@ function formatTime(ex,type="s") {
     if (ex.gte(86400*365)) return format(ex.div(86400*365).floor(),0)+"y, "+formatTime(ex.mod(86400*365))
     if (ex.gte(86400*7)) return format(ex.div(86400*7).floor(),0)+"w, "+formatTime(ex.mod(86400*7),'w')
     if (ex.gte(86400)||type=="w") return format(ex.div(86400).floor(),0)+"d, "+formatTime(ex.mod(86400),'d')
-    if (ex.gte(3600)||type=="d") return (ex.div(3600).gte(10)||type!="d"?"":"0")+format(ex.div(3600).floor(),0)+":"+formatTime(ex.mod(3600),'h')
-    if (ex.gte(60)||type=="h") return (ex.div(60).gte(10)||type!="h"?"":"0")+format(ex.div(60).floor(),0)+":"+formatTime(ex.mod(60),'m')
-    return (ex.gte(10)||type!="m"?"":"0")+format(ex,2)
+    if (ex.gte(3600)||type=="d") return format(ex.div(3600).floor(),0)+":"+formatTime(ex.mod(3600),'h')
+    if (ex.gte(60)||type=="h") return (ex.div(60).gte(10)||type!="h"||NO_POSITIONAL.includes(player.options.notation)?"":"0")+format(ex.div(60).floor(),0)+":"+formatTime(ex.mod(60),'m')
+    return (ex.gte(10)||type!="m"||NO_POSITIONAL.includes(player.options.notation)?"":"0")+format(ex,2)
 }
 
 //OTHERS

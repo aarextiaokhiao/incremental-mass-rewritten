@@ -5,7 +5,7 @@ const ATOM = {
         if (x.lt(1)) return D(0)
         x = x.root(5)
         if (hasUpgrade('rp',15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:D(1))
-        x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+        if (BOSONS.unl()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
         x = x.mul(tmp.supernova.mult)
 
         if (hasElement(17)) x = x.pow(1.1)
@@ -36,7 +36,7 @@ const ATOM = {
         if (tmp.atom.canReset && toConfirm('atom')) {
             player.atom.points = player.atom.points.add(tmp.atom.gain)
             player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain)
-			if (!player.atom.unl) addPopup(POPUP_GROUPS.layer_3)
+			if (!player.atom.unl && !EXT.unl()) addPopup(POPUP_GROUPS.layer_3)
             player.atom.unl = true
             this.doReset()
         }
@@ -57,23 +57,19 @@ const ATOM = {
             let x = tmp.atom.gamma_ray_eff?tmp.atom.gamma_ray_eff.eff:D(0)
             if (hasElement(3)) x = x.mul(tmp.elements.effect[3])
             if (hasElement(52)) x = x.mul(tmp.elements.effect[52])
-            x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+            if (BOSONS.unl()) x = x.mul(tmp.bosons.upgs.gluon[0].effect)
             x = x.mul(tmp.supernova.mult)
 
             if (FERMIONS.onActive("00")) x = expMult(x,0.6)
             if (tmp.md.active) x = MASS_DILATION.applyDil(x)
             return x
         },
-		softcap() {
-			let r = D(5e4)
-			//if (AXION.unl()) r = r.mul(tmp.ax.eff[1])
-			return r
-		},
+		softcap: _ => D(5e4),
 		effect() {
 			if (CHALS.in(14)) return D(0)
 			let sc = ATOM.atomic.softcap()
 			let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75)
-			if (sc.neq(EINF)) x = x.softcap(sc,0.75,0)
+			x = x.softcap(sc,0.75,0)
 			return x.floor()
 		},
     },
@@ -81,7 +77,7 @@ const ATOM = {
         buy() {
 			if (CHALS.in(14)) return
             if (tmp.atom.gamma_ray_can) {
-                if (!hasExtMilestone("qol", 5)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                if (!hasExtMilestone("qol", 4)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
                 player.atom.gamma_ray = player.atom.gamma_ray.add(1)
             }
         },
@@ -89,7 +85,7 @@ const ATOM = {
 			if (CHALS.in(14)) return
             if (tmp.atom.gamma_ray_can) {
                 player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
-                if (!hasExtMilestone("qol", 5)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
+                if (!hasExtMilestone("qol", 4)) player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
             }
 			buyExtraBuildings("ag",2)
 			buyExtraBuildings("ag",3)
@@ -100,9 +96,8 @@ const ATOM = {
             if (hasUpgrade('atom',4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:D(0))
             if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
             if (hasTree("gr1")) pow = pow.mul(treeEff("gr1"))
-            pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
+            if (BOSONS.unl()) pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             if (hasTree("gr2")) pow = pow.pow(1.25)
-            pow = pow.softcap(tmp.atom.gamma_ray_ss,10,3)
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             return {pow: pow, eff: eff}
         },
@@ -143,9 +138,10 @@ const ATOM = {
         effect(i) {
             let p = player.atom.particles[i]
             let x = p.pow(2)
-            if (hasElement(12) && !hasExtMilestone("boost", 6)) x = p.pow(this.mg12(p))
 			//if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
-            if (!hasExtMilestone("boost", 6)) x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
+			if (hasElement(73)) return x
+            if (hasElement(12)) x = p.pow(this.mg12(p))
+            x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
             return x
         },
         gain(i) {
@@ -231,17 +227,16 @@ function updateAtomTemp() {
     tmp.atom.atomicGain = ATOM.atomic.gain()
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
-	let fp = isScalingToned("gamma_ray") ? D(30) : D(1)
+	let fp = isScalingOff("gamma_ray") ? D(200) : D(1)
 	//polarizer synergy
 
-	let scale = getScalingBasePower("gamma_ray")
+	let scale = getScalingExp("gamma_ray")
     tmp.atom.gamma_ray_cost = D(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray").mul(fp).pow(scale)).floor()
     tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).root(scale).div(fp).scaleEvery("gamma_ray", 1).add(1).floor()
     if (player.atom.points.lt(1)) tmp.atom.gamma_ray_bulk = D(0)
 
     tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)
     tmp.atom.gamma_ray_bonus = ATOM.gamma_ray.bonus()
-    tmp.atom.gamma_ray_ss = D(1e20)
     tmp.atom.gamma_ray_eff = ATOM.gamma_ray.effect()
 
     for (let x = 0; x < ATOM.particles.names.length; x++) {
@@ -277,7 +272,7 @@ function updateAtomicHTML() {
 	elm.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
 	elm.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
 	elm.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
-	elm.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x"+getSoftcapHTML(tmp.atom.gamma_ray_eff.pow,tmp.atom.gamma_ray_ss))
+	elm.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x")
 	elm.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
     elm.gamma_ray_auto.setDisplay(hasElement(18))
 	elm.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
@@ -294,7 +289,7 @@ function updateAtomHTML() {
         elm["particle_"+x+"_assign"].setDisplay(!EXT.unl())
         elm["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
         elm["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
-        elm["particle_"+x+"_sc"].setHTML(hasExtMilestone("boost", 6) ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
+        elm["particle_"+x+"_sc"].setHTML(hasElement(72) ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
         elm["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain))
         elm["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
     }

@@ -618,7 +618,7 @@ function updateChalTempNew() {
 }
 
 //HTML
-function setupChalHTMLNew() {
+function setupChalHTML() {
 	let html = ""
 	for (let layer = CHALS.layers.length - 1; layer >= 0; layer--) {
 		html += `<div class='table_center' id="chals_${layer}">`

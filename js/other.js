@@ -162,7 +162,7 @@ const POPUP_GROUPS = {
 
 	layer_1: {
         html: `
-            <b class='red'>Layer 1: Rage!</b><br><br>
+            <h2 class='red'>Layer 1: Rage!</h2><br>
 			After tiers, you decided to go farther...<br>
 			Doing the first of major resets as your advantages rage on!
         `,
@@ -172,7 +172,7 @@ const POPUP_GROUPS = {
 	},
 	layer_2: {
         html: `
-            <b class='yellow'>Layer 2: Black Hole!</b><br><br>
+            <h2 class='yellow'>Layer 2: Black Hole!</h2><br>
 			Eruptly, a black hole appears.<br>
 			The mass starts to suck up for power.<br>
 			Take this as your advantage.
@@ -183,7 +183,7 @@ const POPUP_GROUPS = {
 	},
 	layer_3: {
         html: `
-            <b>Layer 3: Atoms!</b><br><br>
+            <h2>Layer 3: Atoms!</h2><br>
 			You dive deeper and saw the subatomic scale.<br>
 			Colorful quarks and new challenges have been unlocked!
         `,
@@ -193,7 +193,7 @@ const POPUP_GROUPS = {
 	},
 	layer_5: {
         html: `
-            <b class='scarlet'>Layer 5: Exotic!</b><br><br>
+            <h2 class='scarlet'>Layer 5: Exotic!</h2><br>
 			While you were rising Exotic, mysterious particles emit out.<br>
 			The goal of this layer is to capture them!<br>
 			First, you've captured Axions!
@@ -202,55 +202,6 @@ const POPUP_GROUPS = {
         height: 180,
         button: "Cool"
 	},
-    pres_1: {
-        html: `
-            <img src="images/story/pres_1.png"><br><br>
-            Spacetime has been imploded into unknown substances...
-            The everyday life has been obliberated, but what cost?
-        `,
-        button: "Uh oh",
-        otherStyle: {
-            'font-size': "14px",
-        },
-    },
-    pres_2: {
-        html: `
-            <img src="images/story/pres_2.png"><br><br>
-            It is unknown whether it is good, chaos, prime, or not.
-            You have come far enough, but unfortunately...
-			You are descended into a dimensionless entity.
-        `,
-        button: "Sigh",
-        otherStyle: {
-            'font-size': "14px",
-        },
-    },
-    pres_3: {
-        html: `
-            <img src="images/story/pres_3.png"><br><br>
-            The dimensions bent beyond recogition, devoiding space.
-            As you gain the sense of Primordials, you are proficient enough.
-            Invisibly seeing the clouds, they give you a gift.
-        `,
-        button: "Accept the gift",
-        otherStyle: {
-            'font-size': "14px",
-        },
-    },
-    pres_4: {
-        html: `
-            <img src="images/story/pres_4.png"><br><br>
-            You have been ascended. The unknownness has come!
-            Let's reformulate the spatial and temporal axises!
-			<br><br>
-            Mass has been rebuilt by Primordial Gods.
-            <b style='font-size: 24px'>Good luck!</b>
-        `,
-        button: "Build em' all!",
-        otherStyle: {
-            'font-size': "14px",
-        },
-    },
 
 	ap_update: {
 		html() { return `
@@ -271,6 +222,17 @@ const POPUP_GROUPS = {
 		otherStyle: {
 			'font-size': "14px",
 		},
+	},
+	ap_minus: {
+        html: `
+            <h2 class='purple'>Key is Magic!</h2><br>
+			Welcome to Altrascendum: NG- Edition!<br>
+			As you notice, you have exchanged for a low-end recast.<br>
+			More features unlock on reaching further layers!
+        `,
+        width: 400,
+        height: 150,
+        button: "Okay"
 	},
 	/*ap_chroma: {
 		html() { return `

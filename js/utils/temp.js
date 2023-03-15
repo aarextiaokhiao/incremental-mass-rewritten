@@ -61,7 +61,8 @@ function resetTemp() {
             },
         },
 
-        ext_ms_view: "qol",
+        ms: {},
+        ext_ms_view: "ext_qol",
         ch: {}
     }
     for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
@@ -102,9 +103,9 @@ function updateMassTemp() {
 function updateTickspeedTemp() {
     tmp.tickspeedEffect = FORMS.tickspeed.effect()
 
-	let scale = getScalingBasePower("tickspeed")
+	let scale = getScalingExp("tickspeed")
     tmp.tickspeedFP = tmp.upgs.fp.mul(tmp.fermions.effs[1][2])
-    if (isScalingToned("tickspeed")) tmp.tickspeedFP = tmp.tickspeedFP.div(4/3)
+    if (isScalingOff("tickspeed")) tmp.tickspeedFP = tmp.tickspeedFP.div(50)
     tmp.tickspeedCost = D(2).pow(player.tickspeed.scaleEvery("tickspeed").pow(scale)).floor()
     tmp.tickspeedBulk = player.rp.points.max(1).log(2).root(scale).scaleEvery("tickspeed", 1).add(1).floor()
     if (player.rp.points.lt(1)) tmp.tickspeedBulk = D(0)
@@ -129,7 +130,7 @@ function updateBlackHoleTemp() {
     t.dm_can = t.dm_gain.gte(1)
     t.effect = FORMS.bh.effect()
 
-	let scale = getScalingBasePower("bh_condenser")
+	let scale = getScalingExp("bh_condenser")
     t.condenser_bonus = FORMS.bh.condenser.bonus()
     t.condenser_cost = D(1.75).pow(player.bh.condenser.scaleEvery("bh_condenser").pow(scale)).floor()
     t.condenser_bulk = player.bh.dm.max(1).log(1.75).root(scale).scaleEvery("bh_condenser", 1).add(1).floor()
@@ -142,9 +143,7 @@ function updateTemp() {
 	tmp.offlineActive = player.offline.time > 1
 	tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
-	//Tab Forcing
-	if (toned() == 5 && tmp.stab[7] == 2) tmp.stab[7] = 0
-
+	updateStageProgress()
 	updateAltraTemp()
 
 	//Supernova

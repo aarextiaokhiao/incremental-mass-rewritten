@@ -48,7 +48,7 @@ const MASS_DILATION = {
 		return x.sub(player.md.particles).max(0).floor()
 	},
 	undercapacity() {
-		return player.mass.pow(1e-3).max("ee5")
+		return player.mass.pow(1e-4).max("e5e4")
 	},
     massGain() {
         let pow = D(2)
@@ -66,8 +66,16 @@ const MASS_DILATION = {
         return x
     },
     effect() {
-        let x = player.md.mass.max(1).log10().add(1).root(3).mul(tmp.md.upgs[1].eff)
-        return x
+		if (hasElement(72)) {
+			return {
+				exp: 1,
+				eff: player.md.mass.max(1).log10().div(10).add(1).root(50)
+			}
+		} else {
+			return {
+				eff: player.md.mass.max(1).log10().add(1).root(3).mul(tmp.md.upgs[1].eff)
+			}
+		}
     },
     upgs: {
         buy(x) {
@@ -84,16 +92,16 @@ const MASS_DILATION = {
                 effect(x) {
                     let b = 2
                     if (hasElement(25)) b++
-                    if (hasExtMilestone("boost", 5)) return D(b).pow(x)
+                    if (hasExtMilestone("boost", 4)) return D(b).pow(x)
                     return D(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)
                 },
-                effDesc(x) { return format(x,0)+"x"+(hasExtMilestone("boost", 5)?"":getSoftcapHTML(x,'e1.2e4')) },
+                effDesc(x) { return format(x,0)+"x"+(hasExtMilestone("boost", 4)?"":getSoftcapHTML(x,'e1.2e4')) },
             },{
                 desc: `Multiply dilated mass effect.`,
                 cost(x) { return D(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():D(0) },
 				effect(x) {
-					if (!hasExtMilestone("boost", 5)) x = x.mul(tmp.md.upgs[11].eff||1)
+					if (!hasExtMilestone("boost", 4)) x = x.mul(tmp.md.upgs[11].eff||1)
 					if (player.md.upgs[7].gte(1)) return x.root(1.5).mul(0.25).add(1)
 					return x.root(2).mul(0.15).add(1)
 				},
@@ -103,10 +111,10 @@ const MASS_DILATION = {
                 cost(x) { return D(10).pow(x.pow(D(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(D(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():D(0) },
 				effect(x) {
-                    if (hasExtMilestone("boost", 5)) return D(2).pow(x)
+                    if (hasExtMilestone("boost", 4)) return D(2).pow(x)
 					return D(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0)
 				},
-                effDesc(x) { return format(x,0)+"x"+(hasExtMilestone("boost", 5)?"":getSoftcapHTML(x,1e25)) },
+                effDesc(x) { return format(x,0)+"x"+(hasExtMilestone("boost", 4)?"":getSoftcapHTML(x,1e25)) },
             },{
                 desc: `Dilated mass strengthen Stronger.`,
                 maxLvl: 1,
@@ -159,10 +167,10 @@ const MASS_DILATION = {
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():D(0) },
 				effect(x) {
 					let r = D(2).pow(x)
-					if (!hasExtMilestone("boost", 5)) r = r.softcap(1e25,2/3,0)
+					if (!hasExtMilestone("boost", 4)) r = r.softcap(1e25,2/3,0)
 					return r
 				},
-                effDesc(x) { return format(x)+"x"+(hasExtMilestone("boost", 5)?"":getSoftcapHTML(x,1e25)) },
+                effDesc(x) { return format(x)+"x"+(hasExtMilestone("boost", 4)?"":getSoftcapHTML(x,1e25)) },
             },{
                 unl() { return player.supernova.times.gte(1) },
                 desc: `Add 0.015 Mass Dilation upgrade 6's base.`,
@@ -173,7 +181,7 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return "+"+format(x)+getSoftcapHTML(x,0.2) },
             },{
-                unl() { return player.supernova.post_10 && !hasExtMilestone("boost", 5) },
+                unl() { return player.supernova.post_10 && !hasExtMilestone("boost", 4) },
                 desc: `Strengthen first 3 upgrades.`,
                 cost(x) { return D(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():D(0) },
@@ -233,7 +241,7 @@ function updateMDTemp() {
 function updateMDHTML() {
 	let exp = D(1)
     elm.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
-    elm.md_eff.setTxt(exp.gt(1)?"^"+format(exp,3):tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
+    elm.md_eff.setTxt(tmp.md.mass_eff.exp?"^"+format(tmp.md.mass_eff.eff,3):tmp.md.mass_eff.eff.gte(10)?format(tmp.md.mass_eff.eff)+"x":format(tmp.md.mass_eff.eff.sub(1).mul(100))+"%")
     elm.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
     elm.md_undercapacity.setHTML(MASS_DILATION.RPmassgain().gt(MASS_DILATION.undercapacity())?"Base RP is undercapacitied at "+format(MASS_DILATION.undercapacity())+" to prevent temporal anomalies!<br>":"")
     elm.md_btn.setTxt(player.md.active

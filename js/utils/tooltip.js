@@ -42,7 +42,7 @@ function updateTooltips() {
 		style['text-align'] = text_align
 
 		let tr_data = TOOLTIPS[hover_tooltip.id.split("_tooltip")[0]]
-		tooltip_div.innerHTML = `<h2>${tr_data.full}</h2>`+(tr_data.desc?"<br class='line'>"+tr_data.desc():"")
+		tooltip_div.innerHTML = `<h2><b>${tr_data.full}</b></h2>`+(tr_data.desc?"<br class='line'>"+tr_data.desc():"")
 	} else {
 		style.display = 'none';
 		style.top = 0;

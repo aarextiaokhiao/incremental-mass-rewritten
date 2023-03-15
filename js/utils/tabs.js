@@ -1,14 +1,32 @@
 const TABS = {
+	unl(tab, stab) {
+		let data = stab !== undefined ? this[2][tab][stab] : this[1][tab]
+		return data.unl ? data.unl() : true
+	},
+
 	choose(x, stab=false) {
 		if (!stab) {
 			tmp.prev_tab = tmp.tab
 			tmp.tab = x
 		} else tmp.stab[tmp.tab] = x
+		this.fix()
 	},
 	back() {
-		tmp.tab = tmp.prev_tab
-		tmp.prev_tab = tmp.tab
+		this.choose(tmp.prev_tab)
 	},
+	fix(stab) {
+		let data = stab !== undefined ? this[2][stab] : this[1]
+		if (!data) return
+
+		let dataCurr = data[stab !== undefined ? tmp.stab[stab] : tmp.tab]
+		if (dataCurr.unl && !dataCurr.unl()) {
+			console.log(`Tab '${dataCurr.id}' is locked! Fixing...`)
+			if (stab !== undefined) tmp.stab[stab] = 0
+			else tmp.tab = 0
+		}
+		if (stab == undefined) this.fix(tmp.tab)
+	},
+
 	1: [
 		{ id: "Main" },
 		{ id: "Magic", unl() { return MAGIC.unl() }, style: "magic" },
@@ -46,9 +64,7 @@ const TABS = {
 			{ id: "Radiation", unl() { return tmp.radiation.unl }, style: "rad" },
 		],
 		4: [
-			{ id: "Axions" },
-			{ id: "Glueball", unl() { return false }, style: "ch" },
-			{ id: "Primordiums", unl() { return false }, style: "pr" },
+			{ id: "Axions", style: "ext" },
 			{ id: "Milestones" }
 		],
 
@@ -57,13 +73,9 @@ const TABS = {
 			{ id: "Elements", unl() { return player.chal.comps[7].gte(16) || player.supernova.unl }, style: "atom" },
 		],
 		6: [
-			{ id: "Challenges" },
-			{ id: "Virtual", unl() { return future || PORTAL.unl() } },
-			{ id: "Entropic", unl() { return future || PORTAL.unl() }, style: "ent" },
-			{ id: "Vacuum Decay", unl() { return future || PORTAL.unl() }, style: "vac" },
+			{ id: "Challenges" }
 		],
 		7: [
-			{ id: "General" },
 			{ id: "Rewards" },
 			{ id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
 			{ id: "Compression", unl() { return false } },

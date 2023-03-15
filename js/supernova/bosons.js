@@ -1,5 +1,5 @@
 const BOSONS = {
-    unl: () => player.supernova.times.gte(10),
+    unl: () => player.supernova.post_10 && !FERMIONS.onActive(15),
 
     names: ['pos_w','neg_w','z_boson','photon','gluon','hb','graviton'],
     gain: {
@@ -35,6 +35,7 @@ const BOSONS = {
         },
         graviton() {
             let x = D(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1).mul(tmp.fermions.effs[1][1])
+            if (hasTree("bs6")) x = x.mul(treeEff("bs6"))
             x = x.mul(tmp.extMult)
             return x
         },
@@ -48,12 +49,12 @@ const BOSONS = {
     effect: {
         pos_w(x) {
             let a = FERMIONS.onActive(15) ? D(1) : x.add(1).pow(2e4)
-            let b = hasTree("bs5") ? x.max(1).pow(.2) : expMult(x.add(1),2/3,2)
+            let b = hasTree("bs5") ? x.max(1).pow(.3) : expMult(x.add(1),2/3,2)
             return [a,b]
         },
         neg_w(x) {
             let a = FERMIONS.onActive(15) ? D(1) : x.add(1).log10().add(1).root(3)
-            let b = hasTree("bs5") ? x.max(1).pow(.2) : expMult(x.add(1),0.75,2)
+            let b = hasTree("bs5") ? x.max(1).pow(.3) : expMult(x.add(1),0.75,2)
             return [a,b]
         },
         z_boson(x) {

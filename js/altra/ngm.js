@@ -62,6 +62,7 @@ let MAGIC = {
 		if (!MAGIC.unl()) {
 			player.mg = MAGIC.setup()
 			player.mg.unl = true
+			addPopup(POPUP_GROUPS.ap_minus)
 		}
 
 		player.mg.amt = player.mg.amt.add(MAGIC.gain())
