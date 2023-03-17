@@ -248,7 +248,7 @@ function updateUpperHTML() {
 	tmp.el.md_div.setDisplay(unl)
 	if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?"(+"+format(tmp.md.rp_gain,0)+")":(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain.mul(gs)):"(inactive)")))
 	
-	unl = (player.supernova.post_10 || player.superGal.gte(1))
+	unl = (player.supernova.times.gt(0) || quUnl())
 	tmp.el.sn_div.setDisplay(unl)
 	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>(+"+format(tmp.supernova.bulk.sub(player.supernova.times).max(0),0)+")")
 	if (hasElement(291)) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>"+player.supernova.times.formatGain(tmp.supernova.bulk.sub(player.supernova.times).max(0).div(tmp.dt),0))
@@ -257,7 +257,7 @@ function updateUpperHTML() {
 	tmp.el.galQk_div.setDisplay(unl)
 	if (unl) tmp.el.galQkAmt.setHTML(format(player.galQk,0)+"<br>"+player.galQk.formatGain(SUPERNOVA_GALAXY.galQkGain(),0))	
 		
-	unl = (hasElement(291))
+	unl = (hasElement(291) || player.superGal.gt(0))
 	tmp.el.superGal_div.setDisplay(unl)
 	if (unl) tmp.el.superGalAmt.setHTML(format(player.superGal,0)+"<br>(+"+format(SUPERNOVA_GALAXY.bulk().sub(player.superGal).max(0),0)+")")
 }
@@ -470,34 +470,28 @@ function updateHTML() {
 				tmp.el.strongerOverflow.setDisplay(tmp.strongerOverflow.lt(1))
 				tmp.el.strongerOverflow2.setTxt(format(tmp.strongerOverflow))
 			}
-			if (tmp.stab[0] == 1) {
-				updateBlackHoleHTML()
-			}
-			if (tmp.stab[0] == 2) {
-				updateAtomicHTML()
-			}
-			if (tmp.stab[0] == 3) {
-				updateStarsHTML()
-			}
-			if (tmp.stab[0] == 5) {
-				updatePrestigeHTML()
-			}
+			if (tmp.stab[0] == 1) updateBlackHoleHTML()
+			if (tmp.stab[0] == 2) updateAtomicHTML()
+			if (tmp.stab[0] == 4) updatePrestigeHTML()
 		}
 		if (tmp.tab == 1) {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
-			if (tmp.stab[1] == 1) updateScalingHTML()
-			if (tmp.stab[1] == 2) updatePrestigesRewardHTML()
+			if (tmp.stab[1] == 1) updatePrestigesRewardHTML()
+			if (tmp.stab[1] == 2) updateScalingHTML()
 		}
 		if (tmp.tab == 2) {
-			updateMainUpgradesHTML()
+			if (tmp.stab[2] == 0) updateMainUpgradesHTML()
+			if (tmp.stab[2] == 2) updateElementsHTML()
 		}
 		if (tmp.tab == 3) {
-			updateChalHTML()
+			if (tmp.stab[3] == 0) updateChalHTML()
+			if (tmp.stab[3] == 1) updateQCHTML()
+			if (tmp.stab[3] == 2) updateGCHTML()
 		}
 		if (tmp.tab == 4) {
 			if (tmp.stab[4] == 0) updateAtomHTML()
-			if (tmp.stab[4] == 1) updateElementsHTML()
-			if (tmp.stab[4] == 2) updateMDHTML()
+			if (tmp.stab[4] == 1) updateMDHTML()
+			if (tmp.stab[4] == 2) updateStarsHTML()
 		}
 		if (tmp.tab == 8) {
 			updateOptionsHTML()

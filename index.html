@@ -89,15 +89,17 @@
         <div style="width: 100%; border-bottom: solid 2px white; height: 5px; margin-bottom: 13px;"></div>
         <div id="sn_stabs" style="min-height: 40px;"></div><br>
         <div id="stab_frame5_0">
-            <div style="height: 130px;">
-                You have <span id="neutronStar">X</span> Neutron star.<br>
-                <div id="tree_desc" style="margin-top: 3px;">
-    
-                </div>
-            </div>
-            <canvas id="tree_canvas"></canvas>
-            <div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
-            <div id="tree_table"></div>
+			<div id='tree_frame'>
+				<div style="height: 130px;">
+					You have <span id="neutronStar">X</span> Neutron star.<br>
+					<div id="tree_desc" style="margin-top: 3px;">
+		
+					</div>
+				</div>
+				<canvas id="tree_canvas"></canvas>
+				<div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
+				<div id="tree_table"></div>
+			</div>
         </div><div id="stab_frame5_1">
             <div class="bosons">
                 <div class="table_center">
@@ -147,10 +149,10 @@
         </div>
     </div>
     <div id='app_sgal' style='display: none'>
-        <div style="position: absolute; top: 25px; left: 25px;">
-            <button class="btn" onclick="tmp.tab = tmp.sn_tab">Back to Main</button>
-            <button class="btn" onclick="tmp.tab = 5">Back to Supernova</button>
-        </div><br><br>
+		<br>
+		<button class="btn" onclick="tmp.tab = tmp.sn_tab">Back to Main</button>
+		<button id='superGalBack' class="btn" onclick="tmp.tab = 5">Back to Supernova</button>
+		<br><br>
         <div id="sgal_stabs" style="min-height: 40px;"></div>
 		<div id="stab_frame7_0">
 			You have <span id="superGal">0</span> <span id="superGalScale"></span>Supernova Galaxies<br>
@@ -195,18 +197,6 @@
 			Ratio Mode: <span id="atom_ratio_gq">X</span><br>
 			<button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
 			<div id="gparticles_table" class="table_center" style="justify-content: space-evenly;"></div>
-		</div><div id="stab_frame7_3">
-			You have <span id="gc_shard">0</span> Galactic Shards<br>
-			Which are raising Galactic Power gain by ^<span id="gc_shardeff">0</span><br><br>
-			While in Galactic Challenge, gains of Pre-Quantum resources are set to 10^^(slog(gain) - <span id="gc_nerf1"></span>)<br>
-			Pre-Quantum Global Speed is set to 10^^(slog(Pre-Quantum Global Speed) - <span id="gc_nerf2"></span>)<br>
-			Effect of Beta particles is softcapped.<br>
-			<span id="gc_trapeff"></span><br><br>
-			You need to get <span id="gc_goal"></span> supernova to complete the challenge.<br>
-			Difficulty: <span id="gc_diff"></span>/<span id="gc_diff_max"></span><button class="btn" onclick="decGCdiff()">-1</button><button class="btn" onclick="incGCdiff()">+1</button><br>
-			<br><span id="gc_trap2">Trapped Challenges: <span id="gc_trap"></span>/<span id="gc_trap_max"></span><button class="btn" onclick="decGCtrap()">-1</button><button class="btn" onclick="incGCtrap()">+1</button></span><br>
-			<span id="gc_trapu2">Trapped In All U-Fermions: <span id="gc_trapu"></span><button class="btn" onclick="if(!player.gc.active)player.gc.trapu=!player.gc.trapu">Change</button><br></span>
-			<span id="gc_rip2">Trapped In Big Rip: <span id="gc_rip"></span><button class="btn" onclick="if(!player.gc.active)player.gc.rip=!player.gc.rip">Change</button><br></span><button class="btn" onclick="GC.enter()" id="gc_btn">Enter the Galactic Challenge</button>
 		</div>
     </div>
     <div id='app' style='display: none'>
@@ -316,7 +306,6 @@
 					<span id="massSoft10" style="color: rgb(128, 255, 128)">After <b id="massSoftStart10">X</b> of mass gain will softcap^9 mass gain!<br></span>
 					<br>
 					<br>
-					
 					<span id="massOverflow" style="color: rgb(255, 255, 255)">Because of Mass Overflow, your mass gain is raised by <b id="massOverflow2">X</b>!</span><br>
 					<span id="rankCollapse" style="color: rgb(255, 255, 255)">Due to Rank Collapse, the start of Meta-Rank scaling is divided by <b id="rankCollapse2">X</b>!</span>
 					<span id="strongerOverflow" style="color: rgb(255, 255, 255)">Because of Stronger Overflow, Stronger effect is raised by <b id="strongerOverflow2">X</b>!</span>
@@ -364,13 +353,6 @@
                 </div>
 				<span id="atomicOverflow" style="color: rgb(255, 255, 255)">Because of Atomic Overflow, your Atomic Power gain is raised by <b id="atomicOverflow2">X</b>!</span>
             </div><div id="stab_frame0_3">
-                You collapsed <span id="stars_Amt">X</span> stars, which makes mass gain is multiplied based on every type of Ranks<br>
-                <span class="green">Currently: <span id="stars_Eff">X</span></span><br><br>
-                <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
-                <div id="stars_table" class="table_center"></div><br><br>
-                <span id="starSoft1" class="red">After <b id="starSoftStart1">X</b> of collapsed stars gain will softcap collapsed stars gain!</span><br>
-				<span id="starOverflow" style="color: rgb(255, 255, 255)">Because of Star Overflow, your collapsed stars gain is raised by <b id="starOverflow1">X</b>!</span>
-            </div><div id="stab_frame0_4">
                 You have <span id="bpAmt">0</span> Blueprint Particle<br>
                 <span class="green">Which increases pre-Quantum global speed by <span id="bpEff">1</span>x</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
@@ -387,12 +369,12 @@
                         Cosmic Strings Effect: <span id="cosmic_str_eff">X</span>x
                     </div>
                 </div>
-            </div><div id="stab_frame0_5">
+            </div><div id="stab_frame0_4">
 				Your Prestige base is <span id="pres_base"></span> (based on products of Rank tiers)<br><br>
 				<div id="pres_table" class="table_center" style="min-height: 180px;"></div><br>
 				<div id="pres_mass">You have <span id="pres_mass2">X</span> Prestige mass (Gain is based on Prestige Base, Prestige Level, Honor<span id="pres_mass4"> and Glory</span>)<br>Which are weakening Tetr scalings before meta by <span id="pres_mass3"></span></div>
 				<div id="prestige_mass_upgs_table"></div>
-            </div><div id="stab_frame0_6">
+            </div><div id="stab_frame0_5">
                 You have <span id="shardsAmt">0</span> Timeshards<br>
                 <span class="green">Which increases pre-Quantum global speed by ^<span id="shardsEff">1</span> before division</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
@@ -414,15 +396,27 @@
                 <button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn">--></button><br><br>
                 <div id="ranks_rewards_table"></div>
             </div><div id="stab_frame1_1">
-                <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
-                <div id="scaling_table"></div>
-            </div><div id="stab_frame1_2">
                 <button onclick="player.pres_reward = Math.max(player.pres_reward-1,0)" class="btn"><--</button><span id="pres_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.pres_reward = Math.min(player.pres_reward+1,Math.max(...PRESTIGES.fullNames.map((v, i) => i==0 ? i : (PRESTIGES.unl[i]() && i))))" class="btn">--></button><br><br>
                 <div id="pres_rewards_table"></div>
+            </div><div id="stab_frame1_2">
+                <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
+                <div id="scaling_table"></div>
             </div>
         </div><div id="tab_frame2">
-            <div id="main_upg_msg" style="min-height: 100px;"></div>
-            <div id="main_upgs_table" class="table_center"></div>
+			<div id="stab_frame2_0">
+				<div id="main_upg_msg" style="min-height: 100px;"></div>
+				<div id="main_upgs_table" class="table_center"></div>
+			</div><div id="stab_frame2_1">
+			</div><div id="stab_frame2_2">
+				<div id="elemTierDiv">
+					<button onclick="player.atom.elemTier = Math.max(1,player.atom.elemTier-1)" class="btn"><--</button><span id="elemTier" style="margin: 0px 10px">Element Tier 1</span><button onclick="player.atom.elemTier = Math.min(MAX_ELEM_TIERS,player.atom.elemTier+1)" class="btn">--></button><br><br>
+				</div>
+				<div id="elem_ch_div" style="min-height: 70px;">
+					<span id="elem_desc" class='sky'>X</span><br>
+					Cost: <span id="elem_cost">X</span><br>
+					<span id="elem_eff" class='green'>X</span>
+				</div><br><div id="elements_table"></div>
+			</div>
         </div><div id="tab_frame3">
             <div id="stab_frame3_0">
                 Note 1: Click any image to show challenge description. Click again to enter any challenge<br><br>
@@ -437,64 +431,7 @@
                     <span class="green" id="chal_ch_reward"></span><br>
                     <span class="green" id="chal_ch_eff"></span>
                 </div>
-            </div>
-        </div><div id="tab_frame4">
-            <div id="stab_frame4_0">
-                You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
-                <div>
-                    <button class="btn" onclick="ATOM.particles.assignAll()">Distribute</button><br><br>
-                    <input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
-                    <input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
-                    <input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
-                </div>
-                <br><br>
-                Ratio Mode: <span id="atom_ratio">X</span><br>
-                <button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
-                <div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
-            </div><div id="stab_frame4_1">
-                    <div id="elemTierDiv">
-                        <button onclick="player.atom.elemTier = Math.max(1,player.atom.elemTier-1)" class="btn"><--</button><span id="elemTier" style="margin: 0px 10px">Element Tier 1</span><button onclick="player.atom.elemTier = Math.min(MAX_ELEM_TIERS,player.atom.elemTier+1)" class="btn">--></button><br><br>
-                    </div>
-                    <div id="elem_ch_div" style="min-height: 70px;">
-                        <span id="elem_desc" class='sky'>X</span><br>
-                        Cost: <span id="elem_cost">X</span><br>
-                        <span id="elem_eff" class='green'>X</span>
-                    </div><br><div id="elements_table"></div>
-                </div><div id="stab_frame4_2">
-                You have <span id="md_particles">X</span> Relativistic particles<br>
-                You have <span id="md_mass">X</span> of dilated mass, which makes Tickspeed <span id="md_eff">X</span> stronger<br><br>
-                <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="When dilating mass, will reset for atom. While mass is dilated: all pre-atom resources, atomic power gains get multiplier's exponent raised to 0.8;">Dilate Mass</button><br><br>
-                <div class="table_center">
-                    <div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
-                </div><br><div>
-                    <span id="dmSoft1" class="red">After <b id="dmSoftStart1">X</b> of dilated mass gain will softcap dilated mass gain!</span><br>
-					<span id="dmOverflow" style="color: rgb(255, 255, 255)">Because of Dilated Overflow, your dilated mass gain is raised by <b id="dmOverflow2">X</b>!</span>
-
-                </div>
-            </div>
-        </div><div id="tab_frame6">
-            <div id="stab_frame6_0">
-                <span id="qu_theory_div">You have <span id="qu_theory">0</span> Quantum Theory (based on every going quantum)</span><br><br>
-                <div id="chroma_table" class="table_center" style="justify-content: space-evenly;"></div>
-            </div><div id="stab_frame6_1">
-                You Quantized <span id="qu_times">0</span> times<br><br>
-                <div id="qu_milestones_table"></div>
-            </div><div id="stab_frame6_2">
-                <button class="btn" onclick="QUANTUM.auto.switch()">Auto-Quantum: <span id="auto_qu">OFF</span></button>
-                <button class="btn" onclick="QUANTUM.auto.switchMode()">Auto-Quantum Mode: <span id="auto_qu_mode">Amount</span></button><br><br>
-                <input type="text" id="auto_qu_input"><br>
-                = <span id="auto_qu_res"></span>
-            </div><div id="stab_frame6_3">
-                You have <span id="prim_theorem">0</span> Primordium Theorem (based on Blueprint Particles)<br>
-                (+1 at <span id="prim_next_theorem">X</span>)<br><br>
-				<div id="primordium_btn">
-                <button class="btn" onclick="giveRandomPParticles(1)">Give 1 random Particle</button>
-                <button class="btn" onclick="giveRandomPParticles(10)">Give 10 random Particles</button>
-                <button class="btn" onclick="giveRandomPParticles(1,true)">Give all random Particles</button>
-                <button class="btn" onclick="respecPParticles()">Respec all Particles</button><br><br>
-				</div>
-                <div id="primordium_table"></div>
-            </div><div id="stab_frame6_4">
+            </div><div id="stab_frame3_1">
                 You have <span id="qc_shard">0</span> Quantum Shard, which raises to <span id="qc_shard_b">2</span><br>
                 <span class="green">Translated to <span id="qc_shard_eff">1</span>x multiplier of Quantum Foams</span><br><br>
                 <button class="btn" onclick="QCs.enter()" id="qc_btn">Enter the Quantum Challenge</button><br><br>
@@ -518,7 +455,66 @@
                     <button class="btn" onclick="addQCPresetAs()">Add present as your modifications</button><br><br><button class="btn" onclick="importPreset()">Import preset</button><br><br>
                     <div id="QC_Presets_table"></div>
                 </div>
-            </div><div id="stab_frame6_5">
+            </div><div id="stab_frame3_2">
+				You have <span id="gc_shard">0</span> Galactic Shards<br>
+				Which are raising Galactic Power gain by ^<span id="gc_shardeff">0</span><br><br>
+				While in Galactic Challenge, gains of Pre-Quantum resources are set to 10^^(slog(gain) - <span id="gc_nerf1"></span>)<br>
+				Pre-Quantum Global Speed is set to 10^^(slog(Pre-Quantum Global Speed) - <span id="gc_nerf2"></span>)<br>
+				Effect of Beta particles is softcapped.<br>
+				<span id="gc_trapeff"></span><br><br>
+				You need to get <span id="gc_goal"></span> supernova to complete the challenge.<br>
+				Difficulty: <span id="gc_diff"></span>/<span id="gc_diff_max"></span><button class="btn" onclick="decGCdiff()">-1</button><button class="btn" onclick="incGCdiff()">+1</button><br>
+				<br><span id="gc_trap2">Trapped Challenges: <span id="gc_trap"></span>/<span id="gc_trap_max"></span><button class="btn" onclick="decGCtrap()">-1</button><button class="btn" onclick="incGCtrap()">+1</button></span><br>
+				<span id="gc_trapu2">Trapped In All U-Fermions: <span id="gc_trapu"></span><button class="btn" onclick="if(!player.gc.active)player.gc.trapu=!player.gc.trapu">Change</button><br></span>
+				<span id="gc_rip2">Trapped In Big Rip: <span id="gc_rip"></span><button class="btn" onclick="if(!player.gc.active)player.gc.rip=!player.gc.rip">Change</button><br></span><button class="btn" onclick="GC.enter()" id="gc_btn">Enter the Galactic Challenge</button>
+			</div>
+        </div><div id="tab_frame4">
+            <div id="stab_frame4_0">
+                You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
+                <div>
+                    <button class="btn" onclick="ATOM.particles.assignAll()">Distribute</button><br><br>
+                    <input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
+                    <input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
+                    <input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
+                </div>
+                <br><br>
+                Ratio Mode: <span id="atom_ratio">X</span><br>
+                <button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
+                <div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
+            </div><div id="stab_frame4_1">
+				You have <span id="md_particles">X</span> Relativistic particles<br>
+				You have <span id="md_mass">X</span> of dilated mass, which makes Tickspeed <span id="md_eff">X</span> stronger<br><br>
+				<button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="When dilating mass, will reset for atom. While mass is dilated: all pre-atom resources, atomic power gains get multiplier's exponent raised to 0.8;">Dilate Mass</button><br><br>
+				<div class="table_center">
+					<div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
+				</div><br><div>
+					<span id="dmSoft1" class="red">After <b id="dmSoftStart1">X</b> of dilated mass gain will softcap dilated mass gain!</span><br>
+					<span id="dmOverflow" style="color: rgb(255, 255, 255)">Because of Dilated Overflow, your dilated mass gain is raised by <b id="dmOverflow2">X</b>!</span>
+
+				</div>
+            </div><div id="stab_frame4_2">
+                You collapsed <span id="stars_Amt">X</span> stars, which makes mass gain is multiplied based on every type of Ranks<br>
+                <span class="green">Currently: <span id="stars_Eff">X</span></span><br><br>
+                <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
+                <div id="stars_table" class="table_center"></div><br><br>
+                <span id="starSoft1" class="red">After <b id="starSoftStart1">X</b> of collapsed stars gain will softcap collapsed stars gain!</span><br>
+				<span id="starOverflow" style="color: rgb(255, 255, 255)">Because of Star Overflow, your collapsed stars gain is raised by <b id="starOverflow1">X</b>!</span>
+            </div>
+        </div><div id="tab_frame6">
+            <div id="stab_frame6_0">
+                <span id="qu_theory_div">You have <span id="qu_theory">0</span> Quantum Theory (based on every going quantum)</span><br><br>
+                <div id="chroma_table" class="table_center" style="justify-content: space-evenly;"></div>
+            </div><div id="stab_frame6_1">
+                You have <span id="prim_theorem">0</span> Primordium Theorem (based on Blueprint Particles)<br>
+                (+1 at <span id="prim_next_theorem">X</span>)<br><br>
+				<div id="primordium_btn">
+                <button class="btn" onclick="giveRandomPParticles(1)">Give 1 random Particle</button>
+                <button class="btn" onclick="giveRandomPParticles(10)">Give 10 random Particles</button>
+                <button class="btn" onclick="giveRandomPParticles(1,true)">Give all random Particles</button>
+                <button class="btn" onclick="respecPParticles()">Respec all Particles</button><br><br>
+				</div>
+                <div id="primordium_table"></div>
+            </div><div id="stab_frame6_2">
                 <div class="table_center" style="min-height: 250px">
                     <div style="width: 33.3%; min-width: 300px;">
                         Your frequency is <span id="enEva1">0</span> Hz<br><br>
@@ -533,13 +529,21 @@
                     </div>
                 </div><br>
                 <div id="en_table" class="table_center"></div>
-            </div><div id="stab_frame6_6">
+            </div><div id="stab_frame6_3">
                 You have <span id="bd_energy">X</span> Relativistic Energy<br>
                 You have <span id="bd_mass">X</span> of Relativistic mass<br><br>
                 <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd" tooltip="When breaking dilation, while in Big Rip, BH Condensers & Cosmic Rays are no longer nerfed by 8th QC modifier, 7th QC modifier is disabled, you can gain Relativistic Energy based on dilated mass. Relativistic Energy gains Relativistic Mass. Fixing Dilation resets your relativistic energy & its mass, also forces a Quantum reset.">Break Dilation</button><br><br>
                 <div class="table_center">
                     <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
                 </div>
+            </div><div id="stab_frame6_4">
+                You Quantized <span id="qu_times">0</span> times<br><br>
+                <div id="qu_milestones_table"></div>
+            </div><div id="stab_frame6_5">
+                <button class="btn" onclick="QUANTUM.auto.switch()">Auto-Quantum: <span id="auto_qu">OFF</span></button>
+                <button class="btn" onclick="QUANTUM.auto.switchMode()">Auto-Quantum Mode: <span id="auto_qu_mode">Amount</span></button><br><br>
+                <input type="text" id="auto_qu_input"><br>
+                = <span id="auto_qu_res"></span>
             </div>
         </div><div id="tab_frame8">
             <button class="btn" onclick="save()">Save</button>

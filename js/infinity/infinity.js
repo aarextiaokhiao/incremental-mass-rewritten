@@ -167,18 +167,21 @@ function updateInfinityTemp() {
 
 
 function updateInfinityHTML() {
-    let gain2 = hasUpgrade('inf',11)
-    let unl = player.inf.reached || player.superGal.gt(0)
-    tmp.el.infinity_div.setDisplay(unl)
-    tmp.el.eternity_div.setDisplay(hasUpgrade('inf',14))
+	let gain2 = hasUpgrade('inf',11)
+	let unl = player.inf.reached
+	tmp.el.infinity_div.setDisplay(unl)
+	tmp.el.eternity_div.setDisplay(hasUpgrade('inf',14))
 	tmp.el.etAmt.setHTML(formatMass(player.et.points,0)+"<br>"+(hasElement(195)?player.et.points.formatGain(tmp.et.gain,1):"(+"+formatMass(tmp.et.gain,0)+")"));
-    if (unl) tmp.el.infAmt.setHTML(formatMass(player.inf.points,0)+"<br>"+(gain2?player.inf.points.formatGain(tmp.inf.gain,1):"(+"+formatMass(tmp.inf.gain,0)+")"))
-	tmp.el.shardsAmt.setHTML(format(player.et.shards,0)+player.et.shards.formatGain(tmp.et.shardsGain,0));
-	tmp.el.shardsEff.setHTML(format(calcShardsEffect()));
-        tmp.el.shard_gen_lvl.setTxt(format(player.et.shard_gen,0))
-        tmp.el.shard_gen_btn.setClasses({btn: true, locked: !tmp.et.shard_gen_can})
-        tmp.el.shard_gen_scale.setTxt(getScalingName('shard_gen'))
-        tmp.el.shard_gen_cost.setTxt(formatMass(tmp.et.shard_gen_cost,0))
-        tmp.el.shard_gen_pow.setTxt(format(tmp.et.shard_gen_eff.pow))
-        tmp.el.shard_gen_eff.setHTML(format(tmp.et.shard_gen_eff.eff))
+	if (unl) tmp.el.infAmt.setHTML(formatMass(player.inf.points,0)+"<br>"+(gain2?player.inf.points.formatGain(tmp.inf.gain,1):"(+"+formatMass(tmp.inf.gain,0)+")"))
+
+	if (tmp.tab == 0 && tmp.stab[0] == 5) {
+		tmp.el.shardsAmt.setHTML(format(player.et.shards,0)+player.et.shards.formatGain(tmp.et.shardsGain,0));
+		tmp.el.shardsEff.setHTML(format(calcShardsEffect()));
+		tmp.el.shard_gen_lvl.setTxt(format(player.et.shard_gen,0))
+		tmp.el.shard_gen_btn.setClasses({btn: true, locked: !tmp.et.shard_gen_can})
+		tmp.el.shard_gen_scale.setTxt(getScalingName('shard_gen'))
+		tmp.el.shard_gen_cost.setTxt(formatMass(tmp.et.shard_gen_cost,0))
+		tmp.el.shard_gen_pow.setTxt(format(tmp.et.shard_gen_eff.pow))
+		tmp.el.shard_gen_eff.setHTML(format(tmp.et.shard_gen_eff.eff))
+	}
 }

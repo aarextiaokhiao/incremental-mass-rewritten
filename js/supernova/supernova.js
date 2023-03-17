@@ -187,22 +187,18 @@ function updateSupernovaEndingHTML() {
         tmp.el.supernova_rank.setTxt(format(player.supernova.times,0))
         tmp.el.supernova_next.setTxt("Next Supernova at "+format(tmp.supernova.maxlimit,2)+" stars")
 		if (player.supernova.times.gte(SUPERNOVA_GALAXY.req()) && !hasElement(291)) tmp.el.supernova_next.setTxt("You reached the maximum Supernova limit!")
-        if (tmp.stab[5] == 0) {
-            tmp.el.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain.mul(tmp.preQUGlobalSpeed)))
-            updateTreeHTML()
-        }
+        if (tmp.stab[5] == 0) updateTreeHTML()
         if (tmp.stab[5] == 1) updateBosonsHTML()
         if (tmp.stab[5] == 2) updateFermionsHTML()
         if (tmp.stab[5] == 3) updateRadiationHTML()
         if (tmp.stab[5] == 4) updateSupernovaGalaxyHTML()
-        if (tmp.stab[5] == 5) updateFermionsHTML()
     }
+    if (tmp.tab == 2 && tmp.stab[2] == 1) updateTreeHTML()
 
     tmp.el.app_sgal.setDisplay(tmp.tab == 7)
     if (tmp.tab == 7) {
         if (tmp.stab[7] == 0) updateSupernovaGalaxyHTML()
         if (tmp.stab[7] == 1) updateFermionsHTML()
 		if (tmp.stab[7] == 2) updateAtomHTML()
-		if (tmp.stab[7] == 3) updateGCHTML()
     }
 }

@@ -322,7 +322,7 @@ function updateQuantumHTML() {
 		tmp.el.brAmt.setHTML(player.qu.rip.amt.format(0)+"<br>"+((player.qu.rip.active || (hasTree('qu_qol12') && gain2))?gain2?player.qu.rip.amt.formatGain(tmp.rip.gain.div(10))+	`<span class="soft">(softcapped)</span>`:`(+${tmp.rip.gain.format(0)}) <span class="soft">(softcapped)</span>`:"(inactive)"))
 	}
 	
-    if (tmp.tab == 0 && tmp.stab[0] == 4) {
+    if (tmp.tab == 0 && tmp.stab[0] == 3) {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain))
         tmp.el.bpEff.setTxt(format(tmp.qu.bpEff))
 
@@ -332,13 +332,16 @@ function updateQuantumHTML() {
         tmp.el.cosmic_str_cost.setTxt(format(tmp.qu.cosmic_str_cost,0))
         tmp.el.cosmic_str_pow.setTxt(format(tmp.qu.cosmic_str_eff.pow))
         tmp.el.cosmic_str_eff.setHTML(format(tmp.qu.cosmic_str_eff.eff))
-    tmp.el.cosmic_str_auto.setDisplay(hasElement(131))
-	tmp.el.cosmic_str_auto.setTxt(player.qu.auto_cs?"ON":"OFF")
+        tmp.el.cosmic_str_auto.setDisplay(hasElement(131))
+	    tmp.el.cosmic_str_auto.setTxt(player.qu.auto_cs?"ON":"OFF")
     }
 
     if (tmp.tab == 6) {
         if (tmp.stab[6] == 0) updateChromaHTML()
-        if (tmp.stab[6] == 1) {
+        if (tmp.stab[6] == 1) updatePrimordiumHTML()
+        if (tmp.stab[6] == 2) updateEntropyHTML()
+        if (tmp.stab[6] == 3) updateBDHTML()
+        if (tmp.stab[6] == 4) {
             tmp.el.qu_times.setTxt(format(player.qu.times,0))
 
 			if(hasTree('qu_qol11')){
@@ -350,15 +353,11 @@ function updateQuantumHTML() {
                 tmp.el['qu_mil_goal'+x].setTxt(format(QUANTUM.mils[x][0],0))
             }
         }
-        if (tmp.stab[6] == 2) {
+        if (tmp.stab[6] == 5) {
             tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"ON":"OFF")
             tmp.el.auto_qu_mode.setTxt(QUANTUM.auto.mode[player.qu.auto.mode])
             tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
         }
-        if (tmp.stab[6] == 3) updatePrimordiumHTML()
-        if (tmp.stab[6] == 4) updateQCHTML()
-        if (tmp.stab[6] == 5) updateEntropyHTML()
-        if (tmp.stab[6] == 6) updateBDHTML()
     }
 }
 

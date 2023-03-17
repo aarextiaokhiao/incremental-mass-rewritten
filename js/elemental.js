@@ -1301,7 +1301,7 @@ const ELEMENTS = {
 			effDesc(x) { return format(x)+"x"; },
 		},
 		{
-			desc: `Unlock Supernova Galaxies in the Supernova tab.`,
+			desc: `Unlock Supernova Galaxies.`,
 			cost: uni(1e210),
 			et: true,
 		},
