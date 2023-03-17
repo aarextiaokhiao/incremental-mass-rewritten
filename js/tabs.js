@@ -7,8 +7,9 @@ const TABS = {
                 tmp.sn_tab = tmp.tab
                 tree_update = true
             }
-        }
-        else {
+        } else if (tmp.tab == 4 && x == 5) {
+            TABS.choose(5)
+        } else {
             tmp.stab[tmp.tab] = x
         }
     },
@@ -28,8 +29,8 @@ const TABS = {
             { id: "Mass" },
             { id: "Black Hole", unl() { return player.bh.unl }, style: "bh" },
             { id: "Atomic Generator", unl() { return player.atom.unl }, style: "atom" },
-            { id: "Stars", unl() { return STARS.unlocked() } },
-            { id: "Indescribable Matter", unl() { return quUnl() } },
+            { id: "Indescribable Matter", unl() { return quUnl() }, style: "qu" },
+            { id: "Prestiges", unl() { return hasUpgrade('br',9) } },
         ],
         1: [
             { id: "Ranks Rewards" },
@@ -37,22 +38,27 @@ const TABS = {
             { id: "Prestige Rewards", unl() { return hasUpgrade("br",9) } },
             { id: "Beyond-Ranks Rewards", unl() { return tmp.brUnl } },
         ],
+        2: [
+            { id: "Upgrades" },
+            { id: "Elements", unl() { return tmp.elements.unl_length }, style: "atom" },
+            { id: "Elements+", unl() { return tmp.elements.unl_length > 118 }, style: "dark" },
+        ],
         3: [
             { id: "Challenges" },
             { id: "Quantum Challenge", unl() { return hasTree("unl3") }, style: "qu" },
-            //{ id: "Big Rip", unl() { return hasTree("unl4") }, style: "qu" },
+            { id: "Corruption", unl() { return player.dark.c16.first }, style: "c16" },
         ],
         4: [
             { id: "Particles" },
-            { id: "Elements", unl() { return player.chal.comps[7].gte(16) || player.supernova.times.gte(1) || quUnl() } },
             { id: "Mass Dilation", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
             { id: "Break Dilation", unl() { return hasUpgrade("br",9) }, style: "break_dilation" },
+            { id: "Stars", unl() { return STARS.unlocked() }, style: "star" },
         ],
         5: [
             { id: "Neutron Tree" },
-            { id: "Bosons", unl() { return player.supernova.post_10 } },
-            { id: "Fermions", unl() { return player.supernova.fermions.unl } },
-            { id: "Radiation", unl() { return tmp.radiation.unl } },
+            { id: "Bosons", unl() { return player.supernova.post_10 }, style: "boson" },
+            { id: "Fermions", unl() { return player.supernova.fermions.unl }, style: "ferm" },
+            { id: "Radiation", unl() { return tmp.radiation.unl }, style: "rad" },
         ],
         6: [
             { id: "Chroma" },
@@ -65,7 +71,7 @@ const TABS = {
             { id: "Dark Effects" },
             { id: "Dark Run", unl() { return tmp.darkRunUnlocked } },
             { id: "The Matters", unl() { return tmp.matterUnl } },
-            { id: "Corruption", unl() { return player.dark.c16.first } },
+            { id: "Corruption", unl() { return player.dark.c16.first }, style: "c16" },
         ]
     },
 }

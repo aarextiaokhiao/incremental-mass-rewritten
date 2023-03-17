@@ -54,8 +54,6 @@
 
     <script src="js/formats.js"></script>
 
-    <script src="js/secret.js"></script>
-
     <script src="js/tooltip_res.js"></script>
     <script src="js/main.js"></script>
 
@@ -161,7 +159,6 @@
             <div id="table_res_main" class="table_left">
                 <div style="width: 100px;"></div>
                 <div id="table_resources" class="top_text">
-
                     <div class="resources sml" id="mass_div">
                         <div id="mass_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="Mass">
                             <img class="res_img" src="images/mass.png">
@@ -247,14 +244,7 @@
         <div id="tab_frames">
             <div id="tab_frame0">
                 <div id="stab_frame0_0">
-                    <div id="rank_tabs" class="table_center" style="min-height: 30px;">
-                        <div style="width: 145px">
-                            <button onclick="tmp.rank_tab = 0" class="btn_tab">Ranks</button>
-                        </div><div style="width: 145px">
-                            <button onclick="tmp.rank_tab = 1" class="btn_tab">Prestiges</button>
-                        </div>
-                    </div>
-                    <div id="rank_tab0">
+                    <div>
                         <div class="table_center" style="min-height: 180px;">
                             <div style="width: 400px; display: none;" id="pre_beyond_ranks"></div>
                             <div id="ranks_table" class="table_center"></div>
@@ -264,18 +254,14 @@
                                     <div style="margin-left: 5px; text-align: left;" id="br_amt">
                                         Hept 0
                                     </div>
-                                </div>
-                                <br>
-                                <button onclick="BEYOND_RANKS.reset()" class="btn reset" style="max-width: 380px;" id="br_desc">
+                                </div><br>
+                                <button onclick="BEYOND_RANKS.reset()" class="btn reset" id="br_desc">
                                     Reset your Hexs, but current rank up.<br>
                                     To Hept up, require Hex ???<br>
                                     To Oct up, require Hept ???
                                 </button>
                             </div>
                         </div>
-                    </div><div id="rank_tab1">
-                        Your Prestige base is <span id="pres_base"></span> (based on products of Rank tiers)<br><br>
-                        <div id="pres_table" class="table_center" style="min-height: 180px;"></div>
                     </div>
                     <br><br>
                     <div id="mass_upgs_table"></div><br><br>
@@ -306,14 +292,7 @@
                             Accelerator Effect: <span id="accel_eff">X</span>
                         </div>
                     </div><br><div>
-                        <span id="massSoft1" class="red">After <b id="massSoftStart1">X</b> of mass gain will softcap mass gain!<br></span>
-                        <span id="massSoft3" style="color: rgb(121, 0, 0)">After <b id="massSoftStart3">X</b> of mass gain will softcap^2 mass gain!<br></span>
-                        <span id="massSoft4" style="color: rgb(122, 0, 86)">After <b id="massSoftStart4">X</b> of mass gain will softcap^3 mass gain!<br></span>
-                        <span id="massSoft5" style="color: rgb(255, 94, 0)">After <b id="massSoftStart5">X</b> of mass gain will softcap^4 mass gain!<br></span>
-                        <span id="massSoft6" style="color: rgb(255, 238, 0)">After <b id="massSoftStart6">X</b> of mass gain will softcap^5 mass gain!<br></span>
-                        <span id="massSoft7" style="color: rgb(166, 255, 0)">After <b id="massSoftStart7">X</b> of mass gain will softcap^6 mass gain!<br></span>
-                        <span id="massSoft8" style="color: rgb(0, 255, 149)">After <b id="massSoftStart8">X</b> of mass gain will softcap^7 mass gain!<br></span>
-                        <span id="massSoft9" style="color: rgb(0, 225, 255)">After <b id="massSoftStart9">X</b> of mass gain will softcap^8 mass gain!</span>
+                        <span id="massSoft">Mass is <b id="massSoftLvl">(softcapped)</b> at <b id="massSoftStart"></b>!</span>
                         <div id="massOverflow"></div>
                         <div id="strongerOverflow"></div>
                     </div>
@@ -382,12 +361,6 @@
                         <span id="atomicOverflow"></span>
                     </div>
                 </div><div id="stab_frame0_3">
-                    You collapsed <span id="stars_Amt">X</span> stars, which multiplies mass gain based on all rank types.<br>
-                    <span class="green">Currently: <span id="stars_Eff">X</span></span><br><br>
-                    <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
-                    <div id="stars_table" class="table_center"></div><br><br>
-                    <span id="starSoft1" class="red">After <b id="starSoftStart1">X</b> of collapsed stars gain will softcap collapsed stars gain!</span><br>
-                </div><div id="stab_frame0_4">
                     You have <span id="bpAmt">0</span> Blueprint Particle<br>
                     <span class="green">Which increases pre-Quantum global speed by <span id="bpEff">1</span>x</span><br><br>
                     <div style="width: 100%; margin-bottom: 5px;" class="table_center">
@@ -404,6 +377,9 @@
                             Cosmic Strings Effect: <span id="cosmic_str_eff">X</span>x
                         </div>
                     </div>
+                </div><div id="stab_frame0_4">
+                    Your Prestige base is <span id="pres_base"></span> (based on products of Rank tiers)<br><br>
+                    <div id="pres_table" class="table_center" style="min-height: 180px;"></div>
                 </div>
             </div><div id="tab_frame1">
                 <div id="stab_frame1_0">
@@ -419,8 +395,16 @@
                     <div id="br_rewards_table"></div>
                 </div>
             </div><div id="tab_frame2">
-                <div id="main_upg_msg" style="min-height: 100px;"></div>
-                <div id="main_upgs_table" class="table_center"></div>
+                <div id="stab_frame2_0">
+                    <div id="main_upg_msg" style="min-height: 100px;"></div>
+                    <div id="main_upgs_table" class="table_center"></div>
+                </div><div id="elements_frame">
+                    <div id="elem_ch_div" style="min-height: 70px;">
+                        <span id="elem_desc" class='sky'>X</span><br>
+                        Cost: <span id="elem_cost">X</span><br>
+                        <span id="elem_eff" class='green'>X</span>
+                    </div><br><div id="elements_table"></div>
+                </div>
             </div><div id="tab_frame3">
                 <div id="stab_frame3_0">
                     Note: Click any image to show challenge description. Click again to enter any challenge<br><br>
@@ -440,8 +424,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
                 </div><div id="stab_frame3_1">
                     You have <span id="qc_shard">0</span> Quantum Shard, which raises to <span id="qc_shard_b">2</span><br>
                     <span class="green">Translated to <span id="qc_shard_eff">1</span>x multiplier of Quantum Foams</span><br><br>
@@ -461,7 +443,9 @@
                         <button class="btn" onclick="addQCPresetAs()">Add present as your modifications</button><br><br>
                         <div id="QC_Presets_table"></div>
                     </div>
-                    
+                </div><div id="stab_frame3_2">
+                    Your best mass of black hole in 16th Challenge is <b id="bestBH">X</b>.<br><br>
+                    <div class="table_center"><div class="table_center" id="chargers_table" style="width: 1000px;"></div></div>
                 </div>
             </div><div id="tab_frame4">
                 <div id="stab_frame4_0">
@@ -479,15 +463,6 @@
                         <span id="quarkOverflow"></span>
                     </div>
                 </div><div id="stab_frame4_1">
-                    <div id="elemTierDiv">
-                        <button onclick="player.atom.elemTier = Math.max(1,player.atom.elemTier-1)" class="btn"><--</button><span id="elemTier" style="margin: 0px 10px">Element Tier 1</span><button onclick="player.atom.elemTier = Math.min(MAX_ELEM_TIERS,player.atom.elemTier+1)" class="btn">--></button><br><br>
-                    </div>
-                    <div id="elem_ch_div" style="min-height: 70px;">
-                        <span id="elem_desc" class='sky'>X</span><br>
-                        Cost: <span id="elem_cost">X</span><br>
-                        <span id="elem_eff" class='green'>X</span>
-                    </div><br><div id="elements_table"></div>
-                </div><div id="stab_frame4_2">
                     You have <span id="md_particles">X</span> Relativistic particles<br>
                     You have <span id="md_mass">X</span> of dilated mass, which makes Tickspeed <span id="md_eff">X</span> stronger<br><br>
                     <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md tooltip" tooltip-html="When dilating mass, will reset for atom. While mass is dilated: all pre-atom resources, atomic power gains get multiplier's exponent raised to 0.8">Dilate Mass</button><br><br>
@@ -497,13 +472,19 @@
                         <span id="dmSoft1" class="red">After <b id="dmSoftStart1">X</b> of dilated mass gain will softcap dilated mass gain!</span><br>
                         <span id="dmOverflow"></span>
                     </div>
-                </div><div id="stab_frame4_3">
+                </div><div id="stab_frame4_2">
                     You have <span id="bd_energy">X</span> Relativistic Energy<br>
                     You have <span id="bd_mass">X</span> of Relativistic mass<br><br>
                     <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd tooltip" tooltip-html="When breaking dilation, while in Big Rip, BH Condensers & Cosmic Rays are no longer nerfed by 8th QC modifier, 7th QC modifier is disabled, you can gain <b>Relativistic Energy</b> based on dilated mass. Relativistic Energy generates <b>Relativistic Mass</b>. Fixing Dilation resets your relativistic energy & its mass, also forces a Quantum reset.">Break Dilation</button><br><br>
                     <div class="table_center">
                         <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
                     </div>
+                </div><div id="stab_frame4_3">
+                    You collapsed <span id="stars_Amt">X</span> stars, which multiplies mass gain based on all rank types.<br>
+                    <span class="green">Currently: <span id="stars_Eff">X</span></span><br><br>
+                    <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
+                    <div id="stars_table" class="table_center"></div><br><br>
+                    <span id="starSoft1" class="red">After <b id="starSoftStart1">X</b> of collapsed stars gain will softcap collapsed stars gain!</span><br>
                 </div>
             </div><div id="tab_frame6">
                 <div id="stab_frame6_0">
@@ -584,9 +565,6 @@
                         <div id="FSS_eff1"></div>
                     </div><br>
                     <div class="table_center" id="matters_table"></div>
-                </div><div id="stab_frame7_3">
-                    Your best mass of black hole in 16th Challenge is <b id="bestBH">X</b>.<br><br>
-                    <div class="table_center"><div class="table_center" id="chargers_table" style="width: 1000px;"></div></div>
                 </div>
             </div><div id="tab_frame8">
                 <button class="btn" onclick="save()">Save</button>
@@ -595,11 +573,11 @@
                 <button class="btn" onclick="export_copy()">Export to clipboard</button>
                 <button class="btn" onclick="importy()">Import</button>
                 <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">Join Discord</button>
-                <button class="btn tooltip" onclick="window.open('https://www.donationalerts.com/r/mrredshark77')" tooltip-html="Support the original creator of IMR!">Donate</button>
                 <button class="btn" onclick="createPopup(POPUP_GROUPS.help.html,'help')">Help</button><br>
                 <button class="btn" onclick="turnOffline()">Offline Production: <span id="offline_active">ON</span></button>
                 <button class="btn" onclick="createPopup(POPUP_GROUPS.fonts.html,'fonts')">Fonts</button>
                 <button class="btn" onclick="createPopup(POPUP_GROUPS.notations.html,'notations')">Notations</button>
+			    <button class="btn" onclick="updateAarex(true)">Aarex's Theme: <span id="aarex_active">ON</span></button>
                 <button class="btn" id="tree_anim_btn" onclick="changeTreeAnimation()">Tree Animation: <span id="tree_anim">ON</span></button>
                 <button class="btn" onclick="player.options.massDis = (player.options.massDis + 1) % 4">Mass Format Display: <span id="mass_dis">Default</span></button>
                 <br><br>
@@ -611,14 +589,6 @@
                 Contributors: <span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>, 16777216 & Aarex (Artists)<br><br><br>
                 Hint 1: Hover top image above tabs to show description...<br><br>
                 Total time played: <span id="total_time">X</span><br><br>
-                
-                <!-- <a href="https://www.easycounter.com/">
-                <img src="https://www.easycounter.com/counter.php?mrredshark77"
-                border="0" alt="error"></a> -->
-    
-                <div style="position: absolute; bottom: 35px; right: 35px;">
-                    <img id="omega_badge" src="images/omega.png">
-                </div>
             </div>
         </div>
     </div>

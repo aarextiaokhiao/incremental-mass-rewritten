@@ -286,3 +286,25 @@ function convertStringIntoAGY(s) {
 
     return result
 }
+
+//Aarex's Theme
+function updateAarex(toggle) {
+	document.querySelectorAll("link").forEach( function(e) {
+		if (e.href.includes("aarex.css")) e.remove();
+	});
+
+	if (toggle) player.options.aarTheme = !player.options.aarTheme
+
+	if (player.options.aarTheme) {
+		var head = document.head;
+		var link = document.createElement('link');
+		
+		link.type = 'text/css';
+		link.rel = 'stylesheet';
+		link.href = "aarex.css";
+
+		head.appendChild(link);
+	}
+
+	document.getElementById("aarex_active").textContent = player.options.aarTheme ? "ON" : "OFF"
+}

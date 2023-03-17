@@ -29,12 +29,13 @@ function setupHTML() {
 	table = ""
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
-		table += `<div style="width: 300px" id="ranks_div_${x}">
-			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">OFF</button>
-			<span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]} <span id="ranks_amt_${x}">X</span><br><br>
+		table += `<div style="width: 250px" id="ranks_div_${x}">
+			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">OFF</button><br><br>
+			<span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]} <b id="ranks_amt_${x}"></b><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
-				Reset your ${x>0?RANKS.fullNames[x-1]+"s":'mass and upgrades'}, but ${RANKS.fullNames[x]} up.<span id="ranks_desc_${x}"></span><br>
-				Req: <span id="ranks_req_${x}">X</span>
+				<b id="ranks_reset_${x}" style='font-size: 16px'></b><br>
+				(Requires <b id="ranks_req_${x}">X</b>)
+				<b id="ranks_desc_${x}"></b>
 			</button>
 		</div>`
 	}
@@ -182,7 +183,7 @@ function updateTabsHTML() {
 	for (let x = 0; x < TABS[1].length; x++) {
 		if (x != 5 && tmp.tab == 5) continue
 		let tab = TABS[1][x]
-		tmp.el["tab"+x].setDisplay(tab.unl ? tab.unl() : true)
+		tmp.el["tab"+x].el.parentElement.style.display = (!tab.unl || tab.unl()) ? "" : "none"
 		tmp.el["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
 
 		if (tmp.el["tab_frame"+x]) tmp.el["tab_frame"+x].setDisplay(x == tmp.tab)
@@ -190,7 +191,7 @@ function updateTabsHTML() {
 			tmp.el["stabs"+x].setDisplay(x == tmp.tab)
 			if (x == tmp.tab) for (let y = 0; y < TABS[2][x].length; y++)  {
 				let stab = TABS[2][x][y]
-				tmp.el["stab"+x+"_"+y].setDisplay(stab.unl ? stab.unl() : true)
+				tmp.el["stab"+x+"_"+y].el.parentElement.style.display = (!stab.unl || stab.unl()) ? "" : "none"
 				tmp.el["stab"+x+"_"+y].setClasses({btn_tab: true, [stab.style ? stab.style : "normal"]: true, choosed: y == tmp.stab[x]})
 				if (tmp.el["stab_frame"+x+"_"+y]) tmp.el["stab_frame"+x+"_"+y].setDisplay(y == tmp.stab[x])
 			}
@@ -456,8 +457,6 @@ function updateOptionsHTML() {
 	tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
 	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
 	tmp.el.mass_dis.setTxt(["Default",'Always show g','Always show mlt','Important units only'][player.options.massDis])
-
-	tmp.el.omega_badge.setDisplay(localStorage.getItem("imr_secret_badge1") == "1")
 }
 
 function updateHTML() {
@@ -478,27 +477,20 @@ function updateHTML() {
 		updateQuantumHTML()
 		updateDarkHTML()
 		if (tmp.tab == 0) {
+			updateRanksHTML()
 			if (tmp.stab[0] == 0) {
-				updateRanksHTML()
 				updateMassUpgradesHTML()
 				updateTickspeedHTML()
-				
-				tmp.el.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain))
-				tmp.el.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
-				tmp.el.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2))
-				tmp.el.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
-				tmp.el.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
-				tmp.el.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
-				tmp.el.massSoft5.setDisplay(tmp.massGain.gte(tmp.massSoftGain4))
-				tmp.el.massSoftStart5.setTxt(formatMass(tmp.massSoftGain4))
-				tmp.el.massSoft6.setDisplay(tmp.massGain.gte(tmp.massSoftGain5))
-				tmp.el.massSoftStart6.setTxt(formatMass(tmp.massSoftGain5))
-				tmp.el.massSoft7.setDisplay(tmp.massGain.gte(tmp.massSoftGain6))
-				tmp.el.massSoftStart7.setTxt(formatMass(tmp.massSoftGain6))
-				tmp.el.massSoft8.setDisplay(tmp.massGain.gte(tmp.massSoftGain7))
-				tmp.el.massSoftStart8.setTxt(formatMass(tmp.massSoftGain7))
-				tmp.el.massSoft9.setDisplay(tmp.massGain.gte(tmp.massSoftGain8))
-				tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
+
+				let lvl = 0
+				for (var i = 1; i <= 8; i++) if (tmp.massGain.gte(tmp["massSoftGain"+i])) lvl = i
+				tmp.el.massSoft.setDisplay(lvl)
+				if (lvl) {
+					tmp.el.massSoft.setClasses({["soft"+lvl+"_desc"]: true})
+					tmp.el.massSoftStart.setTxt(formatMass(tmp["massSoftGain"+lvl]))
+					tmp.el.massSoftLvl.setClasses({["soft"+lvl]: true})
+					tmp.el.massSoftLvl.setHTML("(softcapped"+(lvl>1?"<sup>"+lvl+"</sup>":"")+")")
+				}
 
 				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass))
     			tmp.el.massOverflow.setHTML(`Because of mass overflow at <b>${formatMass(tmp.overflow_start.mass)}</b>, your mass is ${overflowFormat(tmp.overflow.mass||1)}!`)
@@ -512,9 +504,6 @@ function updateHTML() {
 			if (tmp.stab[0] == 2) {
 				updateAtomicHTML()
 			}
-			if (tmp.stab[0] == 3) {
-				updateStarsHTML()
-			}
 		}
 		if (tmp.tab == 1) {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
@@ -523,16 +512,18 @@ function updateHTML() {
 			if (tmp.stab[1] == 3) updateBeyondRanksRewardHTML()
 		}
 		if (tmp.tab == 2) {
-			updateMainUpgradesHTML()
+			tmp.el["elements_frame"].setDisplay(tmp.elements.tier)
+			if (tmp.stab[2] == 0) updateMainUpgradesHTML()
+			if (tmp.elements.tier) updateElementsHTML()
 		}
 		if (tmp.tab == 3) {
 			updateChalHTML()
 		}
 		if (tmp.tab == 4) {
 			if (tmp.stab[4] == 0) updateAtomHTML()
-			if (tmp.stab[4] == 1) updateElementsHTML()
-			if (tmp.stab[4] == 2) updateMDHTML()
-			if (tmp.stab[4] == 3) updateBDHTML()
+			if (tmp.stab[4] == 1) updateMDHTML()
+			if (tmp.stab[4] == 2) updateBDHTML()
+			if (tmp.stab[4] == 3) updateStarsHTML()
 		}
 		if (tmp.tab == 8) {
 			updateOptionsHTML()

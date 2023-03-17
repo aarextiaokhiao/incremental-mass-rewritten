@@ -91,7 +91,7 @@ const DARK = {
 
         QUANTUM.doReset(true,true)
 
-        if (!hasElement(127)) tmp.rank_tab = 0
+        if (tmp.stab[0] == 4 && !hasElement(127)) tmp.stab[0] = 0
         if (tmp.stab[4] == 3 && !hasElement(127)) tmp.stab[4] = 0
 
         tmp.pass = 2
@@ -272,10 +272,11 @@ function updateDarkHTML() {
             updateDarkRunHTML()
         } else if (tmp.stab[7] == 2) {
             updateMattersHTML()
-        } else if (tmp.stab[7] == 3) {
-            updateC16HTML()
         }
     }
+	if (tmp.tab == 3 && tmp.stab[3] == 2) {
+		updateC16HTML()
+	}
 }
 
 function getNextDarkEffectFromID(i) {

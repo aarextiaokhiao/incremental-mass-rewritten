@@ -66,13 +66,11 @@ const FORMS = {
 
         if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
         
-        x = x.softcap(tmp.massSoftGain,tmp.massSoftPower,0)
+        x = x.softcap(tmp.massSoftGain1,tmp.massSoftPower1,0)
         .softcap(tmp.massSoftGain2,tmp.massSoftPower2,0)
         .softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
         .softcap(tmp.massSoftGain4,tmp.massSoftPower4,0)
         .softcap(tmp.massSoftGain5,tmp.massSoftPower5,0)
-
-        //console.log(x.format())
 
         if (hasElement(117)) x = x.pow(10)
 
@@ -106,7 +104,7 @@ const FORMS = {
 
         return x
     },
-    massSoftGain() {
+    massSoftGain1() {
         if (player.ranks.hex.gte(6)) return EINF
         let s = E(1.5e156)
         if (CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e150)
@@ -116,7 +114,7 @@ const FORMS = {
         if (hasPrestige(0,1)) s = s.pow(10)
         return s.min(tmp.massSoftGain2||1/0).max(1)
     },
-    massSoftPower() {
+    massSoftPower1() {
         let p = E(1/3)
         if (CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) p = p.mul(4)
         if (CHALS.inChal(7) || CHALS.inChal(10)) p = p.mul(6)
@@ -551,7 +549,6 @@ const FORMS = {
 
 function loop() {
     diff = Date.now()-date;
-    ssf[1]()
     updateTemp()
     updateHTML()
     calc(diff/1000*tmp.offlineMult,diff/1000);

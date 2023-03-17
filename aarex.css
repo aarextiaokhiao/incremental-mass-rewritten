@@ -1,0 +1,365 @@
+body {
+	background: radial-gradient(ellipse at top, #000f1f, transparent, #00001f), linear-gradient(#00001f, black);
+	color: #bfcfff
+}
+body.ngm {
+	background: radial-gradient(ellipse at top, #0f001f, transparent, #00001f), linear-gradient(#00001f, black);
+	color: #dfbfff
+}
+
+#loading {
+	background: radial-gradient(ellipse at bottom, #bfcfff1f, transparent), #000000bf
+}
+#loading h1 {
+	animation: blink 2s linear infinite;
+	color: #007fff
+}
+#loading h2 {
+	width: 100%;
+	background: #0003;
+}
+@keyframes blink {
+	0% {
+		opacity: 1
+	}
+	50% {
+		opacity: 0.25
+	}
+	100% {
+		opacity: 1
+	}
+}
+
+#notify {
+	position: fixed;
+	left: inherit;
+	right: 0;
+	top: 20px;
+	z-index: 3;
+	transform: none;
+
+	background: linear-gradient(90deg, transparent, #00b7);
+	border-radius: 2px 0 0 2px;
+	border: none;
+
+	text-align: right
+}
+#notify.hide {
+	transform: translate(100%, 0);
+	top: 20px
+}
+
+#popup, #tooltip-div {
+	color: #7bf;
+	border: 1px solid #00b;
+	background: radial-gradient(ellipse at top, #007b, #0077) !important;
+}
+
+.btn, .btn_tab {
+	border: 0px solid;
+	border-radius: 4px;
+	background: radial-gradient(ellipse at top, #03fb, #03f3);
+	box-shadow: 0 3px 6px #0007;
+
+	color: #7bf;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+	transition-duration: 0.3s
+}
+.btn:hover, .btn_tab:hover {
+	transform: scale(1.1)
+}
+.btn.locked {
+	transform: scale(1) !important;
+
+	border: 0px solid;
+	background: radial-gradient(ellipse at top, #7307, #5103) !important;
+
+	color: #7f2f2f !important;
+	text-shadow: 0 2px 4px #3f0000;
+}
+
+.btn_tab {
+	border-bottom: 2px solid #00f7
+}
+.btn_tab.choosed {
+	border-bottom: 4px solid #0bf;
+	background: radial-gradient(ellipse at top, #03fb, #03f7) !important;
+	box-shadow: inset 0 0 3px #0000ff, 0 3px 6px rgba(0, 0, 191, 0.5);
+
+	color: #bbf !important;
+	font-weight: bold;
+	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
+}
+#tabs .btn_tab {
+	padding-top: 3px;
+	padding-bottom: 3px
+}
+.line {
+	border-bottom: none !important;
+	height: 2px;
+	border: none;
+	background: linear-gradient(90deg, #00f, transparent)
+}
+
+/* RANKS */
+#ranks_amt_0 {
+	background: linear-gradient(transparent, #84e6003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	padding: 2px;
+	color: #84e600;
+	font-size: 20px
+}
+#ranks_0 {
+	background: linear-gradient(#84e6007f, #84e600bf);
+	color: #84e600;
+}
+#ranks_amt_1 {
+	background: linear-gradient(transparent, #e6c9003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e6c900;
+	font-size: 20px
+}
+#ranks_1 {
+	background: linear-gradient(#e6c9007f, #e6c900bf);
+	color: #e6c900;
+}
+#ranks_amt_2 {
+	background: linear-gradient(transparent, #e66d003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e66d00;
+	font-size: 20px
+}
+#ranks_2 {
+	background: linear-gradient(#e66d007f, #e66d00bf);
+	color: #e66d00;
+}
+#ranks_amt_3 {
+	background: linear-gradient(transparent, #e600393f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #e60039;
+	font-size: 20px
+}
+#ranks_3 {
+	background: linear-gradient(#e600397f, #e60039bf);
+	color: #e60039;
+}
+#ranks_amt_4 {
+	background: linear-gradient(transparent, #d700953f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #d70095;
+	font-size: 20px
+}
+#ranks_4 {
+	background: linear-gradient(#d700957f, #d70095bf);
+	color: #d70095;
+}
+
+/* -=- MAGIC -=- */
+.btn_tab.magic {
+	background: radial-gradient(ellipse at top, #507, #005) !important;
+	border-color: #b0f;
+
+	color: #b0f;
+	text-shadow: 0 2px 4px #507
+}
+
+/* -=- BLACK HOLE -=- */
+.btn_tab.bh {
+	background: radial-gradient(ellipse at top, #f907, #fb03) !important;
+	border-color: #f90;
+	box-shadow: 0 0 3px #bf9f00, 0 0 24px #ffbf00;
+
+	color: #f73 !important
+}
+#stab_frame0_1 .btn {
+	background: radial-gradient(ellipse at top, #fb0b, #fb07);
+	color: #ff7
+}
+
+/* -=- ATOM -=- */
+.btn_tab.atom {
+	background: radial-gradient(ellipse at top, #0bf7, #07f3) !important;
+	border-color: #07f;
+	box-shadow: 0 0 12px #07f7;
+
+	color: #7fb !important
+}
+#tab_frame4, #stab_frame0_2 {
+	color: #bff
+}
+#stab_frame0_2 .btn {
+	background: radial-gradient(ellipse at top, #0bf7, #07f3);
+	color: #7ff
+}
+
+/* ELEMENTS */
+.elements {
+	border: 0px solid;
+	border-radius: 6px;
+	background: rgba(0, 191, 255, 0.75) !important;
+
+	color: #7fefff
+}
+.elements.locked {
+	background: radial-gradient(ellipse at top, #5f1f1f, #1f1f1f) !important;
+
+	color: #7f2f2f !important
+}
+.elements.bought {
+	background: radial-gradient(ellipse at top, #00ff00, #7fff00) !important;
+
+	color: #003f00 !important
+}
+.elements.bought.final {
+	background: linear-gradient(#dff, #fff, #fdd) !important;
+
+	color: #003f00 !important
+}
+
+.btn_tab.dilation {
+	background: radial-gradient(ellipse at top, #0f07, #3f03) !important;
+	border-color: #0f0;
+	box-shadow: 0 0 12px #7f7;
+
+	color: #7f7 !important
+}
+#stab_frame4_1 {
+	color: #7f7
+}
+.btn.md {
+	background: radial-gradient(ellipse at top, #0f07, #3f03);
+	border-color: #0f0;
+	color: #7f7
+}
+
+.btn_tab.star, .elements.bought.star {
+	background: radial-gradient(ellipse at top, #ff7f00, #ff3f00) !important;
+	border-color: #ff3f00;
+	box-shadow: 0 0 12px #730;
+
+	color: #330 !important
+}
+#stab_frame2_3 {
+	color: #fb3
+}
+#stab_frame2_3 .btn {
+	background: radial-gradient(ellipse at top, #ff7f00, #ff3f00);
+
+	color: #330;
+}
+
+/* -=- SUPERNOVA -=- */
+.btn_tab.sn, .elements.bought.sn {
+	background: linear-gradient(#b0f, #f0b) !important;
+	box-shadow: 0 0 6px #f0b;
+
+	color: #fbf !important
+}
+
+.btn_tab.boson {
+	background: radial-gradient(ellipse at top, #ffbf00, #bf00ff) !important;
+	border-color: #b0f;
+	box-shadow: 0 0 24px #bf00ff;
+
+	color: #303 !important
+}
+.higgs_boson {
+	min-height: 50px;
+	background: linear-gradient(#dfff007f, transparent);
+	color: #dfff00
+}
+.graviton {
+	min-height: 50px;
+	background: linear-gradient(#007fff7f, transparent);
+	color: #007fff
+}
+.photon {
+	background: linear-gradient(#ffbf007f, transparent);
+	color: #ffbf00
+}
+.gluon {
+	background: linear-gradient(#df00ff7f, transparent);
+	color: #bf00ff
+}
+
+.btn_tab.ferm {
+	background: linear-gradient(45deg, #fb0, #0f0) !important;
+	border-color: #0f0;
+	box-shadow: 0 0 24px #0f07;
+
+	color: #330 !important;
+	text-shadow: 0 0 3px #ffff00, 0 0 3px #bfbf00
+}
+.btn_tab.rad {
+	background: linear-gradient(30deg, #ff7, transparent, transparent, #7ff), linear-gradient(90deg, #f77, #7f7, #77f, #f77) !important;
+	border-color: #7fff00;
+
+	color: #070 !important
+}
+
+/* -=- QUANTUM -=- */
+.btn_tab.qu {
+	background: linear-gradient(45deg, #bfb, #df7) !important;
+	border-color: #0f0;
+	box-shadow: 0 0 24px #0f07;
+
+	color: #070 !important;
+}
+#tab_frame6, #stab_frame0_3 {
+	color: #7f7
+}
+#stab_frame0_3 .btn {
+	background: radial-gradient(ellipse at top, #0b07, #7b03);
+	color: #7f7
+}
+
+.elements.bought.qu {
+	background: linear-gradient(45deg, #bfb, #df7) !important;
+
+	color: #070 !important;
+}
+.elements.bought.br {
+	background: linear-gradient(45deg, #f00, #f30) !important;
+
+	color: #700 !important;
+}
+
+/* -=- DARKNESS -=- */
+.btn_tab.dark, #tab_frame7 .btn {
+	background: linear-gradient(45deg, #3337, #0003) !important;
+	border-color: #333;
+	box-shadow: 0 0 24px #7777;
+
+	color: #333 !important;
+}
+#tab_frame7 div {
+	color: grey
+}
+#tab_frame7 button {
+	background: linear-gradient(45deg, #3337, #0003);
+	color: grey
+}
+.btn_tab.c16 {
+	background: linear-gradient(45deg, #0007, #0003) !important;
+	border-color: #b07;
+	box-shadow: 12px 0 24px #f007, 12px 0 24px #00f7;
+
+	color: #333 !important;
+}
+
+.elements.bought.dark {
+	background: linear-gradient(45deg, #333, #000) !important;
+
+	color: grey !important;
+}

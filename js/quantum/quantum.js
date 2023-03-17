@@ -263,7 +263,7 @@ function updateQuantumTemp() {
 }
 
 function updateQuantumHTML() {
-    if (tmp.tab == 0 && tmp.stab[0] == 4) {
+    if (tmp.tab == 0 && tmp.stab[0] == 3) {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain))
         tmp.el.bpEff.setTxt(format(tmp.qu.bpEff))
 

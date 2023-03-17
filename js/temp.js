@@ -218,22 +218,10 @@ function resetTemp() {
 resetTemp()
 
 function updateMassTemp() {
-    tmp.massSoftPower = FORMS.massSoftPower()
-    tmp.massSoftGain = FORMS.massSoftGain()
-    tmp.massSoftPower2 = FORMS.massSoftPower2()
-    tmp.massSoftGain2 = FORMS.massSoftGain2()
-    tmp.massSoftPower3 = FORMS.massSoftPower3()
-    tmp.massSoftGain3 = FORMS.massSoftGain3()
-    tmp.massSoftPower4 = FORMS.massSoftPower4()
-    tmp.massSoftGain4 = FORMS.massSoftGain4()
-    tmp.massSoftPower5 = FORMS.massSoftPower5()
-    tmp.massSoftGain5 = FORMS.massSoftGain5()
-    tmp.massSoftPower6 = FORMS.massSoftPower6()
-    tmp.massSoftGain6 = FORMS.massSoftGain6()
-    tmp.massSoftPower7 = FORMS.massSoftPower7()
-    tmp.massSoftGain7 = FORMS.massSoftGain7()
-    tmp.massSoftPower8 = FORMS.massSoftPower8()
-    tmp.massSoftGain8 = FORMS.massSoftGain8()
+	for (var lvl = 1; lvl <= 8; lvl++) {
+		tmp["massSoftPower"+lvl] = FORMS["massSoftPower"+lvl]()
+		tmp["massSoftGain"+lvl] = FORMS["massSoftGain"+lvl]()
+	}
     tmp.massGain = FORMS.massGain()
 }
 

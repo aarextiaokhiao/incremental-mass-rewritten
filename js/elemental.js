@@ -1258,37 +1258,37 @@ const ELEMENTS = {
     },
     */
     getUnlLength() {
-        let u = 4
+        let u = 0
 
-        if (player.dark.unl) u = 118+14
-        else {
-            if (quUnl()) u = 77+3
-            else {
-                if (player.supernova.times.gte(1)) u = 49+5
-                else {
-                    if (player.chal.comps[8].gte(1)) u += 14
-                    if (hasElement(18)) u += 3
-                    if (MASS_DILATION.unlocked()) u += 15
-                    if (STARS.unlocked()) u += 18
-                }
-                if (player.supernova.post_10) u += 3
-                if (player.supernova.fermions.unl) u += 10
-                if (tmp.radiation.unl) u += 10
-            }
-            if (PRIM.unl()) u += 3
-            if (hasTree('unl3')) u += 3
-            if (player.qu.rip.first) u += 9
-            if (hasUpgrade("br",9)) u += 23 // 23
-        }
-        if (tmp.chal13comp) u += 10 + 2
-        if (tmp.chal14comp) u += 6 + 11
-        if (tmp.chal15comp) u += 16 + 4
-        if (tmp.darkRunUnlocked) u += 7
-        if (tmp.matterUnl) u += 14
-        if (tmp.mass4Unl) u += 6
-        if (tmp.brUnl) u += 10
+		if (player.dark.unl) {
+			u = 118+14
+			if (tmp.chal13comp) u += 10 + 2
+			if (tmp.chal14comp) u += 6 + 11
+			if (tmp.chal15comp) u += 16 + 4
+			if (tmp.darkRunUnlocked) u += 7
+			if (tmp.matterUnl) u += 14
+			if (tmp.mass4Unl) u += 6
+			if (tmp.brUnl) u += 10
+		} else if (quUnl()) {
+			u = 77+3
+			if (PRIM.unl()) u += 3
+			if (hasTree('unl3')) u += 3
+			if (player.qu.rip.first) u += 9
+			if (hasUpgrade("br",9)) u += 23 // 23
+		} else if (player.supernova.times.gte(1)) {
+			u = 49+5
+			if (player.supernova.post_10) u += 3
+			if (player.supernova.fermions.unl) u += 10
+			if (tmp.radiation.unl) u += 10
+		} else {
+			if (player.chal.comps[7].gte(16)) u = 4
+			if (player.chal.comps[8].gte(1)) u += 14
+			if (hasElement(18)) u += 3
+			if (MASS_DILATION.unlocked()) u += 15
+			if (STARS.unlocked()) u += 18
+		}
 
-        return u
+		return u
     },
 }
 
@@ -1373,7 +1373,7 @@ function setupElementsHTML() {
             else if (m=='x') {
                 num++
                 table += ELEMENTS.upgs[num]===undefined?`<div style="width: 50px; height: 50px"></div>`
-                :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num}); ssf[0]('${ELEMENTS.names[num]}')" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
+                :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num})" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
                 if (k == 1) {
                     if (num==56 || num==88) num += 14
                     else if (num==70) num += 18
@@ -1406,9 +1406,6 @@ function setupElementsHTML() {
 function updateElementsHTML() {
     let tElem = tmp.elements, c16 = tmp.c16active
 
-    tmp.el.elemTierDiv.setDisplay(player.dark.unl)
-    tmp.el.elemTier.setHTML("Element Tier "+player.atom.elemTier)
-
     let ch = tElem.choosed
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
@@ -1422,7 +1419,7 @@ function updateElementsHTML() {
     }
 
     for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
-        let unl = player.atom.elemTier == x
+        let unl = tmp.elements.tier == x
         tmp.el["elemTier"+x+"_div"].setDisplay(unl)
         if (unl) {
             if (x == 1) {
@@ -1441,7 +1438,23 @@ function updateElementsHTML() {
                     upg.setVisible(unl2)
                     if (unl2) {
                         let eu = ELEMENTS.upgs[x]
-                        upg.setClasses(c16 && CORRUPTED_ELEMENTS.includes(x)?{elements: true, locked: true, corrupted: true}:{elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: BR_ELEM.includes(x), final: x == 118, dark: eu.dark})
+						upg.setClasses(c16 && CORRUPTED_ELEMENTS.includes(x) ? {
+							elements: true,
+							locked: true,
+							corrupted: true
+						} : {
+							elements: true, 
+							locked: !ELEMENTS.canBuy(x),
+							bought: hasElement(x),
+
+							unl: ELEMENTS.upgs[x].unl,
+							star: x > 36 && x < 54,
+							sn: x > 54 && x < 77,
+							qu: x > 77 && x <= 86,
+							br: BR_ELEM.includes(x) && x != 118,
+							final: (x == 54 || x == 77 || x == 118 || x == 218),
+							dark: eu.dark,
+						})
                     }
                 }
             }
@@ -1450,8 +1463,9 @@ function updateElementsHTML() {
 }
 
 function updateElementsTemp() {
-    tmp.elements.ts = ELEMENTS.exp[player.atom.elemTier-1]
-    tmp.elements.te = ELEMENTS.exp[player.atom.elemTier]
+    tmp.elements.tier = tmp.stab[2] || undefined
+    tmp.elements.ts = ELEMENTS.exp[tmp.elements.tier-1]
+    tmp.elements.te = ELEMENTS.exp[tmp.elements.tier]
     tmp.elements.tt = tmp.elements.te - tmp.elements.ts
 
     let cannot = []

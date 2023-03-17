@@ -4,16 +4,18 @@ const RANKS = {
     reset(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)
-            let reset = true
-            if (tmp.chal14comp) reset = false
-            else if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
-            else if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
-            else if (type == "tetr" && hasTree("qol5")) reset = false
-            else if (type == "pent" && hasTree("qol8")) reset = false
-            if (reset) this.doReset[type]()
+            if (RANKS.mustReset(type)) this.doReset[type]()
             updateRanksTemp()
         }
     },
+	mustReset(type) {
+		if (tmp.chal14comp) return false
+		if (type == "rank" && hasUpgrade('rp',4)) return false
+		if (type == "tier" && hasUpgrade('bh',4)) return false
+		if (type == "tetr" && hasTree("qol5")) return false
+		if (type == "pent" && hasTree("qol8")) return false
+		return true
+	},
     bulk(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].max(tmp.ranks[type].bulk.max(player.ranks[type].add(1)))
@@ -772,35 +774,31 @@ function beyondRankEffect(x,y,def=1) {
 }
 
 function updateRanksHTML() {
-    tmp.el.rank_tabs.setDisplay(hasUpgrade('br',9))
-    for (let x = 0; x < 2; x++) {
-        tmp.el["rank_tab"+x].setDisplay(tmp.rank_tab == x)
-    }
-
-    if (tmp.rank_tab == 0) {
-        for (let x = 0; x < RANKS.names.length; x++) {
-            let rn = RANKS.names[x]
-            let unl = (!tmp.brUnl || x > 3)&&(RANKS.unl[rn]?RANKS.unl[rn]():true)
-            tmp.el["ranks_div_"+x].setDisplay(unl)
-            if (unl) {
-                let keys = Object.keys(RANKS.desc[rn])
-                let desc = ""
-                for (let i = 0; i < keys.length; i++) {
-                    if (player.ranks[rn].lt(keys[i])) {
-                        desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
-                        break
-                    }
-                }
-    
-                tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
-                tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
-                tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
-                tmp.el["ranks_desc_"+x].setTxt(desc)
-                tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
-                tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-                tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
-            }
-        }
+    if (tmp.stab[0] == 0) {
+		for (let x = 0; x < RANKS.names.length; x++) {
+			let rn = RANKS.names[x]
+			let unl = (!tmp.brUnl || x > 3)&&(RANKS.unl[rn]?RANKS.unl[rn]():true)
+			tmp.el["ranks_div_"+x].setDisplay(unl)
+			if (unl) {
+				let keys = Object.keys(RANKS.desc[rn])
+				let desc = ""
+				for (let i = 0; i < keys.length; i++) {
+					if (player.ranks[rn].lt(keys[i])) {
+						desc = `<hrAt ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+						break
+					}
+				}
+	
+				tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
+				tmp.el["ranks_amt_"+x].setTxt(`[${format(player.ranks[rn],0)}]`)
+				tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
+				tmp.el["ranks_desc_"+x].setHTML(desc)
+				tmp.el["ranks_req_"+x].setTxt(x==0?`[${formatMass(tmp.ranks[rn].req)}]`:RANKS.fullNames[x-1]+` [${format(tmp.ranks[rn].req,0)}]`)
+				tmp.el["ranks_reset_"+x].setTxt(RANKS.mustReset(rn) ? `Reset your ${rn == 0 ? "mass" : RANKS.names[rn-1]} to ${RANKS.fullNames[x]} up.` : RANKS.fullNames[x] + " up.")
+				tmp.el["ranks_auto_"+x].changeStyle("visibility", RANKS.autoUnl[rn]() ? "visible" : "hidden")
+				tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
+			}
+		}
 
         let unl = tmp.brUnl
 
@@ -857,7 +855,7 @@ function updateRanksHTML() {
             tmp.el.br_desc.setClasses({btn: true, reset: true, locked: player.ranks.hex.lt(tmp.beyond_ranks.req)})
         }
     }
-    if (tmp.rank_tab == 1) {
+    if (tmp.stab[0] == 4) {
         tmp.el.pres_base.setHTML(`${tmp.prestiges.baseMul.format(0)}<sup>${format(tmp.prestiges.baseExp)}</sup> = ${tmp.prestiges.base.format(0)}`)
 
         for (let x = 0; x < PRES_LEN; x++) {
