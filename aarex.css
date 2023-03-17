@@ -164,6 +164,63 @@ body.ngm {
 	background: linear-gradient(#d700957f, #d70095bf);
 	color: #d70095;
 }
+.ranks_amt {
+	background: linear-gradient(transparent, #ffffff3f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #ffffff;
+	font-size: 20px
+}
+
+#pres_amt_0 {
+	background: linear-gradient(transparent, #3300dd3f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #3300dd;
+	font-size: 20px
+}
+#pres_0 {
+	background: linear-gradient(#3300dd7f, #3300ddbf);
+	color: #3300dd;
+}
+#pres_amt_1 {
+	background: linear-gradient(transparent, #00d7953f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #00d795;
+	font-size: 20px
+}
+#pres_1 {
+	background: linear-gradient(#00d7957f, #00d795bf);
+	color: #00d795;
+}
+#pres_amt_2 {
+	background: linear-gradient(transparent, #00d7003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #00d700;
+	font-size: 20px
+}
+#pres_2 {
+	background: linear-gradient(#00d7007f, #00d700bf);
+	color: #00d700;
+}
+#pres_amt_3 {
+	background: linear-gradient(transparent, #d7d7003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #d7d700;
+	font-size: 20px
+}
+#pres_3 {
+	background: linear-gradient(#d7d7007f, #d7d700bf);
+	color: #d7d700;
+}
 
 /* -=- MAGIC -=- */
 .btn_tab.magic {
@@ -316,6 +373,14 @@ body.ngm {
 
 	color: #070 !important;
 }
+.btn_tab.break_dilation {
+	background: linear-gradient(45deg, #0f3, #0f7) !important;
+	border-color: #0f7;
+	box-shadow: 0 0 24px #0f77;
+
+	color: #033 !important;
+}
+
 #tab_frame6, #stab_frame0_3 {
 	color: #7f7
 }
@@ -343,7 +408,7 @@ body.ngm {
 
 	color: #333 !important;
 }
-#tab_frame7 div {
+#tab_frame7 div, #stab_frame6_2 div {
 	color: grey
 }
 #tab_frame7 button {

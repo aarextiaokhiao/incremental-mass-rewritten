@@ -10,7 +10,6 @@ function resetTemp() {
         cx: 0,
         cy: 0,
 
-        sn_tab: 0,
         tree_tab: 0,
         tab: 0,
         stab: [],

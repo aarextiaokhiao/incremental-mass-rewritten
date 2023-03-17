@@ -492,8 +492,8 @@ function loadGame(start=true, gotNaN=false) {
         setInterval(loop, 50)
         setInterval(updateStarsScreenHTML, 50)
         treeCanvas()
-        setInterval(drawTreeHTML, 10)
         setInterval(checkNaN,1000)
+        setInterval(moveTreeTab,1000)
     }
 }
 

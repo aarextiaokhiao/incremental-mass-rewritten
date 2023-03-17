@@ -83,7 +83,7 @@
     </div>
     <div id='app_supernova' style='display: none'>
         <div style="position: absolute; top: 25px; left: 25px;">
-            <button class="btn" onclick="tmp.tab = tmp.sn_tab;">Back to Main</button>
+            <button class="btn" onclick="TABS.back()">Back to Main</button>
             <button class="btn" onclick="SUPERNOVA.reset(true)">Reset without being Supernova</button>
         </div>
         <div style="min-height: 70px;">
@@ -94,15 +94,17 @@
         <div class="main-line"></div>
         <div id="sn_stabs" style="min-height: 40px;"></div><br>
         <div id="stab_frame5_0">
-            <div style="height: 130px;">
-                You have <span id="neutronStar">X</span> Neutron star.<br>
-                <div id="tree_desc" style="margin-top: 3px;">
-    
-                </div>
-            </div>
-            <canvas id="tree_canvas"></canvas>
-            <div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
-            <div id="tree_table"></div>
+			<div id='tree_frame'>
+				<div style="height: 130px;">
+					You have <span id="neutronStar">X</span> Neutron star.<br>
+					<div id="tree_desc" style="margin-top: 3px;">
+		
+					</div>
+				</div>
+				<canvas id="tree_canvas"></canvas>
+				<div class="table_center" style="min-height: 30px;" id="tree_tab_table"></div><br>
+				<div id="tree_table"></div>
+			</div>
         </div><div id="stab_frame5_1">
             <div class="bosons">
                 <div class="table_center">
@@ -248,19 +250,11 @@
                         <div class="table_center" style="min-height: 180px;">
                             <div style="width: 400px; display: none;" id="pre_beyond_ranks"></div>
                             <div id="ranks_table" class="table_center"></div>
-                            <div style="width: 400px; display: none;" id="beyond_ranks">
-                                <div class="table_center" style="align-items: center;">
-                                    <button id="br_auto" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('beyond')">OFF</button>
-                                    <div style="margin-left: 5px; text-align: left;" id="br_amt">
-                                        Hept 0
-                                    </div>
-                                </div><br>
-                                <button onclick="BEYOND_RANKS.reset()" class="btn reset" id="br_desc">
-                                    Reset your Hexs, but current rank up.<br>
-                                    To Hept up, require Hex ???<br>
-                                    To Oct up, require Hept ???
-                                </button>
-                            </div>
+							<div style="width: 400px; display: none;" id="beyond_ranks">
+								<button id="br_auto" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('beyond')">OFF</button><br><br>
+								<div id="br_amt"></div>
+								<button onclick="BEYOND_RANKS.reset()" class="btn reset" id="br_desc"></button>
+							</div>
                         </div>
                     </div>
                     <br><br>
@@ -386,18 +380,19 @@
                     <button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn">--></button><br><br>
                     <div id="ranks_rewards_table"></div>
                 </div><div id="stab_frame1_1">
-                    <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
-                    <div id="scaling_table"></div>
+                    <div id="br_rewards_table"></div>
                 </div><div id="stab_frame1_2">
                     <button onclick="player.pres_reward = Math.max(player.pres_reward-1,0)" class="btn"><--</button><span id="pres_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.pres_reward = Math.min(player.pres_reward+1,Math.max(...PRESTIGES.fullNames.map((v, i) => i==0 ? i : (PRESTIGES.unl[i]() && i))))" class="btn">--></button><br><br>
                     <div id="pres_rewards_table"></div>
                 </div><div id="stab_frame1_3">
-                    <div id="br_rewards_table"></div>
+                    <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
+                    <div id="scaling_table"></div>
                 </div>
             </div><div id="tab_frame2">
                 <div id="stab_frame2_0">
                     <div id="main_upg_msg" style="min-height: 100px;"></div>
                     <div id="main_upgs_table" class="table_center"></div>
+                </div><div id="stab_frame2_1">
                 </div><div id="elements_frame">
                     <div id="elem_ch_div" style="min-height: 70px;">
                         <span id="elem_desc" class='sky'>X</span><br>
@@ -473,13 +468,6 @@
                         <span id="dmOverflow"></span>
                     </div>
                 </div><div id="stab_frame4_2">
-                    You have <span id="bd_energy">X</span> Relativistic Energy<br>
-                    You have <span id="bd_mass">X</span> of Relativistic mass<br><br>
-                    <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd tooltip" tooltip-html="When breaking dilation, while in Big Rip, BH Condensers & Cosmic Rays are no longer nerfed by 8th QC modifier, 7th QC modifier is disabled, you can gain <b>Relativistic Energy</b> based on dilated mass. Relativistic Energy generates <b>Relativistic Mass</b>. Fixing Dilation resets your relativistic energy & its mass, also forces a Quantum reset.">Break Dilation</button><br><br>
-                    <div class="table_center">
-                        <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
-                    </div>
-                </div><div id="stab_frame4_3">
                     You collapsed <span id="stars_Amt">X</span> stars, which multiplies mass gain based on all rank types.<br>
                     <span class="green">Currently: <span id="stars_Eff">X</span></span><br><br>
                     <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
@@ -491,14 +479,6 @@
                     <span id="qu_theory_div">You have <span id="qu_theory">0</span> Quantum Theory (based on every going quantum)</span><br><br>
                     <div id="chroma_table" class="table_center" style="justify-content: space-evenly;"></div>
                 </div><div id="stab_frame6_1">
-                    You Quantized <span id="qu_times">0</span> times<br><br>
-                    <div id="qu_milestones_table"></div>
-                </div><div id="stab_frame6_2">
-                    <button class="btn" onclick="QUANTUM.auto.switch()">Auto-Quantum: <span id="auto_qu">OFF</span></button>
-                    <button class="btn" onclick="QUANTUM.auto.switchMode()">Auto-Quantum Mode: <span id="auto_qu_mode">Amount</span></button><br><br>
-                    <input type="text" id="auto_qu_input"><br>
-                    = <span id="auto_qu_res"></span>
-                </div><div id="stab_frame6_3">
                     You have <span id="prim_theorem">0</span> Primordium Theorem (based on Blueprint Particles)<br>
                     (+1 at <span id="prim_next_theorem">X</span>)<br><br>
                     <div id="prim_btns">
@@ -509,7 +489,7 @@
                         <br><br>
                     </div>
                     <div id="primordium_table"></div>
-                </div><div id="stab_frame6_4">
+                </div><div id="stab_frame6_2">
                     <div class="table_center" style="min-height: 250px">
                         <div style="width: 33.3%; min-width: 300px;">
                             Your frequency is <span id="enEva1">0</span> Hz<br><br>
@@ -524,6 +504,21 @@
                         </div>
                     </div><br>
                     <div id="en_table" class="table_center"></div>
+                </div><div id="stab_frame6_3">
+                    You have <span id="bd_energy">X</span> Relativistic Energy<br>
+                    You have <span id="bd_mass">X</span> of Relativistic mass<br><br>
+                    <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd tooltip" tooltip-html="When breaking dilation, while in Big Rip, BH Condensers & Cosmic Rays are no longer nerfed by 8th QC modifier, 7th QC modifier is disabled, you can gain <b>Relativistic Energy</b> based on dilated mass. Relativistic Energy generates <b>Relativistic Mass</b>. Fixing Dilation resets your relativistic energy & its mass, also forces a Quantum reset.">Break Dilation</button><br><br>
+                    <div class="table_center">
+                        <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
+                    </div>
+                </div><div id="stab_frame6_4">
+                    You Quantized <span id="qu_times">0</span> times<br><br>
+                    <div id="qu_milestones_table"></div>
+                </div><div id="stab_frame6_5">
+                    <button class="btn" onclick="QUANTUM.auto.switch()">Auto-Quantum: <span id="auto_qu">OFF</span></button>
+                    <button class="btn" onclick="QUANTUM.auto.switchMode()">Auto-Quantum Mode: <span id="auto_qu_mode">Amount</span></button><br><br>
+                    <input type="text" id="auto_qu_input"><br>
+                    = <span id="auto_qu_res"></span>
                 </div>
             </div><div id="tab_frame7">
                 <div id="stab_frame7_0">

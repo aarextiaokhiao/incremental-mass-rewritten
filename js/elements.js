@@ -44,12 +44,13 @@ function setupHTML() {
 	let pres_table = new Element("pres_table")
 	table = ""
 	for (let x = 0; x < PRES_LEN; x++) {
-		table += `<div style="width: 300px" id="pres_div_${x}">
-			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">OFF</button>
-			<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]} <span id="pres_amt_${x}">X</span><br><br>
+		table += `<div style="width: 250px" id="pres_div_${x}">
+			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">OFF</button><br><br>
+			<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]} <span id="pres_amt_${x}">X</span>
 			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
-				${x>0?"Reset your "+PRESTIGES.fullNames[x-1]+"s":'Force a Quantum reset'}, but ${PRESTIGES.fullNames[x]} up.<span id="pres_desc_${x}"></span><br>
-				Req: <span id="pres_req_${x}">X</span>
+				<b id="pres_reset_${x}" style='font-size: 16px'></b><br>
+				(Requires <b id="pres_req_${x}">X</b>)
+				<b id="pres_desc_${x}"></b>
 			</button>
 		</div>`
 	}
@@ -507,9 +508,9 @@ function updateHTML() {
 		}
 		if (tmp.tab == 1) {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
-			if (tmp.stab[1] == 1) updateScalingHTML()
+			if (tmp.stab[1] == 1) updateBeyondRanksRewardHTML()
 			if (tmp.stab[1] == 2) updatePrestigesRewardHTML()
-			if (tmp.stab[1] == 3) updateBeyondRanksRewardHTML()
+			if (tmp.stab[1] == 3) updateScalingHTML()
 		}
 		if (tmp.tab == 2) {
 			tmp.el["elements_frame"].setDisplay(tmp.elements.tier)
@@ -522,8 +523,7 @@ function updateHTML() {
 		if (tmp.tab == 4) {
 			if (tmp.stab[4] == 0) updateAtomHTML()
 			if (tmp.stab[4] == 1) updateMDHTML()
-			if (tmp.stab[4] == 2) updateBDHTML()
-			if (tmp.stab[4] == 3) updateStarsHTML()
+			if (tmp.stab[4] == 2) updateStarsHTML()
 		}
 		if (tmp.tab == 8) {
 			updateOptionsHTML()

@@ -1184,10 +1184,8 @@ function resizeCanvas() {
 }
 
 function drawTreeHTML() {
-    if (tmp.tab == 5) {
-        if (tree_canvas.width == 0 || tree_canvas.height == 0) resizeCanvas()
-        drawTree()
-    }
+    if (tree_canvas.width == 0 || tree_canvas.height == 0) resizeCanvas()
+    drawTree()
 }
 
 function drawTree() {
@@ -1256,6 +1254,8 @@ function changeTreeAnimation() {
 }
 
 function updateTreeHTML() {
+    tmp.el.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain.mul(tmp.preQUGlobalSpeed)))
+	
     let c16 = tmp.c16active
     let req = ""
     let t_ch = TREE_UPGS.ids[tmp.supernova.tree_choosed]
@@ -1281,4 +1281,13 @@ function updateTreeHTML() {
             if (unl) tmp.el["treeUpg_"+id].setClasses(player.dark.c16.tree.includes(id) || c16 && CORRUPTED_TREE.includes(id) ? {btn_tree: true, corrupted: true, choosed: id == tmp.supernova.tree_choosed} : {btn_tree: true, qu_tree: TREE_UPGS.ids[id].qf, locked: !tmp.supernova.tree_afford[id], bought: bought, choosed: id == tmp.supernova.tree_choosed})
         }
     }
+
+	drawTreeHTML()
+}
+
+function moveTreeTab() {
+	let newLoc = quUnl() ? "stab_frame2_1" : "stab_frame5_0"
+	if (tmp.tree_parent == newLoc) return
+	tmp.tree_parent = newLoc
+	tmp.el[newLoc].el.appendChild(tmp.el.tree_frame.el)
 }

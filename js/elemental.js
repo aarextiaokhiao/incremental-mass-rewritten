@@ -1447,7 +1447,6 @@ function updateElementsHTML() {
 							locked: !ELEMENTS.canBuy(x),
 							bought: hasElement(x),
 
-							unl: ELEMENTS.upgs[x].unl,
 							star: x > 36 && x < 54,
 							sn: x > 54 && x < 77,
 							qu: x > 77 && x <= 86,
@@ -1463,7 +1462,7 @@ function updateElementsHTML() {
 }
 
 function updateElementsTemp() {
-    tmp.elements.tier = tmp.stab[2] || undefined
+    tmp.elements.tier = Math.max(tmp.stab[2]-1, 0)
     tmp.elements.ts = ELEMENTS.exp[tmp.elements.tier-1]
     tmp.elements.te = ELEMENTS.exp[tmp.elements.tier]
     tmp.elements.tt = tmp.elements.te - tmp.elements.ts
@@ -1476,8 +1475,8 @@ function updateElementsTemp() {
     tmp.elements.cannot = cannot
 
     if (!tmp.elements.upg_length) tmp.elements.upg_length = ELEMENTS.upgs.length-1
-    for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
-        tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
+    for (let x = tmp.elements.upg_length; x >= 1; x--) {
+        if (ELEMENTS.upgs[x].effect) tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
     }
     tmp.elements.unl_length = ELEMENTS.getUnlLength()
 }

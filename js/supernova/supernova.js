@@ -178,14 +178,12 @@ function updateSupernovaEndingHTML() {
 
     tmp.el.app_supernova.setDisplay((player.supernova.times.lte(0) ? !tmp.supernova.reached || quUnl() : true) && tmp.tab == 5)
 
+    if (tmp.tab == 2 && tmp.stab[2] == 1) updateTreeHTML()
     if (tmp.tab == 5) {
         tmp.el.supernova_scale.setTxt(getScalingName('supernova'))
         tmp.el.supernova_rank.setTxt(format(player.supernova.times,0))
         tmp.el.supernova_next.setTxt(format(tmp.supernova.maxlimit,2))
-        if (tmp.stab[5] == 0) {
-            tmp.el.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain.mul(tmp.preQUGlobalSpeed)))
-            updateTreeHTML()
-        }
+        if (tmp.stab[5] == 0) updateTreeHTML()
         if (tmp.stab[5] == 1) updateBosonsHTML()
         if (tmp.stab[5] == 2) updateFermionsHTML()
         if (tmp.stab[5] == 3) updateRadiationHTML()

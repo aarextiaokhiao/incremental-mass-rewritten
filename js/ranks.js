@@ -533,16 +533,18 @@ const PRESTIGES = {
             },x=>"x"+x.format()],
         },
     ],
+
+	can(x) {
+		return (x == 0 ? tmp.prestiges.base : player.prestiges[x-1]).gte(tmp.prestiges.req[x])
+	},
     reset(i, bulk = false) {
         let b = this.bulk(i)
-        if (i==0?tmp.prestiges.base.gte(tmp.prestiges.req[i]):player.prestiges[i-1].gte(tmp.prestiges.req[i])) if (!bulk || b.gt(player.prestiges[i]) ) {
+        if (PRESTIGES.can(i)) if (!bulk || b.gt(player.prestiges[i]) ) {
             if (bulk) player.prestiges[i] = b
             else player.prestiges[i] = player.prestiges[i].add(1)
 
             if (!this.noReset[i]()) {
-                for (let j = i-1; j >= 0; j--) {
-                    player.prestiges[j] = E(0)
-                }
+                for (let j = i-1; j >= 0; j--) player.prestiges[j] = E(0)
                 QUANTUM.enter(false,true,false,true)
             }
             
@@ -647,24 +649,24 @@ const BEYOND_RANKS = {
         let x = player.ranks.hex.gte(180)?player.ranks.hex.sub(180).div(10).max(0).root(1.25).add(1).floor():E(0)
         return x
     },
+    noReset: _ => hasBeyondRank(2,2),
     getTier() {
         let x = player.ranks.beyond.gt(0)?player.ranks.beyond.log10().max(0).pow(.8).add(1).floor().toNumber():1
         return x
     },
     getRankFromTier(i) {
-        let hp = Decimal.pow(10,(i-1)**(1/.8)).ceil()
-
+        let hp = Decimal.pow(10,(i-1)**1.25).ceil()
         return player.ranks.beyond.div(hp).floor()
     },
-    getRequirementFromTier(i,t=tmp.beyond_ranks.latestRank,mt=tmp.beyond_ranks.max_tier) {
-        return Decimal.pow(10,(mt)**(1/.8)-(mt-i)**(1/.8)).mul(Decimal.add(t,1)).ceil()
+    getRequirementFromTier(tier, amt) {
+        return Decimal.pow(10,(tier-1)**1.25-(tier-2)**1.25).mul(E(amt).add(1)).ceil()
     },
 
     reset(auto=false) {
         if (player.ranks.hex.gte(tmp.beyond_ranks.req) && (!auto || tmp.beyond_ranks.bulk.gt(player.ranks.beyond))) {
             player.ranks.beyond = auto ? player.ranks.beyond.max(tmp.beyond_ranks.bulk) : player.ranks.beyond.add(1)
 
-            if (hasBeyondRank(2,2)) return;
+            if (BEYOND_RANKS.noReset()) return;
 
             player.ranks.hex = E(0)
             DARK.doReset()
@@ -784,7 +786,7 @@ function updateRanksHTML() {
 				let desc = ""
 				for (let i = 0; i < keys.length; i++) {
 					if (player.ranks[rn].lt(keys[i])) {
-						desc = `<hrAt ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+						desc = `<hr>At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
 						break
 					}
 				}
@@ -794,7 +796,7 @@ function updateRanksHTML() {
 				tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
 				tmp.el["ranks_desc_"+x].setHTML(desc)
 				tmp.el["ranks_req_"+x].setTxt(x==0?`[${formatMass(tmp.ranks[rn].req)}]`:RANKS.fullNames[x-1]+` [${format(tmp.ranks[rn].req,0)}]`)
-				tmp.el["ranks_reset_"+x].setTxt(RANKS.mustReset(rn) ? `Reset your ${rn == 0 ? "mass" : RANKS.names[rn-1]} to ${RANKS.fullNames[x]} up.` : RANKS.fullNames[x] + " up.")
+				tmp.el["ranks_reset_"+x].setTxt(RANKS.mustReset(rn) ? `Reset your ${x == 0 ? "mass" : RANKS.fullNames[x-1]+"s"} to ${RANKS.fullNames[x]} up.` : RANKS.fullNames[x] + " up.")
 				tmp.el["ranks_auto_"+x].changeStyle("visibility", RANKS.autoUnl[rn]() ? "visible" : "hidden")
 				tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
 			}
@@ -808,7 +810,7 @@ function updateRanksHTML() {
             let h = ''
             for (let x = 0; x < 4; x++) {
                 let rn = RANKS.names[x]
-                h += '<div>' + getScalingName(rn) + RANKS.fullNames[x] + ' ' + format(player.ranks[rn],0) + '</div>'
+                h += '<div>' + getScalingName(rn) + RANKS.fullNames[x] + ' [' + format(player.ranks[rn],0) + ']</div>'
             }
             tmp.el.pre_beyond_ranks.setHTML(h)
 
@@ -819,9 +821,14 @@ function updateRanksHTML() {
 
             let t = tmp.beyond_ranks.max_tier
             h = ''
+            let h2 = ''
 
-            for (let x = Math.min(3,t)-1; x >= 0; x--) {
-                h += getRankTierName(t+5-x) + " " + (x == 0 ? tmp.beyond_ranks.latestRank.format(0) : BEYOND_RANKS.getRankFromTier(t-x).format(0)) + (x>0?'<br>':"")
+            for (let x = Math.min(3,t)-1; x >= -1; x--) {
+                if (x >= 0) h += getRankTierName(t+5-x) + " <b class='ranks_amt'>[" + (x == 0 ? tmp.beyond_ranks.latestRank.format(0) : BEYOND_RANKS.getRankFromTier(t-x).format(0)) + "]</b>" + (x>0?'<br>':"")
+				h2 += `${getRankTierName(t+5-x)} Up: <b>${getRankTierName(t+4-x)} [${
+                    t-x == 1 ? tmp.beyond_ranks.req.format(0)
+                    : BEYOND_RANKS.getRequirementFromTier(t-x,BEYOND_RANKS.getRankFromTier(t-x)).format(0)
+                }]</b><br>`
             }
 
             tmp.el.br_amt.setHTML(h)
@@ -833,7 +840,7 @@ function updateRanksHTML() {
                 for (tr in BEYOND_RANKS.rewards[tt]) {
                     tt = Number(tt)
                     if (tt > t || (tmp.beyond_ranks.latestRank.lt(tr) && tt == t)) {
-                        r = "At "+getRankTierName(tt+5)+" "+format(tr,0)+" - "+BEYOND_RANKS.rewards[tt][tr]
+                        r = "<hr>At "+getRankTierName(tt+5)+" "+format(tr,0)+" - "+BEYOND_RANKS.rewards[tt][tr]
                         b = true
                         break
                     }
@@ -842,13 +849,8 @@ function updateRanksHTML() {
             }
 
             h = `
-                Reset your hexs (and force darkness reset), but current rank up. ${r}<br>
-                To ${getRankTierName(t+5)} up, require ${getRankTierName(t+4)} ${
-                    t == 1
-                    ? tmp.beyond_ranks.req.format(0)
-                    : BEYOND_RANKS.getRequirementFromTier(1,tmp.beyond_ranks.latestRank,t-1).format(0)
-                }.<br>
-                To ${getRankTierName(t+6)} up, require ${getRankTierName(t+5)} ${BEYOND_RANKS.getRequirementFromTier(1,0).format(0)}.
+                ${BEYOND_RANKS.noReset() ? "" : "<b style='font-size: 16px'>Force a Darkness reset.</b><br>"}
+                ${h2} ${r}
             `
 
             tmp.el.br_desc.setHTML(h)
@@ -864,23 +866,24 @@ function updateRanksHTML() {
             tmp.el["pres_div_"+x].setDisplay(unl)
 
             if (unl) {
-                let p = player.prestiges[x] || E(0)
-                let keys = Object.keys(PRESTIGES.rewards[x])
-                let desc = ""
-                for (let i = 0; i < keys.length; i++) {
-                    if (p.lt(keys[i]) && (tmp.chal13comp || p.lte(PRES_BEFOREC13[x]||Infinity))) {
-                        desc = ` At ${PRESTIGES.fullNames[x]} ${format(keys[i],0)}, ${PRESTIGES.rewards[x][keys[i]]}`
-                        break
-                    }
-                }
+				let p = player.prestiges[x] || 0
+				let keys = Object.keys(PRESTIGES.rewards[x])
+				let desc = ""
+				for (let i = 0; i < keys.length; i++) {
+					if (p.lt(keys[i])) {
+						desc = `<hr>At ${PRESTIGES.fullNames[x]} ${format(keys[i],0)}, ${PRESTIGES.rewards[x][keys[i]]}`
+						break
+					}
+				}
 
-                tmp.el["pres_scale_"+x].setTxt(getScalingName("prestige"+x))
-                tmp.el["pres_amt_"+x].setTxt(format(p,0))
-                tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.prestiges.base.lt(tmp.prestiges.req[x]):player.prestiges[x-1].lt(tmp.prestiges.req[x])})
-                tmp.el["pres_desc_"+x].setTxt(desc)
-                tmp.el["pres_req_"+x].setTxt(x==0?format(tmp.prestiges.req[x],0)+" of Prestige Base":PRESTIGES.fullNames[x-1]+" "+format(tmp.prestiges.req[x],0))
-                tmp.el["pres_auto_"+x].setDisplay(PRESTIGES.autoUnl[x]())
-                tmp.el["pres_auto_"+x].setTxt(player.auto_pres[x]?"ON":"OFF")
+				tmp.el["pres_scale_"+x].setTxt(getScalingName("prestige"+x))
+				tmp.el["pres_amt_"+x].setHTML(`<b>[${format(p,0)}]</b>`)
+				tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: !PRESTIGES.can(x)})
+				tmp.el["pres_desc_"+x].setHTML(desc)
+				tmp.el["pres_req_"+x].setTxt(x==0?format(tmp.prestiges.req[x],0)+" of Prestige Base":PRESTIGES.fullNames[x-1]+" ["+format(tmp.prestiges.req[x],0)+"]")
+				tmp.el["pres_reset_"+x].setTxt(!PRESTIGES.noReset[x]() ? `${x == 0 ? "Force a Quantum" : "Reset your " + PRESTIGES.fullNames[x-1]} to ${PRESTIGES.fullNames[x]} up.` : PRESTIGES.fullNames[x] + " up.")
+				tmp.el["pres_auto_"+x].changeStyle("visibility", PRESTIGES.autoUnl[x]() ? "visible" : "hidden")
+				tmp.el["pres_auto_"+x].setTxt(player.auto_pres[x]?"ON":"OFF")
             }
         }
     }

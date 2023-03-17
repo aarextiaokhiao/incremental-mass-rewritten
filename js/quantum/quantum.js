@@ -280,7 +280,10 @@ function updateQuantumHTML() {
 
     if (tmp.tab == 6) {
         if (tmp.stab[6] == 0) updateChromaHTML()
-        if (tmp.stab[6] == 1) {
+        if (tmp.stab[6] == 1) updatePrimordiumHTML()
+        if (tmp.stab[6] == 2) updateEntropyHTML()
+        if (tmp.stab[6] == 3) updateBDHTML()
+        if (tmp.stab[6] == 4) {
             tmp.el.qu_times.setTxt(format(player.qu.times,0))
 
             for (let x = 0; x < QUANTUM.mils.length; x++) {
@@ -288,13 +291,11 @@ function updateQuantumHTML() {
                 tmp.el['qu_mil_goal'+x].setTxt(format(QUANTUM.mils[x][0],0))
             }
         }
-        if (tmp.stab[6] == 2) {
+        if (tmp.stab[6] == 5) {
             tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"ON":"OFF")
             tmp.el.auto_qu_mode.setTxt(QUANTUM.auto.mode[player.qu.auto.mode])
             tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
         }
-        if (tmp.stab[6] == 3) updatePrimordiumHTML()
-        if (tmp.stab[6] == 4) updateEntropyHTML()
     }
 }
 
