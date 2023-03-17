@@ -153,8 +153,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
 					if (FERMIONS.onActive(05)) return D(1)
-                    let x = i.max(1).log10().add(1).mul(t).pow(0.9).div(100).add(1).softcap(1.5,0.5,0).min(3)
-                    return x
+                    return i.max(1).log10().add(1).mul(t).pow(0.9).div(100).add(1).softcap(1.5,0.5,0).min(2)
                 },
                 desc(x) {
                     return `Strengthen 4th Photon & Gluon Upgrades by ^${format(x)}.`+getSoftcapHTML(x,1.5)
@@ -252,7 +251,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Gain ${format(x)}x more Higgs & Gravitons.`+getSoftcapHTML(x,1e6)
+                    return `Gain ${format(x)}x more Higgs and Gravitons.`+getSoftcapHTML(x,1e6)
                 },
                 isMass: true,
                 inc: "Mass of Black Hole",
@@ -310,19 +309,19 @@ const FERMIONS = {
                 maxTier: 100,
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
-                    return D('e5e4').pow(t.pow(FERMIONS.getScalingExp(1.5))).mul("e1.8e5")
+                    return D('e2e4').pow(t.pow(FERMIONS.getScalingExp(1.5))).mul("e1.8e5")
                 },
                 calcTier() {
                     let res = player.md.mass
                     if (res.lt('e1.8e5')) return D(0)
-                    let x = res.div('e1.8e5').max(1).log('e5e4').max(0).root(FERMIONS.getScalingExp(1.5))
+                    let x = res.div('e1.8e5').max(1).log('e2e4').max(0).root(FERMIONS.getScalingExp(1.5))
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-					return D(1)
+					return t.div(50).mul(i.max(1).log10().sqrt()).add(1)
                 },
                 desc(x) {
-                    return `Placeholder.`
+                    return `Atomic Power effect softcap starts ${format(x)}x later.`
                 },
 				isMass: true,
                 inc: "Dilated mass",

@@ -160,7 +160,7 @@ const FORMS = {
 			if (!tmp.md.mass_eff.exp) step = step.mul(tmp.md.mass_eff.eff)
 			step = step.mul(tmp.bosons.effect.z_boson[0])
 			if (hasTree("t1")) step = step.pow(1.15)
-			if (tmp.md.mass_eff.exp) step = step.pow(tmp.md.mass_eff.eff)
+			if (tmp.md.mass_eff.exp) step = step.pow(tmp.md.mass_eff.exp)
 			//if (AXION.unl()) step = step.pow(tmp.ax.eff[19])
 			if (hasExtMilestone("boost", 0) && hasElement(18)) step = step.pow(tmp.elements.effect[18])
 
@@ -311,7 +311,9 @@ const FORMS = {
 				pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
 				if (hasUpgrade('atom',11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:D(1))
 				pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
+				if (future) pow = pow.mul(tmp.tickspeedEffect.step)
 				if (hasTree("bh2")) pow = pow.pow(1.15)
+
 				let eff = pow.pow(player.bh.condenser.add(tmp.bh.condenser_bonus))
 				return {pow: pow, eff: eff}
 			},

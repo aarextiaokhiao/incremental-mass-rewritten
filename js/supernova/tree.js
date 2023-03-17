@@ -420,7 +420,7 @@ const TREE_UPGS = {
             cost: D(1e73),
 
             effect() {
-                let x = player.supernova.stars.pow(0.05).max(1)
+                let x = player.supernova.stars.pow(0.05).div(100).max(1)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -430,7 +430,7 @@ const TREE_UPGS = {
             branch: ["bs5"],
             desc: `3rd Boson Upgrades scale linear, but nothing else affects them.`,
             icon: "placeholder",
-            cost: EINF,
+            cost: D(1e83),
         },
         fn1: {
             unl() { return player.supernova.fermions.unl },
@@ -438,10 +438,10 @@ const TREE_UPGS = {
             desc: `Tickspeed boost Fermions at a reduced rate.`,
             cost: D(1e27),
             effect() {
-                let x = D(1.25).pow(player.tickspeed.pow(0.4))
+                let x = D(1.25).pow(player.tickspeed.softcap(5e4,5/8).pow(0.3))
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return format(x)+"x"+getSoftcapHTML(player.tickspeed,5e4) },
         },
         fn2: {
             branch: ["fn1"],

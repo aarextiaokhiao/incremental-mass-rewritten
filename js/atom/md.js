@@ -23,7 +23,6 @@ const MASS_DILATION = {
         let x = D(2).add(tmp.md.upgs[5].eff).mul(CHALS.inDirect(10) ? 1 : CHALS.eff(10))
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
-        x = x.mul(getRadiationEff(10))
         return x
     },
     RPmultgain() {
@@ -68,8 +67,7 @@ const MASS_DILATION = {
     effect() {
 		if (hasElement(72)) {
 			return {
-				exp: 1,
-				eff: player.md.mass.max(1).log10().div(10).add(1).root(50)
+				exp: player.md.mass.max(1).log10().div(10).add(1).root(50)
 			}
 		} else {
 			return {
@@ -241,7 +239,7 @@ function updateMDTemp() {
 function updateMDHTML() {
 	let exp = D(1)
     elm.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
-    elm.md_eff.setTxt(tmp.md.mass_eff.exp?"^"+format(tmp.md.mass_eff.eff,3):tmp.md.mass_eff.eff.gte(10)?format(tmp.md.mass_eff.eff)+"x":format(tmp.md.mass_eff.eff.sub(1).mul(100))+"%")
+    elm.md_eff.setTxt(tmp.md.mass_eff.exp?"^"+format(tmp.md.mass_eff.exp,3):tmp.md.mass_eff.eff.gte(10)?format(tmp.md.mass_eff.eff)+"x":format(tmp.md.mass_eff.eff.sub(1).mul(100))+"%")
     elm.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
     elm.md_undercapacity.setHTML(MASS_DILATION.RPmassgain().gt(MASS_DILATION.undercapacity())?"Base RP is undercapacitied at "+format(MASS_DILATION.undercapacity())+" to prevent temporal anomalies!<br>":"")
     elm.md_btn.setTxt(player.md.active

@@ -24,9 +24,9 @@ TO-DO LIST:
 
 Elements:
 -- 1. Stronger always give +^??? without softcaps.
-2. Mass Upgrades always scale at ^1.25 rate.
+-- 2. Mass Upgrades always scale at ^1.25 rate.
 -- 3. BH Condensers always scale at ^1.25 rate.
--- 4. Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
+4. Tickspeed always scale at ^1.25 rate. Also, non-bonus Tickspeed boosts are disabled.
 5. Tickspeed Power multiplies BHC Power.
 -- 6. Cosmic Rays scale at ^1.25 rate.
 7. Cosmic Ray Power weakens Mass Upgrades and Star Boosters.
@@ -44,16 +44,15 @@ Elements:
 19. ???
 
 Pent Rewards:
-?. Tickspeed Power multiplies Booster Power.
+-- ?. Tickspeed Power multiplies Booster Power.
 -- ?. Stronger Effect raises Muscler efficiency.
 -- ?. Stronger Effect raises Booster efficiency.
 ?. Cosmic Ray Power weakens Mass Upgrades and Tickspeed.
 ?. Atomic Power adds Star Boosters.
-?. Pent boosts Frequency.
+-- ?. Pent boosts Frequency.
 ?. Pent weakens Rank Scalings.
 ?. Rank always scales at ^1.5 rate.
 ?. Pent weakens Tier Scalings.
--- ?. Tier 6 is better.
 
 Others:
 - C12 reward is replaced: Radiation Boost.

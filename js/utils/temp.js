@@ -105,7 +105,7 @@ function updateTickspeedTemp() {
 
 	let scale = getScalingExp("tickspeed")
     tmp.tickspeedFP = tmp.upgs.fp.mul(tmp.fermions.effs[1][2])
-    if (isScalingOff("tickspeed")) tmp.tickspeedFP = tmp.tickspeedFP.div(50)
+    if (hasElement(78)) tmp.tickspeedFP = tmp.tickspeedFP.div(1e3)
     tmp.tickspeedCost = D(2).pow(player.tickspeed.scaleEvery("tickspeed").pow(scale)).floor()
     tmp.tickspeedBulk = player.rp.points.max(1).log(2).root(scale).scaleEvery("tickspeed", 1).add(1).floor()
     if (player.rp.points.lt(1)) tmp.tickspeedBulk = D(0)

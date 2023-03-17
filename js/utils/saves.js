@@ -167,12 +167,13 @@ function newPlayer() {
 /* SAVING */
 function cannotSave() { return false }
 function save(manual) {
-	let str = btoa(JSON.stringify(player))
-	if (cannotSave() || findNaN(str, true)) return
-	tmp.prevSave = localStorage.getItem(saveId)
-	localStorage.setItem(saveId,str)
+	if (cannotSave()) return
+	if (findNaN(player)) return
 
-	console.log("Game Saved")
+	let str = btoa(JSON.stringify(player))
+	tmp.prevSave = localStorage.getItem(saveId)
+	localStorage.setItem(saveId, str)
+
 	if (manual) notify("Game Saved")
 }
 
@@ -199,7 +200,7 @@ function load(str) {
 }
 
 function loadGame() {
-	console.warn("// IM: Altrascendum - Created by Aarex //")
+	console.log("// IM: Altrascendum - Created by Aarex //")
 	getMetaSave()
 	switchSave()
 
@@ -408,4 +409,14 @@ function findNaN(obj, str=false, data=getPlayerData()) {
 		if (typeof obj[k] == "object") return findNaN(obj[k], str, data[k])
 	}
 	return false
+}
+
+/* OTHERS */
+function getSaveTitle() {
+	return inNGM() ? "IM:A Minus" : "IM: Altrascendum"
+}
+
+function switchSave(id) {
+	saveId = id || getSaveId()
+	load(localStorage.getItem(saveId))
 }

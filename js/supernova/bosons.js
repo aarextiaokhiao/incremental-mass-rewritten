@@ -133,9 +133,9 @@ const BOSONS = {
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : D(0) },
 				effect(x) {
 					if (FERMIONS.onActive(15)) return D(1)
-					return player.supernova.bosons.gluon.add(1).pow(x.pow(0.8).mul(100)).min("e3e13")
+					return player.supernova.bosons.gluon.add(1).pow(x.pow(0.8).mul(100)).softcap("ee6",0.8,2)
 				},
-                effDesc(x) { return format(x)+"x" },
+                effDesc(x) { return format(x)+"x"+getSoftcapHTML(x,"ee6") },
             },{
                 desc: "Boost Cosmic Ray Power.",
                 cost(x) { return D(2).pow(x.pow(1.25)).mul(100) },

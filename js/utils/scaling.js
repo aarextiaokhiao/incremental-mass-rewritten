@@ -37,19 +37,20 @@ const SCALE_EXP = {
 	tier: _ => 2,
 	tetr: _ => hasElement(44) ? 1.75 : 2,
 	pent: _ => 1.25,
-	massUpg: _ => 1,
-	tickspeed: _ => hasElement(75) ? 1.25 : 1,
+	massUpg: _ => hasElement(79) ? 1.25 : 1,
+	tickspeed: _ => hasElement(78) ? 1.25 : 1,
 	bh_condenser: _ => hasElement(70) ? 1.25 : 1,
-	gamma_ray: _ => hasElement(77) ? 1.25 : 1,
-	supernova: _ => 1.25,
+	gamma_ray: _ => hasUpgrade("atom", 13) ? 1.25 : 1,
+	supernova: _ => hasUpgrade("atom", 14) ? 5 : 1.25,
 	fTier: _ => 1
 }
 
 const SCALE_OFF = {
-	tickspeed: _ => hasElement(76),
-	gamma_ray: _ => hasElement(77),
+	gamma_ray: _ => hasUpgrade("atom", 13),
+	supernova: _ => hasUpgrade("atom", 14),
 	bh_condenser: _ => hasElement(70),
-	//massUpg: _ => hasElement(79),
+	tickspeed: _ => hasElement(78),
+	massUpg: _ => hasElement(79),
 }
 
 function isScalingOff(name) {
@@ -123,14 +124,16 @@ const SCALE_START = {
 		gamma_ray: D(800),
 	},
 	meta: {
-		rank: D(1e5),
 		tickspeed: D(5e4),
 	},
 }
 
 const SCALE_FP = {
+	supernova: _ => [tmp.bosons.upgs.gluon[3].effect,1,1,1],
 	tickspeed: _ => [1,1,1,tmp.tickspeedFP],
-	bh_condenser: _ => [1,1,1,hasElement(70) ? 0.05 : 1],
+	bh_condenser: _ => [1,1,1,hasElement(70)?0.05:1],
+	massUpg: _ => [1,1,1,hasElement(79)?0.01:1],
+	gamma_ray: _ => [1,1,1,hasUpgrade("atom", 13)?0.2:1],
 }
 
 const SCALE_POWER = {
@@ -162,7 +165,6 @@ const SCALE_POWER = {
 		gamma_ray: 6,
 	},
 	meta: {
-		rank: 1+1e-5,
 		tickspeed: 1.001,
 
 		chal0: 2,
@@ -373,7 +375,7 @@ function getScalingPower(type, name) {
 			if (hasElement(37)) power = power.mul(tmp.elements.effect[37])
 		}
 		if (name=="tetr") {
-			power = power.div(getRadiationEff(19))
+			power = power.div(getRadiationEff(11))
 		}
 		if (name=="massUpg") {
 			if (hasUpgrade('rp',8)) power = power.mul(tmp.upgs.main?tmp.upgs.main[1][8].effect:1)
@@ -390,7 +392,8 @@ function getScalingPower(type, name) {
 			if (hasElement(15)) power = power.mul(0.8)
 		}
 		if (name=='supernova') {
-			power = power.mul(getRadiationEff(16))
+			if (hasElement(77)) power = power.mul(0.9)
+			power = power.mul(getRadiationEff(10))
 		}
 		if (name=="fTier") {
 			if (hasTree("fn3")) power = power.mul(0.925)
@@ -418,7 +421,7 @@ function getScalingPower(type, name) {
 			if (hasElement(55)) power = power.mul(0.75)
 		}
 		if (name=='supernova') {
-			power = power.mul(getRadiationEff(16))
+			power = power.mul(getRadiationEff(10))
 		}
 		if (name=='gamma_ray') {
 			if (hasElement(55)) power = power.mul(0.75)
@@ -439,11 +442,6 @@ function getScalingPower(type, name) {
 		}
 		if (name=='gamma_ray') {
 			if (hasElement(55)) power = power.mul(0.75)
-		}
-	}
-	if (type=="meta") {
-		if (name=='tickspeed') {
-			//if (CHALS.inAny() && AXION.unl()) power = power.div(tmp.ax.eff[2])
 		}
 	}
 	return power

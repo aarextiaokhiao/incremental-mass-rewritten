@@ -57,9 +57,12 @@ const UPGS = {
                 let step = D(1)
                 if (hasRank("rank", 3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
+
                 let total = x.add(tmp.upgs.mass[1].bonus)
-                if (hasRank("pent", 2)) total = total.pow(RANKS.effect.pent[2]())
-                let ret = step.mul(total)
+				let exp = D(1)
+				if (hasRank("pent", 1)) exp = exp.add(total)
+                if (hasRank("pent", 2)) exp = exp.add(RANKS.effect.pent[2]())
+                let ret = step.mul(total.pow(exp)).add(1)
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -83,10 +86,14 @@ const UPGS = {
             effect(x) {
                 let step = D(inNGM() ? 1.25 : 2)
                 if (hasRank("rank", 5)) step = step.add(RANKS.effect.rank[5]())
+				if (hasRank("pent", 4)) step = step.mul(RANKS.effect.pent[4]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
+
                 let total = x.add(tmp.upgs.mass[2].bonus)
-                if (hasRank("pent", 3)) total = total.pow(RANKS.effect.pent[3]())
-                let ret = step.mul(total).add(1)
+				let exp = D(1)
+				if (hasRank("pent", 1)) exp = exp.add(total)
+                if (hasRank("pent", 3)) exp = exp.add(RANKS.effect.pent[3]())
+                let ret = step.mul(total.pow(exp)).add(1)
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -112,7 +119,7 @@ const UPGS = {
 				let ss = D(10)
 				let sp = 0.5
 
-				if (hasElement(74)) step = D(200)
+				if (hasElement(74)) step = D(350)
 				else {
 					if (hasRank("tetr", 2)) step = step.add(RANKS.effect.tetr[2]())
 					if (hasUpgrade('rp',9)) step = step.add(0.25)
@@ -430,7 +437,6 @@ const UPGS = {
                 cost: D('e420'),
                 effect() {
                     let ret = player.atom.atomic.add(1).log(5)
-                    //if (AXION.unl()) ret = ret.mul(tmp.ax.eff[16])
                     return ret.floor()
                 },
                 effDesc(x=this.effect()) {
@@ -451,7 +457,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasTree("qol1") },
-            lens: 12,
+            lens: 15,
             1: {
                 desc: "Start with Mass Upgrades.",
                 cost: D(1),
@@ -542,10 +548,28 @@ const UPGS = {
             12: {
                 unl() { return MASS_DILATION.unlocked() },
                 desc: "Black Hole effect is better.",
-                cost: D('e2015'),
+                cost: D('e2015')
+            },
+            13: {
+                unl() { return hasElement(75) },
+                desc: "Gamma Rays always scale at ^1.25 rate.",
+                cost: D("e9.6e7")
+            },
+            14: {
+                unl() { return hasElement(75) },
+                desc: "Supernovae always scale at ^5 rate.",
+                cost: EINF
+            },
+            15: {
+                unl() { return hasElement(75) },
+                desc: "Frequency scales Atomic Power effect softcap later.",
+                cost: EINF,
                 effect() {
-                    let ret = D(1)
+                    let ret = player.supernova.radiation.hz.log10().div(20).add(1)
                     return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
                 },
             },
         },

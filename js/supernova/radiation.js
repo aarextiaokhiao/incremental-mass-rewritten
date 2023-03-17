@@ -1,12 +1,13 @@
 const RADIATION = {
     names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma"],
-    unls: ["0","1e6","1e10","1e20","5e26","5e29","1e35"],
+    unls: ["0","1e6","1e10","1e11","5e26","5e29","1e35"],
     hz_gain() {
 		if (CHALS.in(14)) return D(0)
 
         let x = D(1)
         if (hasTree("rad1")) x = x.mul(treeEff("rad1"))
         if (hasTree("rad3")) x = x.mul(treeEff("rad3"))
+        if (hasRank("pent", 5)) x = x.mul(RANKS.effect.pent[5]())
         x = x.mul(tmp.radiation.ds_eff[0])
         x = x.mul(tmp.extMult)
         return x
@@ -20,7 +21,7 @@ const RADIATION = {
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return D(0)
 
         let x = D(1)
-        if (i>1) x = x.div(10)
+        if (i>1) x = x.div(5)
         if (hasTree('feat1')) x = x.mul(3)
 		if (hasElement(71)) x = x.mul(3)
         if (hasTree("rad4")) x = x.mul(treeEff("rad4"))
@@ -31,7 +32,7 @@ const RADIATION = {
         return x
     },
     ds_eff(i) {
-        let x = player.supernova.radiation.ds[i].add(1).root(3)
+        let x = player.supernova.radiation.ds[i].add(1).root(hasElement(77)?2.75:3)
         return x
     },
     getBoostData(i) {
@@ -53,11 +54,11 @@ const RADIATION = {
     getBoostScalingExp(i) {
 		if (hasTree("rad2") && i % 2 == 0) i -= 0.05
 		let f2 = 1.3+i*0.05
-		if (future) f2 = 1.25
+		if (hasElement(76)) f2 -= tmp.elements?.effect[76]
 		return Math.max(f2,1.25)
     },
     getLevelEffect(i) {
-        let x = this.boosts[i].eff(FERMIONS.onActive(05)?D(0):tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i]))
+        let x = this.boosts[i].eff(FERMIONS.onActive(05) ? D(0) : tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i]))
         return x
     },
     getBonusLevel(i) {
@@ -92,7 +93,7 @@ const RADIATION = {
 		else res = player.supernova.radiation.ds[x-1]
 
         let b = res.add(1).log10().div(3).add(1)
-        if (hasElement(73)) b = b.mul(1.05)
+        if (hasElement(73)) b = b.mul(1.5)
         if (hasTree("rad6")) b = expMult(res, 0.15).pow(.1).mul(b)
 
 		return b.pow(exp)
@@ -149,7 +150,7 @@ const RADIATION = {
         },{
             title: `Meta-Boost I`,
             eff(b) {
-                let x = b.div(2).mul(b.add(1).log10())
+                let x = b.div(2)
                 return x
             },
             desc(x) { return `Add ${format(x)} levels to all above boosts` },
@@ -160,17 +161,17 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x Visible. (based on Infrared)` },
         },{
-            title: `Relativistic Boost`,
+            title: `Supernovae Boost`,
 			eff(b) {
-				return D(1)
+				return D(9).sub(b.div(2)).max(5).log(9)
 			},
-            desc(x) { return `Raise Relativistic Particles by ^${format(x, 3)}.` },
+            desc(x) { return `Supernovae scalings scale ${format(D(1).sub(x).mul(100))}% slower.` },
         },{
-            title: `Reality Exponent`,
+            title: `Tetr Boost`,
 			eff(b) {
-				return D(1)
+				return D(0)
 			},
-            desc(x) { return `Raise Challenge 10 reward by ^${format(x, 3)}.` },
+            desc(x) { return `Super Tetr scales ${format(D(1).sub(x).mul(100))}% slower.` },
         },{
             title: `Ultraviolet Boost`,
             eff(b) {
@@ -196,11 +197,11 @@ const RADIATION = {
             },
             desc(x) { return `Gain more ${format(x)}x X-Rays. (based on Ultraviolet)` },
         },{
-            title: `Supernovae Boost`,
+            title: `Placeholder Boost`,
 			eff(b) {
-				return D(9).sub(b.add(1).log10()).max(4).log(9)
+				return D(1)
 			},
-            desc(x) { return `Supernovae scalings scale ${format(D(1).sub(x).mul(100))}% slower.` },
+            desc(x) { return `Placeholder.` },
         },{
             title: `Meta Boost II`,
             eff(b) {
@@ -217,18 +218,18 @@ const RADIATION = {
             desc(x) { return `Gain more ${format(x)}x Gamma. (based on X-Rays)` },
         },
         {
-            title: `Tetr Boost`,
+            title: `Placeholder Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Weaken Super Tetr scaling by ${format(x)}x.` },
+            desc(x) { return `Placeholder.` },
         },
         {
-            title: `Meta-Tickspeed Boost`,
+            title: `Placeholder Boost`,
 			eff(b) {
 				return D(1)
 			},
-            desc(x) { return `Meta-Tickspeed starts ${format(x)}x later.` },
+            desc(x) { return `Placeholder.` },
         },
 
         /*

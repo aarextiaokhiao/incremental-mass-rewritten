@@ -1,7 +1,7 @@
 const RANKS = {
     names: ['rank', 'tier', 'tetr', 'pent'],
     fullNames: ['Rank', 'Tier', 'Tetr', 'Pent'],
-	resetDescs: ['mass and upgrades', 'Ranks', 'Tiers', 'pre-Atom features'],
+	resetDescs: ['mass and upgrades', 'Ranks', 'Tiers', 'pre-Supernovae'],
 	mustReset(type) {
 		if (type == "rank" && hasUpgrade('rp',4)) return false
 		if (type == "tier" && hasUpgrade('bh',4)) return false
@@ -37,7 +37,7 @@ const RANKS = {
 		},
 		pent() {
 			player.ranks.tetr = D(0)
-			ATOM.reset(true, true)
+			SUPERNOVA.doReset()
 		},
 		/*highest() {
 			player.ranks[RANKS.names[RANKS.names.length-1]] = D(0)
@@ -96,17 +96,11 @@ const RANKS = {
             '18': "Meta-Tickspeed scales later based on Tiers.",
         },
         pent: {
-            '1': "Tier 6 effect is better. (^0.5 -> ^0.8)",
+            '1': "Muscler and Boosters raise themselves.",
             '2': "Stronger Effect raises Muscler.",
             '3': "Stronger Effect raises Booster.",
-            '4': "Muscler and Boosters add their exponents.",
-            '5': "Boost something...",
-            '6': "Boost something...",
-            '7': "Boost something...",
-            '8': "Boost something...",
-            '9': "Boost something...",
-            '10': "Boost something...",
-            '11': "Boost something...",
+            '4': "Tickspeed Power multiplies Booster Power.",
+            '5': "Pent boosts Frequency.",
         }
     },
     getDesc(t, r) {
@@ -167,7 +161,6 @@ const RANKS = {
                 return ret
             },
             '8'() {
-                if (hasRank("pent", 1)) return player.bh.dm.max(1).log10().div(5).add(1).root(1.25)
                 return player.bh.dm.max(1).log10().add(1).root(2)
             },
             '55'() {
@@ -196,11 +189,18 @@ const RANKS = {
 		pent: {
 			'2'() {
 				if (!tmp.upgs.mass[3]) return D(1)
-				return tmp.upgs.mass[3].eff.eff.div(5).max(1)
+				return tmp.upgs.mass[3].eff.eff.div(10)
 			},
 			'3'() {
 				if (!tmp.upgs.mass[3]) return D(1)
-				return tmp.upgs.mass[3].eff.eff.div(5).max(1)
+				return tmp.upgs.mass[3].eff.eff.div(10)
+			},
+			'4'() {
+				let x = tmp.tickspeedEffect ? tmp.tickspeedEffect.step.max(1) : D(1)
+				return x.pow(.005)
+			},
+			'5'() {
+				return D(2).pow(player.ranks.pent.sub(4))
 			},
 		},
     },
@@ -228,8 +228,10 @@ const RANKS = {
             18(x) { return format(x)+"x" },
         },
         pent: {
-            2(x) { return "^"+format(x) },
-            3(x) { return "^"+format(x) },
+            2(x) { return "+^"+format(x) },
+            3(x) { return "+^"+format(x) },
+            4(x) { return format(x)+"x" },
+            5(x) { return format(x)+"x" },
         },
     },
     fp: {

@@ -441,7 +441,6 @@ const CHALS = {
 			reward: `Raise the RP formula. [can't apply in this challenge]<br><span class="yellow">At first completion, unlock Fermions!</span>`,
 			effect(x) {
 				let ret = x.root(1.75).div(100).add(1)
-				ret = ret.pow(getRadiationEff(11))
 				return ret
 			},
 			effDesc(x) { return "^"+format(x,3) },
@@ -454,15 +453,15 @@ const CHALS = {
 
 			max: D(100),
 			scale: {
-				inc: D(1.15),
-				pow: D(1),
-				start: uni("e1e6"),
+				inc: D(1.05),
+				pow: D(2),
+				start: uni("e3e7"),
 				sexp: true
 			},
 
 			reward: `Strengthen Star Boosters.<br><span class="yellow">On first completion, unlock Pent!</span>`,
 			effect(x) {
-				return x.div(20).add(1)
+				return x.div(10).add(1)
 			},
 			effDesc(x) { return format(x)+"x stronger" },
 		},

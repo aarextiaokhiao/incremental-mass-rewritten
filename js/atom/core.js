@@ -64,7 +64,12 @@ const ATOM = {
             if (tmp.md.active) x = MASS_DILATION.applyDil(x)
             return x
         },
-		softcap: _ => D(5e4),
+		softcap() {
+			let r = D(5e4)
+			if (hasUpgrade("atom", 15)) r = r.mul(tmp.upgs.main?tmp.upgs.main[3][15]:1)
+			r = r.mul(tmp.fermions.effs[1][4])
+			return r
+		},
 		effect() {
 			if (CHALS.in(14)) return D(0)
 			let sc = ATOM.atomic.softcap()
@@ -98,6 +103,8 @@ const ATOM = {
             if (hasTree("gr1")) pow = pow.mul(treeEff("gr1"))
             if (BOSONS.unl()) pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             if (hasTree("gr2")) pow = pow.pow(1.25)
+            pow = pow.softcap(1e30, 10, 3)
+
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             return {pow: pow, eff: eff}
         },
@@ -138,8 +145,7 @@ const ATOM = {
         effect(i) {
             let p = player.atom.particles[i]
             let x = p.pow(2)
-			//if (AXION.unl()) x = x.pow(tmp.ax.eff[4])
-			if (hasElement(73)) return x
+			if (future) return x
             if (hasElement(12)) x = p.pow(this.mg12(p))
             x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2).softcap('e1e11',0.9,2)
             return x
@@ -272,7 +278,7 @@ function updateAtomicHTML() {
 	elm.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
 	elm.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
 	elm.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
-	elm.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x")
+	elm.gamma_ray_pow.setHTML(format(tmp.atom.gamma_ray_eff.pow)+"x"+getSoftcapHTML(tmp.atom.gamma_ray_eff.pow,1e30))
 	elm.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
     elm.gamma_ray_auto.setDisplay(hasElement(18))
 	elm.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
@@ -289,7 +295,7 @@ function updateAtomHTML() {
         elm["particle_"+x+"_assign"].setDisplay(!EXT.unl())
         elm["particle_"+x+"_amt"].setTxt(format(player.atom.particles[x],0))
         elm["particle_"+x+"_amtEff"].setHTML(format(tmp.atom.particles[x].powerGain))
-        elm["particle_"+x+"_sc"].setHTML(hasElement(72) ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
+        elm["particle_"+x+"_sc"].setHTML(future ? "" : getSoftcapHTML(tmp.atom.particles[x].powerGain,'e3.8e4','e1.6e5','e1e11'))
         elm["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain))
         elm["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
     }

@@ -1,10 +1,8 @@
 //MINUS
-function getSaveTitle() {
-	return inNGM() ? "IM:A Minus" : "IM: Altrascendum"
-}
 function inNGM() {
 	return metaSave.ngm == 1
 }
+
 function toggleMinus(start) {
 	if (!confirm("Call the altar? The world will be oriented towards: " + (metaSave.ngm ? "IM:A" : "IM:A-"))) return
 	if (!metaSave.ngm && !confirm("Warning! IM:A Minus is in alpha, and has balanced a little! Are you sure?")) return
