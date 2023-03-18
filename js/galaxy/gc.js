@@ -26,7 +26,6 @@ const GC = {
 }
 
 function GCeffect(x){
-	if(player.chal.active == 21)tmp.gc.nerf = 1.25;
 	x = E(x).slog().sub(tmp.gc.nerf).max(-1);
 	x = Decimal.tetrate(10, x);
 	return x;
@@ -74,10 +73,17 @@ function updateGCTemp() {
 	if(player.gc.trap<0)player.gc.trap=0;
 	
 	tmp.gc.nerf = player.gc.depth/8;
+	if(player.exotic.dark_run.active)tmp.gc.nerf = 1;
+	if(player.chal.active == 21)tmp.gc.nerf = 1.25;
+	if(player.exotic.dark_run.upgs[6].gte(1))tmp.gc.nerf *= tmp.dark_run?(tmp.dark_run.upgs[6].eff || 1):1;
 	tmp.gc.shards = E(0);
-	if(player.supernova.times.gte(GC.goal()) && !(player.chal.active == 21)){
+	if(player.supernova.times.gte(GC.goal()) && !(player.chal.active >= 21) && !player.exotic.dark_run.active){
 		tmp.gc.shards = player.supernova.times.log10().sub(E(GC.goal()).log10()).mul(10**(player.gc.depth*0.9+1.1)).add(1).pow(player.gc.depth);
-		if(tmp.gc.shards.gte(100))tmp.gc.shards = tmp.gc.shards.log10().mul(50);
+		if(player.exotic.dark_run.upgs[7].gte(1)){
+			if(tmp.gc.shards.gte(10000))tmp.gc.shards = tmp.gc.shards.log10().pow(2).mul(625);
+		}else{
+			if(tmp.gc.shards.gte(100))tmp.gc.shards = tmp.gc.shards.log10().mul(50);
+		}
 		tmp.gc.shards = tmp.gc.shards.mul(1+player.gc.trap/20);
 		tmp.gc.shards = tmp.gc.shards.mul(player.gc.rip?2:1);
 		tmp.gc.shards = tmp.gc.shards.mul(player.gc.noeb?1.1:1);

@@ -286,6 +286,8 @@ const CHALS = {
         if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
         if (player.ranks.hex.gte(10) && (x==3||x==4)) pow = pow.mul(0.95)
         if (hasChargedElement(10) && x==20) pow = pow.mul(0.95)
+		if (hasElement(453) && x==21) pow = pow.mul(0.8)
+		let start = chal.start
         chal.pow = chal.pow.max(1)
         let goal = chal.inc.pow(lvl.div(fp).pow(pow)).mul(chal.start)
         let bulk = res.div(chal.start).max(1).log(chal.inc).root(pow).mul(fp).add(1).floor()
@@ -528,7 +530,7 @@ const CHALS = {
         pow: E(2),
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
-            let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1).softcap(82,0.2,0)
+            let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1).softcap(82,hasChargedElement(104)?0.3:0.2,0)
             return ret
         },
         effDesc(x) { return "^"+format(x) },
@@ -543,6 +545,7 @@ const CHALS = {
         pow: E(2),
         start: E('e3e4').mul(1.5e56),
         effect(x) {
+			if(hasChargedElement(104))return x.add(1)
             let ret = x.root(1.75).mul(0.01).add(1)
             return ret
         },
@@ -558,6 +561,7 @@ const CHALS = {
         pow: E(2),
         start: uni("e3.8e7"),
         effect(x) {
+			if(hasChargedElement(104))return x.add(1)
             let ret = x.root(2).div(10).add(1)
             return ret
         },
@@ -573,6 +577,7 @@ const CHALS = {
         pow: E(2),
         start: uni('e8.4e8'),
         effect(x) {
+			if(hasChargedElement(104))return x
             let ret = x.root(hasTree("chal7a")?1.5:2)
             return ret
         },
@@ -713,7 +718,7 @@ const CHALS = {
         effect(x) {
 			if(hasPrestige(2,17))x = x.pow(2);
 			if(hasElement(277))x = x.pow(1.25);
-			x = x.softcap(1e6,hasElement(433)?0.7:hasElement(429)?0.5:hasElement(417)?0.3:hasElement(409)?0.1:hasElement(397)?0.03:0.01,0);
+			x = x.softcap(1e6,hasElement(465)?0.84:hasElement(433)?0.7:hasElement(429)?0.5:hasElement(417)?0.3:hasElement(409)?0.1:hasElement(397)?0.03:0.01,0);
             let ret = E(2).pow(x);
 			if(hasElement(229))ret = ret.pow(3);
 			if(hasElement(334))ret = Decimal.pow(10,Decimal.pow(2.6,x.root(4)));

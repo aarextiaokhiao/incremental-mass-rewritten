@@ -54,6 +54,7 @@ const PRIM = {
             p=>{
                 if (hasElement(107)) p = p.mul(2)
                 let x = p.pow(0.9).mul(2)
+                if (hasChargedElement(107)) x = p.pow(0.95).mul(100)
 				if (player.gc.active){
 					let y = new Decimal(200000);
 					if(hasElement(362))y = y.add(150000);

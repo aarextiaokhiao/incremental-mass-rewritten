@@ -112,6 +112,7 @@ const TREE_UPGS = {
             reqDesc: `13 Supernovas.`,
             cost: E(1e8),
             effect() {
+				if (hasChargedElement(112))return Decimal.pow(10,Decimal.pow(10,player.supernova.times.pow(1/2)));
                 let x = player.supernova.times.mul(0.1).softcap(1.5,0.75,0)
                 if (hasElement(112)) x = x.add(2)
 				if(hasTree('sn6'))x = Decimal.pow(10,player.supernova.times.pow(2));

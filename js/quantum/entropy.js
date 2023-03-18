@@ -30,6 +30,8 @@ const ENTROPY = {
 		if (player.ranks.hept.gte(52)) x = x.mul(E(10).pow(player.ranks.hept));
 		x = x.mul(SUPERNOVA_GALAXY.effects.entropyg())
 		if(hasElement(394)) x = x.mul(EXOTIC.dsEff().en)
+        if (hasChargedElement(109)) x = x.mul(tmp.elements.ceffect[109]||1)
+        if (hasChargedElement(114)) x = x.mul(tmp.elements.ceffect[114]||1)
 	
         return x
     },
@@ -212,6 +214,7 @@ const ENTROPY = {
 				if (i == 6 && hasAscension(0, 22)) p = 1
 				if (i == 2 && hasAscension(0, 42)) p = p ** 0.8
 				if (i == 2 && hasChargedElement(96)) p = p ** 0.9
+				if (i == 2 && hasChargedElement(106)) p = p ** 0.85
             r = r.scale(rc.scale.s, p, 0)
         }
         let x = rc.inc.pow(r).mul(rc.start)
@@ -250,6 +253,7 @@ const ENTROPY = {
 				if (i == 6 && hasAscension(0, 22)) p = 1
 				if (i == 2 && hasAscension(0, 42)) p = p ** 0.8
 				if (i == 2 && hasChargedElement(96)) p = p ** 0.9
+				if (i == 2 && hasChargedElement(106)) p = p ** 0.85
                 x = x.scale(rc.scale.s, p, 0, true)
             }
             x = x.add(1).floor()

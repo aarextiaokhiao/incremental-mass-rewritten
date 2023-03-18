@@ -301,6 +301,12 @@ const RANKS = {
 			'5': "Enne Boost Exotic Matter gain.",
 			'6': "Enne Boost Galactic Quarks gain.",
             '7': "Hyper/Ultra Hept scalings are weaker based on Enne.",
+            '9': "Meta-Hept scaling is weaker based on Enne.",
+            '10': "Enne Boost Dark Shadow gain.",
+            '11': "Oct 1 effect is better.",
+            '12': "Collapsed Star effect is better.",
+            '14': "Meta-Hex scaling is weaker based on Enne.",
+            '15': "Meta-Hept starts 7.5x later.",
 		},
     },
     effect: {
@@ -482,7 +488,7 @@ const RANKS = {
 		},
 		oct: {
             '1'() {
-                let ret = E(0.98).pow(player.ranks.oct);
+                let ret = E(player.ranks.enne.gte(11)?0.97:0.98).pow(player.ranks.oct);
                 return ret
             },
             '2'() {
@@ -518,6 +524,18 @@ const RANKS = {
                 return ret
             },
             '7'() {
+                let ret = E(0.99).pow(player.ranks.enne);
+                return ret
+            },
+            '9'() {
+                let ret = E(0.99).pow(player.ranks.enne);
+                return ret
+            },
+            '10'() {
+                let ret = player.ranks.enne.add(1).pow(2);
+                return ret
+            },
+            '14'() {
                 let ret = E(0.99).pow(player.ranks.enne);
                 return ret
             },
@@ -585,6 +603,9 @@ const RANKS = {
             5(x) { return format(x)+"x" },
             6(x) { return format(x)+"x" },
             7(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            9(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            10(x) { return format(x)+"x" },
+            14(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
 		},
     },
     fp: {
@@ -897,6 +918,7 @@ const PRESTIGES = {
 			"46": `Remove Super Oct scaling.`,
             "48": `Remove Hyper Cosmic Strings scaling.`,
             "49": `Add +5% to Glory 59's effectiveness`,
+            "86": `Add +50% to Glory 59's effectiveness`,
 		},
 		{
 			"1": `Meta-Hex starts 1000x later.`,
@@ -907,6 +929,14 @@ const PRESTIGES = {
             "6": `Remove Meta-Prestige Level scaling, Prestige Mass Effect is applied to Exotic Prestige Level scaling.`,
             "7": `Meta-Hex starts 1e10x later.`,
             "8": `Valor boost Dark Ray gain.`,
+            "9": `Remove Hyper Hept scaling.`,
+            "10": `The Tier Requirement is broken.`,
+            "11": "Exotic Prestige Level scaling is weaker based on Valor.",
+            "12": `Valor boost Glyphic Mass gain.`,
+			"13": `Prestige Mass Effect is applied to Meta-Hept scaling at reduced rate.`,
+			"14": `Renown 24 & 28 effects are better.`,
+            "15": `Valor boost Exotic Matter gain.`,
+            "16": `Add +5% to Valor 13's effectiveness`,
 		},
     ],
     rewardEff: [
@@ -991,6 +1021,7 @@ const PRESTIGES = {
 				if(hasElement(215))x = x.mul(2);
 				if(hasPrestige(3,3))x = x.mul(prestigeEff(3,3));
 				if(hasPrestige(3,29))x = x.mul(prestigeEff(3,29));
+				if(hasAscension(0,80))x = x.mul(ascensionEff(0,80));
                 return x
             },x=>"+"+x.format()],
             "11": [_=>{
@@ -1083,6 +1114,7 @@ const PRESTIGES = {
 				if (hasPrestige(3,31))x += 5;
 				if (hasPrestige(3,49))x += 5;
 				if (hasPrestige(4,3))x += 20;
+				if (hasPrestige(3,86))x += 50;
                 return x
             },x=>x+"% effectiveness"],
             "141": [_=>{
@@ -1134,6 +1166,7 @@ const PRESTIGES = {
             "24": [_=>{
                 let x = player.prestigeMassUpg[1].add(10).log10().add(10).log10().add(10).log10();
 				if(hasAscension(0,7))x = player.prestigeMassUpg[1].add(10).log10().add(10).log10().pow(0.5);
+				if(hasPrestige(4,14))x = player.prestigeMassUpg[1].add(10).log10().add(10).log10();
                 return x
             },x=>"^"+x.format()],
             "27": [_=>{
@@ -1142,6 +1175,7 @@ const PRESTIGES = {
             },x=>"+"+x.format()],
             "28": [_=>{
                 let x = player.prestigeMassUpg[2].add(10).log10().add(10).log10().add(10).log10();
+				if(hasPrestige(4,14))x = player.prestigeMassUpg[2].add(10).log10().add(10).log10();
                 return x
             },x=>"^"+x.format()],
             "29": [_=>{
@@ -1160,6 +1194,23 @@ const PRESTIGES = {
             },x=>"x"+x.format()],
             "8": [_=>{
                 let x = player.prestiges[4].add(1).pow(2);
+                return x
+            },x=>"x"+x.format()],
+            "11": [_=>{
+                let x = E(0.999).pow(player.prestiges[4]);
+                return x
+            },x=>formatReduction(x)+" weaker"],
+            "12": [_=>{
+                let x = player.prestiges[4].add(1);
+                return x
+            },x=>"x"+x.format()],
+            "13": [_=>{
+                let x = 5;
+				if (hasPrestige(4,16))x += 5;
+                return x
+            },x=>x+"% effectiveness"],
+            "15": [_=>{
+                let x = player.prestiges[4].add(1);
                 return x
             },x=>"x"+x.format()],
 		},
@@ -1201,6 +1252,7 @@ function updateRanksTemp() {
 	if (hasPrestige(3,10)) pow = 1.8
 	if (hasChargedElement(9)) pow = 1.78
 	if (hasChargedElement(44)) pow = 1.75
+	if (hasPrestige(4,10)) pow = 1.5
     tmp.ranks.tier.req = player.ranks.tier.div(fp2).scaleEvery('tier').div(fp).add(2).pow(pow).floor()
     tmp.ranks.tier.bulk = player.ranks.rank.max(0).root(pow).sub(2).mul(fp).scaleEvery('tier',true).mul(fp2).add(1).floor();
 
@@ -1219,7 +1271,7 @@ function updateRanksTemp() {
     tmp.ranks.tetr.req = player.ranks.tetr.div(fp2).scaleEvery('tetr').div(fp).pow(pow).mul(3).add(10).floor()
     tmp.ranks.tetr.bulk = player.ranks.tier.sub(10).div(3).max(0).root(pow).mul(fp).scaleEvery('tetr',true).mul(fp2).add(1).floor();
 
-	fp2 = hasElement(298)?tmp.elements.effect[298]:E(1)
+	fp2 = player.qu.times.gte("4.2e690")?fp2:hasElement(298)?tmp.elements.effect[298]:E(1)
     fp = E(1)
     pow = 1.5
     tmp.ranks.pent.req = player.ranks.pent.div(fp2).scaleEvery('pent').div(fp).pow(pow).add(15).floor()
@@ -1522,7 +1574,7 @@ function prestigeRPEffect(){
 
 function prestigeBHEffect(){
 	let p = overflow(player.prestigeBH.add(1),10,2.7);
-	p = overflow(p,E("e100000"),0.33);
+	p = overflow(p,Decimal.pow(10,hasAscension(0,65)?1e7:1e5),0.33);
 	return p;
 }
 
@@ -1634,12 +1686,15 @@ const ASCENSIONS = {
             "22": `Remove Entropic Condenser^2 scaling.`,
             "23": `C5 Effect is better.`,
             "25": `Square Ascension Level 20 Effect.`,
-            "26": `Bonus BH Condensers and Cosmic Rays amount using multiplying adding to amount instead of adding to amount.`,
+            "26": `Bonus BH Condensers and Cosmic Rays amount using multiplying to amount instead of adding to amount.`,
             "28": `Ascension Mass Formula from Ascension Level is better.`,
             "30": `Unlock Valor (a new Prestige Tier)`,
             "42": `Entropic Evaporation^2 is 20% weaker.`,
             "49": `C17 affects Prestige Mass Effect's 2nd softcap at reduced rate.`,
             "60": `Ascension Level 6's effect is squared.`,
+            "65": `Prestige Black Hole Effect is better.`,
+			"80": `Ascension Level boost Honor 9 effect.`,
+            "87": `Ascension Mass effect is better.`,
         },
         {
 			"1": `Transcension Level boost Exotic Matter gain.`,
@@ -1653,6 +1708,10 @@ const ASCENSIONS = {
             "9": `Ascension Mass Formula from Ascension Level is better.`,
 			"10": `Transcension Level 1's effect ^1.6`,
             "11": `Remove Ultra Prestige Level scaling.`,
+            "12": `[G-Neut-Muon] is better.`,
+            "13": `Remove Hyper Honor scaling.`,
+			"14": `Transcension Level boost Glyphic Mass gain.`,
+			"15": `Glyphic Mass gain formula is better.`,
         },
     ],
     rewardEff: [
@@ -1704,6 +1763,12 @@ const ASCENSIONS = {
                 let x = Decimal.pow(0.99,player.chal.comps[17].pow(2).div(1e43).add(1).log10());
                 return x
             },x=>format(E(1).sub(x).mul(100))+"% weaker"],
+            "80": [_=>{
+                let x = player.ascensions[0].add(1).pow(3);
+                return x
+            },x=>{
+                return x.format()+"x"
+            }],
             /*
             "1": [_=>{
                 let x = E(1)
@@ -1723,6 +1788,12 @@ const ASCENSIONS = {
             }],
             "2": [_=>{
                 let x = player.ascensions[1].add(1).pow(1.25);
+                return x
+            },x=>{
+                return x.format()+"x"
+            }],
+            "14": [_=>{
+                let x = player.ascensions[1].add(1);
                 return x
             },x=>{
                 return x.format()+"x"
@@ -1767,7 +1838,6 @@ function updateAscensionHTML() {
 
 	for (let x = 0; x < AS_LEN; x++) {
 		let unl = ASCENSIONS.unl[x]?ASCENSIONS.unl[x]():true
-
 		tmp.el["as_div_"+x].setDisplay(unl)
 
 		if (unl) {
@@ -1832,6 +1902,7 @@ function ascensionMassGain(){
 
 function ascensionMassEffect(){
 	let p = player.ascensionMass.add(1).log10();
+	if(hasAscension(0,87))p = p.pow(2);
 	if(hasAscension(0,13))p = p.mul(2);
 	if(hasAscension(0,15))p = p.mul(2);
 	if(hasAscension(0,16))p = p.mul(2);

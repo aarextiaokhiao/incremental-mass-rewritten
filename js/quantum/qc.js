@@ -1,6 +1,6 @@
 const QCs = {
-    active() { return player.qu.qc.active || player.qu.rip.active },
-    getMod(x) { return player.qu.rip.active ? BIG_RIP_QC[x] : player.qu.qc.mods[x] },
+    active() { return player.qu.qc.active || player.qu.rip.active || player.exotic.dark_run.active },
+    getMod(x) { return player.exotic.dark_run.active ? 30 : player.qu.rip.active ? BIG_RIP_QC[x] : player.qu.qc.mods[x] },
     incMod(x,i) { if (!this.active()) player.qu.qc.mods[x] = Math.min(Math.max(player.qu.qc.mods[x]+i,0),hasTree('qc4')?Math.min(Math.max(Math.floor(player.qu.qc.shard/8),10),50):10) },
     enter() {
 		if(!hasTree('unl3')){
@@ -93,7 +93,7 @@ const QCs = {
             effDesc(x) { return `^${format(x)} to Mass Dilation’s penalty.` },
         },{
             eff(i) {
-                if (hasElement(98) && player.qu.rip.active) i *= 0.8
+                if (hasElement(98) && (player.qu.rip.active || hasChargedElement(98))) i *= 0.8
                 if (player.ranks.hex.gte(135) && player.qu.rip.active) i *= 0.6
 				//if(i>=30)return [0,10**i]
 				if(i>=17)return [0.15*((2/3)**(i-17)),i**4/10000+1]

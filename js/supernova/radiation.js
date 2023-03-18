@@ -8,7 +8,7 @@ const RADIATION = {
         if (player.ranks.pent.gte(2)) x = x.mul(RANKS.effect.pent[2]())
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
 		x = x.pow(SUPERNOVA_GALAXY.galPow5_eff())
-	if(player.gc.active)x = GCeffect(x)
+	if(player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active)x = GCeffect(x)
         return x
     },
     hz_effect() {
@@ -28,7 +28,7 @@ const RADIATION = {
         x = x.mul(tmp.radiation.bs.eff[3*i])
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
 		x = x.pow(SUPERNOVA_GALAXY.galPow5_eff())
-	if(player.gc.active)x = GCeffect(x)
+	if(player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active)x = GCeffect(x)
         return x
     },
     ds_eff(i) {

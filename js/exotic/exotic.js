@@ -8,6 +8,7 @@ const EXOTIC = {
         if (hasPrestige(2,141)) x = x.mul(prestigeEff(2,141,E(1)));
         if (hasPrestige(3,21)) x = x.mul(prestigeEff(3,21,E(1)));
         if (hasPrestige(3,22)) x = x.mul(prestigeEff(3,22,E(1)));
+        if (hasPrestige(4,15)) x = x.mul(prestigeEff(4,15,E(1)));
 		if (player.ranks.oct.gte(34)) x = x.mul(RANKS.effect.oct[34]())
 		if (player.ranks.enne.gte(5)) x = x.mul(RANKS.effect.enne[5]())
 		if(hasUpgrade('exotic', 15)){
@@ -33,11 +34,14 @@ const EXOTIC = {
 		if(hasElement(406)){
 			x = x.mul(tmp.ex.drEff.ex);
 		}
+		if(player.exotic.dark_run.upgs[10].gte(1))x = x.mul(tmp.dark_run?(tmp.dark_run.upgs[10].eff||1):1);
+		x = x.mul(SUPERNOVA_GALAXY.effects.em());
         return x.floor()
     },
     gainTimes() {
         let x = E(1)
 		if (hasElement(402)) x = x.mul(tmp.ex.rcb_eff[3]?(tmp.ex.rcb_eff[3].eff||1):1);
+		if(player.superCluster.gte(8))x = x.mul(SUPERNOVA_CLUSTER.effects.eff1());
         return x
     },
     mils: [
@@ -65,7 +69,7 @@ const EXOTIC = {
 		player.galQk=new Decimal(0)
 		if(player.exotic.times.lt(5))player.gc.shard=new Decimal(0)
 		player.galParticles=[new Decimal(0),new Decimal(0),new Decimal(0)]
-		player.galPow=[E(0),E(0),E(0),E(0),E(0),E(0)]
+		player.galPow=[E(0),E(0),E(0),E(0),E(0),E(0),player.galPow[6]]
 		if(player.exotic.times.lt(4))player.supernova.fermions.tiers[2]=[E(0),E(0),E(0),E(0),E(0),E(0)]
 		if(player.exotic.times.lt(4))player.supernova.fermions.tiers[3]=[E(0),E(0),E(0),E(0),E(0),E(0)]
 		player.prestigeMassUpg=[E(0),E(0),E(0),E(0),E(0)]
@@ -112,6 +116,7 @@ const EXOTIC = {
 			x = x.mul(tmp.ex.abEff.ds);
 		}
         if (hasPrestige(4,8)) x = x.mul(prestigeEff(4,8,E(1)));
+		if(player.exotic.dark_run.upgs[2].gte(1))x = x.mul(tmp.dark_run.upgs[2].eff);
 		return x;
     },
     dsGain(){
@@ -128,6 +133,7 @@ const EXOTIC = {
 		if(hasElement(405))x = x.mul(tmp.elements.effect[405]);
 		if(player.superCluster.gte(3))x = x.mul(SUPERNOVA_CLUSTER.effects.eff1());
         if (hasAscension(0,20)) x = x.mul(ascensionEff(0,20,E(1)));
+		if (player.ranks.enne.gte(10)) x = x.mul(RANKS.effect.enne[10]())
 		return x;
     },
     abGain(){
@@ -136,12 +142,16 @@ const EXOTIC = {
 		x = x.mul(EXOTIC.dsEff().ab);
 		if(hasElement(442))x = x.mul(tmp.elements.effect[442]);
 		if(hasElement(445))x = x.mul(tmp.elements.effect[445]);
+		if(player.superCluster.gte(7))x = x.mul(SUPERNOVA_CLUSTER.effects.eff1());
+		if(player.exotic.dark_run.upgs[9].gte(1))x = x.mul(tmp.dark_run.upgs[9].eff);
 		return x;
     },
     drEff(){
 		let x = {ds:player.exotic.dr.pow(2)};
 		if(hasElement(406))x.ex = player.exotic.dr.pow(0.1);
 		if(hasElement(428))x.ex = player.exotic.dr.pow(0.25);
+		if(hasElement(456))x.ex = player.exotic.dr.pow(0.4);
+		if(hasElement(456))x.gm = player.exotic.dr.add(10).log10();
 		return x;
     },
     dsEff(){
@@ -153,7 +163,7 @@ const EXOTIC = {
 			x.ex = x.ex.pow(2)
 			x.en = x.en.pow(2)
 		}
-		if(hasElement(414))x.ab = player.exotic.ds.div(1e60).add(1).pow(2);
+		if(hasElement(414))x.ab = player.exotic.ds.div(hasElement(468)?1:1e60).add(1).pow(2);
 		return x;
     },
     abEff(){
@@ -190,6 +200,8 @@ function updateExoticTemp() {
 		tmp.ex.exb_eff[i] = EXOTIC_BOOST.effect(i)
 	}
 	
+	updateDRTemp()
+	
 }
 
 function calcExotic(dt) {
@@ -208,6 +220,12 @@ function calcExotic(dt) {
 	}
 	if(hasElement(414)){
 		player.exotic.ab = player.exotic.ab.add(EXOTIC.abGain().mul(dt));
+	}
+	if(player.exotic.dark_run.active){
+		player.exotic.dark_run.points = player.exotic.dark_run.points.add(DARK_RUN.gain().mul(dt));
+	}
+	if(player.exotic.dark_run.upgs[4].gte(1)){
+		player.exotic.times = player.exotic.times.add(EXOTIC.gainTimes().mul(dt));
 	}
 }
 
@@ -255,7 +273,8 @@ function updateExoticHTML(){
 		tmp.el.abyssalBlot.setTxt(player.exotic.ab.format(0));
 		tmp.el.drEff.setHTML(`
 				Boosts dark shadow gain by <b>x${tmp.ex.drEff.ds.format(3)}</b><br>`+
-				(hasElement(406)?`Boosts exotic matter gain by <b>x${tmp.ex.drEff.ex.format(3)}</b><br>`:"")
+				(hasElement(406)?`Boosts exotic matter gain by <b>x${tmp.ex.drEff.ex.format(3)}</b><br>`:"")+
+				(hasElement(456)?`Boosts glyphic mass gain by <b>x${tmp.ex.drEff.gm.format(3)}</b><br>`:"")
 			);
 		tmp.el.dsEff.setHTML(`
 				Boosts exotic matter gain by <b>x${tmp.ex.dsEff.ex.format(3)}</b><br>
@@ -274,6 +293,10 @@ function updateExoticHTML(){
 				(hasElement(436)?`Boosts eternal mass gain by <b>x${tmp.ex.abEff.em.format(3)}</b><br>`:"")
 			);
 	}
+	if (tmp.stab[8] == 4) {
+		tmp.el.dr_points.setTxt(formatMass(player.exotic.dark_run.points));
+		updateDRHTML()
+	}
 }
 
 function setupExoticHTML() {
@@ -288,4 +311,5 @@ function setupExoticHTML() {
         `
     }
     new_table.setHTML(html)
+	setupDRHTML()
 }

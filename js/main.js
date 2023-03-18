@@ -21,7 +21,7 @@ const FORMS = {
         let x = E(1)
         if (tmp.qu.mil_reached[1]) x = x.mul(10)
         if (quUnl()) x = x.mul(tmp.qu.bpEff)
-        if (hasElement(103)) x = x.mul(tmp.elements.effect[103])
+        if (hasElement(103) && !hasChargedElement(103)) x = x.mul(tmp.elements.effect[103])
 		if(hasTree('qc5')) x = x.mul(treeEff('qc5'));
 		if (hasPrestige(0,60)) x = x.mul(prestigeEff(0,60,[E(1),E(1)])[0]);
 		if (hasUpgrade('inf',9)) x = x.mul(upgEffect(5,9));
@@ -31,9 +31,10 @@ const FORMS = {
         if (player.mainUpg.br.includes(3)) x = x.pow(tmp.upgs.main[4][3].effect)
         if (hasPrestige(0,5)) x = x.pow(2)
 		x = x.pow(calcShardsEffect())
+        if (hasChargedElement(103)) x = x.pow(tmp.elements.ceffect[103])
 	
         if (QCs.active()) x = x.div(tmp.qu.qc_eff[1])
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 			
 		if(player.gc.active && hasElement(423))x = x.add(1)
 		return x
@@ -97,11 +98,12 @@ const FORMS = {
         if (hasElement(117)) x = x.pow(10)
 		
         if (hasChargedElement(51) && x.gte(10)) x = expMult(x,1.005)
+        if (hasChargedElement(117) && x.gte(10)) x = expMult(x,1.01)
 		
 		
 		if (CHALS.inChal(20)) x = x.add(1).log10()
 		
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 	
 		tmp.massOverflowStart = E("ee84")
 		if (player.ranks.hex.gte(120))tmp.massOverflowStart = tmp.massOverflowStart.pow(10)
@@ -377,6 +379,8 @@ const FORMS = {
 			if(hasChargedElement(86))ss2 = ss2.mul(2)
 			if(hasElement(434))p2 = p2 ** 0.928
 			if(hasElement(443))p2 = p2 ** 0.968
+			if(hasElement(461))p2 = p2 ** 0.9
+			if(hasChargedElement(102))ss = ss.mul(100)
 			x = overflow(overflow(x,ss,p),ss2,p2)
 			
 			return {step: step, eff: x,  ss: ss}
@@ -472,7 +476,7 @@ const FORMS = {
 		
 			if (FERMIONS.onActive("23"))gain = gain.add(1).log10()
 				
-			if (player.gc.active || player.chal.active >= 21) gain = GCeffect(gain)
+			if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) gain = GCeffect(gain)
 			return gain.floor()
         },
         reset() {
@@ -518,7 +522,7 @@ const FORMS = {
 			if (FERMIONS.onActive("32"))gain = gain.add(1).log10().pow(5)
 				
 			
-			if (player.gc.active || player.chal.active >= 21) gain = GCeffect(gain)
+			if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) gain = GCeffect(gain)
 				
             return gain.floor()
         },
@@ -554,7 +558,7 @@ const FORMS = {
 			if (FERMIONS.onActive("31")) x = x.add(1).log10().pow(100)
 			
 		
-			if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+			if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 				
 			tmp.bhOverflowStart = E("e1e34")
 			if (hasUpgrade('bh',16))tmp.bhOverflowStart = tmp.bhOverflowStart.pow(10)

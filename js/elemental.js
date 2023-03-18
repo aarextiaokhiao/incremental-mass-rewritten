@@ -944,15 +944,22 @@ const ELEMENTS = {
         {
             desc: `8th QC modifier in Big Rip is 20% weaker.`,
             cost: E('e1.2e7'),
+            cdesc: `This element is applied outside of Big Rips.`,
+            ccost: E('ee7e17'),
         },
         {
             desc: `Remove softcap^3 from Photon Upgrade 3 effect, its softcap^2 is weaker.`,
             cost: E('e2.15e7'),
+            cdesc: `Photon Upgrades are better.`,
+            ccost: E('ee7.5e17'),
         },
         {
             desc: `Prestige Base’s exponent is increased based on Pent.`,
             cost: E('e2.5e7'),
             effect() {
+				if(hasChargedElement(100)){
+					return player.ranks.pent.add(1).log10().add(1).log10().add(1).log10().mul(10000);
+				}
 				if(player.ranks.pent.gte("ee10")){
 					return player.ranks.pent.log10().log10().log10().mul(2605);
 				}
@@ -964,95 +971,152 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "+^"+format(x) },
+            cdesc: `This Element is better.`,
+            ccost: E('ee8e17'),
         },
         {
             desc: `Blueprint Particles effect is overpowered.`,
             cost: E('e3.5e7'),
+            cdesc: `This Element is better.`,
+            ccost: E('ee1e18'),
         },
         {
             desc: `Tickspeed Power’s softcap starts ^100 later.`,
             cost: E('e111111111'),
+            cdesc: `Accelerator Effect softcap starts 100x later.`,
+            ccost: E('ee2.2222e18'),
         },
         {
             desc: `Pre-Quantum Global Speed is effective based on Honor.`,
             cost: E('e5e8'),
             effect() {
+				if(hasChargedElement(103))return ELEMENTS.upgs[103].ceffect();
                 let x = E(player.ranks.hex.gte(103)?2.1:2).pow(player.prestiges[1])
 				if(hasPrestige(1,23))x = x.pow(prestigeEff(1,23))
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { if(hasChargedElement(103))return "^"+format(x);return format(x)+"x" },
+            cdesc: `This element is better. Also, permanently add ee10 Blueprint Particles to their effect.`,
+            ccost: E('ee4e18'),
+            ceffect() {
+				if(hasChargedElement(103))return player.prestiges[1].add(1).log10().add(1).log10().add(1).pow(0.1).pow(hasPrestige(1,23)?prestigeEff(1,23):1);
+				return E(1);
+            },
         },
         {
             desc: `Add 200 more C9-12 maximum completions.`,
             cost: E('e1.2e9'),
+            cdesc: `C9-12 effect is better.`,
+            ccost: E('ee1.5e19'),
         },
         {
             desc: `Each Particle Power’s 1st effect is exponentially overpowered.`,
             cost: E('e2.2e9'),
+            cdesc: `This element is better.`,
+            ccost: E('ee5e19'),
         },
         {
             desc: `Entropic Evaporation^2 and Condenser^2 scale 15% weaker.`,
             cost: E('e7.25e9'),
+            cdesc: `Entropic Evaporation^2 scale 15% weaker.`,
+            ccost: E('ee6.8888e19'),
         },
         {
             desc: `Beta Particles are twice effective.`,
             cost: E('e1.45e10'),
+            cdesc: `Beta Particles are better.`,
+            ccost: E('ee6.9e19'),
         },
         {
             desc: `All scalings from Ranks to Pent scale 10% weaker (only 2% during Big Rip).`,
             cost: E('e1.6e10'),
+            cdesc: `All scalings from Hex to Oct scale 10% weaker.`,
+            ccost: E('ee1e20'),
         },
         {
             desc: `Entropic Multiplier is effective, even in Big Rip.`,
             cost: E('e3e10'),
+            cdesc: `Entropic Multiplier boost Entropy gain.`,
+            ccost: E('ee1.3e20'),
+            ceffect() {
+				return E(1.2).pow(player.qu.en.rewards[0]);
+            },
+            ceffDesc(x) { return format(x)+"x" },
         },
         {
             desc: `Mass gain softcap^4 is 50% weaker (only 20% in Big Rip).`,
             cost: E('e6e10'),
+            cdesc: `Stronger Overflow is weaker`,
+            ccost: E('ee1.6666e20'),
         },
         {
             desc: `Neutron Stars raise Atom gain.`,
             cost: E('e7.5e10'),
             effect() {
                 let x = player.supernova.stars.add(1).log10().add(1).log10().add(1).root(3)
+				if(hasChargedElement(111))x = x.pow(3);
                 return x
             },
             effDesc(x) { return "^"+format(x) },
+            cdesc: `This element is better.`,
+            ccost: E('ee2e20'),
         },
         {
             desc: `[sn4] effect is increased by 2.`,
             cost: E('e3e12'),
+            cdesc: `[sn4] effect is better.`,
+            ccost: E('ee4e20'),
         },
         {
             desc: `[bs2] uses a better formula.`,
             cost: E('e4e12'),
+            cdesc: `This element is better.`,
+            ccost: E('ee4.4444e20'),
         },
         {
             desc: `Entropic Multiplier uses a better formula.`,
             cost: E('e1.2e13'),
+            cdesc: `Entropic Multiplier boost Entropy gain.`,
+            ccost: E('ee5e20'),
+            ceffect() {
+				return E(1.2).pow(player.qu.en.rewards[0]);
+            },
+            ceffDesc(x) { return format(x)+"x" },
         },
         {
             desc: `Mass Dilation upgrades are 5% stronger.`,
             cost: E("e7e13"),
+            cdesc: `Mass Dilation upgrades are 5% stronger.`,
+            ccost: E('ee1e21'),
         },
         {
             desc: `Prestige Base boosts Relativistic Energy gain.`,
             cost: E('e1e14'),
             effect() {
+				if(hasChargedElement(116))return ELEMENTS.upgs[116].ceffect();
                 let x = (tmp.prestiges.base||E(1)).add(1).root(3)
 				if(player.ranks.hex.gte(116))x = x.pow(3)
-                return x
+                return x.min("e2e30")
             },
-            effDesc(x) { return "x"+format(x) },
+            effDesc(x) { if(hasChargedElement(116))return "^"+format(x);return format(x)+"x"+(x.gte('e2e30')?" <span class='soft'>(hardcapped)</span>":"") },
+            cdesc: `This element is better.`,
+            ccost: E('ee1.5e21'),
+            ceffect() {
+				if(hasChargedElement(116))return (tmp.prestiges.base||E(1)).add(10).log10().pow(0.5);
+				return E(1);
+            },
         },
         {
             desc: `Mass gain after all softcaps is raised by 10.`,
             cost: E("e5e16"),
+            cdesc: `Mass gain exponent ^1.01`,
+            ccost: E('ee2.75e21'),
         },
         {
             desc: `Unlock more Neutron Tree Upgrades. <span id="final_118" style="display:none;"></span>`,
             cost: E("e1.7e17"),
+            cdesc: `Reach the current endgame.`,
+            ccost: E("ee5.8e21"),
         },
 		
 		// extended element
@@ -1382,6 +1446,7 @@ const ELEMENTS = {
 				if(hasElement(328))x = expMult((player.massUpg[2]||E(1)),0.875);
 				if(hasElement(360))x = expMult((player.massUpg[2]||E(1)),0.886);
 				if(hasElement(367))x = expMult((player.massUpg[1]||E(1)),0.9);
+				if(hasElement(459))x = expMult((player.massUpg[1]||E(1)),0.95);
 				return x
 			},
 			effDesc(x) { return "^"+format(x) },
@@ -1396,6 +1461,7 @@ const ELEMENTS = {
 				if(hasElement(328))x = expMult((player.massUpg[1]||E(1)),0.875);
 				if(hasElement(360))x = expMult((player.massUpg[1]||E(1)),0.886);
 				if(hasElement(367))x = expMult((player.massUpg[1]||E(1)),0.9);
+				if(hasElement(459))x = expMult((player.massUpg[1]||E(1)),0.95);
 				return x
 			},
 			effDesc(x) { return "^"+format(x) },
@@ -2836,9 +2902,141 @@ const ELEMENTS = {
 			galQk: true,
 		},
 		{
-			desc: `Reach the current endgame.`,
+			desc: `Unlock Dark Run.`,
 			cost: E("1e87"),
 			ds: true,
+		},
+		{
+			desc: `Eternal Mass boost Glyphic Mass gain.`,
+			cost: E("1.5e10656"),
+			et: true,
+			effect() {
+				let x = player.et.points.add(10).log10().sqrt();
+				if(hasElement(463))x = x.pow(2);
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Permanently Remove Meta-Pent scaling.`,
+			cost: E("1e87"),
+			exotic: true,
+		},
+		{
+			desc: `Reduce C21 goal.`,
+			cost: E("1.5e1279056"),
+		},
+		{
+			desc: `Break Dilation Upgrade 5 is applied to Meta-Hex scaling.`,
+			cost: E("ee2.4444e18"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Quarks is added to base Infinity Mass gain formula.`,
+			cost: E(Number.MAX_VALUE),
+			galQk: true,
+		},
+		{
+			desc: `Dark Ray's 2nd effect is better. Unlock a new effect of Dark Ray.`,
+			cost: E("1e99"),
+			ds: true,
+		},
+		{
+			desc: `Timeshards effect is better.`,
+			cost: E("1.5e15056"),
+			et: true,
+		},
+		{
+			desc: `Exotic Meta-Boost is better.`,
+			cost: E("2e98"),
+			exotic: true,
+		},
+		{
+			desc: `Elements 173-174 are better.`,
+			cost: E("1.5e1900056"),
+		},
+		{
+			desc: `[G-Neutrino] affects Meta-Hex at a reduced rate.`,
+			cost: E("ee8e19"),
+			qk: true,
+			effect() {
+				let x = player.supernova.fermions.tiers[3][3].add(1).pow(2);
+				return x
+			},
+			effDesc(x) { return format(x)+"x later"; },
+		},
+		{
+			desc: `Accelerator Power Softcap^2 is weaker.`,
+			cost: E("ee8.1e19"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("1e348"),
+			galQk: true,
+		},
+		{
+			desc: `Element 451 is better.`,
+			cost: E("1.5e16856"),
+			et: true,
+		},
+		{
+			desc: `Exotic Matter boost Glyphic Mass gain.`,
+			cost: E("1e108"),
+			exotic: true,
+			effect() {
+				let x = player.exotic.points.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `C20 effect is better.`,
+			cost: E("1.5e2100056"),
+		},
+		{
+			desc: `Exotic Prestige Level starts +42,000 later.`,
+			cost: E("ee3.3333e20"),
+			qk: true,
+		},
+		{
+			desc: `Divide Supernova Galaxies Requirement by 40. Unlock a new effect of Supernova Galaxies.`,
+			cost: E("2e367"),
+			galQk: true,
+		},
+		{
+			desc: `Dark Shadow's 7th effect is better.`,
+			cost: E("1e109"),
+			ds: true,
+		},
+		{
+			desc: `Galactic Dark Matter and Galactic Bosons effects are better.`,
+			cost: E("1.5e20056"),
+			et: true,
+		},
+		{
+			desc: `Meta-Hex starts later based on Exotic Matter.`,
+			cost: E("6e116"),
+			exotic: true,
+			effect() {
+				let x = player.exotic.points.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Infinity Upgrade 24 effect is better.`,
+			cost: E("1.5e2600056"),
+		},
+		{
+			desc: `Tickspeed Power multiply Booster Power.`,
+			cost: E("ee2e21"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("1e396"),
+			galQk: true,
 		},
 	],
     /*
@@ -2853,6 +3051,7 @@ const ELEMENTS = {
     },
     */
     getUnlLength() {
+		if(hasElement(450))return 473;
 		if(hasElement(438))return 450;
 		if(hasElement(380))return 438;
 		if(hasUpgrade("atom",25))return 380;

@@ -94,6 +94,7 @@ const UPGS = {
             effect(x) {
                 let step = E(2)
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
+				if (hasElement(472)) step = step.mul(tmp.tickspeedEffect?(tmp.tickspeedEffect.step||E(1)):E(1))
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
                 let ret = step.mul(x.add(tmp.upgs.mass[2].bonus)).add(1)
 				if(hasElement(173))ret = ret.pow(tmp.elements.effect[173]||1);
@@ -157,6 +158,7 @@ const UPGS = {
 				if (hasChargedElement(77))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.99;
 				if (hasChargedElement(80))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.997;
 				if (hasChargedElement(85))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.997;
+				if (hasChargedElement(110))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.95;
 				tmp.strongerOverflow = overflow(ret, "e4e6", tmp.strongerOverflowPower).log(ret);
 				ret = overflow(ret, "e4e6", tmp.strongerOverflowPower);
                 return {step: step, eff: ret, ss: ss}
@@ -185,14 +187,16 @@ const UPGS = {
 				if (player.prestiges[2].gte(165))step = step.add(tmp.prestigeRPEffect)
                 let ss = E(10)
 				let sp = 0.5
+                let ss2 = E(1000)
+				let sp2 = 0.1
                 
-                let ret = step.mul(xx).add(1).softcap(ss,sp,0)
-                return {step: step, eff: ret, ss: ss}
+                let ret = step.mul(xx).add(1).softcap(ss,sp,0).softcap(ss2,sp2,0)
+                return {step: step, eff: ret, ss: ss, ss2: ss2}
             },
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Stronger Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped)</span>`:"")
+                    eff: "^"+format(eff.eff)+" to Stronger Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped${eff.eff.gte(eff.ss2)?"^2":""})</span>`:"")
                 }
             },
             bonus() {
@@ -894,6 +898,7 @@ const UPGS = {
                 cost: E('ee4.7e14'),
                 effect() {
                     let ret = player.bh.mass.add(1e10).slog();
+					if(player.exotic.dark_run.upgs[5].gte(1))ret = Decimal.pow(10,ret.add(1).sqrt());
                     return ret
                 },
                 effDesc(x=this.effect()) {
@@ -1122,10 +1127,10 @@ const UPGS = {
                 desc: `Pre-Quantum Global Speed is raised based on Death Shards (before division).`,
                 cost: E(50),
                 effect() {
-                    let x = player.qu.rip.amt.add(1).log10().div(25).add(1).softcap(500,0.25,0);
+                    let x = overflow(player.qu.rip.amt.add(1).log10().div(25).add(1).softcap(500,0.25,0),1e9,0.5);
                     return x
                 },
-                effDesc(x=this.effect()) { return "^"+format(x)+(x.gte(500)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x=this.effect()) { return "^"+format(x)+(x.gte(500)?" <span class='soft'>(softcapped"+(x.gte(1e9)?"^2":"")+")</span>":"") },
             },
             4: {
                 desc: `Start with 2 tiers of each Fermion in Big Rip.`,
@@ -1423,6 +1428,7 @@ const UPGS = {
                 cost: E('e126000'),
                 effect() {
                     let x = player.inf.points.add(1).log10().add(1).log10();
+					if(hasElement(471))x = player.inf.points.add(1).log10().pow(0.2);
 					if(hasElement(447))x = x.pow(2);
                     return x
                 },

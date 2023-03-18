@@ -321,7 +321,7 @@ function getPlayerData() {
 		},
 		superGal: E(0),
 		galQk: E(0),
-		galPow: [E(0),E(0),E(0),E(0),E(0),E(0)],
+		galPow: [E(0),E(0),E(0),E(0),E(0),E(0),E(0)],
 		galParticles: [E(0), E(0), E(0)],
 		gc: {
 			depth: 0,
@@ -339,6 +339,11 @@ function getPlayerData() {
 			dr: E(0),
 			ds: E(0),
 			ab: E(0),
+			
+			dark_run: {
+				points: E(0),
+            upgs: [],
+			},
 		},
 		superCluster: E(0),
     }
@@ -353,6 +358,7 @@ function getPlayerData() {
     for (let x = 0; x < CONFIRMS.length; x++) s.confirms[CONFIRMS[x]] = true
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) s.md.upgs[x] = E(0)
     for (let x = 0; x < MASS_DILATION.break.upgs.ids.length; x++) s.md.break.upgs[x] = E(0)
+    for (let x = 0; x < DARK_RUN.upgs.ids.length; x++) s.exotic.dark_run.upgs[x] = E(0)
     for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) s.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = E(0)
     for (let x = 0; x < 7; x++) {
         s.supernova.radiation.ds.push(E(0))

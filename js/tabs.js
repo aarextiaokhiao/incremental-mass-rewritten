@@ -81,6 +81,7 @@ const TABS = {
             { id: "RC Boosters", unl() { return hasUpgrade("exotic",5) } },
             { id: "Exotic Boosts", unl() { return hasUpgrade("exotic",10) } },
             { id: "Darkness", unl() { return hasUpgrade("exotic",15) } },
+            { id: "Dark Run", unl() { return hasElement(450) } },
         ],
     },
 }

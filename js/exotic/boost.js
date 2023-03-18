@@ -19,13 +19,14 @@ const EXOTIC_BOOST = {
         return x
     },
 	effect(i) {
-		let ret = (i == 6 && hasElement(390))?player.exotic.boosts[i].pow(0.6).div(3):(i == 6)?player.exotic.boosts[i].add(1).log10():player.exotic.boosts[i].add(EXOTIC_BOOST.effect(6)).sqrt().mul(0.01);
+		let ret = (i == 6 && hasElement(458))?player.exotic.boosts[i].pow(0.7).div(2.5):(i == 6 && hasElement(390))?player.exotic.boosts[i].pow(0.6).div(3):(i == 6)?player.exotic.boosts[i].add(1).log10():player.exotic.boosts[i].add(EXOTIC_BOOST.effect(6)).sqrt().mul(0.01);
 		if(hasElement(366))ret = ret.mul(1.2);
 		if(hasElement(384))ret = ret.mul(1.1);
 		if(hasElement(408))ret = ret.mul(1.1);
 		if(hasElement(416) && i == 6)ret = ret.mul(1.5);
 		if(hasElement(432))ret = ret.mul(1.1);
 		if(hasElement(446) && i == 6)ret = ret.mul(1.2);
+		if(player.exotic.dark_run.upgs[11].gte(1))ret = ret.mul(tmp.dark_run?(tmp.dark_run.upgs[11].eff||1):1);
 		ret = ret.mul(EXOTIC.abEff().exb);
 		if(player.gc.active && player.gc.noeb)ret = new Decimal(0);
 		if(i == 6)return ret;

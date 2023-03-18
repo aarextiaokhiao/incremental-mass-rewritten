@@ -37,7 +37,7 @@ const MASS_DILATION = {
         if (CHALS.inChal(11)|| CHALS.inChal(14) || CHALS.inChal(19)) return E(0)
         let x = m.div(1.50005e56).max(1).log10().div(40).sub(14).max(0).pow(tmp.md.rp_exp_gain).mul(tmp.md.rp_mult_gain)
 		if (FERMIONS.onActive("21")) x = x.add(1).log10();
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
         return x.sub(player.md.particles).max(0).floor()
     },
     massGain() {
@@ -57,7 +57,7 @@ const MASS_DILATION = {
 		x = x.pow(tmp.fermions.effs[2][1]||E(1))
 		if (!hasElement(158))x = x.softcap(mlt(1e12),0.5,0);
 		if (FERMIONS.onActive("24")) x = x.add(1).log10().pow(10);
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 		tmp.dmOverflow = overflow(x,"e5e28",hasChargedElement(21)?0.925:hasElement(196)?0.92:hasElement(158)?0.9:0.8).log(x);
         return overflow(x,"e5e28",hasChargedElement(21)?0.925:hasElement(196)?0.92:hasElement(158)?0.9:0.8);
     },
@@ -217,6 +217,7 @@ const MASS_DILATION = {
             if (hasElement(116)) x = x.mul(tmp.elements.effect[116]||1)
 
 			if (hasChargedElement(45)) x = x.pow(tmp.elements.ceffect[45]||1)
+            if (hasChargedElement(116)) x = x.pow(tmp.elements.ceffect[116]||1)
             return x
         },
         massGain() {
@@ -419,6 +420,7 @@ function updateMDTemp() {
     let mdub = 1
     if (hasElement(115)) mdub *= 1.05
     if (player.ranks.hex.gte(115)) mdub *= 1.05
+    if (hasChargedElement(115)) mdub *= 1.05
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) {
         let upg = MASS_DILATION.upgs.ids[x]
         tmp.md.upgs[x].cost = upg.cost(player.md.upgs[x])

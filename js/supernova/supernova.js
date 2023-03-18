@@ -76,7 +76,7 @@ const SUPERNOVA = {
 		
 			if(hasUpgrade('exotic',20) && x.gte(10))x = expMult(x,tmp.ex.exb_eff[4])
 	
-	if(player.gc.active)x = GCeffect(x)
+	if(player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active)x = GCeffect(x)
         return x
     },
     req(x=player.supernova.times) {

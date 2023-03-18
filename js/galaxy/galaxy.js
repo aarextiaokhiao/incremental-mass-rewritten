@@ -9,11 +9,11 @@ const SUPERNOVA_GALAXY = {
 		return ret;
 	},
 	req(){
-		return E(SUPERNOVA_GALAXY.req_base()).pow(player.superGal.scaleEvery('superGal')).mul(1e6).floor();
+		return E(SUPERNOVA_GALAXY.req_base()).pow(player.superGal.scaleEvery('superGal')).mul(hasElement(467)?25000:1e6).floor();
 	},
 	bulk(){
-		if(player.supernova.times.lt(1e6))return new Decimal(0);
-		return player.supernova.times.div(1e6).log(SUPERNOVA_GALAXY.req_base()).scaleEvery('superGal',true).add(1).floor();
+		if(player.supernova.times.lt(hasElement(467)?25000:1e6))return new Decimal(0);
+		return player.supernova.times.div(hasElement(467)?25000:1e6).log(SUPERNOVA_GALAXY.req_base()).scaleEvery('superGal',true).add(1).floor();
 	},
 	reset(force=false){
 		if (!force) {
@@ -159,15 +159,20 @@ const SUPERNOVA_GALAXY = {
 			if(player.superGal.lt(3) || player.chal.active == 21)return new Decimal(1);
 			return Decimal.mul(0.5, player.superGal);
 		},
+		em(){
+			if(!hasElement(467))return 1;
+			return player.superGal.add(1);
+		},
 	},
 	galPow0_gain(){
 		if(player.superGal.lt(1))return E(0);
-		return player.supernova.stars.add(1).log10().pow(player.superGal).pow(tmp.gc.GSeffect);
+		return player.supernova.stars.add(1).log10().pow(player.superGal).pow(tmp.gc.GSeffect).mul(SUPERNOVA_GALAXY.galPow6_eff());
 	},
 	galPow0_eff(){
 		if(player.chal.active == 21)return E(1);
 		let ret=Decimal.pow(1.01,player.galPow[0].add(1).log10());
 		if(hasPrestige(1,90))ret = ret.pow(2)
+		if(player.superCluster.gte(9))ret = ret.pow(34.830358446787444612070950011779)
 		let ss1p=E(0.275);
 		if(hasElement(257))ss1p = E(1);
 		else{
@@ -178,11 +183,12 @@ const SUPERNOVA_GALAXY = {
 		let ss2p=E(0.25);
 		if(hasElement(326))ss2p = ss2p.pow(0.9);
 		if(hasElement(353))ss2p = ss2p.pow(0.9);
+		if(player.superCluster.gte(9))ss2p = ss2p.pow(0.978371914025405050280085767869);
 		return overflow(overflow(overflow(ret,2,3),"e500",ss1p),"e1500",ss2p);
 	},
 	galPow1_gain(){
 		if(player.superGal.lt(6))return E(0);
-		return player.atom.points.add(1).log10().add(1).log10().pow(player.superGal).pow(hasElement(287)?tmp.gc.GSeffect:1);
+		return player.atom.points.add(1).log10().add(1).log10().pow(player.superGal).pow(hasElement(287)?tmp.gc.GSeffect:1).mul(SUPERNOVA_GALAXY.galPow6_eff());
 	},
 	galPow1_eff(){
 		if(player.chal.active == 21)return E(1);
@@ -193,12 +199,13 @@ const SUPERNOVA_GALAXY = {
 	},
 	galPow2_gain(){
 		if(player.superGal.lt(6))return E(0);
-		return player.bh.dm.add(1).log10().add(1).log10().pow(player.superGal).pow(hasElement(281)?tmp.gc.GSeffect:1);
+		return player.bh.dm.add(1).log10().add(1).log10().pow(player.superGal).pow(hasElement(281)?tmp.gc.GSeffect:1).mul(SUPERNOVA_GALAXY.galPow6_eff());
 	},
 	galPow2_eff(){
 		if(player.chal.active == 21)return E(1);
 		let ret=Decimal.pow(1.1,player.galPow[2].add(1).log10());
 		if(hasPrestige(1,136))ret = ret.pow(2.6)
+		if(hasElement(469))return overflow(ret.pow(3),2,4);
 		if(hasElement(347))return overflow(ret.pow(3),2,3);
 		return overflow(overflow(overflow(ret,2,3),"1e43000",0.5),"1e100000",0.5);
 	},
@@ -207,12 +214,13 @@ const SUPERNOVA_GALAXY = {
 		let ret=player.supernova.bosons.photon.add(1).log10().add(1).log10().mul(player.supernova.bosons.gluon.add(1).log10().add(1).log10()).pow(player.superGal.sub(5))
 		ret = ret.pow(hasElement(317)?tmp.gc.GSeffect:1)
 			ret = ret.mul(tmp.fermions.effs[3][1]||E(1));
-		return ret;
+		return ret.mul(SUPERNOVA_GALAXY.galPow6_eff());
 	},
 	galPow3_eff(){
 		if(player.chal.active == 21)return E(1);
 		let ret=Decimal.pow(1.275,player.galPow[3].add(1).log10());
 		if(hasElement(270))ret = ret.pow(1.2);
+		if(hasElement(469))return overflow(ret.pow(3),2,3);
 		if(hasElement(347))return overflow(overflow(ret,2,3),"1e50",0.7);
 		return overflow(overflow(ret,2,3),"1e50",0.5);
 	},
@@ -225,7 +233,7 @@ const SUPERNOVA_GALAXY = {
 		}
 		ret = ret.pow(hasElement(329)?tmp.gc.GSeffect:1)
 		
-		return ret;
+		return ret.mul(SUPERNOVA_GALAXY.galPow6_eff());
 	},
 	galPow4_eff(){
 		if(player.chal.active == 21)return E(1);
@@ -238,11 +246,21 @@ const SUPERNOVA_GALAXY = {
 		let ret=player.supernova.radiation.hz.add(1).log10().add(1).log10().pow(player.superGal.sub(6));
 		ret = ret.pow(hasElement(345)?tmp.gc.GSeffect:1)
 		ret = ret.mul(tmp.fermions.effs[2][4]||E(1));
-		return ret;
+		return ret.mul(SUPERNOVA_GALAXY.galPow6_eff());
 	},
 	galPow5_eff(){
 		if(player.chal.active == 21)return E(1);
 		let ret=Decimal.pow(1.1,player.galPow[5].add(1).log10().pow(2.5));
+		return ret;
+	},
+	galPow6_gain(){
+		if(player.superCluster.lt(9))return E(0);
+		let ret=player.superGal.pow(player.superCluster.div(3).sub(2));
+		return ret;
+	},
+	galPow6_eff(){
+		if(player.chal.active == 21)return E(1);
+		let ret=player.galPow[6].add(1).sqrt();
 		return ret;
 	},
 	galQkGain(){
@@ -281,6 +299,7 @@ const SUPERNOVA_GALAXY = {
 		if(hasUpgrade('inf',25))ret = ret.mul(upgEffect(5,24));
 		ret = ret.mul(SUPERNOVA_CLUSTER.effects.eff1())
 		if (player.ranks.enne.gte(6)) ret = ret.mul(RANKS.effect.enne[6]())
+		ret = ret.mul(SUPERNOVA_GALAXY.galPow6_eff())
 		return ret;
 	},
 }
@@ -292,6 +311,7 @@ function calcSupernovaGalaxy(dt, dt_offline) {
 	player.galPow[3] = player.galPow[3].add(SUPERNOVA_GALAXY.galPow3_gain().mul(dt));
 	player.galPow[4] = player.galPow[4].add(SUPERNOVA_GALAXY.galPow4_gain().mul(dt));
 	player.galPow[5] = player.galPow[5].add(SUPERNOVA_GALAXY.galPow5_gain().mul(dt));
+	player.galPow[6] = player.galPow[6].add(SUPERNOVA_GALAXY.galPow6_gain().mul(dt));
 	player.galQk = player.galQk.add(SUPERNOVA_GALAXY.galQkGain().mul(dt));
 	if(player.exotic.times.gte(50))player.superGal = player.superGal.max(SUPERNOVA_GALAXY.bulk());
 }
@@ -307,9 +327,10 @@ function updateSupernovaGalaxyHTML() {
 	tmp.el.galPow3span.setDisplay(player.superGal.gte(7));
 	tmp.el.galPow4span.setDisplay(player.superGal.gte(9));
 	tmp.el.galPow5span.setDisplay(player.superGal.gte(9));
+	tmp.el.galPow6span.setDisplay(player.superCluster.gte(9));
 	tmp.el.galQkspan.setDisplay(player.superGal.gte(10));
 	tmp.el.galPowNextspan.setDisplay(true);
-	
+
 	if(player.superGal.gte(1)){
 		var html="Your Supernova Galaxies gives you following effects:";
 		html += "<br>Multiply Pre-Quantum Global Speed by "+format(SUPERNOVA_GALAXY.effects.pqgs());
@@ -361,9 +382,13 @@ function updateSupernovaGalaxyHTML() {
 		}else tmp.el.galPowNext.setTxt(6);
 		if(player.superGal.gte(11))html += "<br>Permanently Keep Prestiges";
 		if(player.superGal.gte(13))html += "<br>Permanently Keep C13-C20 completions";
+		if(hasElement(467))html += "<br>Multiply Exotic Matter and Glyphic Mass gain by "+format(SUPERNOVA_GALAXY.effects.em());
 		
 		tmp.el.superGalEff.setHTML(html)
 	}else tmp.el.galPowNext.setTxt(1);
+
+	if(player.superCluster.gte(9))tmp.el.galPow6.setTxt(formatMass(player.galPow[6])+player.galPow[6].formatGain(SUPERNOVA_GALAXY.galPow6_gain(),1))
+	if(player.superCluster.gte(9))tmp.el.galPow6_eff.setTxt(format(SUPERNOVA_GALAXY.galPow6_eff()))
 }
 
 const SUPERNOVA_CLUSTER = {
@@ -410,7 +435,6 @@ function updateSupernovaClusterHTML() {
 	tmp.el.superClusterScale.setTxt(getScalingName('superCluster'));
     tmp.el.superClusterReq.setTxt(format(SUPERNOVA_CLUSTER.req(),0))
 	
-	
 	if(player.superCluster.gte(1)){
 		var html="Your Supernova Clusters gives you following effects:";
 		html += "<br>Multiply Galactic Quarks gain by "+format(SUPERNOVA_CLUSTER.effects.eff1());
@@ -423,6 +447,11 @@ function updateSupernovaClusterHTML() {
 		if(player.superCluster.gte(4))html += "<br>Multiply Dark Ray gain by "+format(SUPERNOVA_CLUSTER.effects.eff1());
 		if(player.superCluster.gte(5))html += "<br>Automatically gain Ascension Level";
 		if(player.superCluster.gte(6))html += "<br>Automatically gain Valor";
+		if(player.superCluster.gte(7))html += "<br>Multiply Abyssal Blot gain by "+format(SUPERNOVA_CLUSTER.effects.eff1());
+		if(player.superCluster.gte(7))html += "<br>Multiply Glyphic Mass gain by "+format(SUPERNOVA_CLUSTER.effects.eff1());
+		if(player.superCluster.gte(8))html += "<br>Multiply Exotic Count gain by "+format(SUPERNOVA_CLUSTER.effects.eff1());
+		if(player.superCluster.gte(9))html += "<br>Galactic Power effect is better";
+		if(player.superCluster.gte(9))html += "<br>Unlock Galactic Mass";
 		
 		tmp.el.superClusterEff.setHTML(html)
 	}

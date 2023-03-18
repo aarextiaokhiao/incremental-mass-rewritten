@@ -34,6 +34,11 @@ const INFINITY_LAYER = {
 			if (z.lt(1)) z=E(1)
 			x = x.mul(z)
 		}
+		if (hasElement(455)){
+			let z = player.galQk.add(1).log(Number.MAX_VALUE).pow(2);
+			if (z.lt(1)) z=E(1)
+			x = x.mul(z)
+		}
 		if (player.qu.times.gte(Number.MAX_VALUE) && player.exotic.times.gte(1)){
 			let z = player.qu.times.add(1).log(Number.MAX_VALUE).pow(2);
 			if (z.lt(1)) z=E(1)

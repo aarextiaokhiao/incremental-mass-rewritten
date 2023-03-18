@@ -133,6 +133,7 @@ function calcShardsEffect() {
 	if(hasElement(238))eff = eff.pow(1.2);
 	if(hasElement(431))eff = eff.pow(1.2);
 	if(hasElement(437))eff = eff.pow(1.2741059573015495880509654614338);
+	if(hasElement(457))eff = eff.pow(1.125);
 	return eff;
 }
 

@@ -13,7 +13,7 @@ const STARS = {
 				if(hasChargedElement(36) && x.gte(10))x = expMult(x,1.1)
 			if (FERMIONS.onActive("33"))x = x.add(1).log10()
 	
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 	
 		tmp.starOverflowPower = E(0.8)
 		if (player.ranks.hept.gte(2))tmp.starOverflowPower = tmp.starOverflowPower.pow(RANKS.effect.hept[2]())
@@ -65,7 +65,7 @@ const STARS = {
 		if(hasChargedElement(69))tmp.stars.effectPowerRaw = tmp.stars.effectPowerRaw.pow(player.ranks.hept.mul(0.01).add(1))
 		tmp.stars.effectPower = overflow(tmp.stars.effectPowerRaw,"ee3",hasChargedElement(76)?0.56:hasChargedElement(48)?0.55:0.5);
 		if(!hasChargedElement(46))tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee8",0.5);
-		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee15",0.5);
+		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee15",player.ranks.enne.gte(12)?0.7:0.5);
 		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"e5e19",0.5);
 		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee21",0.5);
 		tmp.stars.effectRaw = x

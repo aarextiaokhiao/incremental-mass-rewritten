@@ -24,7 +24,7 @@ const ATOM = {
 			
 		if (FERMIONS.onActive("34")) x = x.add(1).log10().pow(3000)
 		
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 			
         return x.floor()
     },
@@ -55,7 +55,7 @@ const ATOM = {
 		if (FERMIONS.onActive("30")) x = x.add(1).log10()
 		
 		
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 			
         return x.floor();
     },
@@ -96,7 +96,7 @@ const ATOM = {
             
 			if (FERMIONS.onActive("20")) x = x.add(1).log10()
 			
-			if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+			if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
 				
 			if (hasUpgrade('atom',24)) return x;
 			tmp.atomicOverflowPower = E(0.8)
@@ -199,12 +199,12 @@ const ATOM = {
             if (player.mainUpg.atom.includes(7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
 			x = x.pow(player.galParticles[i].add(1).log10().add(1).pow(3));
-		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21 || player.exotic.dark_run.active) x = GCeffect(x)
             return x
         },
         powerEffect: [
             x=>{
-                let a = hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(3)
+                let a = hasChargedElement(105) ? x.add(1).log10().add(1).log10().add(1) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(3)
                 let b = hasElement(29) ? x.add(1).log2().pow(1.25).mul(0.01) : x.add(1).pow(2.5).log2().mul(0.01)
 				if(player.ranks.hex.gte(29))b = x.add(1).log2().pow(2);
 				if(hasElement(156)){
@@ -223,7 +223,7 @@ const ATOM = {
                 return {eff1: a, eff2: b}
             },
             x=>{
-                let a = hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(2)
+                let a = hasChargedElement(105) ? x.add(1).log10().add(1).log10().add(1) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(2)
                 let b = player.ranks.hex.gte(19)
                 ?player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(2).mul(x.max(1).log(2)).root(2.1))
                 :hasElement(19)
@@ -246,7 +246,7 @@ const ATOM = {
                 return {eff1: a, eff2: b}
             },
             x=>{
-                let a = hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1)
+                let a = hasChargedElement(105) ? x.add(1).log10().add(1).log10().add(1) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1)
                 let b = hasElement(30) ? x.add(1).log2().pow(1.2).mul(0.01) : x.add(1).pow(2).log2().mul(0.01)
 				if(player.ranks.hex.gte(30))b = x.add(1).log2().pow(2);
 				if(hasElement(346))b = a;
@@ -400,6 +400,8 @@ function galParticleEffect(x){
 	if(hasElement(425))sc_rate+=0.01;
 	if(hasElement(441))sc_rate+=0.02;
 	if(hasElement(449))sc_rate+=0.01;//0.3
+	if(hasElement(462))sc_rate+=0.02;
+	if(hasElement(473))sc_rate+=0.02;
 	ret=overflow(ret,1e7,sc_rate);
 	ret=overflow(ret,5.1e9,hasAscension(0,3)?0.5:0.4);
 	return ret;

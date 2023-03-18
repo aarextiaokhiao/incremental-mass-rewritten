@@ -16,6 +16,7 @@
 	
     <script src="js/exotic/boost.js"></script>
     <script src="js/exotic/exotic.js"></script>
+    <script src="js/exotic/dark_run.js"></script>
 	
     <script src="js/infinity/infinity.js"></script>
     <script src="js/infinity/eternal.js"></script>
@@ -207,6 +208,9 @@
 			<hr>
 			<div id="superClusterEff">
 			</div>
+			<hr>
+			<span id="galPow6span">You have <span id="galPow6">0</span> Galactic Mass (gain based on Supernova Galaxies), which are boosting Galactic Resources gain in Galaxy Tab by <span id="galPow6_eff">1</span>x<br></span>
+			
         </div>
     </div>
     <div id='app' style='display: none'>
@@ -777,6 +781,14 @@
 						</div>
 					</div>
 				</div>
+			</div><div id="stab_frame8_4">
+				While in Dark Run, You are trapped in QC with modifiers [30,30,30,30,30,30,30,30], and Galactic Challenge Difficulty 8.<br>
+				You will gain Glyphic Mass based on  your mass in Dark Run.<br>
+				<button class="btn" onclick="DARK_RUN.enter();">Enter/Exit Dark Run</button><br>
+				You have <span id="dr_points"></span> Glyphic Mass.<br>
+				<div class="table_center">
+					<div id="dr_upg_table" class="table_center" style="width: 1000px;"></div>
+				</div>
 			</div>
         </div><div id="tab_frame9">
             <button class="btn" onclick="save()">Save</button>
@@ -795,7 +807,7 @@
             <h2>Confirmation Settings</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            Incremental Mass Rewritten NG+ - Icons Mod - By garoot and Aarex<br>
+            Incremental Mass Rewritten 0.5 NG+ - Icons Mod - By garoot and Aarex<br>
             Original made by MrRedShark77 and loader3229<br><br>
 
             Hint 1: Hover top image above tabs to show description...<br><br>

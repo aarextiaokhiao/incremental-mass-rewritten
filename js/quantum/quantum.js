@@ -138,7 +138,9 @@ const QUANTUM = {
         return x
     },
     bpEff() {
-        let x = hasElement(101) ? player.qu.bp.add(1).log10().add(1).tetrate(hasUpgrade("br",15) ? 1.35 : 1.25) : player.qu.bp.add(1).log10().add(1).pow(1.5)
+		let bp_free = E(0)
+		if(hasChargedElement(103))bp_free = E("ee10");
+        let x = hasElement(101) ? player.qu.bp.add(bp_free).add(1).log10().add(1).tetrate(hasChargedElement(101) ? 1.4 : hasUpgrade("br",15) ? 1.35 : 1.25) : player.qu.bp.add(bp_free).add(1).log10().add(1).pow(1.5)
 		if(hasPrestige(0,100))x = x.pow(1.02)
         return x
     },
@@ -178,6 +180,7 @@ const QUANTUM = {
         [E(Number.MAX_VALUE), `Quantum times add to Infinity Mass gain formula. Super Supernova Galaxies starts 5 later.`],
         [E('6.9e420'), `Entropic Evaporation^2 is 50% weaker.`],
         [E('1e600'), `Multiply the starting point of Meta-Pent scaling by (quantizes+1).`],
+        [E('4.2e690'), `Green Chroma is applied to Pent.`],
     ],
     auto: {
         mode: ["Amount","Time"],
