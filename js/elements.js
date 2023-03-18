@@ -121,7 +121,7 @@ function setupHTML() {
 		table += `<div style="width: 100%; margin-bottom: 5px;" class="table_center" id="ascensionMassUpg_div_${x}">
 			<div style="width: 400px">
 				<div class="resources">
-					<img src="images/mass_upg${x}.png">
+					<img src="images/am_upg${x}.png">
 					<span style="margin-left: 5px; text-align: left;"><span id="ascensionMassUpg_scale_${x}"></span>${upg.title} [<span id="ascensionMassUpg_lvl_${x}">X</span>]</span>
 				</div>
 			</div><button id="ascensionMassUpg_btn_${x}" class="btn" style="width: 200px;" onclick="UPGS.ascensionMass.buy(${x}, true)">Cost: <span id="ascensionMassUpg_cost_${x}">X</span></button>
@@ -180,7 +180,7 @@ function setupHTML() {
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
-			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/main_upg_${(x==6||y>15)?'placeholder':(id+y)}.png">`
+			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/main_upg_${x>4||y>20?id:(id+y)}.png">`
 		}
 		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button></div>`
 	}

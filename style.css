@@ -431,6 +431,20 @@ button {
 	background-color: #f07;
 }
 
+.btn_tab.ext {
+	color: #ffefbf;
+	background-color: #3f1f00;
+	box-shadow: 0 0 12px #ff1f00;
+	border-color: #ff1f00;
+}
+.btn_tab.ext:not(.choosed):hover {
+	background-color: #7f1f00;
+}
+.btn_tab.ext.choosed {
+	color: black;
+	background-color: #ff1f00;
+}
+
 .btn_tab:not(.choosed):hover {
 	background-color: #444
 }

@@ -20,7 +20,7 @@ const TABS = {
         { id: "Supernova", unl() { return (player.supernova.times.gte(1) || quUnl()) && !player.exotic.times.gte(1) }, style: "sn" },
         { id: "Quantum", unl() { return quUnl() }, style: "qu" },
         { id: "Galactic", unl() { return player.superGal.gt(0) || player.supernova.times.gte(SUPERNOVA_GALAXY.req()) }, style: "gal" },
-        { id: "Exotic", unl() { return player.exotic.times.gte(1) }, style: "red" },
+        { id: "Exotic", unl() { return player.exotic.times.gte(1) }, style: "ext" },
         { id: "Options" },
     ],
     2: {
@@ -31,7 +31,7 @@ const TABS = {
             { id: "Indescribable Matter", unl() { return quUnl() }, style: "qu" },
             { id: "Prestigious", unl() { return hasUpgrade("br", 9) }, style: "pm" },
             { id: "Eternal", unl() { return player.et.times.gt(0) }, style: "et" },
-            { id: "Ascendent", unl() { return hasUpgrade("br", 9) }, style: "pm" },
+            { id: "Ascendent", unl() { return hasUpgrade("br", 9) }, style: "bh" },
         ],
         1: [
             { id: "Ranks Rewards" },
