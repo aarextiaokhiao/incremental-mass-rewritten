@@ -1,6 +1,6 @@
 const UPGS = {
     mass: {
-        cols: 3,
+        cols: 4,
         temp() {
             for (let x = this.cols; x >= 1; x--) {
                 let d = tmp.upgs.mass
@@ -44,8 +44,8 @@ const UPGS = {
             let cost, bulk
 
             if (i==4) {
-                cost = mlt(inc.pow(lvl).mul(start))
-                bulk = player.mass.div(1.5e56).max(1).log10().div(start.mul(1e9)).max(1).log(inc).add(1).floor()
+                cost = mlt(inc.pow(lvl.scaleEvery("massUpg4")).mul(start))
+                bulk = player.mass.div(1.5e56).max(1).log10().div(start.mul(1e9)).max(1).log(inc).scaleEvery("massUpg4",true).add(1).floor()
                 if (player.mass.lt(start)) bulk = E(0)
             } else {
                 if (i == 1 && player.ranks.rank.gte(2)) inc = inc.pow(0.8)
@@ -121,6 +121,7 @@ const UPGS = {
             effect(x) {
                 let xx = x.add(tmp.upgs.mass[3].bonus)
                 if (hasElement(81)) xx = xx.pow(1.1)
+                if (hasChargedElement(81)) xx = xx.pow(2)
                 let ss = E(10)
                 if (player.ranks.rank.gte(34)) ss = ss.add(2)
                 if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
@@ -131,6 +132,9 @@ const UPGS = {
                 if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
                 if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
                 if (player.md.upgs[3].gte(1)) step = step.mul(tmp.md.upgs[3].eff)
+					
+				if (hasUpgrade("exotic",3))step = step.pow(tmp.upgs.mass[4]?tmp.upgs.mass[4].eff.eff:1)
+					
                 let sp = 0.5
                 if (player.mainUpg.atom.includes(9)) sp *= 1.15
                 if (player.ranks.tier.gte(30)) sp *= 1.1
@@ -149,6 +153,10 @@ const UPGS = {
 				if (hasElement(305))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.9;
 				if (hasElement(315))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.8;
 				if (hasPrestige(2,81))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.5;
+				if (player.ranks.enne.gte(3))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.99;
+				if (hasChargedElement(77))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.99;
+				if (hasChargedElement(80))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.997;
+				if (hasChargedElement(85))tmp.strongerOverflowPower = tmp.strongerOverflowPower ** 0.997;
 				tmp.strongerOverflow = overflow(ret, "e4e6", tmp.strongerOverflowPower).log(ret);
 				ret = overflow(ret, "e4e6", tmp.strongerOverflowPower);
                 return {step: step, eff: ret, ss: ss}
@@ -166,9 +174,36 @@ const UPGS = {
                 return x
             },
         },
+        4: {
+            unl() { return hasUpgrade("exotic",3) },
+            title: "Overpower",
+            start: E("ee10"),
+            inc: E("ee10"),
+            effect(x) {
+                let xx = x.add(tmp.upgs.mass[4].bonus)
+				let step = E(0.03)
+				if (player.prestiges[2].gte(165))step = step.add(tmp.prestigeRPEffect)
+                let ss = E(10)
+				let sp = 0.5
+                
+                let ret = step.mul(xx).add(1).softcap(ss,sp,0)
+                return {step: step, eff: ret, ss: ss}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+^"+format(eff.step),
+                    eff: "^"+format(eff.eff)+" to Stronger Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped)</span>`:"")
+                }
+            },
+            bonus() {
+                let x = E(0)
+                if (player.mainUpg.exotic.includes(6)) x = x.add(tmp.upgs.main?tmp.upgs.main[6][6].effect:0)
+                return x
+            },
+        },
     },
     prestigeMass: {
-        cols: 3,
+        cols: 4,
         temp() {
             for (let x = this.cols; x >= 1; x--) {
                 let d = tmp.upgs.prestigeMass
@@ -209,11 +244,15 @@ const UPGS = {
             let lvl = player.prestigeMassUpg[i]||E(0)
             let cost, bulk
 
-            
-            cost = inc.pow(lvl).mul(start)
-            bulk = E(0)
-            if (player.prestigeMass.gte(start)) bulk = player.prestigeMass.div(start).max(1).log(inc).add(1).floor()
-        
+            if (i==4) {
+                cost = mlt(inc.pow(lvl).mul(start))
+                bulk = player.prestigeMass.div(1.5e56).max(1).log10().div(start.mul(1e9)).max(1).log(inc).add(1).floor()
+                if (player.prestigeMass.lt(mlt(start))) bulk = E(0)
+			} else {
+				cost = inc.pow(lvl).mul(start)
+				bulk = E(0)
+				if (player.prestigeMass.gte(start)) bulk = player.prestigeMass.div(start).max(1).log(inc).add(1).floor()
+			}
             return {cost: cost, bulk: bulk}
         },
         1: {
@@ -226,6 +265,7 @@ const UPGS = {
                 if (hasPrestige(2,51)) step = step.mul(prestigeEff(2,51))
                 step = step.mul(tmp.upgs.prestigeMass[2]?tmp.upgs.prestigeMass[2].eff.eff:1)
                 let ret = step.mul(x).add(1)
+				if(hasPrestige(3,24))ret = ret.pow(prestigeEff(3,24));
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -245,6 +285,7 @@ const UPGS = {
                 if (hasPrestige(2,52)) step = step.mul(prestigeEff(2,52))
                 step = step.pow(tmp.upgs.prestigeMass[3]?tmp.upgs.prestigeMass[3].eff.eff:1)
                 let ret = step.mul(x).add(1)
+				if(hasPrestige(3,28))ret = ret.pow(prestigeEff(3,28));
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -263,15 +304,159 @@ const UPGS = {
                 let step = E(0.001)
                 if (hasPrestige(2,53)) step = step.mul(prestigeEff(2,53))
                 if (hasPrestige(3,11)) step = step.mul(prestigeEff(3,11))
+                step = step.mul(tmp.upgs.prestigeMass[4]?tmp.upgs.prestigeMass[4].eff.eff:1)
+				let ret = step.mul(x).add(1).softcap(2000,0.5,0);
+                return {step: step, eff: ret, ss: 2000}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+^"+format(eff.step),
+                    eff: "^"+format(eff.eff)+" to Prestige Booster Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped)</span>`:"")
+                }
+            },
+        },
+        4: {
+            unl() { return hasUpgrade("exotic",4) },
+            title: "Prestige Overpower",
+            start: E(1e-4),
+            inc: E(1.0005),
+            effect(x) {
+                let step = E(0.001)
+				if(hasElement(378))step = step.mul(2)
 				let ret = step.mul(x).add(1);
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
                 return {
-                    step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Prestige Booster Power"
+                    step: "+"+format(eff.step)+"x",
+                    eff: "x"+format(eff.eff)+" to Prestige Stronger Power"
+                }
+            }
+        },
+    },
+    ascensionMass: {
+        cols: 4,
+        temp() {
+            for (let x = this.cols; x >= 1; x--) {
+                let d = tmp.upgs.ascensionMass
+                let data = this.getData(x)
+                d[x].cost = data.cost
+                d[x].bulk = data.bulk
+                
+                d[x].bonus = this[x].bonus?this[x].bonus():E(0)
+                d[x].eff = this[x].effect(player.ascensionMassUpg[x]||E(0))
+                d[x].effDesc = this[x].effDesc(d[x].eff)
+            }
+        },
+        autoSwitch(x) {
+            player.autoascensionMassUpg[x] = !player.autoascensionMassUpg[x]
+        },
+        buy(x, manual=false) {
+            let cost = manual ? this.getData(x).cost : tmp.upgs.ascensionMass[x].cost
+            if (player.ascensionMass.gte(cost)) {
+                if (!player.ascensionMassUpg[x]) player.ascensionMassUpg[x] = E(0)
+                player.ascensionMassUpg[x] = player.ascensionMassUpg[x].add(1)
+            }
+        },
+        buyMax(x) {
+            let d = tmp.upgs.ascensionMass[x]
+            let bulk = d.bulk
+            let cost = d.cost
+            if (player.ascensionMass.gte(cost)) {
+                let m = player.ascensionMassUpg[x]
+                if (!m) m = E(0)
+                m = m.max(bulk.floor().max(m.plus(1)))
+                player.ascensionMassUpg[x] = m
+            }
+        },
+        getData(i) {
+            let upg = this[i]
+            let inc = upg.inc
+            let start = upg.start
+            let lvl = player.ascensionMassUpg[i]||E(0)
+            let cost, bulk
+
+            if (i==4) {
+                cost = mlt(inc.pow(lvl).mul(start))
+                bulk = player.ascensionMass.div(1.5e56).max(1).log10().div(start.mul(1e9)).max(1).log(inc).add(1).floor()
+                if (player.ascensionMass.lt(mlt(start))) bulk = E(0)
+			} else {
+				cost = inc.pow(lvl).mul(start)
+				bulk = E(0)
+				if (player.ascensionMass.gte(start)) bulk = player.ascensionMass.div(start).max(1).log(inc).add(1).floor()
+			}
+            return {cost: cost, bulk: bulk}
+        },
+        1: {
+            unl() { return hasAscension(1,4) },
+            title: "Ascension Muscler",
+            start: E(10),
+            inc: E(1.5),
+            effect(x) {
+                let step = player.ascensions[0]
+                step = step.mul(tmp.upgs.ascensionMass[2]?tmp.upgs.ascensionMass[2].eff.eff:1)
+                let ret = step.mul(x).add(1)
+                return {step: step, eff: ret}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+"+format(eff.step),
+                    eff: "x"+format(eff.eff)+" to Ascension Mass gain"
                 }
             },
+        },
+        2: {
+            unl() { return hasAscension(1,5) },
+            title: "Ascension Booster",
+            start: E(100),
+            inc: E(4),
+            effect(x) {
+                let step = player.ascensions[1]
+                step = step.pow(tmp.upgs.ascensionMass[3]?tmp.upgs.ascensionMass[3].eff.eff:1)
+                let ret = step.mul(x).add(1)
+                return {step: step, eff: ret}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+"+format(eff.step)+"x",
+                    eff: "x"+format(eff.eff)+" to Ascension Muscler Power"
+                }
+            },
+        },
+        3: {
+            unl() { return hasAscension(1,6) },
+            title: "Ascension Stronger",
+            start: E(1000),
+            inc: E(9),
+            effect(x) {
+                let step = E(0.1)
+                step = step.mul(tmp.upgs.ascensionMass[4]?tmp.upgs.ascensionMass[4].eff.eff:1)
+				let ret = step.mul(x).add(1).softcap(2000,0.5,0);
+                return {step: step, eff: ret, ss: 2000}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+^"+format(eff.step),
+                    eff: "^"+format(eff.eff)+" to Ascension Booster Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped)</span>`:"")
+                }
+            },
+        },
+        4: {
+            unl() { return false },
+            title: "Ascension Overpower",
+            start: E(1e-4),
+            inc: E(1.0005),
+            effect(x) {
+                let step = E(0.001)
+				let ret = step.mul(x).add(1);
+                return {step: step, eff: ret}
+            },
+            effDesc(eff) {
+                return {
+                    step: "+"+format(eff.step)+"x",
+                    eff: "x"+format(eff.eff)+" to Ascension Stronger Power"
+                }
+            }
         },
     },
     main: {
@@ -283,8 +468,8 @@ const UPGS = {
                 }
             }
         },
-        ids: [null, 'rp', 'bh', 'atom', 'br', 'inf'],
-        cols: 5,
+        ids: [null, 'rp', 'bh', 'atom', 'br', 'inf', 'exotic'],
+        cols: 6,
         over(x,y) { player.main_upg_msg = [x,y] },
         reset() { player.main_upg_msg = [0,0] },
         1: {
@@ -300,7 +485,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return player.mainUpg.bh.includes(5) },
-            lens: 20,
+            lens: 25,
             1: {
                 desc: "Boosters adds Musclers.",
                 cost: E(1),
@@ -388,7 +573,7 @@ const UPGS = {
                 desc: "For every OoM of Rage Powers adds Stronger Power at a reduced rate.",
                 cost: E(1e120),
                 effect() {
-                    let ret = player.rp.points.max(1).log10().softcap(200,0.75,0).div(1000)
+                    let ret = player.rp.points.max(1).log10().softcap(200,hasUpgrade('rp',23)?0.8:0.75,0).div(1000)
                     return ret
                 },
                 effDesc(x=this.effect()) {
@@ -457,11 +642,44 @@ const UPGS = {
                 cost: E('ee151'),
                 effect() {
                     let ret = player.rp.points.add(1).log10().add(1).log10().add(1).log10().add(1).pow(0.1);
+					if(hasUpgrade('rp',25))ret = ret.pow(20);
                     return ret
                 },
                 effDesc(x=this.effect()) {
                     return format(x)+"x"
                 },
+            },
+            21: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Super Overpower starts 1.08x later.",
+                cost: E('ee1.04e14'),
+            },
+            22: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Rage Power boost Tickspeed Power.",
+                cost: E('ee1.25e14'),
+                effect() {
+                    let ret = expMult(player.rp.points.add(1e10),player.rp.points.add(1e10).log10().add(1).log10().add(1).log10().div(500).add(0.001));
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
+            },
+            23: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "The softcap of Rage Upgrade 12 is weaker.",
+                cost: E('ee1.5e14'),
+            },
+            24: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Rage Upgrade 18 boost Galactic Quarks.",
+                cost: E('ee2.22222222e14'),
+            },
+            25: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Rage Power Upgrade 20 is better.",
+                cost: E('ee4.5e14'),
             },
         },
         2: {
@@ -477,7 +695,7 @@ const UPGS = {
                     player.mainUpg.bh.push(x)
                 }
             },
-            lens: 20,
+            lens: 25,
             1: {
                 desc: "Mass Upgardes no longer spends mass.",
                 cost: E(1),
@@ -557,7 +775,7 @@ const UPGS = {
                 desc: "Mass gain is boosted by OoM of Dark Matters.",
                 cost: E(1e33),
                 effect() {
-                    let ret = E(2).pow(player.bh.dm.add(1).log10().softcap(11600,0.5,0))
+                    let ret = E(2).pow(overflow(player.bh.dm.add(1).log10().softcap(11600,0.5,0),"e5e13",0.2))
                     return ret
                 },
                 effDesc(x=this.effect()) {
@@ -630,6 +848,7 @@ const UPGS = {
                 desc: "Black Hole effect exponentially boost mass gain.",
                 cost: E('e2e130'),
                 effect() {
+					if(hasChargedElement(71))return (tmp.bh?(tmp.bh.effect||E(1)):E(1)).add(1).log10();
 					if(hasElement(279))return expMult((tmp.bh?(tmp.bh.effect||E(1)):E(1)).add(1).log10(),0.8);
                     return (tmp.bh?(tmp.bh.effect||E(1)):E(1)).add(1).log10().add(1).log10().pow(0.1);
                 },
@@ -641,6 +860,45 @@ const UPGS = {
                 unl() { return hasUpgrade('inf',15) },
                 desc: "The first Black Hole Overflow effect is weaker.",
                 cost: E('ee170'),
+            },
+            21: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Dark Matter boost BH Condenser Power.",
+                cost: E('ee1.22e14'),
+                effect() {
+                    let ret = expMult(player.bh.dm.add(1e10),player.bh.dm.add(1e10).log10().add(1).log10().add(1).log10().div(500).add(0.001));
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
+            },
+            22: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Dark Matter Upgrade 18 boost Galactic Quarks.",
+                cost: E('ee1.5e14'),
+            },
+            23: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Black Hole Overflow is weaker.",
+                cost: E('ee2.33333333e14'),
+            },
+            24: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Change the effect of [Neut-Tau], and the Meta scaling of BH Condensers and Cosmic Rays are affected by [Neut-Tau]. Improve the effect of Entropic Multiplier.",
+                cost: E('ee3.6e14'),
+            },
+            25: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Mass of Black Hole boost Exotic Matter gain.",
+                cost: E('ee4.7e14'),
+                effect() {
+                    let ret = player.bh.mass.add(1e10).slog();
+                    return ret
+                },
+                effDesc(x=this.effect()) {
+                    return format(x)+"x"
+                },
             },
         },
         3: {
@@ -665,7 +923,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasTree("qol1") },
-            lens: 20,
+            lens: 25,
             1: {
                 desc: "Start with Mass upgrades unlocked.",
                 cost: E(1),
@@ -812,6 +1070,31 @@ const UPGS = {
                     return format(x)+"x"
                 },
             },
+            21: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Quark gain formula is better, and raise Electron Power's 2nd effect by 4.",
+                cost: E('ee1.92e11'),
+            },
+            22: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Boost Star Generators gain.",
+                cost: E('ee2.1e11'),
+            },
+            23: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Atom Upgrade 13 Boost Galactic Quarks.",
+                cost: E('ee3e11'),
+            },
+            24: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Remove Atomic Overflow.",
+                cost: E('ee4.2e11'),
+            },
+            25: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Unlock Element Tier 4.",
+                cost: E('ee1e12'),
+            },
         },
         4: {
             title: "Big Rip Upgrades",
@@ -826,7 +1109,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return false },
-            lens: 20,
+            lens: 25,
             1: {
                 desc: `Start with Hydrogen-1 unlocked in Big Rip.`,
                 cost: E(5),
@@ -944,6 +1227,35 @@ const UPGS = {
                 },
                 effDesc(x=this.effect()) { return "^"+format(x) },
             },
+            21: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Remove Death Shard gain softcap.",
+                cost: E('e1.8e13'),
+            },
+            22: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Change the effect of C14.",
+                cost: E('e1.5e14'),
+            },
+            23: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Death Shards boost Exotic Matter gain.",
+                cost: E('e4e14'),
+				effect(){
+					return player.qu.rip.amt.add(1e10).slog().pow(2.5);
+				},
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            24: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "The Impossible scaling of All Challenges is 20% weaker.",
+                cost: E('e6e14'),
+            },
+            25: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Base Quantum Foam gain ^(16/9)",
+                cost: E('e2.4e15'),
+            },
         },
         5: {
             title: "Infinity Upgrades",
@@ -958,7 +1270,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return false },
-            lens: 20,
+            lens: 25,
             1: {
                 desc: `Multiply your quantum times gain by (200+Infinity times). Infinity Mass boost Quantum Foam gain. The actual cost of this upgrade is 1 mg of Infinity Mass.`,
                 cost: E(1e-3),
@@ -995,6 +1307,7 @@ const UPGS = {
                 cost: E(2),
                 effect() {
                     let x = player.inf.times.add(1);
+					if(hasUpgrade('inf',23))x = expMult(x.add(100),1.5);
                     return x
                 },
                 effDesc(x=this.effect()) { return "x"+format(x) },
@@ -1003,10 +1316,11 @@ const UPGS = {
                 desc: `Keep your elements when Infinity. Infinity Mass boost Prestige Mass gain.`,
                 cost: E(5),
                 effect() {
-                    let x = overflow(player.inf.points.add(1).pow(0.5),"1e2500",0.5);
+					if(hasElement(430))return player.inf.points.add(1).pow(0.5);
+                    let x = overflow(player.inf.points.add(1).pow(0.5),"1e2500",hasUpgrade("inf",22)?0.7:0.5);
                     return x
                 },
-                effDesc(x=this.effect()) { return "x"+format(x)+(x.gte("1e2500")?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x=this.effect()) { return "x"+format(x)+((x.gte("1e2500") && !hasElement(430))?" <span class='soft'>(softcapped)</span>":"") },
             },
             6: {
                 desc: `Mass gain softcap^6-7 are 50% weaker.`,
@@ -1087,6 +1401,188 @@ const UPGS = {
                 unl() { return hasUpgrade('inf',15) },
                 desc: `Infinity Mass formula from Death Shards is better, and Death Shard gain softcap is weaker.`,
                 cost: E(1e51),
+            },
+            21: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Reduce Supernova Galaxies Requirements.",
+                cost: E('e110000'),
+            },
+            22: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Infinity Upgrade 5's softcap is weaker.",
+                cost: E('e120000'),
+            },
+            23: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Infinity Upgrade 4 is better.",
+                cost: E('e123000'),
+            },
+            24: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Infinity Mass boost Exotic Matter.",
+                cost: E('e126000'),
+                effect() {
+                    let x = player.inf.points.add(1).log10().add(1).log10();
+					if(hasElement(447))x = x.pow(2);
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            25: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Infinity Upgrade 24 boost Galactic Quarks.",
+                cost: E('e141000'),
+            },
+        },
+        6: {
+            title: "Exotic Upgrades",
+            res: "Exotic Matter",
+            getRes() { return player.exotic.points },
+            unl() { return player.exotic.times.gte(1) },
+            can(x) { return player.exotic.points.gte(this[x].cost) && !player.mainUpg.exotic.includes(x) },
+            buy(x) {
+                if (this.can(x)) {
+                    player.exotic.points = player.exotic.points.sub(this[x].cost)
+                    player.mainUpg.exotic.push(x)
+                }
+            },
+            auto_unl() { return false },
+            lens: 25,
+            1: {
+                desc: `Multiply your Eternity times gain by (200+Exotic reset times). Remove Mass and Star Overflow.`,
+                cost: E(1),
+            },
+            2: {
+                desc: `Super Supernova Galaxies starts 5 later.`,
+                cost: E(5),
+            },
+            3: {
+                desc: `Unlock Mass Upgrade 4.`,
+                cost: E(15),
+            },
+            4: {
+                desc: `Unlock Prestige Mass Upgrade 4.`,
+                cost: E(30),
+            },
+            5: {
+                desc: `Unlock Reset Count Booster.`,
+                cost: E(150),
+            },
+            6: {
+                unl() { return hasUpgrade('exotic',5) },
+                desc: "Prestige Overpower provide free Overpower.",
+                cost: E(750),
+                effect() {
+                    let ret = player.prestigeMassUpg[4].div(40);
+					if(hasUpgrade('exotic',7))ret = ret.mul(2);
+					if(hasUpgrade('exotic',9))ret = ret.mul(2.5);
+					if(hasUpgrade('exotic',14))ret = ret.mul(2);
+					if(hasUpgrade('exotic',16))ret = ret.mul(2);
+					if(hasUpgrade('exotic',23))ret = ret.mul(2);
+                    return ret.floor()
+                },
+                effDesc(x=this.effect()) {
+                    return "+"+format(x,0)+" Overpower"
+                },
+            },
+            7: {
+                unl() { return hasUpgrade('exotic',5) },
+                desc: "Double the effect of Exotic Upgrade 6.",
+                cost: E(10000)
+            },
+            8: {
+                unl() { return hasUpgrade('exotic',5) },
+                desc: "Hawking Radiation gain is better.",
+                cost: E(25000)
+            },
+            9: {
+                unl() { return hasUpgrade('exotic',5) },
+                desc: "Multiply the effect of Exotic Upgrade 6 by 2.5.",
+                cost: E(50000)
+            },
+            10: {
+                unl() { return hasUpgrade('exotic',5) },
+                desc: "Unlock Exotic Boosts.",
+                cost: E(200000)
+            },
+            11: {
+                unl() { return hasUpgrade('exotic',10) },
+                desc: "Unlock a new Exotic Boost type.",
+                cost: E(800000)
+            },
+            12: {
+                unl() { return hasUpgrade('exotic',10) },
+                desc: "Break Dilation Upgrade 5 affects Meta-Pent.",
+                cost: E(2000000)
+            },
+            13: {
+                unl() { return hasUpgrade('exotic',10) },
+                desc: "Raise Neutron and Electron Power effects by 5.",
+                cost: E(4000000)
+            },
+            14: {
+                unl() { return hasUpgrade('exotic',10) },
+                desc: "Double the effect of Exotic Upgrade 6.",
+                cost: E(10000000)
+            },
+            15: {
+                unl() { return hasUpgrade('exotic',10) },
+                desc: "Unlock Darkness.",
+                cost: E(1e8)
+            },
+            16: {
+                unl() { return hasUpgrade('exotic',15) },
+                desc: "Double the effect of Exotic Upgrade 6.",
+                cost: E(1e9)
+            },
+            17: {
+                unl() { return hasUpgrade('exotic',15) },
+                desc: "Multiply Exotic Matter gain by (1+Exotic reset times).",
+                cost: E(1e10)
+            },
+            18: {
+                unl() { return hasUpgrade('exotic',15) },
+                desc: "Unlock a new Exotic Boost type.",
+                cost: E(3e11)
+            },
+            19: {
+                unl() { return hasUpgrade('exotic',15) },
+                desc: "Permanently keep all upgrades, and unlock more upgrades.",
+                cost: E(3e12)
+            },
+            20: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Unlock a new Exotic Boost type.",
+                cost: E(1e14)
+            },
+            21: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Meta-Pent starts later based on Exotic Matter.",
+                cost: E(2e15),
+				effect(){
+					return overflow(player.exotic.points.add(1),1e10,hasAscension(1,8)?2.5:2);
+				},
+                effDesc(x=this.effect()) { return "x"+format(x)+" later"; },
+            },
+            22: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Exotic Matter gain formula is better.",
+                cost: E(2e16),
+            },
+            23: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Double the effect of Exotic Upgrade 6.",
+                cost: E(2e20),
+            },
+            24: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Unlock a new Exotic Boost type.",
+                cost: E(1e25),
+            },
+            25: {
+                unl() { return hasUpgrade('exotic',19) },
+                desc: "Unlock the final Exotic Boost type, Exotic Boost Importing and Exotic Boost Exporting.",
+                cost: E(1e30),
             },
         },
     },

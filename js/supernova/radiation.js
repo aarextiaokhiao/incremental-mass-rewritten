@@ -117,9 +117,10 @@ const RADIATION = {
             title: `BH-Exponent Boost`,
             eff(b) {
                 let x = b.root(2).div(100)
+				if(hasChargedElement(58))return x
                 return x.min(.15)
             },
-            desc(x) { return `Exponent from the mass of BH formula is increased by ${format(x)} (hardcapped to 0.15)` },
+            desc(x) { return `Exponent from the mass of BH formula is increased by ${format(x)}`+(hasChargedElement(58)?"":"(hardcapped to 0.15)}") },
         },{
             title: `BH-Condenser Boost`,
             eff(b) {

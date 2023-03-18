@@ -33,15 +33,25 @@ const ELEMENTS = {
         'Roeritgenium','Copernicium','Nihonium','Flerovium','Moscovium','Livermorium','Tennessine','Oganesson'
     ],
     canBuy(x) { 
+		if(this.upgs[x].qk)return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x)
+		if(this.upgs[x].exotic)return player.exotic.points.gte(this.upgs[x].cost) && !hasElement(x)
+		if(this.upgs[x].ds)return player.exotic.ds.gte(this.upgs[x].cost) && !hasElement(x)
 		if(this.upgs[x].galQk)return player.galQk.gte(this.upgs[x].cost) && !hasElement(x)
 		if(this.upgs[x].et)return player.et.points.gte(this.upgs[x].cost) && !hasElement(x)
 		if(x>118) return player.inf.points.gte(this.upgs[x].cost) && !hasElement(x)
 		return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : x <= 86) && !tmp.elements.cannot.includes(x)
 	},
-    buyUpg(x) {
+    canCharge(x) {
+		if(!this.upgs[x].ccost)return false;
+		return player.atom.quarks.gte(this.upgs[x].ccost) && !hasChargedElement(x) && hasElement(380)
+	},
+    buyUpg(x,y) {
         if (this.canBuy(x)) {
 			if(x>118){
-				if(this.upgs[x].galQk)player.galQk = player.galQk.sub(this.upgs[x].cost)
+				if(this.upgs[x].qk)player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
+				else if(this.upgs[x].exotic)player.exotic.points = player.exotic.points.sub(this.upgs[x].cost)
+				else if(this.upgs[x].ds)player.exotic.ds = player.exotic.ds.sub(this.upgs[x].cost)
+				else if(this.upgs[x].galQk)player.galQk = player.galQk.sub(this.upgs[x].cost)
 				else if(this.upgs[x].et)player.et.points = player.et.points.sub(this.upgs[x].cost)
 				else player.inf.points = player.inf.points.sub(this.upgs[x].cost)
 			}else{
@@ -49,16 +59,23 @@ const ELEMENTS = {
 			}
             player.atom.elements.push(x)
         }
+        if (this.canCharge(x) && !y) {
+            player.atom.chargedElements.push(x)
+        }
     },
     upgs: [
         null,
         {
             desc: `Improves quark gain formula is better.`,
             cost: E(5e8),
+            cdesc: `Quark gain exponent ^1.01`,
+            ccost: E("ee2.7777e12"),
         },
         {
             desc: `Hardened Challenge scale 25% weaker.`,
             cost: E(2.5e12),
+            cdesc: `Impossible Challenge scale 5% weaker`,
+            ccost: E("ee2.8e12"),
         },
         {
             desc: `Electron Power boost Atomic Powers gain.`,
@@ -66,13 +83,16 @@ const ELEMENTS = {
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
 				if(player.ranks.hex.gte(3))x=x.pow(1.5);
+				if(hasChargedElement(3))return x;
                 if (x.gte('e1e4')) x = expMult(x.div('e1e4'),0.9).mul('e1e4')
 				if (x.gte('ee4000')) x = overflow(x,'ee4000',0.5);
 				if (x.gte('ee2250000')) x = overflow(x,'ee2250000',0.5);
 				if (x.gte('ee7500000')) x = overflow(x,'ee7500000',0.5);
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')&&!hasChargedElement(3)?" <span class='soft'>(softcapped)</span>":"") },
+            cdesc: `Remove All Softcaps from its effect`,
+            ccost: E("ee2.9e12"),
         },
         {
             desc: `Stronger's power is stronger based on Proton Powers.`,
@@ -80,13 +100,18 @@ const ELEMENTS = {
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
 				if(player.ranks.hex.gte(4))x=x.pow(1.05);
+				if(hasChargedElement(4))x=x.pow(1.05);
 				return x
             },
             effDesc(x) { return format(x)+"x stronger" },
+            cdesc: `Effect of this element ^1.05`,
+            ccost: E("ee2.9e12"),
         },
         {
             desc: `The 7th challenge's effect is twice as effective.`,
             cost: E(1e18),
+            cdesc: `The 7th challenge's effect is better`,
+            ccost: E("ee3e12"),
         },
         {
             desc: `Gain 1% more quarks for each challenge completion.`,
@@ -100,6 +125,15 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return format(x)+"x" },
+            cdesc: `This element's effect boost Exotic Matter at a reduced rate.`,
+            ccost: E("ee3.1e12"),
+            ceffect() {
+                let x = E(0)
+                for (let i = 1; i <= CHALS.cols; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
+                if (hasElement(7)) x = x.mul(tmp.elements.effect[7])
+                return x.add(10).log10().pow(hasChargedElement(87)?2:1);
+            },
+            ceffDesc(x) { return format(x)+"x" },
         },
         {
             desc: `Carbon's effect is now multiplied by the number of elements bought.`,
@@ -108,29 +142,48 @@ const ELEMENTS = {
                 let x = E(player.atom.elements.length+1)
 				if (player.ranks.hex.gte(7))x = x.pow(1.1);
                 if (hasElement(11) && (!hasElement(87) || player.ranks.hex.gte(11))) x = x.pow(2);
+                if (hasChargedElement(11)) x = x.pow(3);
+				if (hasChargedElement(7))x = x.pow(tmp.elements.ceffect[7]||E(1));
                 return x
             },
             effDesc(x) { return format(x)+"x" },
+            cdesc: `Boost this element's effect based on the number of elements charged.`,
+            ccost: E("ee3.2e12"),
+            ceffect() {
+                let x = E(player.atom.chargedElements.length+1)
+                return x;
+            },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `C2's reward's softcap is 75% weaker.`,
             cost: E(1e21),
+            cdesc: `C13's reward's softcap starts later.`,
+            ccost: E("ee3.2e12"),
         },
         {
             desc: `The Tetr requirement is 15% weaker.`,
             cost: E(6.5e21),
+            cdesc: `The Tier requirement is broken.`,
+            ccost: E("ee3.7e12"),
         },
         {
             desc: `3rd & 4th challenges' scaling is weakened.`,
             cost: E(1e24),
+            cdesc: `C20 scaling is weakened.`,
+            ccost: E("ee3.9e12"),
         },
         {
             desc: `Nitrogen's multiplier is squared.`,
             cost: E(1e27),
+            cdesc: `Nitrogen's multiplier is cubed.`,
+            ccost: E("ee4.65e12"),
         },
         {
             desc: `Power's gain from each particle formula is better.`,
             cost: E(1e29),
+            cdesc: `This element is better.`,
+            ccost: E("ee4.65e12"),
         },
         {
             desc: `For every c7 completion, add 2 c5 & 6 completion.`,
@@ -141,14 +194,20 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "+"+format(x) },
+            cdesc: `The 7th challenge's effect is better`,
+            ccost: E("ee4.8e12"),
         },
         {
             desc: `Passively gain 5% of the quarks you would get from resetting each second.`,
             cost: E(1e33),
+            cdesc: `Passively gain 100% of the Dark Ray you would get from resetting each second.`,
+            ccost: E("ee5e12"),
         },
         {
             desc: `Super BH Condenser & Cosmic Ray scales 20% weaker.`,
             cost: E(1e34),
+            cdesc: `Remove Meta-Cosmic Ray scaling.`,
+            ccost: E("ee5.2e12"),
         },
         {
             desc: `Silicon now gets +2% for each element bought.`,
@@ -159,10 +218,14 @@ const ELEMENTS = {
                 return Number(x)
             },
             effDesc(x) { return "+"+format(x*100)+"%" },
+            cdesc: `This element's effect boost Silicon's Charged Effect.`,
+            ccost: E("ee5.2e12"),
         },
         {
             desc: `Raise Atom's gain by 1.1.`,
             cost: E(1e40),
+            cdesc: `Raise Atom's gain exponent by 1.01.`,
+            ccost: E("ee5.3e12"),
         },
         {
             desc: `You can now automatically buy Cosmic Rays. Cosmic Ray raise tickspeed effect at an extremely reduced rate.`,
@@ -173,18 +236,26 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "^"+format(x) },
+            cdesc: `Argon's effect boost Normal Mass gain.`,
+            ccost: E("ee5.4e12"),
         },
         {
             desc: `2nd Neutron's effect is better.`,
             cost: E(1e50),
+            cdesc: `2nd Neutron's effect is squared.`,
+            ccost: E("ee5.75e12"),
         },
         {
             desc: `Adds 50 more C7 maximum completions.`,
             cost: E(1e53),
+            cdesc: `The 7th challenge's effect is better`,
+            ccost: E("ee5.9e12"),
         },
         {
             desc: `Unlock Mass Dilation.`,
             cost: E(1e56),
+            cdesc: `Dilated Overflow is weaker.`,
+            ccost: E("ee6e12"),
         },
         {
             desc: `Dilated mass gain is affected by tickspeed at a reduced rate.`,
@@ -192,13 +263,18 @@ const ELEMENTS = {
             effect() {
                 let x = E(1.25).pow(player.tickspeed.pow(0.55))
 				if(player.ranks.hex.gte(22))x = E(10).pow(player.tickspeed)
-                return x
+				if(hasChargedElement(22))x = E(10).pow(player.tickspeed.pow(1.25))
+                return x.min('eee15')
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return format(x)+"x"+(x.gte('eee15')?" <span class='soft'>(hardcapped)</span>":"")  },
+            cdesc: `This element is better.`,
+            ccost: E("ee6.3e12"),
         },
         {
             desc: `The Atomic Power effect is better.`,
             cost: E(1e65),
+            cdesc: `This element is better.`,
+            ccost: E("ee6.9e12"),
         },
         {
             desc: `Passively gain 100% of the atoms you would get from resetting each second. Atomic Power boost Relativistic particles gain at a reduced rate.`,
@@ -209,10 +285,14 @@ const ELEMENTS = {
 				return x
             },
             effDesc(x) { return hasPrestige(0,40) ? "^"+format(x) : format(x)+"x" },
+            cdesc: `Passively gain 100% of the Exotic Matter you would get from resetting each second.`,
+            ccost: E("ee7.5e12"),
         },
         {
             desc: `Adds 1 base of Mass Dilation upgrade 1 effect.`,
             cost: E(1e80),
+            cdesc: `Adds 1 base of Mass Dilation upgrade 3 effect.`,
+            ccost: E("ee7.7e12"),
         },
         {
             desc: `Hardened Challenge scaling weaker for each element bought.`,
@@ -223,22 +303,42 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            cdesc: `Impossible Challenge scaling weaker for each element charged.`,
+            ccost: E("ee7.7e12"),
+            ceffect() {
+                let x = E(0.999).pow(E(player.atom.chargedElements.length))
+                return x
+            },
+            ceffDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
         },
         {
             desc: `Hyper/Ultra Rank & Tickspeed scales 25% weaker.`,
             cost: E(1e90),
+            cdesc: `Meta Tickspeed scales 99% weaker.`,
+            ccost: E("ee8.8e12"),
         },
         {
             desc: `Mass gain is raised to the power of 1.5th if you dilated mass.`,
             cost: E(1e97),
+            cdesc: `Dilated Mass boost Mass gain.`,
+            ccost: E("ee8.9e12"),
+            ceffect() {
+                let x = player.md.mass.add(10).log10();
+                return x
+            },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Proton powers effect is better.`,
             cost: E(1e100),
+            cdesc: `Proton powers effect is squared.`,
+            ccost: E("ee9.3e12"),
         },
         {
             desc: `Electron powers effect is better. Passively gain 10% of each particle you would assign quarks.`,
             cost: E(1e107),
+            cdesc: `Electron powers effect is squared.`,
+            ccost: E("ee9.7e12"),
         },
         {
             desc: `Dilated mass boost Relativistic particles gain.`,
@@ -248,14 +348,25 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { if(player.ranks.hex.gte(31))return "^"+format(x)+", "+format(player.md.mass.add(1).pow(0.0125))+"x";return format(player.md.mass.add(1).pow(0.0125))+"x" },
+            cdesc: `Dilated mass boost Relativistic mass gain.`,
+            ccost: E("ee1.1e13"),
+            ceffect() {
+                let x = player.md.mass.add(1).log10().add(1).log10().add(1).log10().add(1);
+                return x
+            },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Increase dilated mass gain exponent by 5%.`,
             cost: E(1e140),
+            cdesc: `Multiply dilated mass gain exponent by 10.`,
+            ccost: E("ee1.5e13"),
         },
         {
             desc: `Add 50 more C8 maximum completions.`,
             cost: E(1e155),
+            cdesc: `The effect of Challenge 8 is better.`,
+            ccost: E("ee1.5e13"),
         },
         {
             desc: `Rage power boost Relativistic particles gain.`,
@@ -266,6 +377,13 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { if(player.ranks.hex.gte(34))return "^"+format(x);return format(x)+"x" },
+            cdesc: `This element's effect boost Relativistic mass gain.`,
+            ccost: E("ee1.6e13"),
+            ceffect() {
+                let x = player.rp.points.add(1).log10().add(1).log10().add(1).log10().add(1);
+                return x
+            },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Mass from Black Hole boost dilated mass gain.`,
@@ -276,10 +394,19 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { if(player.ranks.hex.gte(35))return "^"+format(x);return format(x)+"x" },
+            cdesc: `This element's effect boost Relativistic mass gain.`,
+            ccost: E("ee1.6e13"),
+            ceffect() {
+                let x = player.bh.mass.add(1).log10().add(1).log10().add(1).log10().add(1).sqrt();
+                return x
+            },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Unlock Stars.`,
             cost: E(1e225),
+            cdesc: `Collapsed Star gain exponent ^1.1`,
+            ccost: E("ee1.6e13"),
         },
         {
             desc: `Super Tier scale weaker based on Tetr.`,
@@ -290,6 +417,13 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            cdesc: `Meta-Hex scale weaker based on Tetr.`,
+            ccost: E("ee2.6e13"),
+            ceffect() {
+                let x = E(0.9).pow(player.ranks.tetr.add(1).log10().add(1).log10().add(1).log10());
+                return x
+            },
+            ceffDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
         },
         {
             desc: `Cosmic Ray's free tickspeeds now adds to RU7.`,
@@ -298,13 +432,18 @@ const ELEMENTS = {
                 let x = tmp.atom?tmp.atom.atomicEff:E(0)
                 if (hasElement(82)) x = x.mul(3)
                 if (player.ranks.hex.gte(38)) x = x.mul(2)
+				if (hasChargedElement(82))return x.pow(2)
                 return x.div(6).floor()
             },
             effDesc(x) { return "+"+format(x,0)+" to Rage Power Upgrade 7" },
+            cdesc: `Cosmic Ray's free tickspeeds now adds to BH Condensers.`,
+            ccost: E("ee2.7e13"),
         },
         {
             desc: `Remove softcap from C2 & C6 effects.`,
             cost: E(1e285),
+            cdesc: `C13 effect softcap starts later.`,
+            ccost: E("ee2.7e13"),
         },
         {
             desc: `Collapsed star boost dilated mass gain.`,
@@ -312,31 +451,50 @@ const ELEMENTS = {
             effect() {
                 let x = player.stars.points.add(1).pow(0.5)
                 if (player.ranks.hex.gte(40)) x = x.pow(2)
+                return x.min('ee3e13')
+            },
+            effDesc(x) { return format(x)+"x"+(x.gte('ee3e13')?" <span class='soft'>(hardcapped)</span>":"") },
+            cdesc: `Collapsed star boost Relativistic mass gain.`,
+            ccost: E("ee3e13"),
+            ceffect() {
+                let x = player.stars.points.add(1).log10().add(1).log10().add(1).log10().add(1);
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Add 50 more C7 maximum completions.`,
             cost: E('e315'),
+            cdesc: `The 7th challenge's effect is better`,
+            ccost: E("ee3.1e13"),
         },
         {
             desc: `Collapsed star boost quark gain.`,
             cost: E('e325'),
             effect() {
+				if(hasChargedElement(42))return Decimal.pow(10,expMult(player.stars.points.add(1).log10().add(1).log10().add(2),0.96));
                 let x = player.stars.points.add(1).pow(1/3)
                 if (player.ranks.hex.gte(42)) x = x.pow(3)
-                return x
+                return x.min('eee10')
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { 
+				if(hasChargedElement(42))return "^"+format(x);
+				return format(x)+"x"+(x.gte('eee10')?" <span class='soft'>(hardcapped)</span>":"") 
+			},
+            cdesc: `This element is better`,
+            ccost: E("ee3.2e13"),
         },
         {
             desc: `You can now automatically buy mass dilation upgrades if you purchased any first. They no longer spent dilated mass.`,
             cost: E('e360'),
+            cdesc: `You can now automatically buy Reset Count Boosters. They no longer spent Exotic Matter.`,
+            ccost: E("ee3.3e13"),
         },
         {
             desc: `The Tetr requirement is broken.`,
             cost: E('e380'),
+            cdesc: `The Tier requirement is broken.`,
+            ccost: E('ee3.4e13'),
         },
         {
             desc: `Collapsed star boost relativistic particles gain.`,
@@ -347,6 +505,13 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { if(player.ranks.hex.gte(45))return "^"+format(x);return format(x)+"x" },
+            cdesc: `This element's effect boost Relativistic Energy gain.`,
+            ccost: E('ee3.5e13'),
+            ceffect() {
+                let x = player.stars.points.add(1).log10().add(1).log10().add(1).log10().add(1).sqrt();
+                return x
+            },
+            ceffDesc(x) { return "^"+format(x) },
         },
         {
             desc: `Collapsed star's effect boost mass gain from the black hole at a reduced rate.`,
@@ -357,14 +522,20 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { if(player.ranks.hex.gte(46))return "^"+format(x);return format(x)+"x" },
+            cdesc: `Collapsed star's effect is better.`,
+            ccost: E('ee3.6e13'),
         },
         {
             desc: `Quarks gain is raised to the 1.1th power.`,
             cost: E('e610'),
+            cdesc: `Quarks gain exponent ^1.02`,
+            ccost: E('ee3.6e13'),
         },
         {
             desc: `Collapsed stars effect is 10% stronger.`,
             cost: E('e800'),
+            cdesc: `Collapsed star's effect is better.`,
+            ccost: E('ee3.8e13'),
         },
         {
             desc: `Collapsed star boost last type of stars.`,
@@ -372,61 +543,86 @@ const ELEMENTS = {
             effect() {
                 let x = player.stars.points.add(1).log10().add(1).pow(1.1)
 				if(player.ranks.hex.gte(49))x = player.stars.points
-				x = overflow(x,"ee40000",0.75);
+				x = overflow(x,"ee40000",0.75).min('eee10');
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.gte('ee40000')?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.gte('eee10')?" <span class='soft'>(hardcapped)</span>":x.gte('ee40000')?" <span class='soft'>(softcapped)</span>":"") },
+            cdesc: `Star generator gain exponent ^1.02`,
+            ccost: E("ee4.7e13"),
         },
         {
             desc: `Star generator is now ^1.05 stronger.`,
             cost: E('e1750'),
+            cdesc: `Star generator gain exponent ^1.02`,
+            ccost: E("ee5.3e13"),
         },
         {
             desc: `Mass gain softcap^2 is 10% weaker.`,
             cost: E('e2400'),
+            cdesc: `Mass gain exponent ^1.005`,
+            ccost: E("ee5.4e13"),
         },
         {
             desc: `Mass of black hole boost atomic powers gain at a reduced rate.`,
             cost: E('e2800'),
             effect() {
-                let x = expMult(player.bh.mass.add(1),0.6)
-				if(player.ranks.hex.gte(52))x = expMult(player.bh.mass.add(1),0.95)
+				if(hasChargedElement(52))return Decimal.pow(10,player.bh.mass.add(1).log10().add(1).log10().add(2));
+                let x = expMult(player.bh.mass.add(1),0.6).min('eee10')
+				if(player.ranks.hex.gte(52))x = expMult(player.bh.mass.add(1),0.95).min('eee10')
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { 
+				if(hasChargedElement(52))return "^"+format(x);
+					return format(x)+"x"+(x.gte('eee10')?" <span class='soft'>(hardcapped)</span>":"") },
+            cdesc: `This element is better`,
+            ccost: E("ee5.5e13"),
         },
         {
             desc: `Mass Dilation upgrade 6 is 75% stronger.`,
             cost: E('e4600'),
+            cdesc: `Remove the softcap of Break Dilation upgrade 1.`,
+            ccost: E("ee5.7e13"),
         },
         {
-            desc: `Collapsed stars boost all-star resources at a reduced rate.`,
+            desc: `Mass boost all-star resources at a reduced rate.`,
             cost: E('e5200'),
             effect() {
+				if(hasChargedElement(54))return E(10).tetrate(player.mass.add(10).slog().div(1.35));
                 let x = player.mass.max(1).log10().root(2)
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { 
+				if(hasChargedElement(54))return "^"+format(x);
+			return format(x)+"x" },
+            cdesc: `This element is better`,
+            ccost: E("ee5.8e13"),
         },
         {
             desc: `Hyper/Ultra BH Condenser & Cosmic Ray scale 25% weaker.`,
             cost: E('e1.6e4'),
+            cdesc: `Remove Meta-BH Condenser scaling.`,
+            ccost: E("ee5.9e13"),
         },
         {
             desc: `Add 200 more C8 maximum completions.`,
             cost: E('e2.2e4'),
+            cdesc: `The effect of C8 is better.`,
+            ccost: E("ee9.9e13"),
         },
         {
             desc: `Tickspeed power boost base from Star Booster at a reduced rate.`,
             cost: E('e3.6e4'),
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
+				if (hasChargedElement(57))x = tmp.tickspeedEffect?E(10).tetrate(tmp.tickspeedEffect.step.add(10).slog().div(hasChargedElement(66)?1.0036:1.00369)):E(1)
                 if (hasElement(66)) x = x.pow(2)
                 if (player.ranks.hex.gte(57)) x = x.pow(1.1)
                 if (player.ranks.hex.gte(66)) x = x.pow(1.1)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
+            cdesc: `This element is better`,
+            ccost: E("ee1e14"),
         },
         {
             desc: `Ultra Rank & Tickspeed scales weaker based on Tier.`,
@@ -437,18 +633,31 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            cdesc: `Meta-Hex scales weaker based on Tier.`,
+            ccost: E("ee1.7e14"),
+            ceffect() {
+                let x = E(0.9).pow(player.ranks.tier.add(1).log10().add(1).log10().add(1).log10());
+                return x
+            },
+            ceffDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
         },
         {
             desc: `The power from the mass of the BH formula is increased to 0.45.`,
             cost: E('e6.6e4'),
+            cdesc: `The power from the mass of the BH formula is increased to 1, and uncap Radiation Booster "BH-Exponent Boost".`,
+            ccost: E("ee1.8e14"),
         },
         {
             desc: `Add 100 more C7 maximum completions.`,
             cost: E('e7.7e4'),
+            cdesc: `C7 reward is better`,
+            ccost: E("ee1.9e14"),
         },
         {
             desc: `Multiply Particle Powers gain by ^0.5 of its Particle's amount after softcap.`,
             cost: E('e1.5e5'),
+            cdesc: `Remove Particle Powers gain softcaps.`,
+            ccost: E("ee2e14"),
         },
         {
             desc: `Ultra Rank scale 3 later for every Supernova.`,
@@ -458,44 +667,68 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return format(x,0)+" later" },
+            cdesc: `Meta-Pent starts later based on Supernova.`,
+            ccost: E("ee2.1e14"),
+            ceffect() {
+                let x = player.supernova.times.add(10).pow(2)
+                return x
+            },
+            ceffDesc(x) { return "x"+format(x,0)+" later" },
         },
         {
             desc: `Non-bonus Tickspeed is 25x effective.`,
             cost: E('e3e5'),
+            cdesc: `Accelerator Effect Softcap^2 is weaker.`,
+            ccost: E("ee3.1e14"),
         },
         {
             desc: `Rewards from Challenges 3-4 & 8 are 50% effective.`,
             cost: E('e5e5'),
+            cdesc: `C3-4 Rewards are better`,
+            ccost: E("ee3.4e14"),
         },
         {
             desc: `Add 200 more C7 & c8 maximum completions.`,
             cost: E('e8e5'),
+            cdesc: `C7-8 Rewards are better`,
+            ccost: E("ee3.7e14"),
         },
         {
             desc: `Lanthanum's effect is twice stronger.`,
             cost: E('e1.1e6'),
+            cdesc: `Lanthanum's effect is better`,
+            ccost: E("ee4.4e14"),
         },
         {
             desc: `Collapsed star boost quarks gain.`,
             cost: E('e1.7e6'),
             effect() {
+				if(hasChargedElement(67)) return E(10).tetrate(player.stars.points.add(100).slog().div(1.337));
                 let x = player.stars.points.add(1)
                 if (player.ranks.hex.gte(67)) return player.stars.points.add(1).log10().add(1).log10().add(1).log10().add(1).sqrt();
-                return x.softcap('e3e15',0.85,2)
+                return x.softcap('e3e15',0.85,2).min('eee10')
             },
-            effDesc(x) { if(player.ranks.hex.gte(67))return "^"+format(x);return format(x)+"x" },
+            effDesc(x) { if(player.ranks.hex.gte(67) || hasChargedElement(67))return "^"+format(x);return format(x)+"x"+(x.gte('eee10')?" <span class='soft'>(hardcapped)</span>":"")  },
+            cdesc: `This element is better`,
+            ccost: E("ee4.5e14"),
         },
         {
             desc: `Meta-Tickspeed start 2x later.`,
             cost: E('e4.8e6'),
+            cdesc: `Meta-Tickspeed start ^2 later.`,
+            ccost: E('ee5e14'),
         },
         {
             desc: `Pent is now added in mass gain formula from collapsed stars.`,
             cost: E('e3.6e7'),
+            cdesc: `Hept is now added in mass gain formula from collapsed stars.`,
+            ccost: E('ee5.4e14'),
         },
         {
             desc: `Add 200 more C7 & c8 maximum completions.`,
             cost: E('e6.9e7'),
+            cdesc: `C7-8 Rewards are better`,
+            ccost: E('ee6.1e14'),
         },
         {
             desc: `From BH the formulas softcap starts later based on Supernovas.`,
@@ -505,10 +738,14 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "^"+format(x)+" later" },
+            cdesc: `Black Hole Upgrade 19 is better.`,
+            ccost: E('ee6.2e14'),
         },
         {
             desc: `Tetrs are 15% cheaper.`,
             cost: E('e5.75e8'),
+            cdesc: `The Tetr requirement is broken.`,
+            ccost: E('ee9e14'),
         },
         {
             desc: `Add more C5-6 & C8 maximum completions based on Supernovas.`,
@@ -519,46 +756,68 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "+"+format(x,0) },
+            cdesc: `Effects of C5,C8 are better.`,
+            ccost: E('ee9.5e14'),
         },
         {
             desc: `Super Tetr scales 25% weaker.`,
             cost: E('e2.6e9'),
+            cdesc: `The Tetr requirement is broken.`,
+            ccost: E('ee1.2e15'),
         },
         {
             desc: `Remove 2 softcaps from Atomic Power's effect.`,
             cost: E('e3.9e9'),
+            cdesc: `Atomic Power's effect is better.`,
+            ccost: E('ee1.3e15'),
         },
         {
             desc: `Collapsed Star's effect is 25% stronger.`,
             cost: E('e3.75e10'),
+            cdesc: `Collapsed Star's effect is better.`,
+            ccost: E('ee1.4e15'),
         },
         {
             desc: `Softcap^3 from mass gain is 17.5% weaker.`,
             cost: E('e4e11'),
+            cdesc: `Stronger Overflow is weaker.`,
+            ccost: E('ee1.9e15'),
         },
         {
             desc: `Meta-Supernova scales 20% weaker.`,
             cost: E('e3.4e12'),
+            cdesc: `Meta-Supernova scales 50% weaker.`,
+            ccost: E('ee3e15'),
         },
         {
             desc: `Neutronium-0 affects Aluminium-13 & Tantalum-73.`,
             cost: E('e4.8e12'),
+            cdesc: `Neutronium-0 is better.`,
+            ccost: E('ee6e15'),
         },
         {
             desc: `Stronger & Tickspeed are 25x stronger.`,
             cost: E('e1.4e13'),
+            cdesc: `Stronger Overflow is weaker.`,
+            ccost: E('ee7.7777e15'),
         },
         {
             desc: `Stronger is ^1.1 stronger.`,
             cost: E('e2.8e13'),
+            cdesc: `Stronger is ^2 stronger.`,
+            ccost: E('ee1e16'),
         },
         {
             desc: `Strontium-38 is thrice effective.`,
             cost: E('e4e13'),
+            cdesc: `Strontium-38's effect is squared.`,
+            ccost: E('ee1.1111e16'),
         },
         {
             desc: `Mass Dilation upgrade 2 effect is overpowered.`,
             cost: E('e3e14'),
+            cdesc: `This element is better.`,
+            ccost: E('ee1.7e16'),
         },
         {
             desc: `Pre-Ultra Mass Upgrades scale weaker based on Cosmic Ray's free tickspeeds.`,
@@ -569,22 +828,37 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return formatReduction(x)+" weaker" },
+            cdesc: `Super Overpower scales weaker based on Cosmic Ray's free tickspeeds.`,
+            ccost: E('ee1.8e16'),
+            ceffect() {
+                let x = tmp.atom?E(0.999).pow(tmp.atom.atomicEff.add(1).log10().add(1).log10().add(1).log10()):E(1)
+                return x
+            },
+            ceffDesc(x) { return formatReduction(x)+" weaker" },
         },
         {
             desc: `Stronger’s Power softcap starts 3x later, is 10% weaker.`,
             cost: E('e7.5e15'),
+            cdesc: `Stronger Overflow is weaker.`,
+            ccost: E('ee1.9e16'),
         },
         {
             desc: `Tickspeed’s Power softcap starts ^2 later, scales 50% weaker.`,
             cost: E('e2e16'),
+            cdesc: `Accelerator effect softcap^2 starts 2x later.`,
+            ccost: E('ee2.5e16'),
         },
         {
             desc: `Carbon-6’s effect is overpowered, but Sodium-11 don’t work.`,
             cost: E('e150'),
+            cdesc: `Square Carbon-6’s charged effect.`,
+            ccost: E('ee3.7e16'),
         },
         {
             desc: `All scaling from Tickspeed start 100x later (after nerf from 8th QC modifier).`,
             cost: E('e500'),
+            cdesc: `Meta-Tickspeeds starts ^2 later.`,
+            ccost: E('ee5e16'),
         },
         {
             desc: `Mass of Black Hole effect raises itself at a reduced logarithm rate.`,
@@ -594,55 +868,78 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "^"+x.format() },
+            cdesc: `The 2nd Black Hole Overflow effect is weaker.`,
+            ccost: E('ee7.7777e16'),
         },
         {
             desc: `Death Shard is boosted by Dilated Mass.`,
             cost: E('e1300'),
             effect() {
+				if(hasChargedElement(90))return ELEMENTS.upgs[90].ceffect();
                 let x = player.md.mass.add(1).log10().add(1).pow(0.5)
 				if(player.ranks.hex.gte(90))x = x.pow(1.1);
-                return x
+                return x.min('ee15');
             },
-            effDesc(x) { return "x"+x.format() },
+            effDesc(x) { if(hasChargedElement(90))return "^"+format(x);return format(x)+"x"+(x.gte('ee15')?" <span class='soft'>(hardcapped)</span>":"") },
+            cdesc: `This element is better.`,
+            ccost: E('ee1.35e17'),
+            ceffect() {
+				if(hasChargedElement(90))return player.md.mass.add(1).log10().add(1).log10().add(1).log10().add(1).log10().add(1);
+				return E(1);
+            },
         },
         {
             desc: `Entropic Accelerator & Booster nerfing is 10% weaker.`,
             cost: E('e2700'),
+            cdesc: `Boost Entropic Condenser.`,
+            ccost: E('ee1.6e17'),
         },
         {
             desc: `Insane Challenges scale 25% weaker.`,
             cost: E('e4800'),
+            cdesc: `Impossible Challenges scale 5% weaker`,
+            ccost: E('ee1.6e17'),
         },
         {
             desc: `Entropy gain is increased by 66.7% for every OoM^2 of normal mass.`,
             cost: E('e29500'),
             effect() {
                 let x = E(player.ranks.hex.gte(93)?2:(5/3)).pow(player.mass.add(1).log10().add(1).log10())
-				x = overflow(x,"e1e4",hasElement(296)?0.2:0.1);
+				x = overflow(x,"e1e4",hasChargedElement(93)?0.3:hasElement(296)?0.2:0.1);
                 return x
             },
             effDesc(x) { return "x"+x.format()+(x.gte('e1e4')?" <span class='soft'>(softcapped)</span>":"")  },
+            cdesc: `Softcap of this element is weaker.`,
+            ccost: E('ee1.8e17'),
         },
         {
             desc: `Death Shard is increased by 10% for every supernova.`,
             cost: E("e32000"),
             effect() {
-                let x = E(1.1).pow(player.supernova.times)
+                let x = E(hasChargedElement(94)?1.2:1.1).pow(player.supernova.times)
                 return x
             },
             effDesc(x) { return "x"+x.format() },
+            cdesc: `The base of this element is 1.2, instead of 1.1.`,
+            ccost: E('ee1.9e17'),
         },
         {
             desc: `Epsilon Particles are worked in Big Rip, but 90% weaker.`,
             cost: E("e34500"),
+            cdesc: `Multiply Epsilon Particles effects by 10. Epsilon Particle's effect is better if you're not in QC.`,
+            ccost: E('ee2e17'),
         },
         {
             desc: `Entropic Converter nerfing is 10% weaker.`,
             cost: E('e202000'),
+            cdesc: `Entropic Evaporation^2 is 10% weaker.`,
+            ccost: E('ee3e17'),
         },
         {
             desc: `Increase Entropic Evaporation’s base by 1.`,
             cost: E('e8.5e6'),
+            cdesc: `Increase Entropic Evaporation’s base by 1.`,
+            ccost: E('ee4.2e17'),
         },
         {
             desc: `8th QC modifier in Big Rip is 20% weaker.`,
@@ -656,6 +953,12 @@ const ELEMENTS = {
             desc: `Prestige Base’s exponent is increased based on Pent.`,
             cost: E('e2.5e7'),
             effect() {
+				if(player.ranks.pent.gte("ee10")){
+					return player.ranks.pent.log10().log10().log10().mul(2605);
+				}
+				if(player.ranks.pent.gte("1e2000")){
+					return player.ranks.pent.add(1).log10().add(1).log10().mul(260.5);
+				}
                 let x = player.ranks.pent.root(2).div(1e3).softcap(5.5,0.1,0);
 				if(player.ranks.pent.gte(1e11))x = x.min(player.ranks.pent.log10().pow(8/9));
                 return x
@@ -1013,6 +1316,7 @@ const ELEMENTS = {
 			effect() {
 				let x = player.et.points.add(1).pow(0.2);
 				if(hasElement(271))x = x.pow(20)
+				if(hasElement(349))x = x.pow(3)
 				return x
 			},
 			effDesc(x) { return format(x)+"x" },
@@ -1076,6 +1380,8 @@ const ELEMENTS = {
 				if(hasElement(244))x = expMult((player.massUpg[2]||E(1)),0.4);
 				if(hasElement(283))x = overflow(expMult((player.massUpg[2]||E(1)),0.875),"e3500000",0.5);
 				if(hasElement(328))x = expMult((player.massUpg[2]||E(1)),0.875);
+				if(hasElement(360))x = expMult((player.massUpg[2]||E(1)),0.886);
+				if(hasElement(367))x = expMult((player.massUpg[1]||E(1)),0.9);
 				return x
 			},
 			effDesc(x) { return "^"+format(x) },
@@ -1088,6 +1394,8 @@ const ELEMENTS = {
 				if(hasElement(244))x = expMult((player.massUpg[1]||E(1)),0.4);
 				if(hasElement(283))x = overflow(expMult((player.massUpg[1]||E(1)),0.875),"e3500000",0.5);
 				if(hasElement(328))x = expMult((player.massUpg[1]||E(1)),0.875);
+				if(hasElement(360))x = expMult((player.massUpg[1]||E(1)),0.886);
+				if(hasElement(367))x = expMult((player.massUpg[1]||E(1)),0.9);
 				return x
 			},
 			effDesc(x) { return "^"+format(x) },
@@ -1373,6 +1681,7 @@ const ELEMENTS = {
 				let x = player.galQk.add(1);
 				if(hasElement(264))x = expMult(x,2);
 				if(hasElement(278))x = expMult(x,1.3);
+				if(hasElement(364))x = expMult(x,2.5/1.3);
 				return x
 			},
 			effDesc(x) { return "^"+format(x); },
@@ -1951,7 +2260,7 @@ const ELEMENTS = {
 			cost: E("1.5e32756"),
 		},
 		{
-			desc: `Meta-Hex starts later.`,
+			desc: `Meta-Hex starts 1.5x later.`,
 			cost: E("1.5e1836"),
 			et: true,
 		},
@@ -1961,8 +2270,575 @@ const ELEMENTS = {
 			galQk: true,
 		},
 		{
-			desc: `Electron Power’s second effects are better.`,
+			desc: `Electron Power’s second effect is better.`,
 			cost: E("1.5e36556"),
+		},
+		{
+			desc: `Effects of Galactic Dark Energy and Galactic Bosons are better.`,
+			cost: E("3e81"),
+			galQk: true,
+		},
+		{
+			desc: `C1, C5 and C7 effects are changed.`,
+			cost: E("1.5e37556"),
+		},
+		{
+			desc: `Element 161 is cubed.`,
+			cost: E("1.5e2056"),
+			et: true,
+		},
+		{
+			desc: `Galactic Shards Effect affects base Galactic Radiation gain.`,
+			cost: E("1e83"),
+			galQk: true,
+		},
+		{
+			desc: `C18 effect is better.`,
+			cost: E("1.5e38206"),
+		},
+		{
+			desc: `Entropic Evaporation^2 is 75% weaker. Remove some Entropic softcaps.`,
+			cost: E("1.5e2056"),
+			et: true,
+		},
+		{
+			desc: `The effect softcap of Galactic Power is weaker.`,
+			cost: E("2e84"),
+			galQk: true,
+		},
+		{
+			desc: `Particle Power’s first effects are squared.`,
+			cost: E("1.5e57386"),
+		},
+		{
+			desc: `Neutron Power’s second effect is better.`,
+			cost: E("1.5e2156"),
+			et: true,
+		},
+		{
+			desc: `The Entropy Cap boost of Supernova Galaxies is better.`,
+			cost: E("4e85"),
+			galQk: true,
+		},
+		{
+			desc: `Tickspeed Effect is better.`,
+			cost: E("1.5e64256"),
+		},
+		{
+			desc: `Atomic Power softcaps are weaker.`,
+			cost: E("1.5e2216"),
+			et: true,
+		},
+		{
+			desc: `Unlock a new layer.`,
+			cost: E("5e86"),
+			galQk: true,
+		},
+		{
+			desc: `Effects of elements 173 and 174 are better.`,
+			cost: E("1.5e70056"),
+		},
+		{
+			desc: `Meta-Hex starts 1.5x later.`,
+			cost: E("1.5e2556"),
+			et: true,
+		},
+		{
+			desc: `Softcap of effect of Beta Particles in Galactic Challange starts later. Double Galactic Shards gain.`,
+			cost: E("1e100"),
+			galQk: true,
+		},
+		{
+			desc: `Exotic Boost 'Atom Boost' boost Quarks.`,
+			cost: E("eee12"),
+			qk: true,
+		},
+		{
+			desc: `Element 231 is better.`,
+			cost: E("2e127"),
+			galQk: true,
+		},
+		{
+			desc: `Timeshards effect is better.`,
+			cost: E("1.5e3556"),
+			et: true,
+		},
+		{
+			desc: `Exotic Boosts are 20% stronger.`,
+			cost: E("2e21"),
+			exotic: true,
+		},
+		{
+			desc: `Effects of elements 173 and 174 are better.`,
+			cost: E("1.5e134056"),
+		},
+		{
+			desc: `Proton Power's second effect ^2.`,
+			cost: E("ee1.5e12"),
+			qk: true,
+		},
+		{
+			desc: `Effects of Galactic Particles are better.`,
+			cost: E("5e128"),
+			galQk: true,
+		},
+		{
+			desc: `Pre-Quantum Global Speed boost Dark Shadow gain.`,
+			cost: E("1e10"),
+			ds: true,
+			effect() {
+				let x = tmp.preQUGlobalSpeed.add(1).log10().sqrt();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Meta-Prestige Level starts 1.25x later.`,
+			cost: E("1.5e3756"),
+			et: true,
+		},
+		{
+			desc: `Exotic Matter boost Dark Ray gain.`,
+			cost: E("2e23"),
+			exotic: true,
+			effect() {
+				let x = player.exotic.points.add(10).log10().pow(2);
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Effect of Galactic Atoms are better.`,
+			cost: E("1.5e142056"),
+		},
+		{
+			desc: `Galactic Quark gain from Quarks is better.`,
+			cost: E("ee2e12"),
+			qk: true,
+		},
+		{
+			desc: `Effects of Galactic U-Fermions are better. G-Fermion Tiers are cheaper.`,
+			cost: E("5e141"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock a new effect of Dark Shadow.`,
+			cost: E("1e20"),
+			ds: true,
+		},
+		{
+			desc: `Timeshards effect is better.`,
+			cost: E("1.5e3856"),
+			et: true,
+		},
+		{
+			desc: `Double Prestige Overpower Power.`,
+			cost: E("2e24"),
+			exotic: true,
+		},
+		{
+			desc: `Remove Hardened and Insane scalings of C1-C19.`,
+			cost: E("1.5e150056"),
+		},
+		{
+			desc: `Unlock Element Charging.`,
+			cost: E("ee2.7777e12"),
+			qk: true,
+		},
+		{
+			desc: `Charged Elements boost Galactic Quark gain.`,
+			cost: E("5e148"),
+			galQk: true,
+			effect() {
+				let x = E(1.5).pow(player.atom.chargedElements.length)
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Unlock a new effect of Dark Shadow.`,
+			cost: E("1e24"),
+			ds: true,
+		},
+		{
+			desc: `Keep Eternal Mass and Eternities when Galactic or Exotic reset. The cost of this element is 6.9e4200 uni of Eternal Mass, Nice.<br>(If you found this element is hard to bought, please check your Exotic Boosts)`,
+			cost: E("1.035e4257"),
+			et: true,
+		},
+		{
+			desc: `Exotic Boosts are 10% stronger.`,
+			cost: E("2e28"),
+			exotic: true,
+		},
+		{
+			desc: `Particle Power's first effects are squared.`,
+			cost: E("1.5e173056"),
+		},
+		{
+			desc: `Galactic Quark gain from U-Quarks is better.`,
+			cost: E("ee1e13"),
+			qk: true,
+		},
+		{
+			desc: `Unlock Supernova Clusters.`,
+			cost: E("1e167"),
+			galQk: true,
+		},
+		{
+			desc: `Death Shards boost Dark Shadow gain.`,
+			cost: E("1e35"),
+			ds: true,
+			effect() {
+				let x = player.qu.rip.amt.add(1).log10().add(1).log10().add(1).pow(2);
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Eternal Mass boost Dark Ray gain.`,
+			cost: E("1.5e4656"),
+			et: true,
+			effect() {
+				let x = player.et.points.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Exotic Meta-Boost is better.`,
+			cost: E("1e34"),
+			exotic: true,
+		},
+		{
+			desc: `Accelerator Effect Softcap^2 is weaker.`,
+			cost: E("1.5e221356"),
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("ee1.9e13"),
+			qk: true,
+		},
+		{
+			desc: `You can automatically complete C20.`,
+			cost: E("3e173"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock a new effect of Dark Shadow.`,
+			cost: E("1e45"),
+			ds: true,
+		},
+		{
+			desc: `Eternal Mass boost Exotic Matter gain.`,
+			cost: E("1.5e4906"),
+			et: true,
+			effect() {
+				let x = player.et.points.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Reduce Supernova Galaxy Requirements.`,
+			cost: E("3e39"),
+			exotic: true,
+		},
+		{
+			desc: `C20 effect is better.`,
+			cost: E("1.5e270056"),
+		},
+		{
+			desc: `Remove Entropic Radiation^2 scaling. Some Entropy Effects are better.`,
+			cost: E("ee5e13"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("1e184"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock a new effect of Dark Shadow.`,
+			cost: E("1e50"),
+			ds: true,
+		},
+		{
+			desc: `Eternal Mass boost Dark Shadow gain.`,
+			cost: E("1.5e5106"),
+			et: true,
+			effect() {
+				let x = player.et.points.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Unlock Exotic Count Booster.`,
+			cost: E("2e41"),
+			exotic: true,
+		},
+		{
+			desc(){
+				if(!hasElement(403))return "403 Forbidden";
+				return "Meta-Prestige Level starts 1.05x later.";
+			},
+			cost: E("1.5e300056"),
+		},
+		{
+			desc(){
+				if(!hasElement(404))return "404 Not Found";
+				return "Bosonic Upgrades are better.";
+			},
+			cost: E("ee5.5555e13"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Quarks boost Dark Shadow gain.`,
+			cost: E("1e190"),
+			galQk: true,
+			effect() {
+				let x = player.galQk.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x"; },
+		},
+		{
+			desc: `Unlock a new effect of Dark Ray.`,
+			cost: E("1e55"),
+			ds: true,
+		},
+		{
+			desc: `Hyper Galactic Fermion Tiers starts 1.5x later.`,
+			cost: E("1.5e5406"),
+			et: true,
+		},
+		{
+			desc: `Exotic Boosts are 10% stronger.`,
+			cost: E("2e47"),
+			exotic: true,
+		},
+		{
+			desc: `C20 effect is better.`,
+			cost: E("1.5e378056"),
+		},
+		{
+			desc: `Super Overpower is 4% weaker.`,
+			cost: E("ee2.3e14"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("1e205"),
+			galQk: true,
+		},
+		{
+			desc: `Some effects of Dark Shadow are better.`,
+			cost: E("1e58"),
+			ds: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better. Neutron Power's first effect is squared.`,
+			cost: E("1e213"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock Abyssal Blots.`,
+			cost: E("1e60"),
+			ds: true,
+		},
+		{
+			desc: `Meta Fermion Tier scaling is 99% weaker.`,
+			cost: E("1.5e6106"),
+			et: true,
+		},
+		{
+			desc: `Exotic Meta-Boost is 1.5x stronger.`,
+			cost: E("1e53"),
+			exotic: true,
+		},
+		{
+			desc: `C20 effect is better.`,
+			cost: E("1.5e457056"),
+		},
+		{
+			desc: `Meta-Tickspeeds starts ^10 later.`,
+			cost: E("ee1.6e15"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("1e235"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock a new effect of Abyssal Blot.`,
+			cost: E("2e70"),
+			ds: true,
+		},
+		{
+			desc: `Change the effect of C1. Meta-Pent starts 1e100x later.`,
+			cost: E("1.5e7331"),
+			et: true,
+		},
+		{
+			desc: `Reduce Supernova Galaxy Requirements.`,
+			cost: E("1e59"),
+			exotic: true,
+		},
+		{
+			desc: `Unlock a new Galactic Challenge modifier. Gain 1 g mass per second and +1 Pre-Quantum Global Speed (doesn't affected by anything) when you're in Galactic Challenge.`,
+			cost: E("1.5e684056"),
+		},
+		{
+			desc: `Meta-Pent starts later based on Tier.`,
+			cost: E("ee1.6666e16"),
+			qk: true,
+			effect() {
+				let x = overflow(expMult(player.ranks.tier.pow(1e-19).add(100),3),"1e100000",10/3);
+				if(hasElement(439))x = x.mul(E("e3e8").pow(player.ranks.tier.add(10).log10().add(10).log10()));
+				return x
+			},
+			effDesc(x) { return format(x)+"x later"; },
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("1e249"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock a new effect of Abyssal Blot.`,
+			cost: E("1e73"),
+			ds: true,
+		},
+		{
+			desc: `Beta Particle's Effect is multiplied by 10.`,
+			cost: E("1.5e7706"),
+			et: true,
+		},
+		{
+			desc: `Dark Ray's 2nd effect ^2.5`,
+			cost: E("1e65"),
+			exotic: true,
+		},
+		{
+			desc: `C20 effect is better.`,
+			cost: E("1.5e800056"),
+		},
+		{
+			desc: `Remove Infinity Upgrade 5's softcap.`,
+			cost: E("ee3.3333e16"),
+			qk: true,
+		},
+		{
+			desc: `Timeshards effect is better.`,
+			cost: E("1.5e7981"),
+			et: true,
+		},
+		{
+			desc: `Exotic Boosts are 10% stronger.`,
+			cost: E("4e73"),
+			exotic: true,
+		},
+		{
+			desc: `C20 effect is better.`,
+			cost: E("1.5e888944"),
+		},
+		{
+			desc: `Accelerator Effect Softcap^2 is weaker.`,
+			cost: E("ee1e17"),
+			qk: true,
+		},
+		{
+			desc: `Unlock a new Galactic Challenge modifier. +5 to Galactic Challenge Difficulty Cap. Square Galactic Shard effect.`,
+			cost: E("3e271"),
+			galQk: true,
+		},
+		{
+			desc: `Unlock a new effect of Abyssal Blot.`,
+			cost: E("1e82"),
+			ds: true,
+		},
+		{
+			desc: `Timeshards effect is better.`,
+			cost: E("1.5e9056"),
+			et: true,
+		},
+		{
+			desc: `Unlock the 21th Challenge.`,
+			cost: E("3e75"),
+			exotic: true,
+		},
+		{
+			desc: `Element 424 is better.`,
+			cost: E("1.5e1000056"),
+		},
+		{
+			desc: `Exotic Prestige Level is 5% weaker.`,
+			cost: E("ee2.1e17"),
+			qk: true,
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("2e286"),
+			galQk: true,
+		},
+		{
+			desc: `Each bought element multiply Abyssal Blot gain by 1.1.`,
+			cost: E("6e83"),
+			ds: true,
+			effect() {
+				return E(1.1).pow(player.atom.elements.length);
+			},
+			effDesc(x) { return format(x)+"x" },
+		},
+		{
+			desc: `Accelerator effect softcap^2 is weaker.`,
+			cost: E("1.5e10081"),
+			et: true,
+		},
+		{
+			desc: `Exotic Boost 'Star Boost' affects Star Generators.`,
+			cost: E("1e78"),
+			exotic: true,
+		},
+		{
+			desc: `Eternal Mass boost Abyssal Blot gain.`,
+			cost: E("1.5e10181"),
+			et: true,
+			effect() {
+				let x = player.et.points.add(10).log10();
+				return x
+			},
+			effDesc(x) { return format(x)+"x" },
+		},
+		{
+			desc: `Exotic Meta-Boost is 1.2x stronger.`,
+			cost: E("1e78"),
+			exotic: true,
+		},
+		{
+			desc: `Infinity Upgrade 24 is better.`,
+			cost: E("1.5e1130056"),
+		},
+		{
+			desc: `Exotic Prestige Level is weaker based on Exotic Matter (Increased Effect above 1e80 EM).`,
+			cost: E("ee5e17"),
+			qk: true,
+			effect() {
+				if(player.exotic.points.gte(1e80))return E(0.97).pow(player.exotic.points.add(10).log10().div(24.185));
+				return E(0.97).pow(player.exotic.points.add(10).log10().pow(0.273));
+			},
+            effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+		},
+		{
+			desc: `Galactic Particles Effect is better.`,
+			cost: E("5e294"),
+			galQk: true,
+		},
+		{
+			desc: `Reach the current endgame.`,
+			cost: E("1e87"),
+			ds: true,
 		},
 	],
     /*
@@ -1977,8 +2853,12 @@ const ELEMENTS = {
     },
     */
     getUnlLength() {
+		if(hasElement(438))return 450;
+		if(hasElement(380))return 438;
+		if(hasUpgrade("atom",25))return 380;
 		
-		if(hasElement(291))return 346;
+		if(player.exotic.times.gte(1))return 362;
+		if(hasElement(291))return 359;
 		if(hasElement(290))return 291;
 		if(player.superGal.gte(10))return 290;
 		if(player.superGal.gte(1))return 218;
@@ -2011,7 +2891,7 @@ const ELEMENTS = {
     },
 }
 
-const MAX_ELEM_TIERS = 3
+const MAX_ELEM_TIERS = 4
 
 function getElementId(x) {
     let log = Math.floor(Math.log10(x))
@@ -2066,6 +2946,8 @@ for (let x = 2; x <= MAX_ELEM_TIERS; x++) {
 }
 
 function hasElement(x) { return player.atom.elements.includes(x) }
+function hasChargedElement(x) { return player.atom.chargedElements.includes(x) }
+
 
 function setupElementsHTML() {
     let elements_table = new Element("elements_table")
@@ -2116,17 +2998,18 @@ function updateElementsHTML() {
 
 	if (tElem.unl_length<=118)player.atom.elemTier=Math.min(player.atom.elemTier,1)
 	if (tElem.unl_length<=218)player.atom.elemTier=Math.min(player.atom.elemTier,2)
+	if (tElem.unl_length<=362)player.atom.elemTier=Math.min(player.atom.elemTier,3)
     tmp.el.elemTierDiv.setDisplay(hasUpgrade("atom",16) || player.superGal.gte(1))
     tmp.el.elemTier.setHTML("Element Tier "+player.atom.elemTier)
 
     let ch = tElem.choosed
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
-        tmp.el.elem_desc.setHTML("<b>["+ELEMENTS.fullNames[ch]+"]</b> "+ELEMENTS.upgs[ch].desc)
+        tmp.el.elem_desc.setHTML(("<b>["+ELEMENTS.fullNames[ch]+"]</b> "+ELEMENTS.upgs[ch].desc+(hasChargedElement(ch)?"<b> [CHARGED]</b>":""))+((hasElement(380) && ELEMENTS.upgs[ch].ccost) ? "<span class=yellow><br>Charged Effect: "+ELEMENTS.upgs[ch].cdesc+"</span>" : ""))
 		if(ELEMENTS.upgs[ch].desc instanceof Function)tmp.el.elem_desc.setHTML("<b>["+ELEMENTS.fullNames[ch]+"]</b> "+ELEMENTS.upgs[ch].desc())
-        tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0)+" Quarks"+(ch>86&&ch<=118?" in Big Rip":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?" [CANNOT AFFORD in Big Rip]":""))
-        if(ch > 118)tmp.el.elem_cost.setTxt((ELEMENTS.upgs[ch].galQk?format:formatMass)(ELEMENTS.upgs[ch].cost,0)+(ELEMENTS.upgs[ch].galQk?" Galactic Quarks":ELEMENTS.upgs[ch].et?" Eternal Mass":" Infinity Mass"))
-		tmp.el.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"Currently: "+ELEMENTS.upgs[ch].effDesc(tElem.effect[ch]):"")
+        tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0)+" Quarks"+(ch>86&&ch<=118?" in Big Rip":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?" [CANNOT AFFORD in Big Rip]":"") + ((hasElement(380) && ELEMENTS.upgs[ch].ccost) ? ", Charge Cost: "+format(ELEMENTS.upgs[ch].ccost,0)+" Quarks" : ""))
+        if(ch > 118)tmp.el.elem_cost.setTxt((ELEMENTS.upgs[ch].galQk||ELEMENTS.upgs[ch].exotic||ELEMENTS.upgs[ch].qk||ELEMENTS.upgs[ch].ds?format:formatMass)(ELEMENTS.upgs[ch].cost,0)+(ELEMENTS.upgs[ch].qk?" Quarks":ELEMENTS.upgs[ch].ds?" Dark Shadow":ELEMENTS.upgs[ch].exotic?" Exotic Matter":ELEMENTS.upgs[ch].galQk?" Galactic Quarks":ELEMENTS.upgs[ch].et?" Eternal Mass":" Infinity Mass"))
+		tmp.el.elem_eff.setHTML((ELEMENTS.upgs[ch].effDesc?"Currently: "+ELEMENTS.upgs[ch].effDesc(tElem.effect[ch]):"")+(hasElement(380) && ELEMENTS.upgs[ch].ceffDesc?"<span class=yellow><br>Current Charged Effect: "+ELEMENTS.upgs[ch].ceffDesc(tElem.ceffect[ch])+"</span>":""))
     }
 
     for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
@@ -2146,7 +3029,7 @@ function updateElementsHTML() {
                     let unl2 = x <= tElem.unl_length
                     upg.setVisible(unl2)
                     if (unl2) {
-                        upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: (x > 86 && x <= 118), ext: (x > 118), et: ELEMENTS.upgs[x].et, gqk: ELEMENTS.upgs[x].galQk})
+                        upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: (x > 86 && x <= 118), ext: (x > 118), et: ELEMENTS.upgs[x].et, gqk: ELEMENTS.upgs[x].galQk, ds: ELEMENTS.upgs[x].ds, ex: ELEMENTS.upgs[x].exotic, qk: ELEMENTS.upgs[x].qk, ch: hasChargedElement(x), cancharge: ELEMENTS.canCharge(x)})
                     }
                 }
             }
@@ -2163,6 +3046,9 @@ function updateElementsTemp() {
     if (!tmp.elements.upg_length) tmp.elements.upg_length = ELEMENTS.upgs.length-1
     for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
         tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
+    }
+    for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].ceffect) {
+        tmp.elements.ceffect[x] = ELEMENTS.upgs[x].ceffect()
     }
     tmp.elements.unl_length = ELEMENTS.getUnlLength()
 }

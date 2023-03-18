@@ -54,12 +54,14 @@ Decimal.prototype.scaleName = function (type, id, rev=false) {
 
 Decimal.prototype.scaleEvery = function (id, rev=false, fp=SCALE_FP[id]?SCALE_FP[id]():[1,1,1,1]) {
     var x = this.clone()
+	if(!rev)x = x.scaleName("exotic",id,rev)
     for (let i = 0; i < 4; i++) {
         let s = rev?i:3-i
         let sc = SCALE_TYPE[s]
 
         x = rev?x.mul(fp[s]).scaleName(sc,id,rev):x.scaleName(sc,id,rev).div(fp[s])
     }
+	if(rev)x = x.scaleName("exotic",id,rev)
     return x
 }
 
@@ -78,9 +80,12 @@ function calc(dt, dt_offline) {
         player.mass = player.mass.add(tmp.massGain.mul(du_gs))
         if (player.mainUpg.rp.includes(3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (player.ranks.rank.gte(x) || player.mainUpg.atom.includes(1))) UPGS.mass.buyMax(x)
         for (let x = 1; x <= UPGS.prestigeMass.cols; x++) if (player.autoprestigeMassUpg[x] &&  UPGS.prestigeMass[x].unl()) UPGS.prestigeMass.buyMax(x)
+        for (let x = 1; x <= UPGS.ascensionMass.cols; x++) if (player.autoascensionMassUpg[x] &&  UPGS.ascensionMass[x].unl()) UPGS.ascensionMass.buyMax(x)
 		if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
         if (FORMS.accel.autoUnl() && player.autoAccel) FORMS.accel.buyMax()
-		if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
+		if (FORMS.prestige_tickspeed.autoUnl() && player.autoPrestigeTickspeed) FORMS.prestige_tickspeed.buyMax()
+        if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
+		if (FORMS.prestigeBHC.autoUnl() && player.autoPrestigeBHC) FORMS.prestigeBHC.buyMax()
         if (hasElement(18) && player.atom.auto_gr) ATOM.gamma_ray.buyMax()
         if (hasElement(131) && player.qu.auto_cs) QUANTUM.cosmic_str.buyMax()
         if (player.mass.gte(1.5e136)) player.chal.unl = true
@@ -106,7 +111,7 @@ function calc(dt, dt_offline) {
             player.atom.atomic = player.atom.atomic.add(tmp.atom.atomicGain.mul(du_gs))
             for (let x = 0; x < 3; x++) player.atom.powers[x] = player.atom.powers[x].add(tmp.atom.particles[x].powerGain.mul(du_gs))
         }
-        if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length && x <= 118; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
+        if (hasTree("qol1")) for (let x = 1; x <= tmp.elements.unl_length && x <= 118; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x,1)
         player.md.mass = player.md.mass.add(tmp.md.mass_gain.mul(du_gs))
         if (hasTree("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(du_gs) : tmp.md.passive_rp_gain.mul(du_gs))
         if (hasTree("qol4")) STARS.generators.unl(true)
@@ -137,9 +142,11 @@ function calc(dt, dt_offline) {
 		if (hasElement(318)) player.chal.comps[17] = player.chal.comps[17].max(tmp.chal.bulk[17].min(tmp.chal.max[17]))
 		if (hasElement(318)) player.chal.comps[18] = player.chal.comps[18].max(tmp.chal.bulk[18].min(tmp.chal.max[18]))
 		if (hasElement(322)) player.chal.comps[19] = player.chal.comps[19].max(tmp.chal.bulk[19].min(tmp.chal.max[19]))
+		if (hasElement(393)) player.chal.comps[20] = player.chal.comps[20].max(CHALS.getChalData(20,E(-1),1).bulk.min(tmp.chal.max[20]))
 		calcPrestigeMass(dt, dt_offline)
         calcInfinity(dt, dt_offline)
         calcSupernovaGalaxy(dt, dt_offline)
+        calcExotic(dt, dt_offline)
     }
 
     tmp.pass = true
@@ -168,26 +175,38 @@ function getPlayerData() {
             hex: E(0),
             hept: E(0),
             oct: E(0),
+            enne: E(0),
         },
         auto_ranks: {
             rank: false,
             tier: false,
         },
         prestiges: [],
+        ascensions: [],
         prestigeMass: E(0),
-        prestigeMassUpg: [E(0), E(0), E(0), E(0)],
+        ascensionMass: E(0),
+        prestigeMassUpg: [E(0), E(0), E(0), E(0), E(0)],
+        ascensionMassUpg: [E(0), E(0), E(0), E(0), E(0)],
+		prestigeRP: E(0),
+		prestigeTickspeed: E(0),
+		prestigeBH: E(0),
+		prestigeDM: E(0),
+		prestigeBHC: E(0),
         auto_mainUpg: {
             
         },
         massUpg: {},
         autoMassUpg: [null,false,false,false],
         autoprestigeMassUpg: [null,false,false,false],
+        autoascensionMassUpg: [null,false,false,false],
         autoTickspeed: false,
+		autoPrestigeTickspeed: false,
         mainUpg: {
             
         },
         ranks_reward: 0,
         pres_reward: 0,
+        as_reward: 0,
         scaling_ch: 0,
         rp: {
             points: E(0),
@@ -218,6 +237,7 @@ function getPlayerData() {
             ratio: 0,
             dRatio: [1,1,1],
             elements: [],
+            chargedElements: [],
         },
         md: {
             active: false,
@@ -309,8 +329,22 @@ function getPlayerData() {
 			shard: E(0),
             active: false,
 		},
+		exotic: {
+			points: E(0),
+			times: E(0),
+			rcb: [E(0), E(0), E(0), E(0)],
+			bp: E(0),
+			boosts: [],
+			
+			dr: E(0),
+			ds: E(0),
+			ab: E(0),
+		},
+		superCluster: E(0),
     }
+    for (let x = 0; x < EXOTIC_BOOST_LENGTH; x++) s.exotic.boosts.push(E(0))
     for (let x = 0; x < PRES_LEN; x++) s.prestiges.push(E(0))
+    for (let x = 0; x < AS_LEN; x++) s.ascensions.push(E(0))
     for (let x = 1; x <= UPGS.main.cols; x++) {
         s.auto_mainUpg[UPGS.main.ids[x]] = false
         s.mainUpg[UPGS.main.ids[x]] = []
@@ -344,6 +378,15 @@ function loadPlayer(load) {
 	if(load.dim_shard>0){
 		alert("Saves from Incremental Mass Rewritten Vanilla 1.0 beta or above is not supported in this NG+ Version!");
 		return true;
+	}
+	if(load.dark){
+		let check=false;
+		if(new Decimal(load.dark.rays).gt(0))check=true;
+		if(new Decimal(load.dark.shadow).gt(0))check=true;
+		if(check){
+			alert("Saves from Incremental Mass Rewritten Vanilla 0.6 or above is not supported in this NG+ Version!");
+			return true;
+		}else delete load.dark;
 	}
     player = deepNaN(load, DATA)
     player = deepUndefinedAndDecimal(player, DATA)

@@ -7,7 +7,8 @@ const TABS = {
 				tmp.sn_tab = tmp.tab
 				tree_update = true
 			}
-		} else if (tmp.tab == 5 && x == 4) tmp.tab = 7
+		} else if (tmp.tab == 4 && x == 3) tmp.tab = 5
+		else if (tmp.tab == 5 && x == 4) tmp.tab = 7
 		else tmp.stab[tmp.tab] = x
 	},
     1: [
@@ -16,9 +17,10 @@ const TABS = {
         { id: "Upgrades", unl() { return player.rp.unl } },
         { id: "Challenges", unl() { return player.chal.unl } },
         { id: "Atom", unl() { return player.atom.unl }, style: "atom" },
-        { id: "Supernova", unl() { return player.supernova.times.gte(1) || quUnl() }, style: "sn" },
+        { id: "Supernova", unl() { return (player.supernova.times.gte(1) || quUnl()) && !player.exotic.times.gte(1) }, style: "sn" },
         { id: "Quantum", unl() { return quUnl() }, style: "qu" },
         { id: "Galactic", unl() { return player.superGal.gt(0) || player.supernova.times.gte(SUPERNOVA_GALAXY.req()) }, style: "gal" },
+        { id: "Exotic", unl() { return player.exotic.times.gte(1) }, style: "red" },
         { id: "Options" },
     ],
     2: {
@@ -29,10 +31,12 @@ const TABS = {
             { id: "Indescribable Matter", unl() { return quUnl() }, style: "qu" },
             { id: "Prestigious", unl() { return hasUpgrade("br", 9) }, style: "pm" },
             { id: "Eternal", unl() { return player.et.times.gt(0) }, style: "et" },
+            { id: "Ascendent", unl() { return hasUpgrade("br", 9) }, style: "pm" },
         ],
         1: [
             { id: "Ranks Rewards" },
             { id: "Prestige Rewards", unl() { return hasUpgrade("br",9) } },
+            { id: "Ascension Rewards", unl() { return hasAscension(0,1) } },
             { id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
         ],
         2: [
@@ -49,13 +53,14 @@ const TABS = {
             { id: "Particles" },
             { id: "Mass Dilation", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
             { id: "Stars", unl() { return STARS.unlocked() }, style: "star" },
+            { id: "Supernova", unl() { return player.exotic.times.gte(1) }, style: "sn" },
         ],
         5: [
             { id: "Neutron Tree", unl() { return !quUnl() } },
             { id: "Bosons", unl() { return player.supernova.post_10 } },
             { id: "Fermions", unl() { return player.supernova.fermions.unl } },
             { id: "Radiation", unl() { return tmp.radiation.unl } },
-            { id: "Galactic", unl() { return hasElement(218) || player.superGal.gte(1)}, style: "gal" },
+            { id: "Galactic", unl() { return hasElement(218) || player.superGal.gte(1) }, style: "gal" },
         ],
         6: [
             { id: "Chroma" },
@@ -69,7 +74,13 @@ const TABS = {
             { id: "Main", unl() { return true } },
             { id: "G-Fermions", unl() { return hasElement(237) } },
             { id: "G-Particles", unl() { return hasElement(251) } },
-            { id: "Galactic Challenges", unl() { return hasElement(267) }, style: "gal" },
+            { id: "Cluster", unl() { return hasElement(387) || player.superCluster.gte(1) }, style: "gal" },
+        ],
+        8: [
+            { id: "Exotic Milestones" },
+            { id: "RC Boosters", unl() { return hasUpgrade("exotic",5) } },
+            { id: "Exotic Boosts", unl() { return hasUpgrade("exotic",10) } },
+            { id: "Darkness", unl() { return hasUpgrade("exotic",15) } },
         ],
     },
 }

@@ -14,7 +14,7 @@ const ST_NAMES = [
 		["","Hc","DHe","THt","TeH","PHc","HHe","HpH","OHt","EHc"]
 	]
 ]
-const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'qu', 'br', 'inf', 'et']
+const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'qu', 'br', 'inf', 'et', 'sg', 'exotic']
 
 const FORMS = {
     getPreQUGlobalSpeed() {
@@ -33,8 +33,9 @@ const FORMS = {
 		x = x.pow(calcShardsEffect())
 	
         if (QCs.active()) x = x.div(tmp.qu.qc_eff[1])
-		if (player.gc.active) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 			
+		if(player.gc.active && hasElement(423))x = x.add(1)
 		return x
     },
     massGain() {
@@ -45,7 +46,7 @@ const FORMS = {
         x = x.mul(tmp.tickspeedEffect.eff||E(1))
         if (player.bh.unl) x = x.mul(tmp.bh.effect)
         if (player.mainUpg.bh.includes(10)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][10].effect:E(1))
-        x = x.mul(tmp.atom.particles[1].powerEffect.eff2)
+        if (!hasElement(355)) x = x.mul(tmp.atom.particles[1].powerEffect.eff2)
         if (player.ranks.rank.gte(380)) x = x.mul(RANKS.effect.rank[380]())
         x = x.mul(tmp.stars.effect)
         if (hasTree("m1")) x = x.mul(tmp.supernova.tree_eff.m1)
@@ -59,6 +60,7 @@ const FORMS = {
 		if (!hasElement(134)) x = x.mul(tmp.tickspeedEffect.eff||E(1))
         else x = x.pow(tmp.tickspeedEffect.eff||E(1))
 	
+        if (hasElement(355)) x = x.pow(tmp.atom.particles[1].powerEffect.eff2)
         if (player.ranks.tier.gte(2)) x = x.pow(1.15)
         if (player.ranks.rank.gte(180)) x = x.pow(1.025)
         if (!(player.chal.active == 3)) x = x.pow(tmp.chal.eff[3])
@@ -73,6 +75,8 @@ const FORMS = {
 		if (hasUpgrade('bh',19)) x = x.pow(tmp.upgs.main?tmp.upgs.main[2][19].effect:E(1))
         if (hasUpgrade('br',20)) x = x.pow(tmp.upgs.main?tmp.upgs.main[4][20].effect:E(1))
 		if (hasElement(213)) x = x.pow(tmp.chal.eff[20])
+		if (hasChargedElement(18)) x = x.pow(tmp.elements.effect[18])
+		if (hasChargedElement(28)) x = x.pow(tmp.elements.ceffect[28])
 		
 		x = x.pow(tmp.fermions.effs[2][2]||E(1))	
 		
@@ -92,10 +96,12 @@ const FORMS = {
 
         if (hasElement(117)) x = x.pow(10)
 		
+        if (hasChargedElement(51) && x.gte(10)) x = expMult(x,1.005)
+		
 		
 		if (CHALS.inChal(20)) x = x.add(1).log10()
 		
-		if (player.gc.active) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 	
 		tmp.massOverflowStart = E("ee84")
 		if (player.ranks.hex.gte(120))tmp.massOverflowStart = tmp.massOverflowStart.pow(10)
@@ -110,7 +116,9 @@ const FORMS = {
 		if (CHALS.inChal(15) || CHALS.inChal(19))tmp.massOverflowPower = tmp.massOverflowPower.pow(12)
 			
 		tmp.massOverflow = overflow(x,tmp.massOverflowStart,tmp.massOverflowPower).log(x);
-		x = overflow(x,tmp.massOverflowStart,tmp.massOverflowPower);
+		if (!hasUpgrade('exotic',1))x = overflow(x,tmp.massOverflowStart,tmp.massOverflowPower);
+			
+		if(player.gc.active && hasElement(423))x = x.add(1)
         return x
     },
     massSoftGain() {
@@ -270,6 +278,9 @@ const FORMS = {
 			step = step.mul(SUPERNOVA_GALAXY.effects.tsMult())
 			
             step = step.mul(tmp.bosons.effect.z_boson[0])
+			
+					if (hasUpgrade('rp',22)) step = step.mul(tmp.upgs.main?tmp.upgs.main[1][22].effect:E(1))
+			
             step = tmp.md.bd3 ? step.pow(tmp.md.mass_eff) : step.mul(tmp.md.mass_eff)
             step = step.pow(tmp.qu.chroma_eff[0])
             if (hasTree("t1")) step = step.pow(1.15)
@@ -298,7 +309,8 @@ const FORMS = {
 		
 			let eff_bottom = eff
 			if (hasElement(134)){
-				eff = eff.add(9).log10().add(9).log10().pow(tmp.accelEffect.eff.mul(0.1));
+				if(hasElement(357))eff = E(10).pow(eff.add(10).log10().add(10).log10().pow(0.15));else eff = eff.add(9).log10().add(9).log10();
+				eff = eff.pow(tmp.accelEffect.eff.mul(0.1));
 				eff_bottom = eff_bottom.pow(tmp.accelEffect.eff);
 				if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05),eff_bottom = eff_bottom.pow(1.05);
 			}
@@ -357,12 +369,77 @@ const FORMS = {
 			if(player.ranks.oct.gte(9))p2 = p2 ** 0.9
 			if(player.ranks.oct.gte(21))ss2 = ss2.mul(2)
 			if(player.ranks.oct.gte(21))p2 = p2 ** 0.9
+			if(player.ranks.oct.gte(29))ss2 = ss2.mul(2)
+			if(player.ranks.oct.gte(29))p2 = p2 ** 0.98
+			if(player.ranks.oct.gte(33))p2 = p2 ** 0.969
+			if(hasElement(391))p2 = p2 ** 0.95
+			if(hasChargedElement(63))p2 = p2 ** 0.99
+			if(hasChargedElement(86))ss2 = ss2.mul(2)
+			if(hasElement(434))p2 = p2 ** 0.928
+			if(hasElement(443))p2 = p2 ** 0.968
 			x = overflow(overflow(x,ss,p),ss2,p2)
 			
 			return {step: step, eff: x,  ss: ss}
         },
         autoUnl() { return true },
         autoSwitch() { player.autoAccel = !player.autoAccel },
+    },
+    prestige_tickspeed: {
+        cost(x=player.tickspeed) { return E(2).pow(x).floor() },
+        can() { return player.prestigeRP.gte(tmp.prestigeTickspeedCost) },
+        buy() {
+            if (this.can()) {
+                player.prestigeTickspeed = player.prestigeTickspeed.add(1)
+            }
+        },
+        buyMax() { 
+            if (this.can()) {
+                player.prestigeTickspeed = tmp.prestigeTickspeedBulk
+            }
+        },
+        effect() {
+            let t = player.prestigeTickspeed
+			let step = tmp.ascensions.base || E(1);
+			let ss = E("1e1000")
+            let p = 0.1
+			
+			if(hasAscension(1,7))step = step.pow(5)
+			
+			step = step.softcap(ss,p,0)
+			let bonus = E(0)
+            let eff = step.pow(t.add(bonus))
+			
+			return {step: step, eff: eff, bonus: bonus, ss: ss}
+        },
+        autoUnl() { return true },
+        autoSwitch() { player.autoPrestigeTickspeed = !player.autoPrestigeTickspeed },
+    },
+    prestigeBHC: {
+        cost(x) { return E(2).pow(x).floor() },
+        can() { return player.prestigeDM.gte(tmp.prestigeBHCCost) },
+        buy() {
+            if (this.can()) {
+                player.prestigeBHC = player.prestigeBHC.add(1)
+            }
+        },
+        buyMax() { 
+            if (this.can()) {
+                player.prestigeBHC = tmp.prestigeBHCBulk
+            }
+        },
+        effect() {
+            let t = player.prestigeBHC
+			let step = (player.ascensions[0] || E(1)).add(1);
+			let ss = E(1e100)
+            let p = 0.1
+			step = step.softcap(ss,p,0)
+			let bonus = E(0)
+            let eff = step.pow(t.add(bonus))
+			
+			return {step: step, eff: eff, bonus: bonus, ss: ss}
+        },
+        autoUnl() { return true },
+        autoSwitch() { player.autoPrestigeBHC = !player.autoPrestigeBHC },
     },
     rp: {
         gain() {
@@ -385,12 +462,17 @@ const FORMS = {
 			gain = gain.pow(SUPERNOVA_GALAXY.effects.rp())
             if (QCs.active()) gain = gain.pow(tmp.qu.qc_eff[4])
 		 gain = gain.pow(tmp.fermions.effs[2][3]||E(1))	
+	 
+			if(hasElement(348))gain = gain.pow(E(2).pow(player.chal.comps[7].mul((tmp.chal?tmp.chal.eff[7]:E(1)).add(1).log10()).pow(0.625).add(1)));
+			
+			if(hasUpgrade('exotic',10) && gain.gte(10))gain = expMult(gain,tmp.ex.exb_eff[0])
+			
             if (player.md.active || CHALS.inChal(10) || CHALS.inChal(14)  || CHALS.inChal(19) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) gain = expMult(gain,tmp.md.pen)
             
 		
 			if (FERMIONS.onActive("23"))gain = gain.add(1).log10()
 				
-			if (player.gc.active) gain = GCeffect(gain)
+			if (player.gc.active || player.chal.active >= 21) gain = GCeffect(gain)
 			return gain.floor()
         },
         reset() {
@@ -414,7 +496,7 @@ const FORMS = {
             gain = gain.root(4)
 
             if (hasTree("bh1")) gain = gain.mul(tmp.supernova.tree_eff.bh1)
-            gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
+            if (hasElement(404)) gain = gain.pow(tmp.bosons.upgs.photon[0].effect); else gain = gain.mul(tmp.bosons.upgs.photon[0].effect)
 
             if (CHALS.inChal(7) || CHALS.inChal(10) || CHALS.inChal(14) || CHALS.inChal(19)) gain = gain.root(6)
             if (!hasElement(105)) gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
@@ -424,13 +506,19 @@ const FORMS = {
             gain = gain.pow(tmp.prim.eff[2][0])
 
             if (QCs.active()) gain = gain.pow(tmp.qu.qc_eff[4])
+			
+
+			
+			if(hasUpgrade('exotic',10) && gain.gte(10))gain = expMult(gain,tmp.ex.exb_eff[1])	
+				
+			
             if (player.md.active || CHALS.inChal(10) || CHALS.inChal(14) || CHALS.inChal(19) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) gain = expMult(gain,tmp.md.pen)
 				
 			
 			if (FERMIONS.onActive("32"))gain = gain.add(1).log10().pow(5)
 				
 			
-			if (player.gc.active) gain = GCeffect(gain)
+			if (player.gc.active || player.chal.active >= 21) gain = GCeffect(gain)
 				
             return gain.floor()
         },
@@ -439,6 +527,7 @@ const FORMS = {
             if (FERMIONS.onActive("11")) return E(-1)
             if (hasElement(59)) x = E(0.45)
             if (player.ranks.hex.gte(59)) x = E(0.5)
+            if (hasChargedElement(59)) x = E(1)
             x = x.add(tmp.radiation.bs.eff[4])
             return x
         },
@@ -448,7 +537,7 @@ const FORMS = {
             if (player.mainUpg.rp.includes(11)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][11].effect:E(1))
             if (player.mainUpg.bh.includes(14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:E(1))
             if (hasElement(46) && !player.ranks.hex.gte(46)) x = x.mul(tmp.elements.effect[46])
-            x = x.mul(tmp.bosons.upgs.photon[0].effect)
+            if (hasElement(404)) x = x.pow(tmp.bosons.upgs.photon[0].effect); else x = x.mul(tmp.bosons.upgs.photon[0].effect)
             if (CHALS.inChal(8) || CHALS.inChal(10) || CHALS.inChal(14) || CHALS.inChal(19) || FERMIONS.onActive("12")) x = x.root(8)
             x = x.pow(tmp.chal.eff[8])
 
@@ -465,7 +554,7 @@ const FORMS = {
 			if (FERMIONS.onActive("31")) x = x.add(1).log10().pow(100)
 			
 		
-			if (player.gc.active) x = GCeffect(x)
+			if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 				
 			tmp.bhOverflowStart = E("e1e34")
 			if (hasUpgrade('bh',16))tmp.bhOverflowStart = tmp.bhOverflowStart.pow(10)
@@ -475,7 +564,7 @@ const FORMS = {
 			if(!hasElement(327))x = overflow(x,tmp.bhOverflowStart,CHALS.inChal(19)?0.04:CHALS.inChal(15)?0.05:(hasElement(262)?0.9:hasElement(241)?0.82:hasUpgrade('bh',20)?0.81:0.8));
 			let bhOverflowStart2 = tmp.bhOverflowStart.pow(1e65);
 			if(x.gte(bhOverflowStart2)){
-				x = x.log10().log10().div(bhOverflowStart2.log10().log10()).pow(0.8).mul(bhOverflowStart2.log10().log10());
+				x = x.log10().log10().div(bhOverflowStart2.log10().log10()).pow(E(hasChargedElement(89)?0.82:hasUpgrade('bh',23)?0.81:0.8).pow(prestigeDMEffect())).mul(bhOverflowStart2.log10().log10());
 				x = Decimal.pow(10,x);x = Decimal.pow(10,x);
 			}
 			if(x.gte("eee10")){
@@ -522,7 +611,8 @@ const FORMS = {
         doReset() {
             let keep = []
             for (let x = 0; x < player.mainUpg.rp.length; x++) if ([3,5,6].includes(player.mainUpg.rp[x])) keep.push(player.mainUpg.rp[x])
-            player.mainUpg.rp = keep
+            if (player.mainUpg.exotic.includes(19))keep = player.mainUpg.rp
+			player.mainUpg.rp = keep
             player.rp.points = E(0)
             player.tickspeed = E(0)
             player.accelerator = E(0)
@@ -560,19 +650,25 @@ const FORMS = {
                     if (player.mainUpg.bh.includes(2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:E(1))
                     pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
                     if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
-                    pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
                     pow = pow.mul(tmp.prim.eff[2][1])
                     pow = pow.mul(getEnRewardEff(3)[1])
                     if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
+						
+					if (hasUpgrade('bh',21)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][21].effect:E(1))
+					
+					
+					if (hasElement(404)) pow = pow.pow(tmp.bosons.upgs.photon[1].effect); else pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
                     if (hasTree("bh2")) pow = pow.pow(1.15)
                     if (hasElement(346))pow = pow.pow(tmp.atom.particles[2].powerEffect.eff2)
                 
                 let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
+					if(hasAscension(0,26))eff = pow.pow(t.add(1).mul((tmp.bh.condenser_bonus||E(0)).add(1)))
                 return {pow: pow, eff: eff}
             },
             bonus() {
                 let x = E(0)
                 if (player.mainUpg.bh.includes(15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:E(0))
+				if (hasChargedElement(38)) x = x.add(tmp.atom.atomicEff);
                 x = x.mul(getEnRewardEff(4))
                 return x
             },
@@ -586,6 +682,7 @@ const FORMS = {
             md: "Dilate mass, then cancel",
             br: "Big Rip the Dimension, then go back",
             eternity: "Require over 1e2000 of Pre-Quantum Global Speed to become Eternal",
+            exotic: "Require over eee12 g of mass to reset previous features for gain Exotic Matter",
         },
         set(id) {
             if (id=="sn") {
@@ -603,6 +700,10 @@ const FORMS = {
             }
             if (id=="infinity") {
                 player.reset_msg = "Require over "+format(E(Number.MAX_VALUE))+" of Quantum Foam to go Infinity"
+                return
+            }
+            if (id=="exotic") {
+                player.reset_msg = "Require over "+formatMass(new Decimal("eee12"))+" of mass to reset previous features for gain Exotic Matter"
                 return
             }
             player.reset_msg = this.msgs[id]

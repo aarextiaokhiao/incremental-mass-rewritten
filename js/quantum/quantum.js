@@ -3,8 +3,10 @@ const QUANTUM = {
 		if (CHALS.inChal(13) || CHALS.inChal(19)) return E(0)
         let x = player.mass.max(1).log10().div(1e13)
         if (x.lt(1)) return E(0)
-        x = x.max(0).pow(hasTree("qu11")?3:1.5)
-
+        x = x.max(0).pow(hasTree("qu11")?3:1.5);
+		if (player.exotic.times.gte(1) && player.qu.times.gte(1e295)) x = x.pow(1.5);
+		if (hasUpgrade('br',25)) x = x.pow(16/9);
+		
         x = x.mul(tmp.qu.qc_s_eff)
         if (tmp.qu.mil_reached[4]) x = x.mul(2)
         if (hasTree("qf1")) x = x.mul(treeEff("qf1"))
@@ -14,6 +16,10 @@ const QUANTUM = {
         if (hasPrestige(0,55)) x = x.mul(player.prestiges[0].max(1))
         if (hasPrestige(0,89)) x = x.mul(prestigeEff(0,89,[E(1),E(1)])[0]);
         if (hasUpgrade('inf',1)) x = x.mul(upgEffect(5,1))
+			
+		
+			if(hasUpgrade('exotic',24) && x.gte(10))x = expMult(x,tmp.ex.exb_eff[5])
+				
         return x.floor()
     },
     gainTimes() {
@@ -24,8 +30,12 @@ const QUANTUM = {
         if (hasTree("qu_qol11")) x = x.mul(10)
         if (hasUpgrade('inf',1)) x = x.mul(player.inf.times.add(200))
         if (hasElement(216)) x = x.mul(tmp.elements.effect[216])
-			
+		if (player.exotic.times.gte(3)) x = x.mul(player.exotic.times);
+	
         x = x.mul(SUPERNOVA_GALAXY.effects.qut2())
+		
+		if (hasUpgrade('exotic',5)) x = x.mul(tmp.ex.rcb_eff[0].eff);
+        if (hasPrestige(2,146)) x = x.mul(prestigeEff(2,146,E(1)));
         return x
     },
     enter(auto=false,force=false,rip=false,bd=false) {
@@ -123,6 +133,8 @@ const QUANTUM = {
         if (hasTree('qu5')) x = x.mul(tmp.supernova.tree_eff.qu5)
         x = x.mul(tmp.qu.cosmic_str_eff.eff)
         if (hasPrestige(0,88)) x = x.mul(prestigeEff(0,88,[E(1),E(1)])[0]);
+		if(hasElement(400))x = x.pow(EXOTIC.dsEff().bp);	
+		
         return x
     },
     bpEff() {
@@ -146,6 +158,7 @@ const QUANTUM = {
         eff() {
             let pow = E(2)
             if (hasTree('qu6')) pow = pow.mul(treeEff('qu6'))
+            if (hasElement(420)) pow = pow.mul(EXOTIC.abEff().csp)
             let x = pow.pow(player.qu.cosmic_str)
             return {pow: pow, eff: x}
         },
@@ -158,6 +171,13 @@ const QUANTUM = {
         [E(6), `Double Quantum Foam gain.`],
         [E(8), `Pre-Quantum global speed can affect Blueprint Particle & Chroma at a reduced rate.`],
         [E(10), `Supernova stars are boosted by Quantum times (capped at 1e10). Unlock Auto-Quantum.`],
+        [E(1e255), `Triple Exotic Matter gain.`],
+        [E(1e275), `Meta-Pent starts 100x later.`],
+        [E(1e295), `Base Quantum Foam gain ^1.5, 5x Exotic Matter gain.`],
+        [E(1e303), `Meta-Pent starts 1e25x later.`],
+        [E(Number.MAX_VALUE), `Quantum times add to Infinity Mass gain formula. Super Supernova Galaxies starts 5 later.`],
+        [E('6.9e420'), `Entropic Evaporation^2 is 50% weaker.`],
+        [E('1e600'), `Multiply the starting point of Meta-Pent scaling by (quantizes+1).`],
     ],
     auto: {
         mode: ["Amount","Time"],
@@ -315,7 +335,7 @@ function updateQuantumHTML() {
     tmp.el.gs1_div.setDisplay(unl)
     if (unl) tmp.el.preQGSpeed.setHTML(formatMult(tmp.preQUGlobalSpeed))
 
-    unl = hasTree("unl4")
+    unl = hasTree("unl4") && player.exotic.times.lt(1)
     tmp.el.br_div.setDisplay(unl)
     if (unl) tmp.el.brAmt.setHTML(player.qu.rip.amt.format(0)+"<br>"+((player.qu.rip.active || (hasTree('qu_qol12') && gain2))?gain2?player.qu.rip.amt.formatGain(tmp.rip.gain.div(10)):`(+${tmp.rip.gain.format(0)})`:"(inactive)"))
 	if (tmp.rip.gain.gte(Number.MAX_VALUE)){
@@ -351,6 +371,9 @@ function updateQuantumHTML() {
             for (let x = 0; x < QUANTUM.mils.length; x++) {
                 tmp.el['qu_mil'+x].changeStyle('background-color',tmp.qu.mil_reached[x]?'#2f22':'#4442')
                 tmp.el['qu_mil_goal'+x].setTxt(format(QUANTUM.mils[x][0],0))
+            }
+			for (let x = 7; x < QUANTUM.mils.length; x++) {
+                tmp.el['qu_mil'+x].changeStyle('display',player.exotic.times.gte(1)?'':'none')
             }
         }
         if (tmp.stab[6] == 5) {

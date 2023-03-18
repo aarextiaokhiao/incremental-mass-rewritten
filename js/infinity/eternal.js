@@ -1,4 +1,3 @@
-
 const ETERNITY_LAYER = {
     gain() {
         let x = tmp.preQUGlobalSpeed.add(1).log("1e2000");
@@ -9,6 +8,7 @@ const ETERNITY_LAYER = {
         x = x.pow(power).sub(1);
 		x = overflow(x,10,2);
 		
+        if (hasPrestige(3,17)) x = x.mul(prestigeEff(3,17));
         if (hasPrestige(2,4)) x = x.mul(prestigeEff(2,4));
         if (hasPrestige(1,26)) x = x.mul(prestigeEff(1,26));
         if (hasPrestige(0,250)) x = x.mul(prestigeEff(0,250));
@@ -18,6 +18,7 @@ const ETERNITY_LAYER = {
 		if (hasElement(127)) x = x.mul(tmp.elements.effect[127]);
         if (player.ranks.oct.gte(10)) x = x.mul(RANKS.effect.oct[10]())
 		x = x.mul(SUPERNOVA_GALAXY.effects.inf())
+		if (hasElement(436)) x = x.mul(EXOTIC.abEff().em);
         return x
     },
     gainTimes() {
@@ -25,6 +26,9 @@ const ETERNITY_LAYER = {
 		if (hasElement(217)) x = x.mul(tmp.elements.effect[217]);
 		if (hasElement(243)) x = x.mul(tmp.elements.effect[243]);
         x = x.mul(SUPERNOVA_GALAXY.effects.qut2())
+		if (hasUpgrade('exotic',1))x = x.mul(player.exotic.times.add(200))
+        if (hasUpgrade('exotic',5)) x = x.mul(tmp.ex.rcb_eff[2].eff);
+        if (hasPrestige(2,148)) x = x.mul(prestigeEff(2,148,E(1)));
         return x
     },
     enter() {
@@ -118,6 +122,7 @@ const ETERNITY_LAYER = {
 
 function calcShardsEffect() {
 	let eff = player.et.shards.add(1).log10().add(1).log10().add(1).pow(0.1);
+	if(hasElement(365))eff = player.et.shards.add(1).log10().add(1).pow(hasElement(377)?0.025:0.02);
 	if(hasUpgrade('br',16))eff = eff.pow(1.1);
 	if(hasUpgrade('br',17))eff = eff.pow(1.2);
 	if(hasUpgrade('br',18))eff = eff.pow(1.1);
@@ -126,5 +131,18 @@ function calcShardsEffect() {
 	if(hasElement(223))eff = eff.pow(1.4);
 	if(hasElement(226))eff = eff.pow(1.3);
 	if(hasElement(238))eff = eff.pow(1.2);
+	if(hasElement(431))eff = eff.pow(1.2);
+	if(hasElement(437))eff = eff.pow(1.2741059573015495880509654614338);
 	return eff;
+}
+
+function updateEternalHTML() {
+	tmp.el.shardsAmt.setHTML(format(player.et.shards,0)+player.et.shards.formatGain(tmp.et.shardsGain,0));
+	tmp.el.shardsEff.setHTML(format(calcShardsEffect()));
+	tmp.el.shard_gen_lvl.setTxt(format(player.et.shard_gen,0))
+	tmp.el.shard_gen_btn.setClasses({btn: true, locked: !tmp.et.shard_gen_can})
+	tmp.el.shard_gen_scale.setTxt(getScalingName('shard_gen'))
+	tmp.el.shard_gen_cost.setTxt(formatMass(tmp.et.shard_gen_cost,0))
+	tmp.el.shard_gen_pow.setTxt(format(tmp.et.shard_gen_eff.pow))
+	tmp.el.shard_gen_eff.setHTML(format(tmp.et.shard_gen_eff.eff))
 }

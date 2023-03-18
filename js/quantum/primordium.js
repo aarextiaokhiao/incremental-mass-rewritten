@@ -44,7 +44,7 @@ const PRIM = {
                 return x
             },
             p=>{
-                let x = [p.root(3).div(10), p.root(3).pow((QCs.active()||hasTree('prim3a'))?2:1).pow((!QCs.active() && hasElement(200))?1.75:1)]
+                let x = [p.root(3).div(10).mul(hasChargedElement(95)?10:1), p.root(3).pow((QCs.active()||hasTree('prim3a'))?2:1).pow((!QCs.active() && hasElement(200))?1.75:1).pow((!QCs.active() && hasChargedElement(95))?1.2:1).mul(hasChargedElement(95)?10:1)]
                 return x
             },
             p=>{
@@ -54,10 +54,15 @@ const PRIM = {
             p=>{
                 if (hasElement(107)) p = p.mul(2)
                 let x = p.pow(0.9).mul(2)
-				if (player.gc.active && x.gte(200000))x = x.div(2).log10().mul(40000);
-				if (player.gc.active && x.gte(300000))x = x.div(3).log10().mul(60000);
-				if (player.gc.active && x.gte(400000))x = x.div(4).log10().mul(80000);
-				if (player.gc.active && x.gte(500000))x = E(500000);
+				if (player.gc.active){
+					let y = new Decimal(200000);
+					if(hasElement(362))y = y.add(150000);
+					while(x.gte(y)){
+						x = x.div(y.div(100000)).log10().mul(y.div(5));
+						y = y.add(100000);
+					}
+				}
+				if(hasElement(427)) x = x.mul(10)
                 return x
             },
         ],

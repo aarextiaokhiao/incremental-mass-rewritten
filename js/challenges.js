@@ -38,7 +38,10 @@ function updateChalHTML() {
             tmp.el.chal_ch_reset.setTxt(CHALS.getReset(player.chal.choosed))
             tmp.el.chal_ch_goal.setTxt("Goal: "+CHALS.getFormat(player.chal.choosed)(tmp.chal.goal[player.chal.choosed])+CHALS.getResName(player.chal.choosed))
             tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward)
+			if(player.chal.choosed == 1)tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward())
 			if(player.chal.choosed == 5)tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward())
+			if(player.chal.choosed == 7)tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward())
+			if(player.chal.choosed == 14)tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward())
             tmp.el.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[player.chal.choosed]))
         }
     }
@@ -99,7 +102,7 @@ const CHALS = {
 			if(x == 16 && chal_reset == false){
 				player.prestigeMass = E(0);
 			}
-		}else {
+		}else if (x < 21) {
 			ETERNITY_LAYER.doReset();
 			updateTemp();
 			updateTemp();
@@ -111,6 +114,13 @@ const CHALS = {
 				QUANTUM.enter(false,true,true)
 				player.prestigeMass = E(0);
 			}
+		}else{
+			EXOTIC.doReset();
+			updateTemp();
+			updateTemp();
+			updateTemp();
+			updateTemp();
+			updateTemp();
 		}
     },
     exit(auto=false) {
@@ -137,7 +147,8 @@ const CHALS = {
             this.reset(player.chal.choosed, false)
         }
     },
-    getResource(x) {
+    getResource(x, y) {
+		if (x == 20 && y == 1) return player.mass.add(1).log10()
         if (x < 5 || x > 8) return player.mass
         return player.bh.mass
     },
@@ -153,7 +164,8 @@ const CHALS = {
         if (x < 9) return "Entering challenge will reset with Atoms except previous challenges!"
         if (x < 13) return "Entering challenge will reset without being Supernova!"
         if (x < 17) return "Entering challenge will force an Infinity reset!"
-		return "Entering challenge will force an Eternity reset!"
+		if (x < 21) return "Entering challenge will force an Eternity reset!"
+		return "Entering challenge will force an Exotic reset!"
     },
     getMax(i) {
         if (hasPrestige(1,25) && (i<=11)) return EINF
@@ -230,6 +242,7 @@ const CHALS = {
         return ""
     },
     getPower(i) {
+		if(hasElement(379) && i <= 19)return E(0)
         let x = E(1)
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
@@ -240,6 +253,7 @@ const CHALS = {
         return x
     },
     getPower2(i) {
+		if(hasElement(379) && i <= 19)return E(0)
         let x = E(1)
         if (hasElement(92)) x = x.mul(0.75)
         if (player.ranks.hex.gte(92) && (i<=8 || i>=10) && i<=12) x = x.mul(0.75)
@@ -249,10 +263,14 @@ const CHALS = {
     getPower3(i) {
         let x = E(1)
 		if (i>12)x = E(50)
+		if(hasUpgrade('br',24))x = x.mul(0.8)
+        if (hasChargedElement(2)) x = x.mul(0.95)
+        if (hasChargedElement(26)) x = x.mul(tmp.elements.ceffect[26])
+        if (hasChargedElement(92)) x = x.mul(0.95)
         return x
     },
-    getChalData(x, r=E(-1)) {
-        let res = this.getResource(x)
+    getChalData(x, r=E(-1), y) {
+        let res = this.getResource(x,y)
         let lvl = r.lt(0)?player.chal.comps[x]:r
         let chal = this[x]
 		if(hasElement(170)&&x==15)chal.inc = E(2);
@@ -267,6 +285,7 @@ const CHALS = {
         let pow = chal.pow
         if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
         if (player.ranks.hex.gte(10) && (x==3||x==4)) pow = pow.mul(0.95)
+        if (hasChargedElement(10) && x==20) pow = pow.mul(0.95)
         chal.pow = chal.pow.max(1)
         let goal = chal.inc.pow(lvl.div(fp).pow(pow)).mul(chal.start)
         let bulk = res.div(chal.start).max(1).log(chal.inc).root(pow).mul(fp).add(1).floor()
@@ -342,7 +361,10 @@ const CHALS = {
     1: {
         title: "Instant Scale",
         desc: "Super Ranks, Mass Upgrades starts at 25. In addtional, Super Tickspeed start at 50.",
-        reward: `Super Ranks starts later, Super Tickspeed scaling weaker by completions.`,
+        reward() {
+			if(hasElement(348))return `Meta-Tickspeed scaling starts later.`;
+			return `Super Ranks starts later, Super Tickspeed scaling weaker by completions.`
+		},
         max: E(100),
         inc: E(5),
         pow: E(1.3),
@@ -352,7 +374,7 @@ const CHALS = {
             let tick = E(0.96).pow(x.root(2))
             return {rank: rank, tick: tick}
         },
-        effDesc(x) { return "+"+format(x.rank,0)+" later to Super Ranks, Super Tickspeed scaling "+format(E(1).sub(x.tick).mul(100))+"% weaker" },
+        effDesc(x) { if(hasElement(348))return format(x.rank.add(1),0)+"x later";return "+"+format(x.rank,0)+" later to Super Ranks, Super Tickspeed scaling "+format(E(1).sub(x.tick).mul(100))+"% weaker" },
     },
     2: {
         unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
@@ -383,6 +405,7 @@ const CHALS = {
         start: E(2.9835e49),
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
+            if (hasChargedElement(64))return expMult(x.add(1),2.6);
             let ret = x.root(1.5).mul(0.01).add(1)
 			if(hasElement(310))return ret;
             return ret.softcap(3,E(0.25).pow(tmp.chal.eff[17]||1),0)
@@ -400,6 +423,7 @@ const CHALS = {
         start: E(1.736881338559743e133),
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
+            if (hasChargedElement(64))return expMult(x.add(1),2.6);
             let ret = x.root(1.5).mul(0.01).add(1)
 			if(hasElement(310))return ret;
 			if (player.ranks.hex.gte(39))return ret.softcap(3,E(0.26).pow(tmp.chal.eff[17]||1),0);
@@ -412,6 +436,8 @@ const CHALS = {
         title: "No Rank",
         desc: "You cannot rank up.",
         reward() {
+			if(hasElement(421))return `Meta-Hex scaling starts later. Blue chroma affects this effect, but at a reduced rate.`;
+			if(hasElement(348))return `Meta-Pent scaling starts later. Blue chroma affects this effect, but at a reduced rate.`;
 			if(hasElement(265))return `Meta-Tetr scaling starts later.`;
 			if(hasElement(230))return `Meta-Tier scaling starts later.`;
 			if(hasElement(170))return `Meta-Rank scaling starts later.`;
@@ -422,8 +448,10 @@ const CHALS = {
         pow: E(1.25),
         start: E(1.5e136),
         effect(x) {
+			if(hasElement(421))return x.add(1).log10().mul(player.chal.comps[5]).pow(hasAscension(0,23)?1:1/3).add(10).log10();
+			if(hasElement(348))return x.add(1).log10().mul(player.chal.comps[5]).pow(hasAscension(0,23)?1:1/3).add(1);
 			if(hasElement(170))return x.pow(hasElement(230)?1:hasElement(199)?0.8:0.6).add(1);
-            let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0));
+            let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0)).max(E("e-1e10"));
             return ret
         },
         effDesc(x) { if(hasElement(170))return format(x)+"x later";return format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.97).gte(5)?" <span class='soft'>(softcapped)</span>":"") },
@@ -447,7 +475,10 @@ const CHALS = {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) || quUnl() },
         title: "No Rage Powers",
         desc: "You cannot gain Rage Powers, but Dark Matters are gained by mass instead of Rage Powers at a reduced rate.<br>In addtional, mass gain softcap is stronger.",
-        reward: `Completions adds 2 maximum completions of 1-4 Challenge.<br><span class="yellow">On 16th completion, unlock Elements</span>`,
+        reward() {
+			if(hasElement(348))return `Rage Powers gain are raised by completions. Blue chroma affects this effect, but at a reduced rate.<br><span class="yellow">On 16th completion, unlock Elements</span>`;
+			return `Completions adds 2 maximum completions of 1-4 Challenge.<br><span class="yellow">On 16th completion, unlock Elements</span>`
+		},
         max: E(50),
         inc: E(64),
         pow: E(1.25),
@@ -455,9 +486,16 @@ const CHALS = {
         effect(x) {
             let ret = x.mul(2)
             if (hasElement(5)) ret = ret.mul(2)
+            if (hasChargedElement(5)) ret = ret.pow(20)
+            if (hasChargedElement(13)) ret = ret.pow(1.7)
+            if (hasChargedElement(20)) ret = ret.pow(1.1)
+            if (hasChargedElement(41)) ret = ret.pow(1.3)
+            if (hasChargedElement(60)) ret = ret.pow(1.7)
+            if (hasChargedElement(65)) ret = ret.pow(1.3)
+            if (hasChargedElement(70)) ret = ret.pow(1.3)
             return ret.floor()
         },
-        effDesc(x) { return "+"+format(x,0) },
+        effDesc(x) { if(hasElement(348))return "^"+format(E(2).pow(player.chal.comps[7].mul(x.add(1).log10()).pow(0.625).add(1)));return "+"+format(x,0) },
     },
     8: {
         unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) || quUnl() },
@@ -470,6 +508,10 @@ const CHALS = {
         start: E(1.989e38),
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
+			if(hasChargedElement(70))return expMult(x.add(1),2.65);
+			if(hasChargedElement(65))return expMult(x.add(1),2.64);
+			if(hasChargedElement(56))return expMult(x.add(1),2.63);
+			if(hasChargedElement(33))return expMult(x.add(1),2.62);
             let ret = x.root(1.75).mul(0.02).add(1)
 			if(hasElement(310))return ret;
             return ret.softcap(2.3,0.25,0)
@@ -547,7 +589,13 @@ const CHALS = {
         start: E('ee40'),
         effect(x) {
 			if(CHALS.inChal(17) || CHALS.inChal(19))return E(1)
-			if(x.gte(10))x=x.log10().mul(10);
+			if(hasChargedElement(39)){
+				if(x.gte(200))x=x.div(2).log10().mul(100);
+			}else if(hasChargedElement(8)){
+				if(x.gte(100))x=x.log10().mul(50);
+			}else{
+				if(x.gte(10))x=x.log10().mul(10);
+			}
             let ret = x.div(100).add(1)
             return ret
         },
@@ -557,17 +605,23 @@ const CHALS = {
         unl() { return hasElement(159) },
         title: "The Reality II",
         desc: "All challenges 1-12 are applied at once. In addtional, you are trapped in Big Rip!",
-        reward: `Death Shards gain softcap is weaker.`,
+        reward() {
+			if(hasUpgrade('br',22))return `Death Shards gain is raised by completions.`;
+			return `Death Shards gain softcap is weaker.`
+		},
         max: E(100),
         inc: E('e2.5e11'),
         pow: E(2),
         start: E('e2e12'),
         effect(x) {
 			if(CHALS.inChal(17) || CHALS.inChal(19))return E(1)
+			if(hasUpgrade('br',22)){
+				return x.add(1e10).log10().div(10);
+			}
             let ret = E(0.97).pow(x.root(2).softcap(25,0.56,0).softcap(42,0.1,0))
             return ret
         },
-        effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.97).gte(25)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { if(hasUpgrade('br',22))return "^"+format(x);return format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.97).gte(25)?" <span class='soft'>(softcapped)</span>":"") },
     },
     15: {
         unl() { return hasElement(164) },
@@ -626,6 +680,7 @@ const CHALS = {
         pow: E(9),
         start: E('ee2683'),
         effect(x) {
+			if(hasElement(351))return x.add(1).log10().add(1).log10().mul(1.75).pow(2);
             let ret = x.add(1).log10().add(1).log10().add(1).log10().softcap(0.09,hasElement(233)?1:0.25,0).mul(hasElement(233)?4.2:1);
             return ret
         },
@@ -658,6 +713,7 @@ const CHALS = {
         effect(x) {
 			if(hasPrestige(2,17))x = x.pow(2);
 			if(hasElement(277))x = x.pow(1.25);
+			x = x.softcap(1e6,hasElement(433)?0.7:hasElement(429)?0.5:hasElement(417)?0.3:hasElement(409)?0.1:hasElement(397)?0.03:0.01,0);
             let ret = E(2).pow(x);
 			if(hasElement(229))ret = ret.pow(3);
 			if(hasElement(334))ret = Decimal.pow(10,Decimal.pow(2.6,x.root(4)));
@@ -666,7 +722,22 @@ const CHALS = {
         },
         effDesc(x) { return "^"+format(x) },
     },
-    cols: 20,
+    21: {
+        unl() { return hasElement(438) },
+        title: "No Supernova Galaxies",
+        desc: "Supernova Galaxies, Galactic Resources and Galactic Particles have no effect except QoL effects. Also You're trapped in Galactic Challenge Difficulty 10.",
+        reward: `Super Supernova Galaxies starts later.`,
+		max: E(100),
+		inc: E(1e10),
+		pow: E(10),
+        start: E("4e18493813"),
+        effect(x) {
+			let ret = x.mul(12).min(x.mul(2).add(10));
+			return ret
+        },
+        effDesc(x) { return "+"+format(x)+" later" },
+    },
+    cols: 21,
 }
 
 /*

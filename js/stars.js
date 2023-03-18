@@ -9,14 +9,17 @@ const STARS = {
 		x = x.pow(tmp.fermions.effs[3][0]||E(1))
         x = x.softcap(tmp.stars.softGain,tmp.stars.softPower,0)
 	
+			if(hasUpgrade('exotic',18) && x.gte(10))x = expMult(x,tmp.ex.exb_eff[3])
+				if(hasChargedElement(36) && x.gte(10))x = expMult(x,1.1)
 			if (FERMIONS.onActive("33"))x = x.add(1).log10()
 	
-		if (player.gc.active) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 	
 		tmp.starOverflowPower = E(0.8)
 		if (player.ranks.hept.gte(2))tmp.starOverflowPower = tmp.starOverflowPower.pow(RANKS.effect.hept[2]())
 			
 		
+		if (hasUpgrade('exotic',1))return x;
 		tmp.starOverflow = overflow(x,"e1e43",tmp.starOverflowPower).log(x);
         return overflow(x,"e1e43",tmp.starOverflowPower);
     },
@@ -59,8 +62,12 @@ const STARS = {
 		let l2=Decimal.pow(10,Decimal.pow(10,l));
 		tmp.stars.effectPowerRaw = x.add(1).mul(l2).log10().log10().div(l).sqrt()
 		if(player.ranks.hex.gte(69))tmp.stars.effectPowerRaw = tmp.stars.effectPowerRaw.pow(player.ranks.hex.sub(68).mul(0.01).add(1))
-		tmp.stars.effectPower = overflow(tmp.stars.effectPowerRaw,"ee3",0.5);
-		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee8",0.5);
+		if(hasChargedElement(69))tmp.stars.effectPowerRaw = tmp.stars.effectPowerRaw.pow(player.ranks.hept.mul(0.01).add(1))
+		tmp.stars.effectPower = overflow(tmp.stars.effectPowerRaw,"ee3",hasChargedElement(76)?0.56:hasChargedElement(48)?0.55:0.5);
+		if(!hasChargedElement(46))tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee8",0.5);
+		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee15",0.5);
+		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"e5e19",0.5);
+		tmp.stars.effectPower = overflow(tmp.stars.effectPower,"ee21",0.5);
 		tmp.stars.effectRaw = x
 		if(hasPrestige(1,24))return x.min("e1e85");
         return overflow(x.softcap("ee15",0.95,2).softcap("e5e22",0.95,2).softcap("e1e24",0.91,2).softcap("e2e56",0.95,2).softcap("e1e70",0.95,2),"e1e70",0.6).min("e1e75");
@@ -89,11 +96,17 @@ const STARS = {
             if (hasElement(49) && i==4) x = x.mul(tmp.elements.effect[49])
             if (hasTree("s1") && i==4) x = x.mul(tmp.supernova.tree_eff.s1)
             if (player.md.upgs[8].gte(1)) x = x.mul(tmp.md.upgs[8].eff)
-            if (hasElement(54)) x = x.mul(tmp.elements.effect[54])
-            x = x.mul(tmp.bosons.upgs.photon[3].effect)
+            if (hasElement(54) && !hasChargedElement(54)) x = x.mul(tmp.elements.effect[54])
             x = x.mul(tmp.stars.generator_boost_eff)
+            if (hasChargedElement(54)) x = x.pow(tmp.elements.effect[54])
+            if(hasElement(404))x = x.pow(tmp.bosons.upgs.photon[3].effect);else x = x.mul(tmp.bosons.upgs.photon[3].effect)
             if (hasPrestige(1,1)) x = x.pow(2)
 
+				
+				if(hasUpgrade('atom',22)) x = expMult(x,1.005)
+				if(hasChargedElement(49)) x = expMult(x,1.02)
+				if(hasChargedElement(50)) x = expMult(x,1.02)
+			if(hasElement(444) && x.gte(10))x = expMult(x,tmp.ex.exb_eff[3])
             if (QCs.active()) x = expMult(x,tmp.qu.qc_eff[0][0])
             return x
         },
@@ -179,7 +192,7 @@ function updateStarsScreenHTML() {
 function updateStarsHTML() {
     tmp.el.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
 	tmp.el.starSoftStart1.setTxt(format(tmp.stars.softGain))
-    tmp.el.starOverflow.setDisplay(tmp.stars.gain.gte("ee43"))
+    tmp.el.starOverflow.setDisplay(tmp.stars.gain.gte("ee43") && !hasUpgrade('exotic',1))
 	tmp.el.starOverflow1.setTxt(format(tmp.starOverflow))
     tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain.mul(tmp.preQUGlobalSpeed)))
     if (player.supernova.times.gte(SUPERNOVA_GALAXY.req()) || hasElement(291))tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" "+formatGain(player.stars.points,tmp.stars.gain.mul(tmp.preQUGlobalSpeed)))

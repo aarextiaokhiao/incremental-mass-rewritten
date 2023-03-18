@@ -39,7 +39,7 @@ const CHROMA = {
             return x
         },
         i => {
-            let x = E(1.1).pow(i.add(1).log10().max(0).pow(0.75))
+            let x = E(1.1).pow(i.add(1).log10().max(0).pow(hasChargedElement(79)?0.8:0.75))
 			if (!hasElement(310))x = overflow(x,"1e730",0.5)
 			if (!hasElement(250))x = x.min("1e1000");else x = overflow(x,"1e1000",0.2)
             if (hasUpgrade('br',10)) x = x.pow(1.1)

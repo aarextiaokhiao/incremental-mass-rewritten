@@ -5,7 +5,7 @@ const ATOM = {
         if (x.lt(1)) return E(0)
         x = x.root(5)
         if (player.mainUpg.rp.includes(15)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][15].effect:E(1))
-        x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+        if (hasElement(404)) x = x.pow(tmp.bosons.upgs.gluon[0].effect); else x = x.mul(tmp.bosons.upgs.gluon[0].effect)
 	
 	
         if (hasElement(17)) x = x.pow(1.1)
@@ -13,20 +13,26 @@ const ATOM = {
         x = x.pow(tmp.prim.eff[3][0])
         if (hasElement(111)) x = x.pow(tmp.elements.effect[111])
 
+			
+			if(hasUpgrade('exotic',11) && x.gte(10))x = expMult(x,tmp.ex.exb_eff[2])
+			if(hasChargedElement(17))x = expMult(x,1.01)
+			if(hasChargedElement(47))x = expMult(x,1.02)
+				
+			
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
         if (FERMIONS.onActive("10")) x = expMult(x,0.625)
 			
 		if (FERMIONS.onActive("34")) x = x.add(1).log10().pow(3000)
 		
-		if (player.gc.active) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 			
         return x.floor()
     },
     quarkGain() {
         if (tmp.atom.gain.lt(1)) return E(0)
         x = tmp.atom.gain.max(1).log10().pow(1.1).add(1)
-        if (hasElement(1)) x = E(1.25).pow(tmp.atom.gain.max(1).log10())
-        if (hasElement(1) && player.ranks.hex.gte(1)) x = E(1.5).pow(tmp.atom.gain.max(1).log10())
+        if (hasElement(1)) x = E(1.25).pow(tmp.atom.gain.max(1).log10().pow(hasUpgrade('atom',21)?1.1:1))
+        if (hasElement(1) && player.ranks.hex.gte(1)) x = E(1.5).pow(tmp.atom.gain.max(1).log10().pow(hasUpgrade('atom',21)?1.1:1))
         if (player.mainUpg.bh.includes(13)) x = x.mul(10)
         if (player.mainUpg.atom.includes(8)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][8].effect:E(1))
         if (player.ranks.rank.gte(300)) x = x.mul(RANKS.effect.rank[300]())
@@ -38,15 +44,18 @@ const ATOM = {
         if (hasElement(47)) x = x.pow(1.1)
         if (player.ranks.hex.gte(47)) x = x.pow(1.1)
         if (hasPrestige(1,7)) x = x.pow(prestigeEff(1,7))
-        if (hasElement(67) && player.ranks.hex.gte(67)) x = x.pow(tmp.elements.effect[67])
+        if (hasElement(67) && (player.ranks.hex.gte(67) || hasChargedElement(67))) x = x.pow(tmp.elements.effect[67])
 		x = x.pow(SUPERNOVA_GALAXY.galPow1_eff())
         if (hasElement(231)) x = x.pow(tmp.elements.effect[231])
-			
+        if (hasChargedElement(42)) x = x.pow(tmp.elements.effect[42])
 		
+			if(hasElement(363) && x.gte(10))x = expMult(x,tmp.ex.exb_eff[2])
+			if(hasChargedElement(1))x = expMult(x,1.01)
+
 		if (FERMIONS.onActive("30")) x = x.add(1).log10()
 		
 		
-		if (player.gc.active) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 			
         return x.floor();
     },
@@ -66,7 +75,8 @@ const ATOM = {
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         if(player.qu.times.gt(0))for (let x = 0; x < player.mainUpg.bh.length; x++) if ([6].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
-        player.mainUpg.bh = keep
+        if (player.mainUpg.exotic.includes(19))keep = player.mainUpg.bh
+		player.mainUpg.bh = keep
         if (chal_reset && !player.mainUpg.atom.includes(4) && !hasTree("chal2") ) for (let x = 1; x <= 4; x++) player.chal.comps[x] = E(0)
         FORMS.bh.doReset()
     },
@@ -75,8 +85,10 @@ const ATOM = {
             let x = tmp.atom.gamma_ray_eff?tmp.atom.gamma_ray_eff.eff:E(0)
             if (hasElement(3)) x = x.mul(tmp.elements.effect[3])
             if (hasElement(52)) x = x.mul(tmp.elements.effect[52])
-            x = x.mul(tmp.bosons.upgs.gluon[0].effect)
+            if (hasElement(404)) x = x.pow(tmp.bosons.upgs.gluon[0].effect); else x = x.mul(tmp.bosons.upgs.gluon[0].effect)
 			x = x.pow(tmp.fermions.effs[2][0]||E(1))
+			
+			if(hasChargedElement(52)) x = x.pow(tmp.elements.effect[52])
 			
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
             if (FERMIONS.onActive("00")) x = expMult(x,0.6)
@@ -84,17 +96,18 @@ const ATOM = {
             
 			if (FERMIONS.onActive("20")) x = x.add(1).log10()
 			
-			if (player.gc.active) x = GCeffect(x)
+			if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
 				
+			if (hasUpgrade('atom',24)) return x;
 			tmp.atomicOverflowPower = E(0.8)
 			tmp.atomicOverflow = overflow(x,"e1e3000",tmp.atomicOverflowPower).log(x);
 			return overflow(x,"e1e3000",tmp.atomicOverflowPower);
         },
         effect() {
-            let x = player.atom.atomic.max(1).log(player.ranks.hex.gte(23)?1.2:hasElement(23)?1.5:1.75).pow(getEnRewardEff(1))
+            let x = player.atom.atomic.max(1).log(hasChargedElement(23)?1.1:player.ranks.hex.gte(23)?1.2:hasElement(23)?1.5:1.75).pow(getEnRewardEff(1))
             if (!hasElement(75)) x = x.softcap((player.prestiges[0].gte(50) && hasUpgrade("atom",13))?6e5:5e4,hasUpgrade("atom",19)?0.9:0.75,0).softcap((player.prestiges[0].gte(50) && hasUpgrade("atom",13))?4.8e7:4e6,hasUpgrade("atom",19)?0.5:0.25,0)
             if (!hasElement(337)) x = x.softcap(hasUpgrade("atom",13)?(player.prestiges[0].gte(50)?1.2e11:1e11):1e10,hasUpgrade("atom",19)?0.105:0.1,0)
-			x = overflow(x,"ee9",hasElement(337)?0.3:0.25);
+			x = overflow(x,"ee9",hasChargedElement(75)?0.65:hasChargedElement(23)?0.6:hasElement(358)?0.5:hasElement(337)?0.3:0.25);
             return x.floor()
         },
     },
@@ -118,12 +131,13 @@ const ATOM = {
             if (player.mainUpg.atom.includes(4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
             if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
             if (hasTree("gr1")) pow = pow.mul(tmp.supernova.tree_eff.gr1)
-            pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
+            if (hasElement(404))pow = pow.pow(tmp.bosons.upgs.gluon[1].effect); else pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
             pow = pow.mul(tmp.prim.eff[3][1])
             pow = pow.mul(getEnRewardEff(3)[1])
             if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
             if (hasTree("gr2")) pow = pow.pow(1.25)
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
+					if(hasAscension(0,26))eff = pow.pow(t.add(1).mul((tmp.atom.gamma_ray_bonus||E(0)).add(1))).sub(1)
             return {pow: pow, eff: eff}
         },
         bonus() {
@@ -173,9 +187,11 @@ const ATOM = {
             let x = p.pow(2)
             if (hasElement(12)) x = p.pow(p.add(1).log10().add(1).root(4).pow(tmp.chal.eff[9]).softcap(40000,0.1,0))
             if (player.ranks.hex.gte(12)) x = p.pow(p.add(1).log10().add(1).root(4).pow(tmp.chal.eff[9]).softcap(40000,0.99,0))
-            x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2)
+            if (hasChargedElement(12)) x = p.pow(p.add(1).log10().add(1).root(3).pow(tmp.chal.eff[9]))
+            if (!hasChargedElement(61))x = x.softcap('e3.8e4',0.9,2).softcap('e1.6e5',0.9,2)
             if (hasElement(61)) x = x.mul(p.add(1).root(2))
             if (player.ranks.hex.gte(61)) x = x.mul(p.add(1).root(2))
+			if (hasChargedElement(61)) return x;
             return x.softcap('ee11',0.9,2).softcap('ee13',0.9,2)
         },
         gain(i) {
@@ -183,7 +199,7 @@ const ATOM = {
             if (player.mainUpg.atom.includes(7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
 			x = x.pow(player.galParticles[i].add(1).log10().add(1).pow(3));
-		if (player.gc.active) x = GCeffect(x)
+		if (player.gc.active || player.chal.active >= 21) x = GCeffect(x)
             return x
         },
         powerEffect: [
@@ -195,10 +211,15 @@ const ATOM = {
 					a = a.pow(5);
 					b = a;
 					if(player.ranks.hex.gte(29))b = b.pow(2);
+					if(hasElement(354))a = a.pow(2);
+					if(hasElement(368))b = b.pow(2);
+					if(hasElement(385))a = a.pow(2);
 				}
 				
 				a = a.pow(galParticleEffect(0));
 				b = b.pow(galParticleEffect(0));
+				if(hasChargedElement(29))a = a.pow(2);
+				if(hasChargedElement(29))b = b.pow(2);
                 return {eff1: a, eff2: b}
             },
             x=>{
@@ -210,9 +231,18 @@ const ATOM = {
                 :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))
 				
 				b = overflow(b,"ee28000000",0.5);
+				if(hasElement(354))a = a.pow(2);
+				if(hasElement(355))b = b.add(1).log10().add(1).log10().add(1);
 				
 				a = a.pow(galParticleEffect(1));
 				b = b.pow(galParticleEffect(1));
+				
+				if(hasUpgrade('exotic',13))a = a.pow(5);
+				if(hasUpgrade('exotic',13))b = b.pow(5);
+					
+				if(hasChargedElement(19))b = b.pow(2);
+					if(hasElement(385))a = a.pow(2);
+				if(hasElement(413))a = a.pow(2);
                 return {eff1: a, eff2: b}
             },
             x=>{
@@ -220,9 +250,20 @@ const ATOM = {
                 let b = hasElement(30) ? x.add(1).log2().pow(1.2).mul(0.01) : x.add(1).pow(2).log2().mul(0.01)
 				if(player.ranks.hex.gte(30))b = x.add(1).log2().pow(2);
 				if(hasElement(346))b = a;
+				if(hasElement(354))a = a.pow(2);
 				
 				a = a.pow(galParticleEffect(2));
 				b = b.pow(galParticleEffect(2));
+				
+				
+				if(hasUpgrade('exotic',13))a = a.pow(5);
+				if(hasUpgrade('exotic',13))b = b.pow(5);
+				
+				if(hasUpgrade('atom',21))b = b.pow(4);
+					if(hasElement(385))a = a.pow(2);
+				if(hasChargedElement(30))a = a.pow(2);
+				if(hasChargedElement(30))b = b.pow(2);
+				
                 return {eff1: a, eff2: b}
             },
         ],
@@ -233,9 +274,10 @@ const ATOM = {
                 `Adds Tickspeed Power by ${format(x.eff2.mul(100))}%`)
 			},
             x=>{ return `
-                Boosts Rage Power gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
-                Makes Mass gain boosted by Rage Powers - ${format(x.eff2)}x<br><br>
-            ` },
+                Boosts Rage Power gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>`+
+				(hasElement(355)?`Makes Mass gain boosted by Rage Powers - ^`+format(x.eff2):
+                `Makes Mass gain boosted by Rage Powers - ${format(x.eff2)}x<br><br>`)
+            },
             x=>{ return `
                 Boosts Dark Matter gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>`+
 				(hasElement(346)?` Boosts BH Condenser Power by ^`+format(x.eff2):
@@ -261,6 +303,7 @@ function updateAtomTemp() {
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
     let fp = tmp.fermions.effs[1][5]
+	if(hasUpgrade('bh',24))fp = fp.add(10).log10();
 
     tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray",false,[1,1,1,fp])).floor()
     tmp.atom.gamma_ray_bulk = E(0)
@@ -312,7 +355,7 @@ function updateAtomicHTML() {
     tmp.el.atomicAmt.setHTML(format(player.atom.atomic)+" "+formatGain(player.atom.atomic, tmp.atom.atomicGain.mul(tmp.preQUGlobalSpeed)))
 	tmp.el.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+(tmp.atom.atomicEff.gte(5e4)?" <span class='soft'>(softcapped)</span>":""))
 
-	tmp.el.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):""))
+	tmp.el.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(hasAscension(0,26)?" x "+format((tmp.atom.gamma_ray_bonus||E(0)).add(1),0):(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):"")))
 	tmp.el.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
 	tmp.el.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
 	tmp.el.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
@@ -322,7 +365,7 @@ function updateAtomicHTML() {
 	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
 	
 	
-    tmp.el.atomicOverflow.setDisplay(tmp.atom.atomicGain.gte("ee3000"))
+    tmp.el.atomicOverflow.setDisplay(tmp.atom.atomicGain.gte("ee3000") && !hasUpgrade('atom',24))
 	tmp.el.atomicOverflow2.setTxt(format(tmp.atomicOverflow))
 }
 
@@ -342,10 +385,22 @@ function updateAtomHTML() {
 }
 
 function galParticleEffect(x){
+		if(player.chal.active == 21)return E(1);
+		if(player.gc.active && player.gc.nogp)return E(1);
 	let ret=player.galParticles[x].add(1).log10().add(1).pow(3);
 	ret=overflow(ret,1.2e5,5);
 	ret=overflow(ret,5e5,3);
-	ret=overflow(ret,1e7,0.2);
-	//ret=ret.min(2e9);
+	let sc_rate = 0.2;
+	if(hasElement(369))sc_rate+=0.01;
+	if(hasElement(392))sc_rate+=0.01;
+	if(hasElement(399))sc_rate+=0.01;
+	if(hasElement(411))sc_rate+=0.01;
+	if(hasElement(413))sc_rate+=0.01;//0.25
+	if(hasElement(419))sc_rate+=0.01;
+	if(hasElement(425))sc_rate+=0.01;
+	if(hasElement(441))sc_rate+=0.02;
+	if(hasElement(449))sc_rate+=0.01;//0.3
+	ret=overflow(ret,1e7,sc_rate);
+	ret=overflow(ret,5.1e9,hasAscension(0,3)?0.5:0.4);
 	return ret;
 }

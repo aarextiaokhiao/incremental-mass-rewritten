@@ -27,6 +27,12 @@ function resetTemp() {
             eff: [],
         },
 
+        ascensions: {
+            req: [],
+            bulk: [],
+            eff: [],
+        },
+
         bd: {
             upgs: [],
         },
@@ -35,11 +41,13 @@ function resetTemp() {
             main: {},
             mass: {},
             prestigeMass: {},
+            ascensionMass: {},
         },
 
         elements: {
             choosed: 0,
             effect: [null],
+            ceffect: [null],
             cannot: [],
         },
     
@@ -84,11 +92,9 @@ function resetTemp() {
             mil_reached: [],
             qc_eff: [],
         },
-
         prim: {
             eff: [],
         },
-
         en: {
             gain: {},
             eff: {},
@@ -96,24 +102,26 @@ function resetTemp() {
             rewards_eff: [],
             reward_br: [],
         },
+        rip: {},
 
-        rip: {
-            
-        },
+        inf: {},
+        et: {},
+        gc: {},
+		ex: {
+			rcb_cost:{},
+			rcb_can:{},
+			rcb_eff:{},
+			rcb_bulk:{},
+			exb_eff:{},
+		},
 
-        inf: {
-            
-        },
-        et: {
-            
-        },
-        gc: {
-            
-        },
         prevSave: "",
+		rankCollapse: E(1),
     }
     for (let x = 0; x < PRES_LEN; x++) tmp.prestiges.eff[x] = {}
+    for (let x = 0; x < AS_LEN; x++) tmp.ascensions.eff[x] = {}
     for (let x = UPGS.prestigeMass.cols; x >= 1; x--) tmp.upgs.prestigeMass[x] = {}
+    for (let x = UPGS.ascensionMass.cols; x >= 1; x--) tmp.upgs.ascensionMass[x] = {}
     for (let x = UPGS.mass.cols; x >= 1; x--) tmp.upgs.mass[x] = {}
     for (let x = 1; x <= UPGS.main.cols; x++) tmp.upgs.main[x] = {}
     for (let j = 0; j < TREE_TAB.length; j++) {
@@ -164,6 +172,12 @@ function updateMassTemp() {
 }
 
 function updateTickspeedTemp() {
+	
+    tmp.prestigeTickspeedCost = E(2).pow(player.prestigeTickspeed).floor()
+    tmp.prestigeTickspeedBulk = E(0)
+    if (player.prestigeRP.gte(1)) tmp.prestigeTickspeedBulk = player.prestigeRP.max(1).log(2).add(1).floor()
+    tmp.prestigeTickspeedEffect = FORMS.prestige_tickspeed.effect()
+	
     tmp.accelUnl = hasElement(134)
 
     tmp.accelCost = FORMS.accel.cost()
@@ -182,6 +196,7 @@ function updateUpgradesTemp() {
     UPGS.main.temp()
     UPGS.mass.temp()
     UPGS.prestigeMass.temp()
+    UPGS.ascensionMass.temp()
 }
 
 function updateRagePowerTemp() {
@@ -205,12 +220,19 @@ function updateBlackHoleTemp() {
     t.effect = FORMS.bh.effect()
 
     let fp = tmp.fermions.effs[1][5]
+	if(hasUpgrade('bh',24))fp = fp.add(10).log10();
 
     t.condenser_bonus = FORMS.bh.condenser.bonus()
     t.condenser_cost = E(1.75).pow(player.bh.condenser.scaleEvery('bh_condenser',false,[1,1,1,fp])).floor()
     t.condenser_bulk = E(0)
     if (player.bh.dm.gte(1)) t.condenser_bulk = player.bh.dm.max(1).log(1.75).scaleEvery('bh_condenser',true,[1,1,1,fp]).add(1).floor()
     t.condenser_eff = FORMS.bh.condenser.effect()
+	
+	
+    tmp.prestigeBHCCost = E(2).pow(player.prestigeBHC).floor()
+    tmp.prestigeBHCBulk = E(0)
+    if (player.prestigeDM.gte(1)) tmp.prestigeBHCBulk = player.prestigeDM.max(1).log(2).add(1).floor()
+    tmp.prestigeBHCEffect = FORMS.prestigeBHC.effect()
 }
 
 function updateTemp() {
@@ -218,6 +240,8 @@ function updateTemp() {
     tmp.offlineActive = player.offline.time > 1
     tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
+    updateExoticTemp()
+	
     updateGCTemp()
 	
     updateInfinityTemp()

@@ -506,6 +506,25 @@ button {
 	background-color: #069;
 }
 
+.elements.bought.ext.ex {
+	border-color: #ff3939;
+	box-shadow: 0px 0px 10px 0px #ff39397e;
+	background-color: #800;
+}
+
+.elements.bought.ext.qk {
+	border-color: #009014;
+	box-shadow: 0px 0px 10px 0px #0090147e;
+	background-color: #00520b;
+}
+
+.elements.bought.ext.ds {
+	color: #666;
+	border-color: #666;
+	background-color: #222;
+	box-shadow: 0 0 10px #666;
+}
+
 .btn_tree:not(.qu_tree).bought {
 	border-color: #00520b;
 }
@@ -551,6 +570,30 @@ button {
 .img_btn.bought {
 	background-color: #00520b;
 	cursor: default;
+}
+
+.elements.bought.cancharge
+ {
+	background-color: #669900;
+	cursor: pointer;
+}
+
+.elements.bought.ch
+ {
+	background-color: #cccc00;
+	color: black;
+}
+
+.elements.bought.cancharge.br
+ {
+	background-color: #cc3300;
+	cursor: pointer;
+}
+
+.elements.bought.ch.br
+ {
+	background-color: #ff6600;
+	color: black;
 }
 
 .chal_comp {

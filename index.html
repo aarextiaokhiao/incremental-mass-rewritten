@@ -14,6 +14,9 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 	
+    <script src="js/exotic/boost.js"></script>
+    <script src="js/exotic/exotic.js"></script>
+	
     <script src="js/infinity/infinity.js"></script>
     <script src="js/infinity/eternal.js"></script>
 
@@ -197,7 +200,14 @@
 			Ratio Mode: <span id="atom_ratio_gq">X</span><br>
 			<button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
 			<div id="gparticles_table" class="table_center" style="justify-content: space-evenly;"></div>
-		</div>
+        </div><div id="stab_frame7_3">
+			You have <span id="superCluster">0</span> <span id="superClusterScale"></span>Supernova Clusters<br>
+			Next at <span id="superClusterReq">0</span> Supernova Galaxies<br>
+            <button class="btn" onclick="SUPERNOVA_CLUSTER.reset()">Reset for a Supernova Cluster</button><br>
+			<hr>
+			<div id="superClusterEff">
+			</div>
+        </div>
     </div>
     <div id='app' style='display: none'>
         <div id="star"></div>
@@ -252,6 +262,9 @@
                     </div><div class="resources sml quark_color" id="galQk_div">
                         <div tooltip="Galactic Quark" t-size="small"><img class="res_img" src="images/sgq.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="galQkAmt">X</span>
+                    </div><div class="resources sml red" id="exotic_div">
+                        <div tooltip="Exotic Matter" t-size="small"><img class="res_img" src="images/exotic.png" onclick="EXOTIC.enter()" onmousemove="FORMS.reset_msg.set('exotic')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <span style="margin-left: 5px; text-align: left;" id="exoticAmt">X</span>
                     </div>
                 </div>
             </div>
@@ -372,8 +385,38 @@
             </div><div id="stab_frame0_4">
 				Your Prestige base is <span id="pres_base"></span> (based on products of Rank tiers)<br><br>
 				<div id="pres_table" class="table_center" style="min-height: 180px;"></div><br>
-				<div id="pres_mass">You have <span id="pres_mass2">X</span> Prestige mass (Gain is based on Prestige Base, Prestige Level, Honor<span id="pres_mass4"> and Glory</span>)<br>Which are weakening Tetr scalings before meta by <span id="pres_mass3"></span></div>
+				<div id="pres_mass">You have  <span id="pres_mass2">X</span> Prestige mass (Gain is based on Prestige Base, Prestige Level, Honor<span id="pres_mass4"> and Glory</span>)<br>Which are weakening Tetr scalings before meta by <span id="pres_mass3"></span></div>
+				<div id="pres_rp">You have  <span id="pres_rp2">X</span> Prestige Rage Power (Gain is based on Prestige Mass)<br>Which are adding Overpower Power by <span id="pres_rp3"></span></div>
+				<div id="pres_bh">You have <span id="pres_bh2">X</span> of Prestige Black Hole (Gain is based on Prestige Mass and Prestige Black Hole)<br>Which are multiplying Prestige Mass by <span id="pres_bh3"></span></div>
+				<div id="pres_dm">You have <span id="pres_dm2">X</span> Prestige Dark Matter (Gain is based on Prestige Rage Power)<br>Which are weakening 2nd Black Hole Overflow effect by <span id="pres_dm3"></span></div>
 				<div id="prestige_mass_upgs_table"></div>
+				<div style="width: 100%; margin-bottom: 5px;" class="table_center" id="prestige_tickspeed_div">
+					<div style="width: 400px">
+						<div class="resources">
+							<img src="images/tickspeed.png">
+							<span style="margin-left: 5px; text-align: left;">Prestige Tickspeeds [<span id="prestige_tickspeed_lvl">X</span>]</span>
+						</div>
+					</div><button id="prestige_tickspeed_btn" class="btn" style="width: 200px;" onclick="FORMS.prestige_tickspeed.buy()">Cost: <span id="prestige_tickspeed_cost">X</span> Prestige Rage Power</button>
+					<button class="btn" style="width: 120px;" onclick="FORMS.prestige_tickspeed.buyMax()">Buy Max</button>
+					<button id="prestige_tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.prestige_tickspeed.autoSwitch()">OFF</button>
+					<div style="margin-left: 5px; text-align: left; width: 400px">
+						Prestige Tickspeed Power: <span id="prestige_tickspeed_step">X</span><br>
+						Prestige Tickspeed Effect: <span id="prestige_tickspeed_eff">X</span> to Prestige Mass gain
+					</div>
+				</div><div style="width: 100%; margin-bottom: 5px;" class="table_center" id="prestigeBHC_div">
+					<div style="width: 400px">
+						<div class="resources">
+							<img src="images/bhCondenser.png">
+							<span style="margin-left: 5px; text-align: left;">Prestige Black Hole Condensers [<span id="prestigeBHC_lvl">X</span>]</span>
+						</div>
+					</div><button id="prestigeBHC_btn" class="btn" style="width: 200px;" onclick="FORMS.prestigeBHC.buy()">Cost: <span id="prestigeBHC_cost">X</span> Prestige Dark Matter</button>
+					<button class="btn" style="width: 120px;" onclick="FORMS.prestigeBHC.buyMax()">Buy Max</button>
+					<button id="prestigeBHC_auto" class="btn" style="width: 80px;" onclick="FORMS.prestigeBHC.autoSwitch()">OFF</button>
+					<div style="margin-left: 5px; text-align: left; width: 400px">
+						Prestige BH Condenser Power: <span id="prestigeBHC_step">X</span><br>
+						Prestige BH Condenser Effect: <span id="prestigeBHC_eff">X</span> to Mass of Prestige Black Hole gain
+					</div>
+				</div>
             </div><div id="stab_frame0_5">
                 You have <span id="shardsAmt">0</span> Timeshards<br>
                 <span class="green">Which increases pre-Quantum global speed by ^<span id="shardsEff">1</span> before division</span><br><br>
@@ -390,6 +433,11 @@
                         Shard Generators Effect: <span id="shard_gen_eff">X</span>x
                     </div>
                 </div>
+            </div><div id="stab_frame0_6">
+				Your Ascension base is <span id="as_base"></span> (based on products of Prestige tiers)<br><br>
+				<div id="as_table" class="table_center" style="min-height: 180px;"></div><br>
+				<div id="as_mass">You have  <span id="as_mass2">X</span> Ascension mass (Gain is based on Ascension Base, Ascension Level, Transcension Level<span id="as_mass4"> and Glory</span>)<br>Which are adding Prestige Base Exponent by <span id="as_mass3"></span></div>
+				<div id="ascension_mass_upgs_table"></div>
             </div>
         </div><div id="tab_frame1">
             <div id="stab_frame1_0">
@@ -399,6 +447,9 @@
                 <button onclick="player.pres_reward = Math.max(player.pres_reward-1,0)" class="btn"><--</button><span id="pres_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.pres_reward = Math.min(player.pres_reward+1,Math.max(...PRESTIGES.fullNames.map((v, i) => i==0 ? i : (PRESTIGES.unl[i]() && i))))" class="btn">--></button><br><br>
                 <div id="pres_rewards_table"></div>
             </div><div id="stab_frame1_2">
+                <button onclick="player.as_reward = Math.max(player.as_reward-1,0)" class="btn"><--</button><span id="as_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.as_reward = Math.min(player.as_reward+1,Math.max(...ASCENSIONS.fullNames.map((v, i) => i==0 ? i : (ASCENSIONS.unl[i]() && i))))" class="btn">--></button><br><br>
+                <div id="as_rewards_table"></div>
+            </div><div id="stab_frame1_3">
                 <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
                 <div id="scaling_table"></div>
             </div>
@@ -464,10 +515,13 @@
 				<span id="gc_trapeff"></span><br><br>
 				You need to get <span id="gc_goal"></span> supernova to complete the challenge.<br>
 				Difficulty: <span id="gc_diff"></span>/<span id="gc_diff_max"></span><button class="btn" onclick="decGCdiff()">-1</button><button class="btn" onclick="incGCdiff()">+1</button><br>
-				<br><span id="gc_trap2">Trapped Challenges: <span id="gc_trap"></span>/<span id="gc_trap_max"></span><button class="btn" onclick="decGCtrap()">-1</button><button class="btn" onclick="incGCtrap()">+1</button></span><br>
-				<span id="gc_trapu2">Trapped In All U-Fermions: <span id="gc_trapu"></span><button class="btn" onclick="if(!player.gc.active)player.gc.trapu=!player.gc.trapu">Change</button><br></span>
-				<span id="gc_rip2">Trapped In Big Rip: <span id="gc_rip"></span><button class="btn" onclick="if(!player.gc.active)player.gc.rip=!player.gc.rip">Change</button><br></span><button class="btn" onclick="GC.enter()" id="gc_btn">Enter the Galactic Challenge</button>
-			</div>
+                <br><span id="gc_trap2">Trapped Challenges: <span id="gc_trap"></span>/<span id="gc_trap_max"></span><button class="btn" onclick="decGCtrap()">-1</button><button class="btn" onclick="incGCtrap()">+1</button></span><br>
+                <span id="gc_trapu2">Trapped In All U-Fermions: <span id="gc_trapu"></span><button class="btn" onclick="if(!player.gc.active)player.gc.trapu=!player.gc.trapu">Change</button><br></span>
+                <span id="gc_rip2">Trapped In Big Rip: <span id="gc_rip"></span><button class="btn" onclick="if(!player.gc.active)player.gc.rip=!player.gc.rip">Change</button><br></span>
+<span id="gc_noeb2">Disable Exotic Boosts: <span id="gc_noeb"></span><button class="btn" onclick="if(!player.gc.active)player.gc.noeb=!player.gc.noeb">Change</button><br></span>				
+<span id="gc_nogp2">Disable Galactic Particles: <span id="gc_nogp"></span><button class="btn" onclick="if(!player.gc.active)player.gc.nogp=!player.gc.nogp">Change</button><br></span>				
+				<button class="btn" onclick="GC.enter()" id="gc_btn">Enter the Galactic Challenge</button>
+            </div>
         </div><div id="tab_frame4">
             <div id="stab_frame4_0">
                 You have <span id="unassignQuarkAmt">X</span> unassigned Quarks<br><br>
@@ -490,7 +544,6 @@
 				</div><br><div>
 					<span id="dmSoft1" class="red">After <b id="dmSoftStart1">X</b> of dilated mass gain will softcap dilated mass gain!</span><br>
 					<span id="dmOverflow" style="color: rgb(255, 255, 255)">Because of Dilated Overflow, your dilated mass gain is raised by <b id="dmOverflow2">X</b>!</span>
-
 				</div>
             </div><div id="stab_frame4_2">
                 You collapsed <span id="stars_Amt">X</span> stars, which makes mass gain is multiplied based on every type of Ranks<br>
@@ -546,6 +599,186 @@
                 = <span id="auto_qu_res"></span>
             </div>
         </div><div id="tab_frame8">
+            <div id="stab_frame8_0">
+                You have <span id="exotic_times">0</span> Exotic resets.<br><br>
+                <div id="ex_milestones_table"></div>
+            </div>
+            <div id="stab_frame8_1">
+                You Quantized <span id="rcb0_times">0</span> times.<br>
+                You Infinitied <span id="rcb1_times">0</span> times.<br>
+                You Eternitied <span id="rcb2_times">0</span> times.<br><br>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/qu.png">
+                            <span style="margin-left: 5px; text-align: left;"><span id="rcb0_scale"></span>Quantum Count Boosters [<span id="rcb0_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="rcb0_btn" class="btn" style="width: 200px;" onclick="EXOTIC.rcb.buy(0)">Cost: <span id="rcb0_cost">X</span> Exotic Matter</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC.rcb.buyMax(0)">Buy Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Quantum Count Boosters Power: <span id="rcb0_pow">X</span>x<br>
+                        Quantum Count Boosters Effect: <span id="rcb0_eff">X</span>x
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/inf.png">
+                            <span style="margin-left: 5px; text-align: left;"><span id="rcb1_scale"></span>Infinity Count Boosters [<span id="rcb1_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="rcb1_btn" class="btn" style="width: 200px;" onclick="EXOTIC.rcb.buy(1)">Cost: <span id="rcb1_cost">X</span> Exotic Matter</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC.rcb.buyMax(1)">Buy Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Infinity Count Boosters Power: <span id="rcb1_pow">X</span>x<br>
+                        Infinity Count Boosters Effect: <span id="rcb1_eff">X</span>x
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/et.png">
+                            <span style="margin-left: 5px; text-align: left;"><span id="rcb2_scale"></span>Eternity Count Boosters [<span id="rcb2_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="rcb2_btn" class="btn" style="width: 200px;" onclick="EXOTIC.rcb.buy(2)">Cost: <span id="rcb2_cost">X</span> Exotic Matter</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC.rcb.buyMax(2)">Buy Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Eternity Count Boosters Power: <span id="rcb2_pow">X</span>x<br>
+                        Eternity Count Boosters Effect: <span id="rcb2_eff">X</span>x
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="rcb3_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/exotic.png">
+                            <span style="margin-left: 5px; text-align: left;"><span id="rcb3_scale"></span>Exotic Count Boosters [<span id="rcb3_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="rcb3_btn" class="btn" style="width: 200px;" onclick="EXOTIC.rcb.buy(3)">Cost: <span id="rcb3_cost">X</span> Exotic Matter</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC.rcb.buyMax(3)">Buy Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Exotic Count Boosters Power: +<span id="rcb3_pow">X</span><br>
+                        Exotic Count Boosters Effect: <span id="rcb3_eff">X</span>x
+                    </div>
+                </div>
+            </div>
+            <div id="stab_frame8_2">
+                You have <span id="ex_bp"></span> Exotic Boost Points (based on best Exotic Matter, next at <span id="ex_bp2"></span>).<br>Refund or Respec Exotic Boosts will force an Exotic reset!<br><br><button class="btn" onclick="EXOTIC_BOOST.respec()">Respec</button>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/rp.png">
+                            <span style="margin-left: 5px; text-align: left;">Rage Boost [<span id="exb0_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb0_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(0)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(0)">Buy Max</button>
+                    <button id="exb0_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(0)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(0)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Rage Boost Effect: Rage Power Gain Exponent ^<span id="exb0_eff">X</span>
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/dm.png">
+                            <span style="margin-left: 5px; text-align: left;">Dark Matter Boost [<span id="exb1_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb1_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(1)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(1)">Buy Max</button>
+                    <button id="exb1_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(1)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(1)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Dark Matter Boost Effect: Dark Matter Gain Exponent ^<span id="exb1_eff">X</span>
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="exb2_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/atom.png">
+                            <span style="margin-left: 5px; text-align: left;">Atom Boost [<span id="exb2_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb2_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(2)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(2)">Buy Max</button>
+                    <button id="exb2_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(2)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(2)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Atom Boost Effect: Atom Gain Exponent ^<span id="exb2_eff">X</span>
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="exb3_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/star_5.png">
+                            <span style="margin-left: 5px; text-align: left;">Star Boost [<span id="exb3_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb3_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(3)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(3)">Buy Max</button>
+                    <button id="exb3_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(3)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(3)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Star Boost Effect: Collapsed Star Gain Exponent ^<span id="exb3_eff">X</span>
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="exb4_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/sn.png">
+                            <span style="margin-left: 5px; text-align: left;">Supernova Boost [<span id="exb4_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb4_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(4)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(4)">Buy Max</button>
+                    <button id="exb4_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(4)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(4)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Supernova Boost Effect: Neutron Star Gain Exponent ^<span id="exb4_eff">X</span>
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="exb5_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/qu.png">
+                            <span style="margin-left: 5px; text-align: left;">Quantum Boost [<span id="exb5_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb5_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(5)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(5)">Buy Max</button>
+                    <button id="exb5_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(5)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(5)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Quantum Boost Effect: Quantum Foam Gain Exponent ^<span id="exb5_eff">X</span>
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="exb6_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/exotic.png">
+                            <span style="margin-left: 5px; text-align: left;">Exotic Meta-Boost [<span id="exb6_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="exb6_btn" class="btn" style="width: 200px;" onclick="EXOTIC_BOOST.buy(6)">Cost: 1 Boost Point</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.buyMax(6)">Buy Max</button>
+                    <button id="exb6_refund" class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refund(6)">Refund 1</button>
+                    <button class="btn" style="width: 120px;" onclick="EXOTIC_BOOST.refundMax(6)">Refund Max</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        Exotic Meta-Boost Effect: Add <span id="exb6_eff">X</span> levels to All Previous Boosts
+                    </div>
+                </div>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="exb6_div2">
+				<button class="btn" onclick="EXOTIC_BOOST.import();">Import</button> <button class="btn" onclick="EXOTIC_BOOST.importrespec();">Respec And Import</button> <button class="btn" onclick="EXOTIC_BOOST.export();">Export</button><br></div>
+            </div><div id="stab_frame8_3">
+				<div class="table_center">
+					<div style="width: 33.3%; min-width: 300px;">
+						You have <b id="darkRay"></b> Dark Ray.
+						<div id="drEff" class="sky"></div>
+					</div><div style="width: 33.3%; min-width: 300px;">
+						You have <b id="darkShadow"></b> Dark Shadow.
+						<div id="dsEff" class="sky"></div>
+					</div><div style="width: 33.3%; min-width: 300px;">
+						<div id="ab_div">
+							You have <b id="abyssalBlot"></b> Abyssal Blot.
+							<div id="abEff" class="sky"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div><div id="tab_frame9">
             <button class="btn" onclick="save()">Save</button>
             <button class="btn" onclick="if (confirm('Are you sure you want to RESET your progress to new game?')) {wipe(true)}">Hard Reset</button>
             <button class="btn" onclick="exporty()">Export</button>
@@ -564,6 +797,7 @@
             <br><br>
             Incremental Mass Rewritten NG+ - Icons Mod - By garoot and Aarex<br>
             Original made by MrRedShark77 and loader3229<br><br>
+
             Hint 1: Hover top image above tabs to show description...<br><br>
             Total time played: <span id="total_time">X</span>
         </div>

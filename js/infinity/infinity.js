@@ -12,6 +12,8 @@ const INFINITY_LAYER = {
 		if (hasUpgrade('inf',18))power = power.add(1)
 		if (hasUpgrade('inf',19))power = power.add(1)
 		if (hasElement(205))power = power.add(tmp.chal?tmp.chal.eff[18]:0);
+		if (hasAscension(0,9))power = power.add(ascensionEff(0,9));
+		power = power.add(SUPERNOVA_CLUSTER.effects.eff4())
 		if (hasElement(146)){
 			let z = player.qu.en.amt.add(1).log(Number.MAX_VALUE);
 			if (z.lt(1)) z=E(1)
@@ -32,6 +34,11 @@ const INFINITY_LAYER = {
 			if (z.lt(1)) z=E(1)
 			x = x.mul(z)
 		}
+		if (player.qu.times.gte(Number.MAX_VALUE) && player.exotic.times.gte(1)){
+			let z = player.qu.times.add(1).log(Number.MAX_VALUE).pow(2);
+			if (z.lt(1)) z=E(1)
+			x = x.mul(z)
+		}
         x = x.mul(y).pow(power).sub(1);
 		x = overflow(x,1e5,2);
 
@@ -44,6 +51,7 @@ const INFINITY_LAYER = {
 		if (hasUpgrade('inf',10))x = x.mul(p)
         if (hasUpgrade('inf',4)) x = x.mul(upgEffect(5,4))
 		if (hasUpgrade('inf',7)) x = x.mul(2)
+        if (hasPrestige(3,17)) x = x.mul(prestigeEff(3,17));
         if (hasPrestige(2,3)) x = x.mul(prestigeEff(2,3));
         if (hasPrestige(1,18)) x = x.mul(prestigeEff(1,18));
         if (hasPrestige(0,165)) x = x.mul(prestigeEff(0,165));
@@ -66,6 +74,8 @@ const INFINITY_LAYER = {
 		if (hasElement(120)) x = x.mul(tmp.elements.effect[120]);
 		if (hasElement(123)) x = x.mul(tmp.elements.effect[123]);
         x = x.mul(SUPERNOVA_GALAXY.effects.qut2())
+        if (hasUpgrade('exotic',5)) x = x.mul(tmp.ex.rcb_eff[1].eff);
+        if (hasPrestige(2,147)) x = x.mul(prestigeEff(2,147,E(1)));
         return x
     },
     enter() {
@@ -130,7 +140,6 @@ const INFINITY_LAYER = {
 function calcInfinity(dt, dt_offline) {
     if (player.qu.points.gte(Number.MAX_VALUE) && !player.inf.reached) {
         player.inf.reached = true
-        addPopup(POPUP_GROUPS.inf)
     }
 	if (player.inf.times.gt(0)){
 		if (hasUpgrade('inf',11)){
@@ -167,21 +176,10 @@ function updateInfinityTemp() {
 
 
 function updateInfinityHTML() {
-	let gain2 = hasUpgrade('inf',11)
-	let unl = player.inf.reached
-	tmp.el.infinity_div.setDisplay(unl)
-	tmp.el.eternity_div.setDisplay(hasUpgrade('inf',14))
+    let gain2 = hasUpgrade('inf',11)
+    let unl = player.inf.reached || player.exotic.times.gte(1)
+    tmp.el.infinity_div.setDisplay(unl)
+    tmp.el.eternity_div.setDisplay(hasUpgrade('inf',14))
 	tmp.el.etAmt.setHTML(formatMass(player.et.points,0)+"<br>"+(hasElement(195)?player.et.points.formatGain(tmp.et.gain,1):"(+"+formatMass(tmp.et.gain,0)+")"));
 	if (unl) tmp.el.infAmt.setHTML(formatMass(player.inf.points,0)+"<br>"+(gain2?player.inf.points.formatGain(tmp.inf.gain,1):"(+"+formatMass(tmp.inf.gain,0)+")"))
-
-	if (tmp.tab == 0 && tmp.stab[0] == 5) {
-		tmp.el.shardsAmt.setHTML(format(player.et.shards,0)+player.et.shards.formatGain(tmp.et.shardsGain,0));
-		tmp.el.shardsEff.setHTML(format(calcShardsEffect()));
-		tmp.el.shard_gen_lvl.setTxt(format(player.et.shard_gen,0))
-		tmp.el.shard_gen_btn.setClasses({btn: true, locked: !tmp.et.shard_gen_can})
-		tmp.el.shard_gen_scale.setTxt(getScalingName('shard_gen'))
-		tmp.el.shard_gen_cost.setTxt(formatMass(tmp.et.shard_gen_cost,0))
-		tmp.el.shard_gen_pow.setTxt(format(tmp.et.shard_gen_eff.pow))
-		tmp.el.shard_gen_eff.setHTML(format(tmp.et.shard_gen_eff.eff))
-	}
 }
