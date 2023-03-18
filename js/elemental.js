@@ -1205,7 +1205,7 @@ const ELEMENTS = {
             desc: `Stronger overflow starts later based on FSS.`,
             cost: E('e710'),
             effect() {
-                let x = E(2+player.dark.matters.final**.8).pow(player.dark.matters.final)
+                let x = E(2).add(player.dark.matters.final.pow(.8)).pow(player.dark.matters.final)
                 
 				return x
             },

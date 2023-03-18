@@ -702,9 +702,7 @@ const BEYOND_RANKS = {
             ],
             4: [
                 ()=>{
-                    let x = player.dark.matters.final**0.75/10+1
-
-                    return x
+                    return E(player.dark.matters.final).pow(.75).div(10).add(1)
                 },
                 x=>formatPercent(x-1)+" stronger",
             ],

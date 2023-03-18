@@ -1079,7 +1079,7 @@ const TREE_UPGS = {
 
             effect() {
                 let x = Decimal.pow(0.95,overflow(player.dark.c16.totalS.add(1).log10(),2,0.5).root(2))
-                return x.toNumber()
+                return x
             },
             effDesc(x) { return formatReduction(x) },
         },

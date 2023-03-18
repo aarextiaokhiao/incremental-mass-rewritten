@@ -242,7 +242,7 @@ function updateDarkRunHTML() {
 	}
 
     tmp.el.FSS_eff2.setHTML(
-        player.dark.matters.final > 0
+        player.dark.matters.final.gt(0)
         ? `Thanks to FSS, they boost glyphic mass gain by x${format(tmp.matters.FSS_eff[1],2)}`
         : ''
     )

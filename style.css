@@ -926,7 +926,7 @@ h3 {
 	animation: final_star_animation 10s linear infinite;
 }
 
-.matter_div.final > span {
+#final_star_base {
 	font-size: 12px;
 }
 

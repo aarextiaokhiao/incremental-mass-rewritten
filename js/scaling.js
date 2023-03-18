@@ -16,6 +16,7 @@ const SCALE_START = {
 		prestige1: E(7),
 		prestige2: E(12),
 		massUpg4: E(50),
+		fss: E(5),
     },
 	hyper: {
 		rank: E(120),
@@ -84,6 +85,7 @@ const SCALE_POWER= {
 		prestige1: 1.5,
 		prestige2: 2,
 		massUpg4: 3,
+		fss: 2,
     },
 	hyper: {
 		rank: 2.5,
@@ -160,6 +162,7 @@ const SCALING_RES = {
 	prestige1() { return player.prestiges[1] },
 	prestige2() { return player.prestiges[2] },
 	massUpg4() { return E(player.massUpg[4]||0) },
+	fss() { return player.dark.matters.final },
 }
 
 const NAME_FROM_RES = {
@@ -172,13 +175,14 @@ const NAME_FROM_RES = {
 	tickspeed: "Tickspeed",
 	bh_condenser: "Black Hole Condenser",
 	gamma_ray: "Cosmic Ray",
-	supernova: "Supernova",
+	supernova: "Supernovae",
 	fTier: "Fermion Tier",
 	cosmic_str: "Cosmic String",
 	prestige0: "Prestige Level",
 	prestige1: "Honor",
 	prestige2: "Glory",
 	massUpg4: "Overpower",
+	fss: "Final Star Shard",
 }
 
 function updateScalingHTML() {

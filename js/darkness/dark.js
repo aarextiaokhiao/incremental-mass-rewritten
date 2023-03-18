@@ -207,7 +207,7 @@ function updateDarkHTML() {
 	if (unl) tmp.el.darkAmt.setHTML(player.dark.rays.format(0)+"<br>"+(og?dtmp.rayEff.passive?player.dark.rays.formatGain(dtmp.gain.mul(dtmp.rayEff.passive)):"(+"+dtmp.gain.format(0)+")":"(require Og-118)"))
     let c16 = tmp.c16active
 
-    unl = player.dark.matters.final>0
+    unl = player.dark.matters.final.gt(0)
 	tmp.el.fss_div.setDisplay(unl)
 	if (unl) tmp.el.FSS2.setHTML(format(player.dark.matters.final,0)+"<br>(+"+(tmp.matters.FSS_base.gte(tmp.matters.FSS_req)?1:0)+")")
 
@@ -308,7 +308,7 @@ function getDarkSave() {
             amt: [],
             upg: [],
             unls: 3,
-            final: 0,
+            final: E(0),
         },
 
         c16: {
