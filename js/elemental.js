@@ -35,7 +35,7 @@ const ELEMENTS = {
         'Roeritgenium','Copernicium','Nihonium','Flerovium','Moscovium','Livermorium','Tennessine','Oganesson'
     ],
     canBuy(x) {
-        if (tmp.c16active && !tmp.elements.deCorrupt.includes(x) && CORRUPTED_ELEMENTS.includes(x)) return false
+        if (tmp.c16active && isElemCorrupted(x)) return false
         let res = this.upgs[x].dark ? player.dark.shadow : player.atom.quarks
         return res.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : !BR_ELEM.includes(x)) && !tmp.elements.cannot.includes(x) && !(CHALS.inChal(14) && x < 118)
     },
@@ -387,7 +387,7 @@ const ELEMENTS = {
             cost: E('e4600'),
         },
         {
-            desc: `Collapsed stars boost all-star resources at a reduced rate.`,
+            desc: `<span class="final_elem">[Final Atomic Element]</span> Collapsed stars boost all-star resources at a reduced rate.`,
             cost: E('e5200'),
             effect() {
                 let x = player.mass.max(1).log10().root(2)
@@ -516,7 +516,7 @@ const ELEMENTS = {
             cost: E('e3.75e10'),
         },
         {
-            desc: `Mass softcap^3 is 17.5% weaker.`,
+            desc: `<span class="final_elem">[Final Supernova Element]</span> Mass softcap^3 is 17.5% weaker.`,
             cost: E('e4e11'),
         },
         {
@@ -731,7 +731,7 @@ const ELEMENTS = {
             cost: E("e5e16"),
         },
         {
-            desc: `Unlock <span id="final_118">Darkness</span>, you'll able to go Dark.`,
+            desc: `<span class="final_elem">[Final Quantum Element]</span> Unlock <span class="final_elem">Darkness</span>, you'll able to go Dark.`,
             cost: E("e1.7e17"),
         },
         {
@@ -1365,7 +1365,9 @@ for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
     }
 }
 
-function hasElement(x,layer=0) { return player.atom[["elements","muonic_el"][layer]].includes(x) && (layer > 0 || (tmp.elements.deCorrupt.includes(x) || !(tmp.c16active && CORRUPTED_ELEMENTS.includes(x)))) }
+function isElemCorrupted(x,layer=0) { return layer == 0 && !tmp.elements.deCorrupt.includes(x) && CORRUPTED_ELEMENTS.includes(x) }
+
+function hasElement(x,layer=0) { return player.atom[["elements","muonic_el"][layer]].includes(x) && !(tmp.c16active && isElemCorrupted(x)) }
 
 function elemEffect(x,def=1) { return tmp.elements.effect[x]||def }
 
@@ -1453,26 +1455,26 @@ function updateElementsHTML() {
         let eff = tElem[["effect","mu_effect"][elayer]]
 
         tmp.el.elem_desc.setHTML("<b>["+["","Muonic "][elayer]+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
-        tmp.el.elem_desc.setClasses({sky: true, corrupted_text2: c16 && CORRUPTED_ELEMENTS.includes(ch)})
+        tmp.el.elem_desc.setClasses({sky: true, corrupted_text2: c16 && isElemCorrupted(ch,elayer)})
         tmp.el.elem_cost.setTxt(format(eu.cost,0)+res+(BR_ELEM.includes(ch)?" in Big Rip":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?" [CANNOT AFFORD in Big Rip]":""))
         tmp.el.elem_eff.setHTML(eu.effDesc?"Currently: "+eu.effDesc(eff[ch]):"")
     }
 
-    for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
-        let unl = et[elayer] == x
+    for (let t = 1; t <= MAX_ELEM_TIERS; t++) {
+        let unl = et[elayer] == t
 
-        tmp.el["elemTier"+x+"_div"].setDisplay(unl)
+        tmp.el["elemTier"+t+"_div"].setDisplay(unl)
         if (unl) {
             let unllen = tElem.unl_length[elayer]
 
-            if (x == 1) {
+            if (t == 1) {
                 tmp.el.element_la_1.setVisible(unllen>56)
                 tmp.el.element_la_3.setVisible(unllen>56)
                 tmp.el.element_la_2.setVisible(unllen>88)
                 tmp.el.element_la_4.setVisible(unllen>88)
             }
 
-            let len = x > 1 ? tElem.te : tElem.upg_length
+            let len = t > 1 ? tElem.te : tElem.upg_length
 
             for (let x = tElem.ts+1; x <= len; x++) {
                 let upg = tmp.el['elementID_'+x]
@@ -1481,7 +1483,8 @@ function updateElementsHTML() {
                     upg.setVisible(unl2)
                     if (unl2) {
                         let eu = ELEMENTS.upgs[x]
-						upg.setClasses(c16 && CORRUPTED_ELEMENTS.includes(x) ? {
+                        let final = ([[54, 77, 118], [11]][elayer]).includes(x)
+						upg.setClasses(c16 && isElemCorrupted(x,elayer) ? {
 							elements: true,
 							locked: true,
 							corrupted: true
@@ -1490,12 +1493,12 @@ function updateElementsHTML() {
 							locked: !ELEMENTS.canBuy(x),
 							bought: hasElement(x),
 
-							muon: elayer == 1, 
+							muon: elayer == 1 && !final, 
 							star: elayer == 0 && x > 36 && x < 54,
 							sn: elayer == 0 && x > 54 && x < 77,
 							qu: elayer == 0 && x > 77 && x <= 86,
 							br: elayer == 0 && BR_ELEM.includes(x) && x != 118,
-							final: elayer == 0 && (x == 54 || x == 77 || x == 118 || x == 218),
+							final: final,
 							dark: elayer == 0 && eu.dark,
 						})
                     }
@@ -1503,7 +1506,7 @@ function updateElementsHTML() {
             }
         }
 
-        tmp.el["elemTier_btn"+x].setDisplay(x <= tElem.max_tier[elayer])
+        tmp.el["elemTier_btn"+t].setDisplay(t <= tElem.max_tier[elayer])
     }
 }
 
