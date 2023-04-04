@@ -24,6 +24,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/darkness/exotic_atoms.js"></script>
     <script src="js/darkness/c16.js"></script>
     <script src="js/darkness/matter.js"></script>
     <script src="js/darkness/dark_run.js"></script>
@@ -265,7 +266,7 @@
                                 <img src="images/tickspeed.png">
                                 <span style="margin-left: 5px; text-align: left;"><span id="tickspeed_scale"></span>Tickspeeds [<span id="tickspeed_lvl">X</span>]</span>
                             </div>
-                        </div><button id="tickspeed_btn" class="btn" style="width: 300px;" onclick="FORMS.tickspeed.buy()">Cost: <span id="tickspeed_cost">X</span> Rage Points</button>
+                        </div><button id="tickspeed_btn" class="btn" style="width: 300px;" onclick="FORMS.tickspeed.buy()">Cost: <span id="tickspeed_cost">X</span> Rage Power</button>
                         <button class="btn" style="width: 120px;" onclick="FORMS.tickspeed.buyMax()">Buy Max</button>
                         <button id="tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.tickspeed.autoSwitch()">OFF</button>
                         <div style="margin-left: 5px; text-align: left; width: 400px">
@@ -278,7 +279,7 @@
                                 <img src="images/accelerator.png">
                                 <span style="margin-left: 5px; text-align: left;"><span id="accel_scale"></span>Accelerators [<span id="accel_lvl">X</span>]</span>
                             </div>
-                        </div><button id="accel_btn" class="btn" style="width: 300px;" onclick="FORMS.accel.buy()">Cost: <span id="accel_cost">X</span> Rage Points</button>
+                        </div><button id="accel_btn" class="btn" style="width: 300px;" onclick="FORMS.accel.buy()">Cost: <span id="accel_cost">X</span> Rage Power</button>
                         <button class="btn" style="width: 120px;" onclick="FORMS.accel.buyMax()">Buy Max</button>
                         <button id="accel_auto" class="btn" style="width: 80px;" onclick="FORMS.accel.autoSwitch()">OFF</button>
                         <div style="margin-left: 5px; text-align: left; width: 400px">
@@ -288,6 +289,7 @@
                     </div><br><div>
                         <span id="massSoft">Mass is <b id="massSoftLvl">(softcapped)</b> at <b id="massSoftStart"></b>!</span>
                         <div id="massOverflow"></div>
+                        <div id="massOverflow2" style="color: rgb(255, 197, 215)"></div>
                         <div id="strongerOverflow"></div>
                     </div>
                 </div><div id="stab_frame0_1">
@@ -334,6 +336,7 @@
                             The formula (x + 1)<sup id="bhMassPower2">0.33</sup> softcaps at <b id="bhFSoftStart1">X</b>
                         </span><br>
                         <span id="bhOverflow"></span>
+                        <div id="bhOverflow2" style="color: rgb(255, 197, 215)"></div>
                     </div>
                 </div><div id="stab_frame0_2">
                     You have <span id="atomicAmt">X</span> Atomic Power<br>
@@ -393,7 +396,9 @@
                     <div id="main_upg_msg" style="min-height: 100px;"></div>
                     <div id="main_upgs_table" class="table_center"></div>
                 </div><div id="stab_frame2_1">
-                </div><div id="elements_frame">
+                </div><div id="stab_frame2_2">
+                    <button class="btn" id="elemLayer" onclick="changeElemLayer()">Elements' Layer: Normal</button>
+                    <div id="elemTierDiv"></div><br>
                     <div id="elem_ch_div" style="min-height: 70px;">
                         <span id="elem_desc" class='sky'>X</span><br>
                         Cost: <span id="elem_cost">X</span><br>
@@ -560,6 +565,25 @@
                         <div id="FSS_eff1"></div>
                     </div><br>
                     <div class="table_center" id="matters_table"></div>
+                </div><div id="stab_frame7_3">
+                    <button class="btn half_full tooltip" id="mcf_btn" tooltip-html="Tiering will result in forcing FSS reset." onclick="EXOTIC_ATOM.tier()">
+                        Muon-Catalyzed Fusion Tier 0<br>
+                        Requirement: ??? Exotic Atoms
+                    </button>
+                    <div id="ea_div">
+                        <br>
+                        <div>You have <span id="ext_atom">0</span> Exotic Atoms (Muon & Pion based).</div>
+                        <div class="table_center">
+                            <div style="width: 50%; min-width: 500px;">
+                                You have <span id="ea_amt0">0</span> Muons.<br><br>
+                                <div class="sky" id="ea_milestone_table0"></div>
+                            </div>
+                            <div style="width: 50%; min-width: 500px;">
+                                You have <span id="ea_amt1">0</span> Pions.<br><br>
+                                <div class="sky" id="ea_milestone_table1"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div><div id="tab_frame8">
                 <button class="btn" onclick="save()">Save</button>
@@ -579,7 +603,7 @@
                 <h2>Confirmation Settings</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                Incremental Mass Rewritten v0.6.4.3 - made by MrRedShark77<br>
+                Incremental Mass Rewritten v0.6.5.1 - made by MrRedShark77<br>
                 The game is inspired by Distance Incremental & Synergism<br>
                 Contributors: <span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>, 16777216 & Aarex (Artists)<br><br><br>
                 Hint 1: Hover top image above tabs to show description...<br><br>

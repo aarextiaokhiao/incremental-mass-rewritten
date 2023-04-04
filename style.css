@@ -2,6 +2,8 @@
     --font: 'Verdana, Geneva, Tahoma, sans-serif';
 	--cx: 0;
     --cy: 0;
+
+	--elem-symbol-size: 18px;
 }
 
 @font-face {
@@ -110,6 +112,7 @@ button {
 	color: white;
     font-size: 14px;
 	cursor: pointer;
+	transition-property: background-color, border, transform;
 	transition-duration: 0.15s;
 }
 
@@ -520,6 +523,13 @@ button {
 	font-weight: bold;
 }
 
+.elements.muon.bought {
+	color: #fc0;
+	border-color: #f60;
+	background-color: #f30;
+	box-shadow: 0 0 10px #f60;
+}
+
 #final_118 {
 	color: white;
 	text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
@@ -541,7 +551,7 @@ button {
 }
 
 .elements {
-	font-size: 18px;
+	font-size: var(--elem-symbol-size);
 	width: 50px;
 	height: 50px;
 	background-color: #444;
@@ -580,6 +590,19 @@ button {
 
 .elements.corrupted {
 	transform: scale(1.1);
+}
+
+#elemLayer {
+	margin-bottom: 5px;
+}
+
+#elemTierDiv > .btn {
+	width: 180px;
+	padding: 3px 0;
+}
+
+.muon-symbol {
+	font-size: 12px;
 }
 
 @keyframes corrupted_div {

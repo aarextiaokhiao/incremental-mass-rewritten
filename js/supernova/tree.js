@@ -37,7 +37,7 @@ const TREE_IDS = [
         ['chal5','chal6','chal7','chal8'],
         ['fn12','fn11','fn6','fn10','rad6',""],
         ['en1','qu5','br1'],
-        [],
+        ['ct15','ct12','ct16','ct13','ct14'],
     ],[
         ['s4','sn5','sn4'],
         ['','','','qu_qol8a'],
@@ -700,6 +700,7 @@ const TREE_UPGS = {
             cost: E(1e24),
             effect() {
                 let x = player.qu.prim.theorems.add(1)
+                if (hasBeyondRank(2,17)) x = x.mul(beyondRankEffect(2,17)[0])
                 return x
             },
             effDesc(x) { return format(x,0)+"x" },
@@ -1085,25 +1086,94 @@ const TREE_UPGS = {
         },
         ct11: {
             branch: ['ct6'],
-            icon: "placeholder",
 
-            desc: `Outside C16, mass of black hole overflow starts later based on best mass of black hole in C16.`,
+            desc: `Mass of black hole overflow starts later based on best mass of black hole in C16. (weaker during C16)`,
             cost: E(1e6),
 
             req() { return tmp.c16active && player.atom.atomic.gte(1e20) },
             reqDesc() { return `Reach ${format(1e20)} atomic powers during C16.` },
 
             effect() {
-                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(3)
-                return overflow(x,10,0.5).pow(2)
+                let x = player.dark.c16.bestBH.add(1).log10().add(1)
+                x = tmp.c16active ? x.root(4) : x.pow(3)
+                x = overflow(x,10,0.5)
+                x = tmp.c16active ? x.root(3) : x.pow(2)
+                return x
             },
             effDesc(x) { return "^"+format(x)+" later" },
+        },
+        ct12: {
+            branch: ['ct9'],
+
+            desc: `Best mass of black hole in C16 adds free primordium particles.`,
+            cost: E(5e7),
+
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e2070') && player.bh.condenser.lte(0) },
+            reqDesc() { return `Reach ${formatMass('1e2070')} of black hole during C16 & [Meta-Quark] without buying BH Condensers.` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().root(2)
+                return x
+            },
+            effDesc(x) { return "+"+format(x) },
+        },
+        ct13: {
+            branch: ['ct7'],
+
+            desc: `Neutronium-0 now affects Challenge 15 at a reduced rate (like [ct5]). C15 now affects Atomic & Quark Overflows.`,
+            cost: E(2.5e8),
+
+            req() { return player.chal.comps[14]&&player.chal.comps[14].gte(960) },
+            reqDesc() { return `Get ${format(960,0)} C14 completions.` },
+        },
+        ct14: {
+            branch: ['ct11'],
+
+            desc: `Dilated mass overflow starts later based on best mass of black hole in C16.`,
+            cost: E(1e10),
+
+            req() { return tmp.c16active && player.atom.atomic.gte(1e180) },
+            reqDesc() { return `Reach ${format(1e180)} atomic powers during C16.` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(2)
+                return x
+            },
+            effDesc(x) { return "^"+format(x)+" later" },
+        },
+        ct15: {
+            branch: ['ct8'],
+            icon: "placeholder",
+
+            desc: `Total corrupted shards boost matters gain.`,
+            cost: E(2.5e10),
+
+            effect() {
+                let x = player.dark.c16.totalS.add(1).root(2)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },
+        ct16: {
+            unl: ()=>tmp.eaUnl,
+            branch: ['ct10'],
+            icon: "placeholder",
+
+            desc: `Best mass of black hole in C16 boosts Muon & Pion gain.`,
+            cost: E(5e16),
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().div(1e5).add(1).pow(2)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
         },
 
         /*
         x: {
             unl() { return true },
             req() { return true },
+            icon: "placeholder",
             reqDesc: ``,
             desc: `Placeholder.`,
             cost: EINF,

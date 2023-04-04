@@ -41,7 +41,6 @@ const TABS = {
             { id: "Upgrades" },
             { id: "Neutron Tree", unl() { return quUnl() }, style: "sn" },
             { id: "Elements", unl() { return tmp.elements.unl_length }, style: "atom" },
-            { id: "Elements+", unl() { return tmp.elements.unl_length > 118 }, style: "dark" },
         ],
         3: [
             { id: "Challenges" },
@@ -71,6 +70,7 @@ const TABS = {
             { id: "Dark Effects" },
             { id: "Dark Run", unl() { return tmp.darkRunUnlocked } },
             { id: "The Matters", unl() { return tmp.matterUnl } },
+            { id: "Exotic Atoms", unl() { return tmp.eaUnl } },
         ]
     },
 }

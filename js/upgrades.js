@@ -161,13 +161,17 @@ const UPGS = {
 
                 let o = ret
                 let os = E('e115')
+                let op = E(.5)
 
                 if (hasElement(210)) os = os.mul(elemEffect(210))
 
-                ret = overflow(ret,os,0.5)
+                if (hasBeyondRank(3,1)) op = op.pow(beyondRankEffect(3,1))
+
+                ret = overflow(ret,os,op)
 
                 tmp.overflow.stronger = calcOverflow(o,ret,os)
                 tmp.overflow_start.stronger = os
+                tmp.overflow_power.stronger = op
                 
                 return {step: step, eff: ret, ss: ss}
             },
@@ -196,9 +200,11 @@ const UPGS = {
                 if (hasUpgrade('rp',17)) step = step.add(.005)
                 if (hasUpgrade('rp',19)) step = step.mul(upgEffect(1,19,0))
 
-                let x = step.mul(xx).add(1)
+                let ss = E(10)
+
+                let x = step.mul(xx).add(1).softcap(ss,0.5,0)
                 
-                return {step: step, eff: x, ss: EINF}
+                return {step: step, eff: x, ss: ss}
             },
             effDesc(eff) {
                 return {
@@ -290,7 +296,7 @@ const UPGS = {
                 },
             },
             8: {
-                desc: "Super and Hyper mass upgrade scalings are weaker based on rage points.",
+                desc: "Super and Hyper mass upgrade scalings are weaker based on Rage Power.",
                 cost: E(1e15),
                 effect() {
                     let ret = E(0.9).pow(player.rp.points.max(1).log10().max(1).log10().pow(1.25).softcap(2.5,0.5,0))
@@ -772,7 +778,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasElement(132) },
-            lens: 19,
+            lens: 20,
             1: {
                 desc: `Start with Hydrogen-1 unlocked in Big Rip.`,
                 cost: E(5),
@@ -893,6 +899,18 @@ const UPGS = {
                     return x
                 },
                 effDesc(x=this.effect()) { return "x"+format(x)+" cheaper" },
+            },
+            20: {
+                unl() { return player.dark.c16.first },
+                desc: `Total corrupted Shards boost dark rays gain.`,
+                cost: E('e784'),
+                effect() {
+                    let x = player.dark.c16.totalS.add(1)
+                    return overflow(x,10,0.5).pow(1.25)
+                },
+                effDesc(x=this.effect()) {
+                    return "x"+format(x)
+                },
             },
         },
     },

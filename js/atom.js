@@ -40,7 +40,7 @@ const ATOM = {
         if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
 
         let o = x
-        let os = tmp.c16active ? E('ee6') : E('ee90').pow(tmp.dark.abEff.ApQ_Overflow||1)
+        let os = tmp.c16active ? E('ee6') : E('ee90').pow(tmp.dark.abEff.ApQ_Overflow||1).pow(treeEff('ct13')?tmp.chal.eff[15]:1)
 
         if (hasUpgrade('atom',16)) os = os.pow(10)
 
@@ -87,7 +87,7 @@ const ATOM = {
             if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
 
             let o = x
-            let os = E('ee82').pow(tmp.dark.abEff.ApQ_Overflow||1)
+            let os = tmp.c16active ? E('e500') : E('ee82').pow(tmp.dark.abEff.ApQ_Overflow||1).pow(treeEff('ct13')?tmp.chal.eff[15]:1)
 
             x = overflow(x,os,0.25)
 
@@ -195,9 +195,9 @@ const ATOM = {
                     player.rp.points.add(1).log10().add(10).log10().mul(x.add(1).log10().add(10).log10()).root(3).sub(1)
                 )
                 .mul(player.mass.add(1).log10().add(10).log10())
-                :hasElement(19)
+                :(hasElement(19)
                 ?player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(10).mul(x.max(1).log(10)).root(2.75))
-                :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))
+                :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))).min('ee200')
                 return {eff1: a, eff2: b}
             },
             x=>{

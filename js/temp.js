@@ -1,6 +1,7 @@
 var tmp = {}
 
 function resetTemp() {
+    let d = new Date()
     keep = [tmp.el, tmp.prevSave]
     tmp = {
         tree_time: 0,
@@ -15,7 +16,7 @@ function resetTemp() {
         stab: [],
         qc_tab: 0,
         qc_ch: -1,
-        pass: true,
+        pass: 0,
         notify: [],
         popup: [],
         saving: 0,
@@ -48,10 +49,15 @@ function resetTemp() {
         elements: {
             choosed: 0,
             effect: [null],
+            mu_effect: [null],
             cannot: [],
+            deCorrupt: [],
             ts: 0,
             te: 118,
             tt: 118,
+
+            max_tier: [1,1],
+            unl_length: [0,0],
         },
     
         fermions: {
@@ -119,6 +125,7 @@ function resetTemp() {
             abEff: {},
             mass_glyph_eff: [],
             mass_glyph_gain: [],
+            mg_passive: [],
         },
 
         matters: {
@@ -155,7 +162,9 @@ function resetTemp() {
         },
 
         overflow_power: {
+            mass: E(.5),
             bh: E(0.5),
+            stronger: E(.5),
         },
 
         mass_glyph_msg: 0,
@@ -177,7 +186,16 @@ function resetTemp() {
             fvm_eff: {},
         },
 
+        exotic_atom: {
+            amount: E(0),
+            gain: [E(0),E(0)],
+            eff: [[],[]],
+        },
+
         prevSave: "",
+
+        april: d.getDate() == 1 && d.getMonth() == 3,
+        aprilEnabled: false,
     }
     for (let x = 0; x < PRES_LEN; x++) tmp.prestiges.eff[x] = {}
     for (let x in BEYOND_RANKS.rewardEff) tmp.beyond_ranks.eff[x] = {}
@@ -225,7 +243,7 @@ function updateMassTemp() {
 }
 
 function updateTickspeedTemp() {
-    tmp.tickspeedFP = tmp.fermions.effs[1][2]
+    tmp.tickspeedFP = hasCharger(4) ? 1 : tmp.fermions.effs[1][2]
     tmp.tickspeedCost = E(2).pow(player.tickspeed.scaleEvery('tickspeed')).floor()
     tmp.tickspeedBulk = E(0)
     if (player.rp.points.gte(1)) tmp.tickspeedBulk = player.rp.points.max(1).log(2).scaleEvery('tickspeed',true).add(1).floor()
@@ -264,7 +282,8 @@ function updateBlackHoleTemp() {
     t.dm_can = t.dm_gain.gte(1)
     t.effect = FORMS.bh.effect()
 
-    let fp = tmp.fermions.effs[1][5]
+    let fp = hasCharger(6) ? 1 : tmp.fermions.effs[1][5]
+    if (hasCharger(6) && tmp.c16active) fp *= 1e6
 
     t.condenser_bonus = FORMS.bh.condenser.bonus()
     t.condenser_cost = E(1.75).pow(player.bh.condenser.scaleEvery('bh_condenser',false,[1,1,1,fp])).floor()
@@ -302,6 +321,7 @@ function updateTemp() {
     tmp.moreUpgs = hasElement(192)
     tmp.mass4Unl = hasElement(202)
     tmp.brUnl = hasElement(208)
+    tmp.eaUnl = hasCharger(5)
 
     updateC16Temp()
     updateDarkTemp()

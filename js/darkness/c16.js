@@ -17,12 +17,44 @@ const CHARGERS = [
         desc: `
         Unstable Black Hole's effect is 50% stronger. (after overflow)
         `,
+    },{
+        req: E('e30000'),
+        cost: E(1e7),
+        desc: `
+        Remove all pre-Meta scalings from Supernova. [Neut-Muon]'s effect is now changed. Denullify C5's effect, but it's changed.
+        `,
+    },{
+        req: E('e45000'),
+        cost: E(5e8),
+        desc: `
+        Dark Shadow's first reward is overpowered. Remove all scalings from Tickspeed, but nullify [Tau]'s effect.
+        `,
+    },{
+        req: E('e89000'),
+        cost: E(5e10),
+        desc: `
+        Unlock Exotic Atoms in Atom tab, and unlock new elements' layer.
+        `,
+    },{
+        req: E('ee6'),
+        cost: E(1e26),
+        desc: `
+        Remove all scalings from BHC. [Neut-Tau]'s effect no longer affects BHC's cheapness. In C16, BHC is 1,000,000x cheaper.
+        `,
+    },{
+        req: E('e1.7e6'),
+        cost: E(1e31),
+        desc: `
+        Remove all scalings from Cosmic Ray. [Neut-Tau]'s effect now re-affects BHC's cheapness, but its effect is MASSIVELY weaker.
+        `,
     },
 ]
 
 const UNSTABLE_BH = {
     gain() {
         let x = tmp.unstable_bh.fvm_eff.eff||E(1)
+
+        x = x.mul(exoticAEff(1,0))
 
         return x
     },
@@ -57,6 +89,8 @@ const UNSTABLE_BH = {
             let lvl = player.bh.fvm
 
             let pow = E(2)
+
+            if (hasPrestige(2,28)) pow = pow.mul(prestigeEff(2,28))
 
             let eff = pow.pow(lvl)
 
@@ -117,6 +151,8 @@ function corruptedShardGain() {
 
     if (hasPrestige(3,4)) x = x.mul(prestigeEff(3,4))
 
+    x = x.mul(exoticAEff(0,0))
+
     return x.floor()
 }
 
@@ -145,3 +181,5 @@ function updateC16HTML() {
         tmp.el[id+"_div"].setClasses({btn: true, full: true, charger: true, locked: !req || cs.lt(c.cost) || hasCharger(i)})
     }
 }
+
+const CORRUPTED_ELEMENTS = [40,64,67,150,162,187,199,200,204]

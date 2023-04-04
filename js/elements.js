@@ -340,7 +340,7 @@ function updatePrestigesRewardHTML() {
 					tmp.el["pres_reward_"+x+"_"+y].setClasses({corrupted_text2: c16 && CORRUPTED_PRES[x] && CORRUPTED_PRES[x].includes(parseInt(keys[y]))})
 					if (tmp.el["pres_eff_"+x+"_"+y]) {
 						let eff = PRESTIGES.rewardEff[x][keys[y]]
-						tmp.el["pres_eff_"+x+"_"+y].setTxt(eff[1](tmp.prestiges.eff[x][keys[y]]))
+						tmp.el["pres_eff_"+x+"_"+y].setHTML(eff[1](tmp.prestiges.eff[x][keys[y]]))
 					}
 				}
 			}
@@ -417,9 +417,11 @@ function updateBlackHoleHTML() {
 	tmp.el.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
 	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
 
-	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh))
-    tmp.el.bhOverflow.setHTML(`Because of black hole mass overflow at <b>${formatMass(tmp.overflow_start.bh)}</b>, your mass of black hole is ${overflowFormat(tmp.overflow.bh||1)}!`)
+	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[0]))
+    tmp.el.bhOverflow.setHTML(`Because of black hole mass overflow at <b>${formatMass(tmp.overflow_start.bh[0])}</b>, your mass of black hole is ${overflowFormat(tmp.overflow.bh||1)}!`)
 
+	tmp.el.bhOverflow2.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[1]))
+    tmp.el.bhOverflow2.setHTML(`Because of black hole mass overflow at <b>${formatMass(tmp.overflow_start.bh[1])}</b>, your black hole mass overflow is even stronger!`)
 	// Unstable 
 
 	let unl = hasCharger(1)
@@ -493,39 +495,32 @@ function updateHTML() {
 					tmp.el.massSoftLvl.setHTML("(softcapped"+(lvl>1?"<sup>"+lvl+"</sup>":"")+")")
 				}
 
-				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass))
-    			tmp.el.massOverflow.setHTML(`Because of mass overflow at <b>${formatMass(tmp.overflow_start.mass)}</b>, your mass is ${overflowFormat(tmp.overflow.mass||1)}!`)
+				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass[0]))
+    			tmp.el.massOverflow.setHTML(`Because of mass overflow at <b>${formatMass(tmp.overflow_start.mass[0])}</b>, your mass is ${overflowFormat(tmp.overflow.mass||1)}!`)
+
+				tmp.el.massOverflow2.setDisplay(player.mass.gte(tmp.overflow_start.mass[1]))
+    			tmp.el.massOverflow2.setHTML(`Because of mass overflow^2 at <b>${formatMass(tmp.overflow_start.mass[1])}</b>, your mass overflow is even stronger!`)
 
 				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger))
     			tmp.el.strongerOverflow.setHTML(`Because of stronger overflow at <b>${format(tmp.overflow_start.stronger)}</b>, your stronger effect is ${overflowFormat(tmp.overflow.stronger||1)}!`)
 			}
-			if (tmp.stab[0] == 1) {
-				updateBlackHoleHTML()
-			}
-			if (tmp.stab[0] == 2) {
-				updateAtomicHTML()
-			}
-		}
-		if (tmp.tab == 1) {
+            if (tmp.stab[0] == 1) updateBlackHoleHTML()
+			if (tmp.stab[0] == 2) updateAtomicHTML()
+		} else if (tmp.tab == 1) {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
 			if (tmp.stab[1] == 1) updateBeyondRanksRewardHTML()
 			if (tmp.stab[1] == 2) updatePrestigesRewardHTML()
 			if (tmp.stab[1] == 3) updateScalingHTML()
-		}
-		if (tmp.tab == 2) {
-			tmp.el["elements_frame"].setDisplay(tmp.elements.tier)
+		} else if (tmp.tab == 2) {
 			if (tmp.stab[2] == 0) updateMainUpgradesHTML()
-			if (tmp.elements.tier) updateElementsHTML()
-		}
-		if (tmp.tab == 3) {
+			if (tmp.stab[2] == 2) updateElementsHTML()
+		} else if (tmp.tab == 3) {
 			updateChalHTML()
-		}
-		if (tmp.tab == 4) {
+		} else if (tmp.tab == 4) {
 			if (tmp.stab[4] == 0) updateAtomHTML()
 			if (tmp.stab[4] == 1) updateMDHTML()
 			if (tmp.stab[4] == 2) updateStarsHTML()
-		}
-		if (tmp.tab == 8) {
+		} else if (tmp.tab == 8) {
 			updateOptionsHTML()
 		}
 	}

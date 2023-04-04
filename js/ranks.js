@@ -265,7 +265,7 @@ const RANKS = {
         rank() {
             let f = E(1)
             if (player.ranks.tier.gte(1)) f = f.mul(1/0.8)
-            f = f.mul(tmp.chal.eff[5].pow(-1))
+            if (!hasCharger(3)) f = f.mul(tmp.chal.eff[5].pow(-1))
             return f
         },
         tier() {
@@ -321,7 +321,7 @@ const PRESTIGES = {
                 x = y.div(fp).scaleEvery('prestige1',false).pow(1.25).mul(3).add(4)
                 break;
             case 2:
-                x = hasElement(167)?y.div(fp).pow(1.25).mul(3.5).add(5):y.pow(1.3).mul(4).add(6)
+                x = hasElement(167)?y.div(fp).scaleEvery('prestige2',false).pow(1.25).mul(3.5).add(5):y.pow(1.3).mul(4).add(6)
                 break;
             case 3:
                 x = y.div(fp).pow(1.25).mul(3).add(9)
@@ -342,7 +342,7 @@ const PRESTIGES = {
                 if (y.gte(4)) x = y.sub(4).div(3).max(0).root(1.25).scaleEvery('prestige1',true).mul(fp).add(1)
                 break
             case 2:
-                if (y.gte(6)) x = hasElement(167)?y.sub(5).div(3.5).max(0).root(1.25).mul(fp).add(1):y.sub(6).div(4).max(0).root(1.3).mul(fp).add(1)
+                if (y.gte(6)) x = hasElement(167)?y.sub(5).div(3.5).max(0).root(1.25).scaleEvery('prestige2',true).mul(fp).add(1):y.sub(6).div(4).max(0).root(1.3).mul(fp).add(1)
                 break
             case 3:
                 if (y.gte(9)) x = y.sub(9).div(3).max(0).root(1.25).mul(fp).add(1)
@@ -421,8 +421,10 @@ const PRESTIGES = {
             "46": `Add 500 more C13-15 max completions.`,
             "66": `All Fermions' scaling is 20% weaker.`,
             "91": `FSS base is raised to the 1.05th power.`,
-            "127": `Remove all pre-Exotic scalings from Rank & Tier, but nullify C5's reward.`,
+            "127": `Remove all pre-Exotic scalings from Rank & Tier, but nullify C5's reward and Hybridized Uran-Astatine’s first effect for Rank & Tier.`,
             "139": `Matters' production is tripled every FSS. FV Manipulator's cost is slightly weaker.`,
+            "167": `Abyssal Blot's fourth reward is raised by FSS.`,
+            "247": `Muon's production is increased by MCF tier.`,
         },
         {
             "1": `The requirement for prestige levels & honors are 15% lower.`,
@@ -431,11 +433,15 @@ const PRESTIGES = {
             "5": `Glory boosts glyphic mass.`,
             "8": `Glory reduces Black Hole Overflow nerf.`,
             "22": `Glory boosts all matters gain.`,
+            "25": `Uncap pre-darkness challenges' completion cap. C7's reward is changed.`,
+            "28": `FV Manipulator Power is boosted by Honor.`,
+            "34": `Pions boost Muons gain at a reduced rate.`,
         },
         {
             "1": `The requirements for previous prestiges are 10% lower.`,
             "2": `Exotic Supernova starts x1.25 later every Renown.`,
             "4": `Corrupted shard gain is increased by +50% per Renown.`,
+            "6": `Exotic Atoms boost them other resources.`,
         },
     ],
     rewardEff: [
@@ -466,9 +472,9 @@ const PRESTIGES = {
                 return x
             },x=>formatReduction(x)+" weaker"],
             "607": [()=>{
-                let x = tmp.prestiges.base.max(1).pow(1.5)
+                let x = tmp.prestiges.base.max(1).pow(1.5).softcap('e7500',0.1,0)
                 return x
-            },x=>"x"+format(x)],
+            },x=>"x"+format(x)+softcapHTML(x,'e7500')],
             "1337": [()=>{
                 let x = tmp.preQUGlobalSpeed.max(1).log10().add(1).log10().div(10)
                 return x.toNumber()
@@ -507,6 +513,10 @@ const PRESTIGES = {
                 let x = Decimal.pow(3,player.dark.matters.final)
                 return x
             },x=>"x"+x.format(0)],
+            "247": [()=>{
+                let x = Decimal.pow(player.dark.exotic_atom.tier+1,1.5)
+                return x
+            },x=>"x"+x.format()],
         },
         {
             "5": [()=>{
@@ -521,6 +531,14 @@ const PRESTIGES = {
                 let x = Decimal.pow(2,player.prestiges[2].pow(.5))
                 return x
             },x=>"x"+format(x)],
+            "28": [()=>{
+                let x = player.prestiges[1].root(2).div(10).add(1)
+                return x
+            },x=>"x"+format(x)],
+            "34": [()=>{
+                let x = player.dark.exotic_atom.amount[1].add(1).log10().add(1).pow(1.5)
+                return x
+            },x=>"x"+format(x)],
         },
         {
             "2": [()=>{
@@ -529,6 +547,10 @@ const PRESTIGES = {
             },x=>"x"+x.format()+" later"],
             "4": [()=>{
                 let x = player.prestiges[3].div(2).add(1)
+                return x
+            },x=>"x"+x.format()],
+            "6": [()=>{
+                let x = tmp.exotic_atom.amount.add(1).log10().add(1)
                 return x
             },x=>"x"+x.format()],
         },
@@ -563,19 +585,20 @@ function updateRanksTemp() {
     if (!tmp.ranks) tmp.ranks = {}
     for (let x = 0; x < RANKS.names.length; x++) if (!tmp.ranks[RANKS.names[x]]) tmp.ranks[RANKS.names[x]] = {}
     let fp2 = tmp.qu.chroma_eff[1][0]
+    let rt_fp2 = hasPrestige(1,127) ? 1 : fp2
     let ffp = E(1)
     let ffp2 = 1
     if (tmp.c16active || player.dark.run.active) ffp2 /= mgEff(5)
 
     let fp = RANKS.fp.rank().mul(ffp)
-    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ffp2).scaleEvery('rank',false,[1,1,1,1,fp2]).div(fp).pow(1.15)).mul(10)
+    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ffp2).scaleEvery('rank',false,[1,1,1,1,rt_fp2]).div(fp).pow(1.15)).mul(10)
     tmp.ranks.rank.bulk = E(0)
-    if (player.mass.gte(10)) tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).scaleEvery('rank',true,[1,1,1,1,fp2]).mul(ffp2).add(1).floor();
+    if (player.mass.gte(10)) tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).scaleEvery('rank',true,[1,1,1,1,rt_fp2]).mul(ffp2).add(1).floor();
     tmp.ranks.rank.can = player.mass.gte(tmp.ranks.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03")
 
     fp = RANKS.fp.tier().mul(ffp)
-    tmp.ranks.tier.req = player.ranks.tier.div(ffp2).scaleEvery('tier',false,[1,1,1,fp2]).div(fp).add(2).pow(2).floor()
-    tmp.ranks.tier.bulk = player.ranks.rank.max(0).root(2).sub(2).mul(fp).scaleEvery('tier',true,[1,1,1,fp2]).mul(ffp2).add(1).floor();
+    tmp.ranks.tier.req = player.ranks.tier.div(ffp2).scaleEvery('tier',false,[1,1,1,rt_fp2]).div(fp).add(2).pow(2).floor()
+    tmp.ranks.tier.bulk = player.ranks.rank.max(0).root(2).sub(2).mul(fp).scaleEvery('tier',true,[1,1,1,rt_fp2]).mul(ffp2).add(1).floor();
 
     fp = E(1).mul(ffp)
     let pow = 2
@@ -687,6 +710,13 @@ const BEYOND_RANKS = {
             7: `Gain more fermions based on Hept, except Meta-Fermions.`,
             10: `Raise mass of black hole to the 1.2th power.`,
             15: `Remove all scalings from mass upgrades 1-3.`,
+            17: `[qu9] is more effective based on mass of black hole. Exotic Supernova starts later based on Quantizes.`,
+            20: `C1's reward is changed.`,
+        },
+        3: {
+            1: `Mass & Stronger Overflow is weaker based on archverse tier of normal mass.`,
+            2: `Super FSS starts +1 later.`,
+            4: `Beyond Rank boosts Muon & Pion gain.`,
         },
     },
 
@@ -702,7 +732,7 @@ const BEYOND_RANKS = {
             ],
             4: [
                 ()=>{
-                    return E(player.dark.matters.final).pow(.75).div(10).add(1)
+                    return player.dark.matters.final.pow(.75).div(10).add(1)
                 },
                 x=>formatPercent(x-1)+" stronger",
             ],
@@ -729,6 +759,34 @@ const BEYOND_RANKS = {
                     let x = player.ranks.beyond.add(1).log10().add(1).pow(2)
 
                     return overflow(x,10,0.5)
+                },
+                x=>"x"+format(x),
+            ],
+            17: [
+                ()=>{
+                    let x = player.bh.mass.add(1).log10().add(1).log10().add(1).pow(2)
+                    
+                    let y = player.qu.times.add(1).log10().root(2).div(8).add(1)
+
+                    return [x,y]
+                },
+                x=>"x"+format(x[0])+" effective; x"+format(x[1])+" later",
+            ],
+        },
+        3: {
+            1: [
+                ()=>{
+                    let x = Decimal.pow(0.99,player.mass.div(1.5e56).max(1).log10().div(1e9).max(1).log10().div(15).root(3))
+
+                    return x
+                },
+                x=>formatReduction(x)+" weaker",
+            ],
+            4: [
+                ()=>{
+                    let x = player.ranks.beyond.add(1).log10().add(1).pow(2)
+
+                    return x
                 },
                 x=>"x"+format(x),
             ],

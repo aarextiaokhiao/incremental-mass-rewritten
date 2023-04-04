@@ -4,7 +4,7 @@ const TOOLTIP_RES = {
         desc() {
             let h = `You have pushed <b>${formatMass(player.mass)}</b>.`;
 
-            if (tmp.overflowBefore.mass.gte(tmp.overflow_start.mass))
+            if (tmp.overflowBefore.mass.gte(tmp.overflow_start.mass[0]))
             h += `<br>(<b>+${formatMass(tmp.overflowBefore.mass)}</b> gained before <b>overflow</b>)`;
 
             if (quUnl())
@@ -41,7 +41,7 @@ const TOOLTIP_RES = {
         desc() {
             let h = `You have <b>${formatMass(player.bh.mass)}</b> of black hole.`;
 
-            if (tmp.overflowBefore.bh.gte(tmp.overflow_start.bh))
+            if (tmp.overflowBefore.bh.gte(tmp.overflow_start.bh[0]))
             h += `<br>(<b>+${formatMass(tmp.overflowBefore.bh)}</b> gained before <b>overflow</b>)`;
 
             if (hasCharger(1))
@@ -189,7 +189,7 @@ const TOOLTIP_RES = {
             <br class='line'>
             <i>
             Start the 16th Challenge. Earn <b>Corrupted Shard</b> based on your mass of black hole, when exiting that challenge and reaching <b>${formatMass('e100')}</b> of black hole.<br><br>
-            • You cannot gain rage points nor dark matters, and all matters’ formula is disabled, and they generate each other. Red matter generates dark matter.<br>
+            • You cannot gain Rage Power nor dark matters, and all matters’ formula is disabled, and they generate each other. Red matter generates dark matter.<br>
             • Pre-C16 following contents (including rank & prestige tiers, main upgrades, elements, tree and etc.) are corrupted like disabled.<br>
             • You are trapped in Mass Dilation & Dark Run with 100 all glyphs (10 slovak glyphs).<br>
             • Primordium particles disabled.<br>

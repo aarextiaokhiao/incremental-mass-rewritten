@@ -228,7 +228,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(200).mul(t.softcap(8,0.5,0)).add(1)
-                    return x
+                    return x.softcap(15,0.5,0)
                 },
                 desc(x) {
                     return `Dark ray's effect is ^${x.format()} stronger`.corrupt(tmp.c16active)
@@ -278,6 +278,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = t.pow(1.5).add(1).pow(i.add(1).log10().softcap(10,0.75,0)).softcap(1e6,0.75,0)
+                    if (tmp.c16active) x = overflow(x,1e100,0.5)
                     return x
                 },
                 desc(x) {
@@ -352,11 +353,14 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let m = i.add(1).log10().mul(t).root(4)
-                    let x = Math.min(hasElement(157)?m.div(150).add(1).softcap(5,0.5,0).pow(-1).toNumber():1,E(0.95).pow(m.softcap(27,0.5,0)).max(2/3).toNumber())
+                    let x = hasCharger(3)
+                    ?Decimal.pow(0.975,overflow(m.max(1).log10(),10,0.5))
+                    :Math.min(hasElement(157)?m.div(150).add(1).softcap(5,0.5,0).pow(-1).toNumber():1,E(0.95).pow(m.softcap(27,0.5,0)).max(2/3).toNumber())
                     return x
                 },
                 desc(x) {
-                    return `Pre-Meta-Supernova Scalings are ${format(100-x*100)}% weaker`
+                    let w = formatReduction(x)
+                    return hasCharger(3)?`Meta & Exotic Supernovas scale ${w} weaker`:`Pre-Meta-Supernova Scalings are ${w} weaker`
                 },
                 inc: "Atom",
                 cons: "U-Leptons, Z<sup>0</sup> bosons do nothing",
@@ -372,7 +376,9 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-                    let x = i.add(1).log10().pow(0.75).div(100).add(1).pow(t.pow(0.75))
+                    let c = hasCharger(7)
+                    let x = c ? t.add(1).pow(i.add(1).log10().add(1).log10()) : i.add(1).log10().pow(0.75).div(100).add(1).pow(t.pow(0.75))
+                    if (!c && tmp.c16active) x = overflow(x,150,0.05)
                     return x
                 },
                 desc(x) {
@@ -394,7 +400,7 @@ const FERMIONS = {
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(2000).mul(t.softcap(8,0.5,0))
                     if (hasBeyondRank(2,2)) x = x.mul(8)
-                    return x.toNumber()
+                    return x.softcap(20,0.5,0).toNumber()
                 },
                 desc(x) {
                     return `Increase prestige base's exponent by ${format(x)}`

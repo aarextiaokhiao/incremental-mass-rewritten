@@ -35,7 +35,7 @@ const ELEMENTS = {
         'Roeritgenium','Copernicium','Nihonium','Flerovium','Moscovium','Livermorium','Tennessine','Oganesson'
     ],
     canBuy(x) {
-        if (tmp.c16active && CORRUPTED_ELEMENTS.includes(x)) return false
+        if (tmp.c16active && !tmp.elements.deCorrupt.includes(x) && CORRUPTED_ELEMENTS.includes(x)) return false
         let res = this.upgs[x].dark ? player.dark.shadow : player.atom.quarks
         return res.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : !BR_ELEM.includes(x)) && !tmp.elements.cannot.includes(x) && !(CHALS.inChal(14) && x < 118)
     },
@@ -239,7 +239,7 @@ const ELEMENTS = {
             cost: E(1e130),
             effect() {
                 let x = player.md.mass.add(1).pow(0.0125)
-                return x.softcap('ee27',0.95,2)
+                return overflow(x.softcap('ee27',0.95,2),"ee110",0.25)
             },
             effDesc(x) { return format(x)+"x"+x.softcapHTML('ee27') },
         },
@@ -768,6 +768,7 @@ const ELEMENTS = {
             desc: `7th challenge’s effect gives more C9-12 completions at 10% rate.`,
             cost: E("e9e24"),
             effect() {
+                if (hasPrestige(2,25)) return E(0)
                 let c = tmp.chal?tmp.chal.eff[7]:E(0)
                 let x = c.div(10).ceil()
                 return x
@@ -909,10 +910,10 @@ const ELEMENTS = {
             desc: `Prestige base exponent boosts Abyssal Blot gain.`,
             cost: E("e6e47"),
             effect() {
-                let x = Math.max(1,tmp.prestiges.baseExp**1.5)
-                return x
+                let x = Decimal.max(1,tmp.prestiges.baseExp**1.5)
+                return overflow(x,400,0.5)
             },
-            effDesc(x) { return "^"+format(x) },
+            effDesc(x) { return "^"+format(x)+x.softcapHTML(400) },
         },{
             desc: `Hyper Prestige Level, Tetr & Pent scalings are 10% weaker.`,
             cost: E("e5e64"),
@@ -951,14 +952,14 @@ const ELEMENTS = {
             cost: E("1e96"),
         },{
             desc: `Collapsed star’s effect now provide an exponential boost at reduced rate. It can apply to mass of black hole gain. But nullify Palladium-46, Cadmium-48, Thulium-69 & Osmium-76.`,
-            cost: E("e4.20e69"), // nice
+            cost: E("e2e69"),
         },{
             desc: `Spatial Dilation is slightly weaker.`,
             cost: E("e4.7e70"),
         },{
             br: true,
             desc: `[m1]’s effect is overpowered.`,
-            cost: E("e4.20e69"), // nice x2
+            cost: E("e4.20e69"), // nice
         },{
             br: true,
             desc: `[rp1]’s effect is another overpowered.`,
@@ -1076,6 +1077,7 @@ const ELEMENTS = {
             cost: E("e2e90"),
             effect() {
                 let x = Decimal.pow(2,tmp.prestiges.base.max(1).log10().root(2))
+                if (tmp.c16active) x = overflow(x,10,.5)
                 return x
             },
             effDesc(x) { return "^"+format(x)+" later" },
@@ -1205,8 +1207,7 @@ const ELEMENTS = {
             desc: `Stronger overflow starts later based on FSS.`,
             cost: E('e710'),
             effect() {
-                let x = E(2).add(player.dark.matters.final.pow(.8)).pow(player.dark.matters.final)
-                
+                let x = player.dark.matters.final.pow(.8).add(2).pow(player.dark.matters.final)
 				return x
             },
             effDesc(x) { return "x"+format(x)+" later" },
@@ -1329,35 +1330,49 @@ function getElementName(x) {
 
 function WE(a,b) { return 2*(a**2-(a-b)**2) }
 
-for (let x = 2; x <= MAX_ELEM_TIERS; x++) {
+for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
     let [ts,te] = [ELEMENTS.exp[x-1],ELEMENTS.exp[x]]
 
-    let m = 'xx1xxxxxxxxxxxxxxxxvxx2xxxxxxxxxxxxxxxxv_v'
+    if (x > 1) {
+        let m = 'xx1xxxxxxxxxxxxxxxxvxx2xxxxxxxxxxxxxxxxv_v'
 
-    for (let y = x; y >= 1; y--) {
-        let k = 10 + 4 * y
-        m += "1"+'x'.repeat(k)+"v"
-        m += "2"+'x'.repeat(k)
-        if (y > 1) m += "v_v"
+        for (let y = x; y >= 1; y--) {
+            let k = 10 + 4 * y
+            m += "1"+'x'.repeat(k)+"v"
+            m += "2"+'x'.repeat(k)
+            if (y > 1) m += "v_v"
+        }
+
+        for (let y = ts+1; y <= te; y++) {
+            ELEMENTS.names.push(getElementId(y))
+            ELEMENTS.fullNames.push(getElementName(y))
+            if (!ELEMENTS.upgs[y]) ELEMENTS.upgs.push({
+                desc: `Placeholder.`,
+                cost: EINF,
+            })
+        }
+
+        ELEMENTS.map.push(m)
     }
 
+    // Muonic Elements
+
     for (let y = ts+1; y <= te; y++) {
-        ELEMENTS.names.push(getElementId(y))
-        ELEMENTS.fullNames.push(getElementName(y))
-        if (!ELEMENTS.upgs[y]) ELEMENTS.upgs.push({
+        if (!MUONIC_ELEM.upgs[y]) MUONIC_ELEM.upgs.push({
             desc: `Placeholder.`,
             cost: EINF,
         })
     }
-
-    ELEMENTS.map.push(m)
 }
 
-const CORRUPTED_ELEMENTS = [40,150,162,187,199,200,204]
-
-function hasElement(x) { return player.atom.elements.includes(x) && !(tmp.c16active && CORRUPTED_ELEMENTS.includes(x)) }
+function hasElement(x,layer=0) { return player.atom[["elements","muonic_el"][layer]].includes(x) && (layer > 0 || (tmp.elements.deCorrupt.includes(x) || !(tmp.c16active && CORRUPTED_ELEMENTS.includes(x)))) }
 
 function elemEffect(x,def=1) { return tmp.elements.effect[x]||def }
+
+function buyElement(x,layer=player.atom.elemLayer) {
+    if (layer == 0) ELEMENTS.buyUpg(x)
+    else if (layer == 1) MUONIC_ELEM.buyUpg(x)
+}
 
 function setupElementsHTML() {
     let elements_table = new Element("elements_table")
@@ -1373,7 +1388,9 @@ function setupElementsHTML() {
             else if (m=='x') {
                 num++
                 table += ELEMENTS.upgs[num]===undefined?`<div style="width: 50px; height: 50px"></div>`
-                :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num})" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
+                :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="buyElement(${num}); ssf[0]('${ELEMENTS.names[num]}')" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0">
+                <div style="font-size: 12px;">${num}</div><sup class="muon-symbol"></sup>${ELEMENTS.names[num]}
+                </button>`
                 if (k == 1) {
                     if (num==56 || num==88) num += 14
                     else if (num==70) num += 18
@@ -1401,32 +1418,58 @@ function setupElementsHTML() {
         table += "</div></div>"
     }
 	elements_table.setHTML(table)
+
+    let elem_tier = new Element("elemTierDiv")
+    table = ""
+
+    for (let i = 1; i <= MAX_ELEM_TIERS; i++) {
+        table += `
+        <button class="btn" id="elemTier_btn${i}" onclick="player.atom.elemTier[player.atom.elemLayer] = ${i}">
+            Tier ${i}<br>
+            <span style="font-size: 10px">[${ELEMENTS.exp[i-1]+1} - ${ELEMENTS.exp[i]}]</span>
+        </button>
+        `
+    }
+
+    elem_tier.setHTML(table)
 }
 
 function updateElementsHTML() {
     let tElem = tmp.elements, c16 = tmp.c16active
+    let et = player.atom.elemTier, elayer = player.atom.elemLayer
+
+    tmp.el.elemLayer.setDisplay(tmp.eaUnl)
+    tmp.el.elemLayer.setHTML("Elements' Layer: "+["Normal","Muonic"][elayer])
+
+    tmp.el.elemTierDiv.setDisplay(tElem.max_tier[elayer]>1)
+
+    let elem_const = [ELEMENTS,MUONIC_ELEM][elayer]
 
     let ch = tElem.choosed
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
-        let eu = ELEMENTS.upgs[ch]
-        let res = eu.dark?" Dark Shadows":" Quarks"
+        let eu = elem_const.upgs[ch]
+        let res = [eu.dark?" Dark Shadows":" Quarks"," Exotic Atoms"][elayer]
+        let eff = tElem[["effect","mu_effect"][elayer]]
 
-        tmp.el.elem_desc.setHTML("<b>["+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
+        tmp.el.elem_desc.setHTML("<b>["+["","Muonic "][elayer]+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
         tmp.el.elem_desc.setClasses({sky: true, corrupted_text2: c16 && CORRUPTED_ELEMENTS.includes(ch)})
         tmp.el.elem_cost.setTxt(format(eu.cost,0)+res+(BR_ELEM.includes(ch)?" in Big Rip":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?" [CANNOT AFFORD in Big Rip]":""))
-        tmp.el.elem_eff.setHTML(eu.effDesc?"Currently: "+eu.effDesc(tElem.effect[ch]):"")
+        tmp.el.elem_eff.setHTML(eu.effDesc?"Currently: "+eu.effDesc(eff[ch]):"")
     }
 
     for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
-        let unl = tmp.elements.tier == x
+        let unl = et[elayer] == x
+
         tmp.el["elemTier"+x+"_div"].setDisplay(unl)
         if (unl) {
+            let unllen = tElem.unl_length[elayer]
+
             if (x == 1) {
-                tmp.el.element_la_1.setVisible(tElem.unl_length>56)
-                tmp.el.element_la_3.setVisible(tElem.unl_length>56)
-                tmp.el.element_la_2.setVisible(tElem.unl_length>88)
-                tmp.el.element_la_4.setVisible(tElem.unl_length>88)
+                tmp.el.element_la_1.setVisible(unllen>56)
+                tmp.el.element_la_3.setVisible(unllen>56)
+                tmp.el.element_la_2.setVisible(unllen>88)
+                tmp.el.element_la_4.setVisible(unllen>88)
             }
 
             let len = x > 1 ? tElem.te : tElem.upg_length
@@ -1434,7 +1477,7 @@ function updateElementsHTML() {
             for (let x = tElem.ts+1; x <= len; x++) {
                 let upg = tmp.el['elementID_'+x]
                 if (upg) {
-                    let unl2 = x <= tElem.unl_length
+                    let unl2 = x <= unllen
                     upg.setVisible(unl2)
                     if (unl2) {
                         let eu = ELEMENTS.upgs[x]
@@ -1447,36 +1490,49 @@ function updateElementsHTML() {
 							locked: !ELEMENTS.canBuy(x),
 							bought: hasElement(x),
 
-							star: x > 36 && x < 54,
-							sn: x > 54 && x < 77,
-							qu: x > 77 && x <= 86,
-							br: BR_ELEM.includes(x) && x != 118,
-							final: (x == 54 || x == 77 || x == 118 || x == 218),
-							dark: eu.dark,
+							muon: elayer == 1, 
+							star: elayer == 0 && x > 36 && x < 54,
+							sn: elayer == 0 && x > 54 && x < 77,
+							qu: elayer == 0 && x > 77 && x <= 86,
+							br: elayer == 0 && BR_ELEM.includes(x) && x != 118,
+							final: elayer == 0 && (x == 54 || x == 77 || x == 118 || x == 218),
+							dark: elayer == 0 && eu.dark,
 						})
                     }
                 }
             }
         }
+
+        tmp.el["elemTier_btn"+x].setDisplay(x <= tElem.max_tier[elayer])
     }
 }
 
 function updateElementsTemp() {
-    tmp.elements.tier = Math.max(tmp.stab[2]-1, 0)
-    tmp.elements.ts = ELEMENTS.exp[tmp.elements.tier-1]
-    tmp.elements.te = ELEMENTS.exp[tmp.elements.tier]
-    tmp.elements.tt = tmp.elements.te - tmp.elements.ts
+    let tElem = tmp.elements
+    let et = player.atom.elemTier, elayer = player.atom.elemLayer
+
+    tElem.ts = ELEMENTS.exp[et[elayer]-1]
+    tElem.te = ELEMENTS.exp[et[elayer]]
+    tElem.tt = tElem.te - tElem.ts
+
+    let decor = []
+    if (hasElement(10,1)) decor.push(187)
+    tElem.deCorrupt = decor
 
     let cannot = []
     if (player.qu.rip.active) {
         if (!hasElement(121)) cannot.push(58)
         if (!hasElement(126)) cannot.push(74)
     }
-    tmp.elements.cannot = cannot
+    tElem.cannot = cannot
 
-    if (!tmp.elements.upg_length) tmp.elements.upg_length = ELEMENTS.upgs.length-1
-    for (let x = tmp.elements.upg_length; x >= 1; x--) {
-        if (ELEMENTS.upgs[x].effect) tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
+    if (!tElem.upg_length) tElem.upg_length = ELEMENTS.upgs.length-1
+    for (let x = tElem.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
+        tElem.effect[x] = ELEMENTS.upgs[x].effect()
     }
-    tmp.elements.unl_length = ELEMENTS.getUnlLength()
+
+    tElem.unl_length = [ELEMENTS.getUnlLength(),MUONIC_ELEM.getUnlLength()]
+
+    tElem.max_tier = [1,1]
+    if (player.dark.unl) tElem.max_tier[0]++
 }

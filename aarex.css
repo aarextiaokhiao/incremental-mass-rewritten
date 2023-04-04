@@ -428,3 +428,8 @@ body.ngm {
 
 	color: grey !important;
 }
+.elements.bought.muon {
+	background: linear-gradient(45deg, #f30, #fb0) !important;
+
+	color: #700 !important;
+}
