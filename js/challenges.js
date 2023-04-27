@@ -40,6 +40,11 @@ function updateChalHTML() {
     if (tmp.stab[3]==1) updateQCHTML()
 }
 
+function enterChal() {
+    if (player.chal.choosed == 16) startC16()
+    else CHALS.enter()
+}
+
 function updateChalTemp() {
     if (!tmp.chal) tmp.chal = {
         goal: {},
