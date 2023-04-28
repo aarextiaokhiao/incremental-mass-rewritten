@@ -80,5 +80,11 @@ const TABS = {
 			{ id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
 			{ id: "Compression", unl() { return false } },
 		],
+		8: [
+			{ id: "Options" },
+			{ id: "Tab Hider" },
+			{ id: "Resource Hider" },
+			{ id: "About" }
+		],
 	},
 }

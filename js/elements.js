@@ -1,14 +1,10 @@
 function setupHTML() {
-	let sn_stabs = new Element("sn_stabs")
-	let ext_stabs = new Element("ext_stabs")
 	let tabs = new Element("tabs")
 	let stabs = new Element("stabs")
 	let table = ""
 	let table2 = ""
-	let table3 = ""
-	let table4 = ""
 	for (let x = 0; x < TABS[1].length; x++) {
-		table += `<div style="width: 130px" id="tab${x}_div">
+		table += `<div id="tab${x}_div">
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
 		</div>`
 		if (TABS[2][x]) {
@@ -19,15 +15,11 @@ function setupHTML() {
 				</div>`
 			}
 			a += `</div>`
-			if (x == 4) table4 += a
-			else if (x == 3) table3 += a
-			else table2 += a
+			table2 += a
 		}
 	}
 	tabs.setHTML(table)
 	stabs.setHTML(table2)
-	sn_stabs.setHTML(table3)
-	ext_stabs.setHTML(table4)
 
 	let mass_upgs_table = new Element("mass_upgs_table")
 	table = ""
@@ -109,8 +101,8 @@ function setupHTML() {
 }
 
 function updateTabsHTML() {
-	elm.tabs.setDisplay(gameStarted())
-	elm.tab_header.setDisplay(gameStarted())
+	elm.upper.setDisplay(gameStarted() || tmp.tab != 0)
+	elm.tab_header.setDisplay(gameStarted() || tmp.tab != 0)
 	for (let x = 0; x < TABS[1].length; x++) {
 		let tab = TABS[1][x]
 		elm["tab"+x+"_div"].setDisplay(TABS.unl(x))
@@ -128,7 +120,6 @@ function updateTabsHTML() {
 				if (unl) unls++
 			}
 			elm["stabs"+x].setDisplay(x == tmp.tab && unls > 1)
-			if (x == 4) elm["ext_bar"].setDisplay(unls > 1)
 		}
 	}
 }
@@ -185,8 +176,6 @@ function updateUpperRes(id, unl, call) {
 	elm[id].setDisplay(unl)
 	if (unl) {
 		upperResources++
-		if (player.options.resLayout.col) elm["res_col"+((upperResources-1)%player.options.resLayout.num+1)].appendHTML(id)
-		else elm["res_col"+Math.ceil(upperResources/player.options.resLayout.num)].appendHTML(id)
 		call()
 	}
 }
@@ -332,7 +321,7 @@ function updateHTML() {
 	elm.offlineGainDiv.setDisplay(tmp.offlineActive)
 
 	let inScene = SUPERNOVA.canPlayAnimation()
-    elm.app.setDisplay(!tmp.offlineActive && tmp.tab != 3 && !inScene)
+    elm.app.setDisplay(!tmp.offlineActive && !inScene)
 	document.body.style.backgroundColor = tmp.tab == 3 ? "#000" : inNGM() ? "#101" : "#111"
 	document.body.className = inNGM() ? "ngm" : ""
 
@@ -342,7 +331,7 @@ function updateHTML() {
 	updateSupernovaHTML()
 	updateExoticHTML()
 	updateTabsHTML()
-	if ((!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) && tmp.tab != 3) {
+	if (!tmp.supernova.reached || player.supernova.post_10 || EXT.unl(true)) {
 		elm.beginning.setDisplay(!gameStarted())
 		elm.beginning2.setDisplay(!gameStarted() && !inNGM() && player.mass.gt(15))
 		updateTabsHTML()

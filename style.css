@@ -246,23 +246,6 @@ button {
 	font-size: 12px;
 }
 
-.resources {
-	display: flex;
-	align-items: center;
-	min-width: 200px;
-	line-height: 1.1em
-}
-
-.res_img {
-	width: 40px;
-	height: 40px;
-}
-
-.btn_tab {
-	width: 125px;
-	height: 30px
-}
-
 .btn_tab.magic {
 	background: #102;
 	color: #bbf;
@@ -725,29 +708,25 @@ h2 {
 	background-color: #ff1f00;
 }
 
-#app_ext {
-	position: fixed;
+#ext_bg {
+	position: absolute;
 	width: 100%;
 	height: 100%;
+	left: 0;
+	top: 0;
+	z-index: -1;
 	background: repeating-linear-gradient(45deg, #f007, transparent, #f307, #f007);
 }
-#app_ext_div {
+#ext_bg_2 {
 	position: absolute;
-	height: calc(100% - 54px);
-	width: calc(100% - 200px);
-	bottom: 6px;
-	right: 6px;
-	border: 2px solid #ff3f00;
-	background: #100;
-	overflow-y: auto
-}
-#ext_bar {
-	position: absolute;
-	right: 6px;
-	top: 18px;
-	height: 2px;
-	width: calc(100% - 200px);
-	background: #ff7f3f
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	z-index: -1;
+	border-top: 2px solid #ff3f00;
+	border-bottom: 2px solid #ff3f00;
+	background: #100
 }
 
 /* AXIONS */
@@ -778,4 +757,87 @@ h2 {
 
 	width: 360px;
 	height: 24px;
+}
+
+/* Revamped */
+#tabs {
+	width: 196px;
+	height: 100%;
+	overflow-y: auto;
+	border-right: solid 2px white;
+}
+
+#tabs > div {
+	width: 100%;
+}
+
+#tabs .btn_tab {
+	width: 100%;
+	height: 50px;
+	position: relative;
+	overflow: hidden;
+}
+
+#tabs .btn_tab > div {
+	width: 160px;
+	font-size: 18px;
+	text-align: left;
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+#tabs .btn_tab > iconify-icon {
+	opacity: 0.1;
+	position: absolute;
+	bottom: -20px;
+	right: 5px;
+	transition: transform 0.25s;
+	transform: rotate(-15deg);
+}
+
+#tabs .btn_tab:hover > iconify-icon,
+#tabs .btn_tab.choosed > iconify-icon {
+	transform: scale(1.3) rotate(-25deg);
+}
+
+#tabs .btn_tab.choosed {
+	border-left-width: 10px;
+	border-bottom-width: 2px;
+}
+
+.btn_tab {
+	width: calc(100% - 5px);
+	min-height: 50px;
+}
+
+.btn_tab.choosed {
+	border-bottom-width: 6px;
+}
+
+#resources_table {
+	width: 246px;
+	height: 100%;
+	overflow-y: auto;
+	border-left: solid 2px white;
+}
+
+.resources {
+	display: flex;
+	position: relative;
+	align-items: center;
+	width: 100%;
+	line-height: 1.1em
+}
+
+#resources_table .resources > span {
+	position: absolute;
+	text-align: right;
+	right: 0
+}
+
+.res_img {
+	width: 40px;
+	height: 40px;
 }

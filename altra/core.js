@@ -103,8 +103,8 @@ function gteAPVer(a, b) {
 //BETA
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "3/16/23"
-let betaVerNum = 230316.00
+let betaVer = "4/28/23"
+let betaVerNum = 230428.00
 let betaSave = "testBeta"
 
 //SAVE UPDATING

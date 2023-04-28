@@ -223,7 +223,6 @@ function updateSupernovaHTML() {
         elm.sns5.setOpacity(Math.max(Math.min(tmp.supernova.time-5,1),0))
     }
 
-    elm.app_supernova.setDisplay(reached && tmp.tab == 3)
     if (tmp.tab == 3) {
         elm.supernova_sweep.setTxt("Auto-Sweep: " + (player.supernova.auto.toggle ? "ON" : "OFF"))
         elm.supernova_sweep.setDisplay(hasTree("qol8"))

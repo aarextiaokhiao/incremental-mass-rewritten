@@ -169,7 +169,9 @@ let EXT = EXOTIC
 
 //HTML
 function updateExoticHTML() {
-	elm.app_ext.setDisplay(tmp.tab == 4)
+	elm.ext_bg.setDisplay(tmp.tab == 4)
+	elm.main_res.setDisplay(tmp.tab != 4)
+	elm.ext_res.setDisplay(tmp.tab == 4)
 	if (tmp.tab == 4) {
 		updateExoticHeader()
 		if (tmp.stab[4] == 0) updateAxionHTML()
@@ -295,10 +297,10 @@ function hasExtMilestoneQ9() {
 function setupExtMilestonesHTML() {
 	html1 = html2 = ``
 	for (let i of EXT_MILESTONES) {
-		html1 += `<button id="milestone_tab_${i}" onclick="tmp.ext_ms_view = '${i}'">${MILESTONE[i].title}</button>`
+		html1 += `<div style='width: 145px'><button id="milestone_tab_${i}" onclick="tmp.ext_ms_view = '${i}'">${MILESTONE[i].title}</button></div>`
 		html2 += `<div id='milestones_${i}'></div>`
 	}
-	new Element("ext_milestones").setHTML(html1 + "<br>" + html2)
+	new Element("ext_milestones").setHTML(`<div class='table_center'>${html1}</div><br>${html2}`)
 }
 
 function updateExtMilestonesHTML() {

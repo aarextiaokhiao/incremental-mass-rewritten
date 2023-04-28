@@ -319,7 +319,6 @@ function onLoaded() {
     if (off_time >= 60 && player.options.offline) player.offline.time += off_time
 
 	updateAarex()
-	updateResourceLayout()
 	changeFont()
 }
 
