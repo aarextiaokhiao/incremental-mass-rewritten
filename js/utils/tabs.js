@@ -34,6 +34,7 @@ const TABS = {
 		{ id: "Supernova", unl() { return player.supernova.unl }, style: "sn" },
 		{ id: "Exotic", unl() { return EXT.unl() }, style: "ext" },
 
+		{ id: "Achievements", style: "bh", break: true },
 		{ id: "Upgrades", unl() { return player.rp.unl } },
 		{ id: "Challenges", unl() { return player.chal.unl } },
 		{ id: "Stats", unl() { return player.rp.unl } },
@@ -69,18 +70,21 @@ const TABS = {
 		],
 
 		5: [
+			{ id: "Achievements" },
+			//{ id: "Feats", unl() { return tmp.radiation.unl }, style: "bh" },
+		],
+		6: [
 			{ id: "Main" },
 			{ id: "Elements", unl() { return player.chal.comps[7].gte(16) || player.supernova.unl }, style: "atom" },
 		],
-		6: [
+		7: [
 			{ id: "Challenges" }
 		],
-		7: [
+		8: [
 			{ id: "Rewards" },
 			{ id: "Scaling", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
-			{ id: "Compression", unl() { return false } },
 		],
-		8: [
+		9: [
 			{ id: "Options" },
 			{ id: "Tab Hider" },
 			{ id: "Resource Hider" },

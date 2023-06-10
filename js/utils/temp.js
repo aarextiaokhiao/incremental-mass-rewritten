@@ -97,7 +97,7 @@ function updateMassTemp() {
     tmp.massSoftGain2 = FORMS.massSoftGain2()
     tmp.massSoftPower3 = FORMS.massSoftPower3()
     tmp.massSoftGain3 = FORMS.massSoftGain3()
-    tmp.massGain = calcProd("mass")
+    tmp.massGain = FORMS.massGain()
 }
 
 function updateTickspeedTemp() {
@@ -126,7 +126,7 @@ function updateBlackHoleTemp() {
     t.massSoftPower = FORMS.bh.massSoftPower()
     t.massSoftGain = FORMS.bh.massSoftGain()
     t.massPowerGain = FORMS.bh.massPowerGain()
-    t.massGain = calcProd("bh")
+    t.massGain = FORMS.bh.massGain()
     t.dm_can = t.dm_gain.gte(1)
     t.effect = FORMS.bh.effect()
 

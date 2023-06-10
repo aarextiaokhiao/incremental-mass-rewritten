@@ -10,7 +10,7 @@ const ELEMENTS = {
 		'Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn',
 		'Sb','Te','I','Xe','Cs','Ba','La','Ce','Pr','Nd',
 		'Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb',
-		'Lu','Hf','Ta','W','Re','Os','Ir','Pt','At','Hg',
+		'Lu','Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg',
 		'Ti','Pb','Bi','Po','Au','Rn','Fr','Ra','Ac','Th',
 		'Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm',
 		'Md','No','Lr','Rf','Db','Sg','Bh','Hs','Mt','Ds',
@@ -548,7 +548,7 @@ const ELEMENTS = {
 			u = 54
 			if (player.supernova.post_10) u = 57
 			if (player.supernova.fermions.unl) u = 67
-			if (future) u = 86
+			if (hasTree("unl1") && future) u = 86
 		} else {
 			if (player.chal.comps[8].gte(1)) u += 14
 			if (hasElement(18)) u += 3
@@ -570,7 +570,7 @@ function setupElementsHTML() {
 	for (let i = 0; i < ELEMENTS.map.length; i++) {
 		let m = ELEMENTS.map[i]
 		if (m=='v') table += '</div><div class="table_center">'
-		else if (m=='_' || !isNaN(Number(m))) table += `<div ${ELEMENTS.la[m]!==undefined?`id='element_la_${m}'`:""} style="width: 50px; height: 50px">${ELEMENTS.la[m]!==undefined?"<br>"+ELEMENTS.la[m]:""}</div>`
+		else if (m=='_' || !isNaN(Number(m))) table += `<div ${ELEMENTS.la[m]!==undefined?`id='element_la_${m}'`:``} style="width: 50px; height: 50px">${ELEMENTS.la[m]!==undefined?"<br>"+ELEMENTS.la[m]:""}</div>`
 		else if (m=='x') {
 			num++
 			table += ELEMENTS.upgs[num]===undefined?`<div style="width: 50px; height: 50px"></div>`

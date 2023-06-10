@@ -47,16 +47,16 @@
 	<script src="js/supernova/tree.js"></script>
 
 	<!-- ALTRASCENDUM -->
-	<script src="altra/core.js"></script>
-	<script src="altra/compress.js"></script>
-	<script src="altra/progress.js"></script>
-	<script src="altra/ngm.js"></script>
-	<script src="altra/meta.js"></script>
+	<script src="js/altra/core.js"></script>
+	<script src="js/altra/achievements.js"></script>
+	<script src="js/altra/progress.js"></script>
+	<script src="js/altra/ngm.js"></script>
+	<script src="js/altra/meta.js"></script>
 
-	<script src="altra/exotic/core.js"></script>
-	<script src="altra/exotic/axion.js"></script>
-	<script src="altra/exotic/extra_buildings.js"></script>
-	<script src="altra/exotic/shortcuts.js"></script>
+	<script src="js/altra/exotic/core.js"></script>
+	<script src="js/altra/exotic/axion.js"></script>
+	<script src="js/altra/exotic/extra_buildings.js"></script>
+	<script src="js/altra/exotic/shortcuts.js"></script>
 
 	<title id="title">IM: Altrascendum</title>
 	<meta name="IM: Altrascendum" content="An alternative mod to Incremental Mass Rewritten. By Aarex." charset="utf-8"/>
@@ -92,9 +92,9 @@
 
 	<div id="star"></div>
 	<div id="ext_bg"></div>
-	<div id='app' class="table_center" style="height: 100%; width: 100%; overflow-y: hidden">
+	<div id='app' class="table_center" style="height: 100%; width: 100%">
 		<div id="tabs"></div>
-		<div id="main_app" style='width: calc(100% - 450px); overflow-y: auto'>
+		<div id="main_app" style='width: calc(100% - 450px); height: 100%; overflow-x: hidden; overflow-y: auto'>
 			<div id="upper" style="height: 40px">
 				<div id="chal_upper"></div>
 				<div id="progress_header" style='width: 100%'>
@@ -396,10 +396,12 @@
 
 			<!-- OTHERS -->
 			<div id="tab_frame5">
-				<div id="stab_frame5_0">
+				<table id='ach_div'></table>
+			</div><div id="tab_frame6">
+				<div id="stab_frame6_0">
 					<div id="main_upgs_table" class="table_center"></div>
 					<div id="main_upg_msg"></div>
-				</div><div id="stab_frame5_1">
+				</div><div id="stab_frame6_1">
 					You have <span id="elem_quark">X</span> Quarks<br><br>
 					<div id="elem_ch_div" style="min-height: 70px;">
 						<span id="elem_desc" class='sky'>X</span><br>
@@ -409,39 +411,23 @@
 					<button class="btn" onclick="ELEMENTS.buyAll()">Buy All</button>
 					<div id="elements_table"></div>
 				</div>
-			</div><div id="tab_frame6">
-				<div id="stab_frame6_0">
+			</div><div id="tab_frame7">
+				<div id="stab_frame7_0">
 					<button class="btn" id="chal_sweep" onclick="startSupernovaSweep('chal')">Sweep</button>
 					<button class="btn" id="chal_exit" onclick="CHALS.exitAll()">Exit</button>
 					<div id="chal_table"></div>
 				</div>
-			</div><div id="tab_frame7">
-				<div id="stab_frame7_0">
+			</div><div id="tab_frame8">
+				<div id="stab_frame8_0">
 					<button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn" id="ranks_left_arrow"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn" id="ranks_right_arrow">--></button><br><br>
 					<div id="ranks_rewards_table"></div>
-				</div><div id="stab_frame7_1">
+				</div><div id="stab_frame8_1">
 					<button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,-1)" class="btn" id="scaling_left_arrow"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,Math.max(...SCALE_TYPE.map((type, i) => tmp.scaling[type].length > 0 ? i : -1)))" class="btn" id="scaling_right_arrow">--></button><br><br>
 					<div id="scaling_eff"></div>
 					<div id="scaling_table"></div>
-				</div><div id="stab_frame7_2">
-					Compression: Reduce first before the amount gets added. Then, do the opposite.
-					<br><br>
-					<table class="table_fix" id="compress_table" align="center">
-						<tr>
-							<td></td>
-						</tr><tr>
-							<td><b tooltip="Base production." t-size="medium">Base</b></td>
-						</tr><tr>
-							<td><b tooltip="Roots Base and roots the amount." t-size="medium">Exponent</b></td>
-						</tr><tr>
-							<td><b tooltip="Roots Exponent and dilates the amount." t-size="medium">Dilation</b></td>
-						</tr><tr>
-							<td><b tooltip="The amount becomes logarithmic. Additionally, Exponent becomes Base and Dilation becomes Exponent." t-size="medium">Log-Stack</b></td>
-						</tr>
-					</table>
 				</div>
-			</div><div id="tab_frame8">
-				<div id="stab_frame8_0">
+			</div><div id="tab_frame9">
+				<div id="stab_frame9_0">
 					<h2>Saving</h2><br>
 					<button class="btn" onclick="save(true)">Save</button>
 					<button class="btn" onclick="export_save()">Export</button>
@@ -476,17 +462,17 @@
 
 					<br><br>
 					Hint 1: Hover a image to show description...
-				</div><div id="stab_frame8_1">
+				</div><div id="stab_frame9_1">
 					Soon.
-				</div><div id="stab_frame8_2">
+				</div><div id="stab_frame9_2">
 					Soon.
-				</div><div id="stab_frame8_3">
+				</div><div id="stab_frame9_3">
 					Incremental Mass: Altrascendum - by Aarex -
 					<span id="ver">(v0.5.0R)</span> The Rewrite
 					<br>
 					This mod is an alternative to MrRedShark77's <a href="https://mrredshark77.github.io/incremental-mass-rewritten/">Incremental Mass: Rewritten</a>.
 				</div>
-				<div style="position: fixed; left: 3px; bottom: 3px; text-align: left">
+				<div style="position: fixed; left: 3px; bottom: 3px; text-align: left; display: none">
 					<button class="btn" id="help" onclick="addPopup(POPUP_GROUPS.help)">Help</button><br>
 					<button class="btn" onclick="window.open('http://aarextiaokhiao.github.io/chat.html')">Discord</button>
 					<button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">IM:R Discord</button>
@@ -498,40 +484,40 @@
 		<div id="resources_table">
 			<div id="main_res">
 				<div class="resources sml" id="mass_div">
-					<div id="mass_tooltip" class="tooltip"><img class="res_img" src="images/mass.png"></div>
+					<div id="mass_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/mass.png"></div>
 					<span id="mass">X</span>
 				</div><div class="resources sml purple" id="mg_div">
-					<div id="mg_tooltip" class="tooltip"><img class="res_img" src="images/ngm/magic.png" onclick="MAGIC.reset()" style="cursor: pointer;"></div>
+					<div id="mg_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/ngm/magic.png" onclick="MAGIC.reset()" style="cursor: pointer;"></div>
 					<span id="mgAmt">X</span>
 				</div><div class="resources sml red" id="rp_div">
-					<div id="rp_tooltip" class="tooltip"><img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" style="cursor: pointer;"></div>
+					<div id="rp_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" style="cursor: pointer;"></div>
 					<span id="rpAmt">X</span>
 				</div><div class="resources yellow" id="dm_div">
-					<div id="dm_tooltip" class="tooltip"><img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" style="cursor: pointer;"></div>
+					<div id="dm_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" style="cursor: pointer;"></div>
 					<span id="dmAmt">X</span>
 				</div><div class="resources sml yellow" id="bh_div">
-					<div id="bh_tooltip" class="tooltip"><img class="res_img" src="images/bh.png"></div>
+					<div id="bh_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/bh.png"></div>
 					<span id="bhMass">X</span>
 				</div><div class="resources sml sky" id="atom_div">
-					<div id="atom_tooltip" class="tooltip"><img class="res_img" src="images/atom.png" onclick="ATOM.reset()" style="cursor: pointer;"></div>
+					<div id="atom_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/atom.png" onclick="ATOM.reset()" style="cursor: pointer;"></div>
 					<span id="atomAmt">X</span>
 				</div><div class="resources quark_color" id="quark_div">
-					<div id="qk_tooltip" class="tooltip"><img class="res_img" src="images/quark.png" onclick="ATOM.reset()" style="cursor: pointer;"></div>
+					<div id="qk_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/quark.png" onclick="ATOM.reset()" style="cursor: pointer;"></div>
 					<span id="quarkAmt">X</span>
 				</div><div class="resources sml green" id="md_div">
-					<div id="md_tooltip" class="tooltip"><img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" style="cursor: pointer;"></div>
+					<div id="md_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" style="cursor: pointer;"></div>
 					<span id="mdAmt">X</span>
 				</div><div class="resources sml yellow" id="star_div">
-					<div id="star_tooltip" class="tooltip"><img class="res_img" src="images/star.png"></div>
+					<div id="star_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/star.png"></div>
 					<span id="starAmt">X</span>
 				</div><div class="resources sml magenta" id="sn_div">
-					<div id="sn_tooltip" class="tooltip"><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" style="cursor: pointer;"></div>
+					<div id="sn_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" style="cursor: pointer;"></div>
 					<span id="snAmt">X</span>
 				</div><div class="resources sml ns_color" id="ns_div">
-					<div id="ns_tooltip" class="tooltip"><img class="res_img" src="images/ns.png"></div>
+					<div id="ns_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/ns.png"></div>
 					<span id="nsAmt">X</span>
 				</div><div class="resources sml scarlet" id="ext_div">
-					<div id="ext_tooltip" class="tooltip"><img class="res_img" src="images/ext.png" onclick="EXOTIC.reset()" style="cursor: pointer;"></div>
+					<div id="ext_tooltip" class="tooltip" tooltip-align=right><img class="res_img" src="images/ext.png" onclick="EXOTIC.reset()" style="cursor: pointer;"></div>
 					<span id="extAmt">X</span>
 				</div>
 			</div><div id="ext_res">

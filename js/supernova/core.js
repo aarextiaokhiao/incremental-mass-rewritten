@@ -86,6 +86,58 @@ const SUPERNOVA = {
     },
 }
 
+function getSupernovaSave() {
+	let s = {
+		maxMass: D(0),
+		time: 0,
+		times: D(0),
+		post_10: false,
+		stars: D(0),
+		tree: [],
+		chal: {
+			noTick: true,
+			noBHC: true,
+		},
+		bosons: {
+			pos_w: D(0),
+			neg_w: D(0),
+			z_boson: D(0),
+			photon: D(0),
+			gluon: D(0),
+			graviton: D(0),
+			hb: D(0),
+		},
+		b_upgs: {
+			photon: [],
+			gluon: [],
+		},
+		fermions: {
+			unl: false,
+			points: [D(0),D(0)],
+			tiers: [[D(0),D(0),D(0),D(0),D(0),D(0)],[D(0),D(0),D(0),D(0),D(0),D(0)]],
+			choosed: "",
+			choosed2: "",
+			dual: true,
+		},
+		radiation: {
+			hz: D(0),
+			ds: [],
+			bs: [],
+		},
+		auto: {
+			on: -2,
+			t: 0,
+			toggle: true,
+		}
+	}
+	for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) s.b_upgs[BOSONS.upgs.ids[x]][y] = D(0)
+	for (let x = 0; x < 7; x++) {
+		s.radiation.ds.push(D(0))
+		s.radiation.bs.push(D(0),D(0))
+	}
+	return s
+}
+
 function calcSupernova(dt, dt_offline) {
     if (player.tickspeed.gte(1)) player.supernova.chal.noTick = false
     if (player.bh.condenser.gte(1)) player.supernova.chal.noBHC = false

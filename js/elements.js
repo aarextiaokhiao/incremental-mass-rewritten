@@ -5,6 +5,7 @@ function setupHTML() {
 	let table2 = ""
 	for (let x = 0; x < TABS[1].length; x++) {
 		table += `<div id="tab${x}_div">
+			${TABS[1][x].break ? "<div class='line'></div>" : ""}
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
 		</div>`
 		if (TABS[2][x]) {
@@ -129,7 +130,7 @@ function updateUpperHTML() {
 
 	let preExt = false //!EXT.unl()
 	updateUpperRes("mass_div", true, () => {
-		elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+getProdDisp(player.mass, "mass", true, true))
+		elm.mass.setHTML(formatMass(player.mass, true)+"<br>"+formatGain(player.mass, tmp.massGain, true, true))
 	})
 	updateUpperRes("mg_div", gameStarted() && inNGM(), () => {
 		elm.mgAmt.setHTML(format(MAGIC.amt(),0)+"<br>"+formatGainOrGet(MAGIC.amt(), MAGIC.gain(), false))
@@ -141,7 +142,7 @@ function updateUpperHTML() {
 		elm.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+formatGainOrGet(player.bh.dm, tmp.bh.dm_gain, hasUpgrade('atom',6)))
 	})
 	updateUpperRes("bh_div", player.bh.unl && !player.supernova.unl, () => {
-		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+getProdDisp(player.bh.mass, "bh", true))
+		elm.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.massGain, true))
 	})
 	updateUpperRes("atom_div", player.chal.unl, () => {
 		elm.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+formatGainOrGet(player.atom.points, tmp.atom.gain,hasElement(24)))
@@ -291,7 +292,7 @@ function updateBlackHoleHTML() {
 	elm.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
 	elm.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
 
-	elm.bhSoft.setDisplay(tmp.bh.massGain.base.gte(tmp.bh.massSoftGain))
+	elm.bhSoft.setDisplay(tmp.bh.massGain.gte(tmp.bh.massSoftGain))
 	elm.bhSoftStart.setTxt(formatMass(tmp.bh.massSoftGain))
 
 	updateExtraBuildingHTML("bh", 2)
@@ -313,8 +314,10 @@ function updateHTML() {
 		elm.offlineSpeed.setTxt("(Offline: " + format(tmp.offlineMult) + "x, " + formatTime(player.offline.time) + " left)")
 		elm.offlineGainDiv.setHTML(
 			player.stats.maxMass.eq(player.offline.mass) || player.offline.mass.eq(0) ? "" :
-			(player.stats.maxMass.gte(mlt(1)) ? "^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) + " mass gained!"
-			: format(player.stats.maxMass.div(player.offline.mass)) + "x mass gained!") + " " + getProdDisp(player.mass, "mass", true, true)
+			(player.stats.maxMass.gte(mlt(1)) ? 
+				"^" + format(player.stats.maxMass.log10().div(player.offline.mass.log10()).max(1)) :
+				format(player.stats.maxMass.div(player.offline.mass)) + "x"
+			) + " mass gained!"
 		)
 	}
 	elm.loading.setDisplay(tmp.offlineActive)
@@ -343,7 +346,7 @@ function updateHTML() {
 				updateTickspeedHTML()
 
 				let lvl = 0
-				for (var i = 1; i <= 3; i++) if (tmp.massGain.base.gte(tmp["massSoftGain"+i])) lvl = i
+				for (var i = 1; i <= 3; i++) if (tmp.massGain.gte(tmp["massSoftGain"+i])) lvl = i
 				elm.massSoft.setDisplay(lvl)
 				if (lvl) {
 					elm.massSoft.setClasses({["soft"+lvl+"_desc"]: true})
@@ -363,19 +366,19 @@ function updateHTML() {
 			if (tmp.stab[2] == 3) updateStarsHTML()
 		}
 
-		if (tmp.tab == 5) {
-			if (tmp.stab[5] == 0) updateMainUpgradesHTML()
-			if (tmp.stab[5] == 1) updateElementsHTML()
-		}
+		if (tmp.tab == 5) updateAchs()
 		if (tmp.tab == 6) {
-			if (tmp.stab[6] == 0) updateChalHTMLNew()
+			if (tmp.stab[6] == 0) updateMainUpgradesHTML()
+			if (tmp.stab[6] == 1) updateElementsHTML()
 		}
 		if (tmp.tab == 7) {
-			if (tmp.stab[7] == 0) updateRanksRewardHTML()
-			if (tmp.stab[7] == 1) updateScalingHTML()
-			if (tmp.stab[7] == 2) updateCompressionHTML()
+			if (tmp.stab[7] == 0) updateChalHTMLNew()
 		}
 		if (tmp.tab == 8) {
+			if (tmp.stab[8] == 0) updateRanksRewardHTML()
+			if (tmp.stab[8] == 1) updateScalingHTML()
+		}
+		if (tmp.tab == 9) {
 			updateConfirmHTML()
 			updateOptionsHTML()
 		}

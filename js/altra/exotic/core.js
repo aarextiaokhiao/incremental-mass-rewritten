@@ -46,7 +46,6 @@ let EXOTIC = {
 		if (!force && !can) return
 		if (!can && restart) {
 			if (!confirm("Are you sure do you want to restart? There will be bare consequences!")) return
-			if (!confirm("ARE YOU REALLY SURE? IT TAKES A LONG TIME TO RECOVER!")) return
 		} else {
 			if (!toConfirm('ext')) return
 		}
@@ -71,54 +70,22 @@ let EXOTIC = {
 		player.ranks.pent = D(0)
 		CHALS.clear(2)
 
-		player.supernova.times = D(0)
-		player.supernova.stars = D(0)
+		let old_supernova = player.supernova
+		player.supernova = getSupernovaSave()
 
-		let list = []
-		if (hasExtMilestone("qol", 1)) list.push("c", "m1", "qol1", "qol2", "qol8", "qol10")
-		if (hasExtMilestone("qol", 2)) list.push("qol3", "qol4", "qol5", "qol6", "qol7", "chal4", "chal4a", "chal5", "chal6", "chal7")
+		let start_tree = []
+		if (hasExtMilestone("qol", 1)) start_tree.push("c", "m1", "qol1", "qol2", "qol8", "qol10")
+		if (hasExtMilestone("qol", 2)) start_tree.push("qol3", "qol4", "qol5", "qol6", "qol7", "chal4", "chal4a", "chal5", "chal6", "chal7")
 
-		let list_keep = []
+		let keep_tree = []
 		for (let x = 0; x < player.supernova.tree.length; x++) {
-			let it = player.supernova.tree[x]
-			if (list.includes(it)) list_keep.push(it)
-			else if (TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) list_keep.push(it)
+			let it = old_supernova.tree[x]
+			if (start_tree.includes(it)) keep_tree.push(it)
+			else if (TREE_UPGS.ids[it] && TREE_UPGS.ids[it].perm) keep_tree.push(it)
 		}
-		player.supernova.tree = list_keep
-
-		player.supernova.post_10 = false
-		player.supernova.unl = false
-		player.supernova.bosons = {
-			pos_w: D(0),
-			neg_w: D(0),
-			z_boson: D(0),
-			photon: D(0),
-			gluon: D(0),
-			graviton: D(0),
-			hb: D(0),
-		}
-		player.supernova.b_upgs = {
-			photon: [ D(0), D(0), D(0), D(0) ],
-			gluon: [ D(0), D(0), D(0), D(0) ],
-		}
-		player.supernova.fermions = {
-			unl: false,
-			points: [D(0),D(0)],
-			tiers: [[D(0),D(0),D(0),D(0),D(0),D(0)],[D(0),D(0),D(0),D(0),D(0),D(0)]],
-			choosed: "",
-			choosed2: "",
-			dual: player.supernova.fermions.dual
-		}
-		player.supernova.radiation = {
-			hz: D(0),
-			ds: [ D(0), D(0), D(0), D(0), D(0), D(0), D(0) ],
-			bs: [ D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0), D(0) ],
-		}
-		player.supernova.auto = {
-			toggle: player.supernova.auto.toggle,
-			on: -2,
-			t: 0
-		}
+		player.supernova.tree = keep_tree
+		player.supernova.fermions.dual = old_supernova.fermions.dual
+		player.supernova.auto.toggle = old_supernova.auto.toggle
 
 		player.bh.unl = false
 		player.chal.unl = false

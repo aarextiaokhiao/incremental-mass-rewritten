@@ -103,8 +103,8 @@ function gteAPVer(a, b) {
 //BETA
 let beta = true
 let betaLink = "2-chroma"
-let betaVer = "4/28/23"
-let betaVerNum = 230428.00
+let betaVer = "6/10/23"
+let betaVerNum = 230610.00
 let betaSave = "testBeta"
 
 //SAVE UPDATING
@@ -145,7 +145,7 @@ function setupAltraHTML() {
 	//Others
 	setupMilestonesHTML()
 	setupShortcuts()
-	setupCompressionHTML()
+	setupAchs()
 }
 
 function updateAarex(toggle) {

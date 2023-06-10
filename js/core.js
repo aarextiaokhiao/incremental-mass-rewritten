@@ -11,7 +11,7 @@ function loop() {
 
 function calc(dt, dt_offline) {
 	//PRE-DARK MATTER
-	player.mass = addProdWorth(player.mass, "mass", dt)
+	player.mass = tmp.massGain.mul(dt).add(player.mass)
 	player.supernova.maxMass = player.supernova.maxMass.max(player.mass)
 	if (tmp.md.active && player.mass.gt(player.stats.maxMass)) player.ext.chal.f11 = true
 	player.stats.maxMass = player.stats.maxMass.max(player.mass)
@@ -33,7 +33,7 @@ function calc(dt, dt_offline) {
 	if (hasUpgrade('atom',6)) player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain.mul(dt))
 	if (player.bh.unl && tmp.pass) {
 		if (FORMS.bh.condenser.autoUnl() && player.bh.autoCondenser) FORMS.bh.condenser.buyMax()
-		player.bh.mass = addProdWorth(player.bh.mass, "bh", dt)
+		player.bh.mass = tmp.bh.massGain.mul(dt).add(player.mass)
 	}
 
 	chalTick()
