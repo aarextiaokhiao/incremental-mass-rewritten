@@ -279,7 +279,7 @@ function updateMainUpgradesHTML() {
 
 function updateBlackHoleHTML() {
 	elm.bhMass2.setHTML(formatMass(player.bh.mass))
-	elm.bhMassGain.setHTML(getProdDisp(player.bh.mass, "bh", true))
+	elm.bhMassGain.setHTML(formatGain(player.bh.mass, tmp.bh.massGain, true))
 	elm.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
 	elm.bhEffect.setTxt(format(tmp.bh.effect))
 
