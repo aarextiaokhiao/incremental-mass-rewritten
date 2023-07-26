@@ -29,7 +29,7 @@ const QUANTUM = {
     doReset(force=false, dark=false, metaF=false) {
         let c16 = tmp.c16active
 
-        player.supernova.times = E(0)
+        if (!hasElement(47,1)) player.supernova.times = E(0)
         player.supernova.stars = E(0)
 
         if (!hasTree('ct8')) {
@@ -105,9 +105,16 @@ const QUANTUM = {
             let pow = E(2)
             if (hasTree('qu6')) pow = pow.mul(treeEff('qu6'))
             pow = pow.mul(tmp.dark.abEff.csp||1)
+            pow = pow.pow(exoticAEff(1,3))
 
-            let x = pow.pow(player.qu.cosmic_str)
-            return {pow: pow, eff: x}
+            if (CHALS.inChal(17)) pow = E(1)
+
+            let b = E(0)
+
+            if (hasElement(19,1)) b = b.add(muElemEff(19,0))
+
+            let x = pow.pow(player.qu.cosmic_str.add(b))
+            return {pow: pow, eff: x, bonus: b}
         },
     },
     mils: [
@@ -116,7 +123,7 @@ const QUANTUM = {
         [E(3), `You start with challenges tree and qol7 unlocked.`],
         [E(5), `You start with qol8-9, unl1, and radiation unlocked.`],
         [E(6), `Double Quantum Foam gain.`],
-        [E(8), `Pre-Quantum global speed affects blueprint particle and chroma at a reduced rate.`],
+        [E(8), `Pre-Quantum global speed affects Blueprint Particles and Chroma at a reduced rate.`],
         [E(10), `Supernova stars are boosted by Quantizes (capped at 1e10). Unlock Auto-Quantum.`],
     ],
     auto: {
@@ -187,15 +194,17 @@ function getQUSave() {
     return s
 }
 
-function calcQuantum(dt, dt_offline) {
+function calcQuantum(dt) {
+    let inf_gs = tmp.preInfGlobalSpeed.mul(dt)
+
     if (player.mass.gte(mlt(1e4)) && !player.qu.reached && player.chal.comps[12].gte(1)) {
         player.qu.reached = true
         createPopup(POPUP_GROUPS.qu.html(),'quReached')
     }
 
     if (quUnl()) {
-        player.qu.bp = player.qu.bp.add(tmp.qu.bpGain.mul(dt))
-        for (let x = 0; x < CHROMA_LEN; x++) player.qu.chroma[x] = player.qu.chroma[x].add(tmp.qu.chroma_gain[x].mul(dt))
+        player.qu.bp = player.qu.bp.add(tmp.qu.bpGain.mul(inf_gs))
+        for (let x = 0; x < CHROMA_LEN; x++) player.qu.chroma[x] = player.qu.chroma[x].add(tmp.qu.chroma_gain[x].mul(inf_gs))
 
         if (player.qu.auto_cr) QUANTUM.cosmic_str.buyMax()
 
@@ -204,7 +213,7 @@ function calcQuantum(dt, dt_offline) {
         }
 
         if (player.qu.auto.enabled) {
-            player.qu.auto.time += dt_offline
+            player.qu.auto.time += dt
 
             let can = false
             if (player.qu.auto.mode == 0) can = tmp.qu.gain.gte(tmp.qu.auto_input)
@@ -213,11 +222,11 @@ function calcQuantum(dt, dt_offline) {
         }
 
         if (hasUpgrade('br',8)) {
-            player.qu.points = player.qu.points.add(tmp.qu.gain.mul(dt/10))
-            if (player.qu.rip.active || hasElement(147)) player.qu.rip.amt = player.qu.rip.amt.add(tmp.rip.gain.mul(dt/10))
+            player.qu.points = player.qu.points.add(tmp.qu.gain.mul(inf_gs).div(10))
+            if (player.qu.rip.active || hasElement(147)) player.qu.rip.amt = player.qu.rip.amt.add(tmp.rip.gain.mul(inf_gs).div(10))
         }
 
-        if (hasElement(139)) player.qu.times = player.qu.times.add(tmp.qu.gainTimes.mul(dt))
+        if (hasElement(139)) player.qu.times = player.qu.times.add(tmp.qu.gainTimes.mul(inf_gs))
     }
 
     if (player.mass.gte(mlt(7.5e6)) && !player.qu.en.unl) {
@@ -226,13 +235,13 @@ function calcQuantum(dt, dt_offline) {
     }
 
     if (hasUpgrade('br',9)) {
-        player.md.break.energy = player.md.break.energy.add(tmp.bd.energyGain.mul(dt))
-        player.md.break.mass = player.md.break.mass.add(tmp.bd.massGain.mul(dt))
+        player.md.break.energy = player.md.break.energy.add(tmp.bd.energyGain.mul(inf_gs))
+        player.md.break.mass = player.md.break.mass.add(tmp.bd.massGain.mul(inf_gs))
     }
 
-    if (hasTree("qu_qol1")) for (let x = 0; x < tmp.supernova.auto_tree.length; x++) TREE_UPGS.buy(tmp.supernova.auto_tree[x], true)
+    if (hasTree("qu_qol1") || hasInfUpgrade(4)) for (let x = 0; x < TREE_TYPES.normal.length; x++) TREE_UPGS.buy(TREE_TYPES.normal[x], true)
 
-    calcEntropy(dt, dt_offline)
+    calcEntropy(dt)
 }
 
 function updateQuantumTemp() {
@@ -248,8 +257,12 @@ function updateQuantumTemp() {
     tmp.qu.theories = player.qu.times.sub(player.qu.chr_get.length).max(0).min(3).toNumber()
     tmp.qu.pick_chr = tmp.qu.theories > 0
 
-    tmp.qu.cosmic_str_cost = E(2).pow(player.qu.cosmic_str.scaleEvery("cosmic_str").add(1)).floor()
-    tmp.qu.cosmic_str_bulk = player.qu.points.max(1).log(2).scaleEvery("cosmic_str",true).add(scalingActive('cosmic_str',player.qu.cosmic_str.max(tmp.qu.cosmic_str_bulk),'super')?1:0).floor()
+    let fp = E(1)
+
+    if (tmp.inf_unl) fp = fp.mul(theoremEff('proto',0))
+
+    tmp.qu.cosmic_str_cost = E(2).pow(player.qu.cosmic_str.div(fp).scaleEvery("cosmic_str").add(1)).floor()
+    tmp.qu.cosmic_str_bulk = player.qu.points.max(1).log(2).scaleEvery("cosmic_str",true).mul(fp).add(scalingActive('cosmic_str',player.qu.cosmic_str.max(tmp.qu.cosmic_str_bulk),'super')?1:0).floor()
 
     tmp.qu.cosmic_str_can = player.qu.points.gte(tmp.qu.cosmic_str_cost)
     tmp.qu.cosmic_str_eff = QUANTUM.cosmic_str.eff()
@@ -263,11 +276,15 @@ function updateQuantumTemp() {
 }
 
 function updateQuantumHTML() {
-    if (tmp.tab == 0 && tmp.stab[0] == 3) {
-        tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain))
+    let inf_gs = tmp.preInfGlobalSpeed
+
+    if (tmp.tab == 0 && tmp.stab[0] == 2) {
+		tmp.el.cs_div.setDisplay(quUnl())
+
+        tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain.mul(inf_gs)))
         tmp.el.bpEff.setTxt(format(tmp.qu.bpEff))
 
-        tmp.el.cosmic_str_lvl.setTxt(format(player.qu.cosmic_str,0))//+(tmp.qu.cosmic_str_bonus.gte(1)?" + "+format(tmp.qu.cosmic_str_bonus,0):"")
+        tmp.el.cosmic_str_lvl.setTxt(format(player.qu.cosmic_str,0)+(tmp.qu.cosmic_str_eff.bonus.gte(1)?" + "+format(tmp.qu.cosmic_str_eff.bonus,0):""))
         tmp.el.cosmic_str_btn.setClasses({btn: true, locked: !tmp.qu.cosmic_str_can})
         tmp.el.cosmic_str_scale.setTxt(getScalingName('cosmic_str'))
         tmp.el.cosmic_str_cost.setTxt(format(tmp.qu.cosmic_str_cost,0))
@@ -284,17 +301,17 @@ function updateQuantumHTML() {
         if (tmp.stab[6] == 2) updateEntropyHTML()
         if (tmp.stab[6] == 3) updateBDHTML()
         if (tmp.stab[6] == 4) {
+            tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"ON":"OFF")
+            tmp.el.auto_qu_mode.setTxt(QUANTUM.auto.mode[player.qu.auto.mode])
+            tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
+        }
+        if (tmp.stab[6] == 5) {
             tmp.el.qu_times.setTxt(format(player.qu.times,0))
 
             for (let x = 0; x < QUANTUM.mils.length; x++) {
                 tmp.el['qu_mil'+x].changeStyle('background-color',tmp.qu.mil_reached[x]?'#2f22':'#4442')
                 tmp.el['qu_mil_goal'+x].setTxt(format(QUANTUM.mils[x][0],0))
             }
-        }
-        if (tmp.stab[6] == 5) {
-            tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"ON":"OFF")
-            tmp.el.auto_qu_mode.setTxt(QUANTUM.auto.mode[player.qu.auto.mode])
-            tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
         }
     }
 }

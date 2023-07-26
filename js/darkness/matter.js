@@ -20,7 +20,10 @@ const MATTERS = {
 
         if (x.lt(1)) return x
 
-        if (i < MATTERS_LEN-1) x = c16 ? x.mul(tmp.matters.upg[i+1].eff) : x.pow(tmp.matters.upg[i+1].eff)
+        if (i < MATTERS_LEN-1) {
+            x = c16 ? x.mul(tmp.matters.upg[i+1].eff) : x.pow(tmp.matters.upg[i+1].eff)
+            if (hasElement(256)) x = c16 ? x.mul(player.dark.matters.amt[i+1].add(1)) : x.pow(player.dark.matters.amt[i+1].max(1).log10().add(1))
+        }
 
         if (!c16) {
             x = x.pow(tmp.dark.abEff.mexp||1)
@@ -31,6 +34,7 @@ const MATTERS = {
         if (hasElement(11,1) || !c16) x = x.pow(tmp.matters.FSS_eff[0])
 
         if (hasElement(4,1)) x = c16 ? x.pow(1.1) : expMult(x,1.05)
+        if (hasElement(227)) x = c16 ? x.pow(elemEffect(227)) : expMult(x,elemEffect(227))
 
         return x
     },
@@ -44,11 +48,15 @@ const MATTERS = {
 
         let bulk = (c16?player.dark.matters.amt[i].max(1).log(100).root(pow):player.dark.matters.amt[i].max(1).log(1e10).root(pow).sub(1).scale(i>0?25:50,1.05,1,true).add(1)).floor()
 
-        let base = c16?3:4/3
+        let base = Decimal.add(c16?3:4/3,GPEffect(2))
 
-        if (hasTree('ct4')) base += treeEff('ct4')
+        if (hasTree('ct4')) base = base.add(treeEff('ct4'))
 
-        let eff = c16?Decimal.pow(base,lvl):i==0?lvl.mul(tmp.matters.str).add(1):Decimal.pow(base,lvl.mul(tmp.matters.str))
+        if (!c16) lvl = lvl.mul(tmp.matters.str)
+
+        let eff = c16?Decimal.pow(base,lvl):i==0?hasElement(21,1)?Decimal.pow(base,lvl.root(5)):lvl.add(1):Decimal.pow(base,lvl)
+
+        if (i==0) eff = eff.overflow('e2500',0.5)
 
         return {cost: cost, bulk: bulk, eff: eff}
     },
@@ -66,13 +74,26 @@ const MATTERS = {
         },
         req() {
             let f = player.dark.matters.final
-            if (hasTree('ct10')) f = f.mul(treeEff('ct10'))
-            f = f.scaleEvery('FSS')
+
+            f = f.scaleEvery('FSS',false,[1,hasTree('ct10')?treeEff('ct10').pow(-1):1])
 
             if (hasElement(217)) f = f.mul(.8)
 
             let x = Decimal.pow(100,Decimal.pow(f,1.5)).mul(1e43)
             return x
+        },
+        bulk() {
+            let f = tmp.matters.FSS_base
+
+            if (f.lt(1e43)) return E(0)
+
+            let x = f.div(1e43).max(1).log(100).root(1.5)
+
+            if (hasElement(217)) x = x.div(.8)
+
+            x = x.scaleEvery('FSS',true,[1,hasTree('ct10')?treeEff('ct10').pow(-1):1])
+
+            return x.add(1).floor()
         },
 
         reset(force = false) {
@@ -92,7 +113,11 @@ const MATTERS = {
             fss = fss.mul(tmp.dark.abEff.fss||1)
 
             let x = Decimal.pow(2,fss.pow(1.25))
-            if (c16) x = x.log10().div(10).add(1)
+
+            if (c16) {
+                x = x.log10().div(10).add(1)
+                if (hasElement(247)) x = x.pow(1.5)
+            }
 
             let y = fss.mul(.15).add(1)
             return [x,y]
@@ -109,6 +134,10 @@ function getMatterUpgrade(i) {
     if (amt.gte(tu.cost) && player.dark.matters.upg[i].lt(tu.bulk)) player.dark.matters.upg[i] = tu.bulk
 }
 
+function buyMaxMatters() {
+    for (let i = 0; i < player.dark.matters.unls-1; i++) getMatterUpgrade(i)
+}
+
 function resetMatters() {
     for (let i = 0; i < 13; i++) {
         player.dark.matters.amt[i] = E(0)
@@ -118,8 +147,11 @@ function resetMatters() {
 
 function updateMattersHTML() {
     let c16 = tmp.c16active
+    let inf_gs = tmp.preInfGlobalSpeed
 
-    tmp.el.matter_exponent.setTxt(format(tmp.matters.exponent))
+    let h = `10<sup>lg(lg(x))<sup>${format(tmp.matters.exponent)}</sup>`
+    if (hasElement(256)) h += c16 ? `</sup>×(next matter)` : `×lg(next matter)</sup>`
+    tmp.el.matter_formula.setHTML(h)
     tmp.el.matter_req_div.setDisplay(player.dark.matters.unls<14)
     if (player.dark.matters.unls<14) tmp.el.matter_req.setTxt(format(tmp.matters.req_unl))
 
@@ -131,7 +163,7 @@ function updateMattersHTML() {
             let amt = i == 0 ? player.bh.dm : player.dark.matters.amt[i-1]
 
             tmp.el['matter_amt'+i].setTxt(format(amt,0))
-            tmp.el['matter_gain'+i].setTxt(i == 0 ? amt.formatGain(tmp.bh.dm_gain.mul(tmp.preQUGlobalSpeed)) : amt.formatGain(tmp.matters.gain[i-1]))
+            tmp.el['matter_gain'+i].setTxt(i == 0 ? amt.formatGain(tmp.bh.dm_gain.mul(tmp.preQUGlobalSpeed)) : amt.formatGain(tmp.matters.gain[i-1].mul(inf_gs)))
 
             if (i > 0) {
                 let tu = tmp.matters.upg[i-1]
@@ -160,7 +192,7 @@ function updateMattersHTML() {
 
     tmp.el.FSS_eff1.setHTML(
         player.dark.matters.final.gt(0)
-        ? `Thanks to FSS, boosts Matters gain by ^${tmp.matters.FSS_eff[0].format(1)}`.corrupt(c16 && !hasElement(11,1))
+        ? `Thanks to FSS, your Matters gain is boosted by ^${tmp.matters.FSS_eff[0].format(1)}`.corrupt(c16 && !hasElement(11,1))
         : ''
     )
 }
@@ -170,15 +202,21 @@ function updateMattersTemp() {
     tmp.matters.FSS_req = MATTERS.final_star_shard.req()
     tmp.matters.FSS_eff = MATTERS.final_star_shard.effect()
 
-    tmp.matters.str = 1
-    if (hasBeyondRank(1,2)) tmp.matters.str *= beyondRankEffect(1,2)
+    tmp.matters.str = E(1)
+    if (hasBeyondRank(1,2)) tmp.matters.str = tmp.matters.str.mul(beyondRankEffect(1,2))
 
-    tmp.matters.exponent = 2 + glyphUpgEff(11,0)
-    if (hasPrestige(0,382)) tmp.matters.exponent += prestigeEff(0,382,0)
-    if (player.ranks.hex.gte(91)) tmp.matters.exponent += .15
-    if (hasElement(206)) tmp.matters.exponent += elemEffect(206,0)
-    if (hasBeyondRank(1,1)) tmp.matters.exponent += .5
-    if (hasPrestige(0,1337)) tmp.matters.exponent += prestigeEff(0,1337,0)
+    if (hasElement(29,1)) tmp.matters.str = tmp.matters.str.mul(Decimal.max(1,tmp.exotic_atom.strength.root(2)))
+
+    let e = Decimal.add(2,glyphUpgEff(11,0)).add(exoticAEff(1,5,0))
+
+    if (hasPrestige(0,382)) e = e.add(prestigeEff(0,382,0))
+    if (player.ranks.hex.gte(91)) e = e.add(.15)
+    if (hasElement(206)) e = e.add(elemEffect(206,0))
+    if (hasBeyondRank(1,1)) e = e.add(.5)
+    if (hasPrestige(0,1337)) e = e.add(prestigeEff(0,1337,0))
+    if (hasElement(14,1)) e = e.add(muElemEff(14,0))
+
+    tmp.matters.exponent = e
     
     tmp.matters.req_unl = Decimal.pow(1e100,Decimal.pow(1.2,Math.max(0,player.dark.matters.unls-4)**1.5))
 

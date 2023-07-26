@@ -11,7 +11,7 @@ const FERMIONS = {
         for (let j = 0; j < FERMIONS.types[i].length; j++) x = x.mul(base.pow(player.supernova.fermions.tiers[i][j]))
         if (hasTree("fn1") && tmp.supernova) x = x.mul(tmp.supernova.tree_eff.fn1)
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
         return x
     },
@@ -27,7 +27,7 @@ const FERMIONS = {
     },
     bonus(i,j) {
         let x = E(0)
-        if (hasTree("prim3") && j < 6) x = x.add(tmp.prim.eff[5][1].min(j>2&&!hasElement(172)?4:1/0))
+        if (hasTree("prim3") && j < 6) x = x.add(tmp.prim.eff[5][1].min(j>2&&!hasElement(172)?4:EINF))
         if (hasTree('ct3')) x = x.add(treeEff('ct3'))
         return x
     },
@@ -129,11 +129,11 @@ const FERMIONS = {
                     return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+(x.gte(5)?" <span class='soft'>(softcapped)</span>":"")
                 },
                 inc: "Mass",
-                cons: "You are trapped in Mass Dilation, but they are twice as effective",
+                cons: "You are trapped in Mass Dilation, and it is twice as strong",
                 isMass: true,
             },{
                 maxTier() {
-                    if (hasElement(142)) return Infinity
+                    if (hasElement(142)) return EINF
                     let x = 15
                     if (hasTree("fn9")) x += 2
                     if (hasTree("fn11")) x += 5
@@ -150,7 +150,8 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-                    let x = i.max(1).log10().add(1).mul(t).pow(0.9).div(100).add(1).softcap(1.5,0.5,0).softcap(5,1/3,0).min(6.5)
+                    let x = i.max(1).log10().add(1).mul(t).pow(0.9).div(100).add(1).softcap(1.5,0.5,0).softcap(5,1/3,0)
+                    if (!hasElement(23,1)) x = x.min(6.5)
                     return x
                 },
                 desc(x) {
@@ -160,7 +161,7 @@ const FERMIONS = {
                 cons: "You are trapped in Mass Dilation and Challenges 3-5",
             },{
                 maxTier() {
-                    if (hasElement(156)) return Infinity
+                    if (hasElement(156)) return EINF
                     let x = 30
                     if (hasTree("fn11")) x += 5
                     return x
@@ -187,7 +188,7 @@ const FERMIONS = {
                 isMass: true,
             },{
                 maxTier() {
-                    if (hasElement(173)) return Infinity
+                    if (hasElement(173)) return EINF
                     let x = 10
                     if (hasTree("fn11")) x += 5
                     return x
@@ -228,7 +229,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(200).mul(t.softcap(8,0.5,0)).add(1)
-                    return x.softcap(15,0.5,0)
+                    return x.softcap(15,hasPrestige(1,300)?0.55:0.5,0)
                 },
                 desc(x) {
                     return `Dark ray's effect is ^${x.format()} stronger`.corrupt(tmp.c16active)
@@ -240,7 +241,7 @@ const FERMIONS = {
         ],[
             {
                 maxTier() {
-                    if (hasTree("fn10")) return 1/0
+                    if (hasTree("fn10")) return EINF
                     let x = 15
                     if (hasTree("fn5")) x += 35
                     return x
@@ -261,7 +262,7 @@ const FERMIONS = {
                     return x//.softcap(1e18,0.1,0)
                 },
                 desc(x) {
-                    return `Collapse Stars gain softcap starts ^${format(x)} later`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Collapsed Stars gain softcap starts ^${format(x)} later`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
                 },
                 inc: "Quark",
                 cons: "^0.625 to the exponent of Atoms gain",
@@ -299,7 +300,8 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-                    let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
+                    let x = hasElement(17,1) ? t.pow(2).mul(i.add(1).log10().add(1)).add(1) : t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
+                    if (hasBeyondRank(4,40)) x = x.pow(3)
                     return x
                 },
                 desc(x) {
@@ -309,7 +311,7 @@ const FERMIONS = {
                 cons: "You are trapped in Challenges 8-9",
             },{
                 maxTier() {
-                    if (hasElement(142)) return Infinity
+                    if (hasElement(142)) return EINF
                     let x = 15
                     if (hasTree("fn9")) x += 2
                     if (hasTree("fn11")) x += 5
@@ -336,7 +338,7 @@ const FERMIONS = {
                 cons: "Star generators are decreased to ^0.5",
             },{
                 maxTier() {
-                    if (hasElement(156)) return Infinity
+                    if (hasElement(156)) return EINF
                     let x = 25
                     if (hasTree("fn11")) x += 5
                     return x
@@ -400,7 +402,7 @@ const FERMIONS = {
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(2000).mul(t.softcap(8,0.5,0))
                     if (hasBeyondRank(2,2)) x = x.mul(8)
-                    return x.softcap(20,0.5,0).toNumber()
+                    return x.softcap(20,hasPrestige(1,300)?0.55:0.5,0)
                 },
                 desc(x) {
                     return `Increase prestige base's exponent by ${format(x)}`
@@ -476,7 +478,7 @@ function updateFermionsTemp() {
             let f = FERMIONS.types[i][x]
 
             tf.bonuses[i][x] = FERMIONS.bonus(i,x)
-            tf.maxTier[i][x] = typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0
+            tf.maxTier[i][x] = typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||EINF
             tf.tiers[i][x] = f.calcTier().min(tf.maxTier[i][x])
             tf.effs[i][x] = f.eff(player.supernova.fermions.points[i], (FERMIONS.onActive("04") && i == 0) || (FERMIONS.onActive("14") && i == 1) ? E(0) : player.supernova.fermions.tiers[i][x].add(tmp.fermions.bonuses[i][x]).mul(i==1?tmp.radiation.bs.eff[16]:1).mul(i==0?tmp.radiation.bs.eff[19]:1))
         }
@@ -504,7 +506,7 @@ function updateFermionsHTML() {
                 tmp.el[id+"_div"].setClasses({fermion_btn: true, [FERMIONS.names[i]]: true, choosed: active})
                 tmp.el[id+"_nextTier"].setTxt(fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])))
                 tmp.el[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x))
-                tmp.el[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(tmp.fermions.maxTier[i][x] < Infinity?" / "+format(tmp.fermions.maxTier[i][x],0):"") + (tmp.fermions.bonuses[i][x].gt(0)?" + "+tmp.fermions.bonuses[i][x].format():""))
+                tmp.el[id+"_tier"].setTxt(format(player.supernova.fermions.tiers[i][x],0)+(Decimal.lt(tmp.fermions.maxTier[i][x],EINF)?" / "+format(tmp.fermions.maxTier[i][x],0):"") + (tmp.fermions.bonuses[i][x].gt(0)?" + "+tmp.fermions.bonuses[i][x].format():""))
                 tmp.el[id+"_desc"].setHTML(f.desc(tmp.fermions.effs[i][x]))
 
                 tmp.el[id+"_cur"].setDisplay(active)

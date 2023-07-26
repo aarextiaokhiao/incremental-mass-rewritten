@@ -9,7 +9,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -21,7 +21,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -32,7 +32,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -44,7 +44,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -56,7 +56,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -66,7 +66,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -77,7 +77,7 @@ const BOSONS = {
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
             return x
         },
@@ -88,7 +88,9 @@ const BOSONS = {
             if (hasTree("qu2") && !player.qu.rip.active) a = a.pow(x.add(1).log10().add(1).pow(4/3).softcap(1e15,0.1,0))
             if (tmp.c16active) a = overflow(a,10,0.5)
             let b = expMult(x.add(1),2/3,2)
-            return [a,b]
+            let c = E(1)
+            if (hasElement(250)) c = x.add(1).log10().add(1).root(10)
+            return [a,b,c]
         },
         neg_w(x) {
             let a = x.add(1).log10().add(1).root(3)
@@ -103,13 +105,14 @@ const BOSONS = {
         },
         graviton(x) {
             let a = expMult(x.add(1),0.5).pow(tmp.bosons.effect.hb?tmp.bosons.effect.hb[0]:1)
-            return [a]
+
+            return [a.overflow('eee3',0.5,2)]
         },
         hb(x) {
             let a = x.add(1).log10().max(0).root(2).mul(tmp.prim.eff[4])
             if (hasTree("qu10") && !player.qu.rip.active) a = a.mul(treeEff('qu10'))
             if (tmp.c16active) a = a.pow(.2)
-            return [a]
+            return [a.overflow('e700',0.5)]
         },
     },
     upgs: {
@@ -161,6 +164,7 @@ const BOSONS = {
                     let x
                     if (hasElement(213)) {
                         x = player.supernova.bosons.photon.add(1).log10().add(10).log10().mul(i.add(10).log10()).pow(0.75)
+                        if (hasElement(23,1)) x = x.pow(tmp.fermions.effs[0][3].log10().add(1).root(2))
                     } else {
                         x = player.supernova.bosons.photon.add(1).log10().add(1).pow(i.softcap(8000,0.1,0).pow(tmp.fermions.effs[0][3]).mul(0.5)).softcap("ee11",0.8,2).softcap("e4e14",hasElement(99)?0.785:0.75,2)
                         if (!hasElement(99)) x = x.softcap("e4e15",0.5,2)
@@ -274,7 +278,10 @@ function updateBosonsHTML() {
     for (let x in BOSONS.names) {
         let id = BOSONS.names[x]
         tmp.el[id+"_amt"].setTxt(format(player.supernova.bosons[id])+" "+formatGain(player.supernova.bosons[id],tmp.bosons.gain[id].mul(tmp.preQUGlobalSpeed)))
-        if (tmp.bosons.effect[id]) for (let y in tmp.bosons.effect[id]) tmp.el[id+"_eff"+y].setTxt(format(tmp.bosons.effect[id][y]))
+        if (tmp.bosons.effect[id]) for (let y in tmp.bosons.effect[id]) {
+            if (y == '2' && id == 'pos_w') tmp.el[id+"_eff"+y].setHTML(hasElement(250) ? ',<br>and raise mass gain by ' + format(tmp.bosons.effect[id][y]) : '')
+            else tmp.el[id+"_eff"+y].setTxt(format(tmp.bosons.effect[id][y]))
+        }
 
         if (BOSONS.upgs.ids.includes(id)) for (let y in BOSONS.upgs[id]) {
             let id2 = id+"_upg"+y

@@ -193,10 +193,6 @@ body.ngm {
 	color: #00d795;
 	font-size: 20px
 }
-#pres_1 {
-	background: linear-gradient(#00d7957f, #00d795bf);
-	color: #00d795;
-}
 #pres_amt_2 {
 	background: linear-gradient(transparent, #00d7003f);
 	border-radius: 2px;
@@ -204,10 +200,6 @@ body.ngm {
 	padding-right: 2px;
 	color: #00d700;
 	font-size: 20px
-}
-#pres_2 {
-	background: linear-gradient(#00d7007f, #00d700bf);
-	color: #00d700;
 }
 #pres_amt_3 {
 	background: linear-gradient(transparent, #d7d7003f);
@@ -217,9 +209,13 @@ body.ngm {
 	color: #d7d700;
 	font-size: 20px
 }
-#pres_3 {
-	background: linear-gradient(#d7d7007f, #d7d700bf);
-	color: #d7d700;
+#pres_amt_4 {
+	background: linear-gradient(transparent, #d795003f);
+	border-radius: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
+	color: #d79500;
+	font-size: 20px
 }
 
 /* -=- MAGIC -=- */
@@ -381,7 +377,7 @@ body.ngm {
 	color: #033 !important;
 }
 
-#tab_frame6, #stab_frame0_3 {
+#tab_frame6 {
 	color: #7f7
 }
 #stab_frame0_3 .btn {
@@ -419,17 +415,38 @@ body.ngm {
 	background: linear-gradient(45deg, #0007, #0003) !important;
 	border-color: #b07;
 	box-shadow: 12px 0 24px #f007, 12px 0 24px #00f7;
-
-	color: #333 !important;
+	color: #333 !important
 }
 
 .elements.bought.dark {
 	background: linear-gradient(45deg, #333, #000) !important;
-
 	color: grey !important;
 }
 .elements.bought.muon {
 	background: linear-gradient(45deg, #f30, #fb0) !important;
-
 	color: #700 !important;
+}
+
+/* INFINITY */
+.btn_tab.inf {
+	background: linear-gradient(45deg, #f703, #ff07) !important;
+	color: gold !important
+}
+.elements.bought.inf {
+	background: linear-gradient(45deg, #f703, #ff07) !important;
+	color: gold !important
+}
+.elements.bought.c16, .elements.bought.cs {
+	background: linear-gradient(45deg, #0007, #0003) !important;
+	color: #333 !important;
+	animation: none !important
+}
+
+.btn.galactic:not(.locked) {
+	background: linear-gradient(45deg, #113, #111) !important;
+	color: #447 !important
+}
+.btn.galactic::before {
+	background: none;
+	animation: none !important
 }

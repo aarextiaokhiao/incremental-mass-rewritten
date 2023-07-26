@@ -15,8 +15,12 @@ const SCALE_START = {
 		prestige0: E(15),
 		prestige1: E(7),
 		prestige2: E(30),
+		prestige3: E(8),
 		massUpg4: E(50),
 		FSS: E(5),
+		pe: E(25),
+		inf_theorem: E(10),
+		ascension0: E(20),
     },
 	hyper: {
 		rank: E(120),
@@ -33,12 +37,17 @@ const SCALE_START = {
 		cosmic_str: E(90),
 		prestige0: E(80),
 		prestige1: E(60),
+		prestige2: E(60),
+		prestige3: E(55),
+		massUpg4: E(250),
+		FSS: E(32),
 	},
 	ultra: {
 		rank: E(600),
 		tier: E(1e5),
 		tetr: E(150),
 		pent: E(1200),
+		hex: E(2e12),
 		massUpg: E(1e11),
 		tickspeed: E(700),
 		bh_condenser: E(750),
@@ -66,6 +75,13 @@ const SCALE_START = {
 	},
 	supercritical: {
 		rank: E(1e37),
+		supernova: E(1e7),
+	},
+	instant: {
+		rank: E('e400'),
+	},
+	mega: {
+		
 	},
 }
 
@@ -86,8 +102,12 @@ const SCALE_POWER= {
 		prestige0: 1.5,
 		prestige1: 1.5,
 		prestige2: 2,
+		prestige3: 2,
 		massUpg4: 3,
 		FSS: 2,
+		pe: 2,
+		inf_theorem: 2,
+		ascension0: 2,
     },
 	hyper: {
 		rank: 2.5,
@@ -104,12 +124,17 @@ const SCALE_POWER= {
 		cosmic_str: 4,
 		prestige0: 2,
 		prestige1: 2,
+		prestige2: 3,
+		prestige3: 3,
+		massUpg4: 8,
+		FSS: 3,
 	},
 	ultra: {
 		rank: 4,
 		tier: 4,
 		tetr: 6,
 		pent: 6,
+		hex: 8,
 		massUpg: 10,
 		tickspeed: 7,
 		bh_condenser: 4,
@@ -137,6 +162,13 @@ const SCALE_POWER= {
 	},
 	supercritical: {
 		rank: 50,
+		supernova: 75,
+	},
+	instant: {
+		rank: 3,
+	},
+	mega: {
+
 	},
 }
 
@@ -146,8 +178,8 @@ const SCALE_FP = {
 
 const QCM8_SCALES = ['rank','tier','tetr','pent','hex','massUpg','tickspeed','bh_condenser','gamma_ray','supernova','fTier']
 const PreQ_SCALES = ['rank','tier','tetr','massUpg','tickspeed','bh_condenser','gamma_ray']
-const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta', 'exotic', 'supercritical'] // super, hyper, ultra, meta, exotic
-const FULL_SCALE_NAME = ['Super', 'Hyper', 'Ultra', 'Meta', 'Exotic', 'Supercritical']
+const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta', 'exotic', 'supercritical', 'instant', 'mega'] // super, hyper, ultra, meta, exotic
+const FULL_SCALE_NAME = ['Super', 'Hyper', 'Ultra', 'Meta', 'Exotic', 'Supercritical', 'Instant', 'Mega']
 
 const SCALING_RES = {
     rank(x=0) { return player.ranks.rank },
@@ -165,8 +197,12 @@ const SCALING_RES = {
 	prestige0() { return player.prestiges[0] },
 	prestige1() { return player.prestiges[1] },
 	prestige2() { return player.prestiges[2] },
+	prestige3() { return player.prestiges[3] },
 	massUpg4() { return E(player.massUpg[4]||0) },
 	FSS() { return player.dark.matters.final },
+	pe() { return player.inf.pe},
+	inf_theorem() { return player.inf.theorem},
+	ascension0() { return player.ascensions[0] },
 }
 
 const NAME_FROM_RES = {
@@ -185,24 +221,34 @@ const NAME_FROM_RES = {
 	prestige0: "Prestige Level",
 	prestige1: "Honor",
 	prestige2: "Glory",
+	prestige3: "Renown",
 	massUpg4: "Overpower",
 	FSS: "Final Star Shard",
+	pe: "Parallel Extruder",
+	inf_theorem: "Infinity Theorem",
+	ascension0: "Ascension",
 }
+
+const C18_SCALING = [
+	'rank','tier','tetr','pent','hex','massUpg','tickspeed','bh_condenser','gamma_ray','supernova','fTier',
+	'cosmic_str','prestige0','prestige1','prestige2','prestige3','massUpg4','FSS'
+]
 
 function updateScalingHTML() {
 	let s = SCALE_TYPE[player.scaling_ch]
-	tmp.el.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
+	// tmp.el.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
 	if (!tmp.scaling) return
 	for (let x = 0; x < SCALE_TYPE.length; x++) {
+		let type = SCALE_TYPE[x]
 		tmp.el["scaling_div_"+x].setDisplay(player.scaling_ch == x)
 		if (player.scaling_ch == x) {
-			let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
-			for (let y = 0; y < key.length; y++) {
-				let have = tmp.scaling[SCALE_TYPE[x]].includes(key[y])
-				tmp.el['scaling_'+x+'_'+key[y]+'_div'].setDisplay(have)
+			for (let key in SCALE_START[type]) {
+				let have = tmp.scaling[type].includes(key)
+				tmp.el['scaling_'+x+'_'+key+'_div'].setDisplay(have)
 				if (have) {
-					tmp.el['scaling_'+x+'_'+key[y]+'_power'].setTxt(format(tmp.scaling_power[SCALE_TYPE[x]][key[y]].mul(100))+"%")
-					tmp.el['scaling_'+x+'_'+key[y]+'_start'].setTxt(format(tmp.scaling_start[SCALE_TYPE[x]][key[y]],0))
+					let p = tmp.scaling_power[type][key], q = Decimal.pow(SCALE_POWER[type][key],p)
+					tmp.el['scaling_'+x+'_'+key+'_power'].setTxt(format(p.mul(100))+"%, "+(x%4==3?q.format()+"^":"^"+q.format()+(x>=6?" to exponent":"")))
+					tmp.el['scaling_'+x+'_'+key+'_start'].setTxt(format(tmp.scaling_start[type][key],0))
 				}
 			}
 		}
@@ -243,7 +289,7 @@ function updateScalingTemp() {
 		}
 	}
 	let sqc8 = []
-	if (!CHALS.inChal(14) && !player.dark.run.active && !tmp.c16active && !CHALS.inChal(15)) {
+	if (!CHALS.inChal(14) && !inDarkRun() && !tmp.c16active && !CHALS.inChal(15)) {
 		if (player.mainUpg.br.includes(2)) sqc8.push("massUpg","rank","tier","tetr","pent",'hex')
 		if (player.md.break.active) sqc8.push("bh_condenser","gamma_ray")
 	}
@@ -265,7 +311,7 @@ function getScalingName(name, x=0, y=0) {
 	let amt = SCALING_RES[name](x,y);
 	for (let n = cap - 1; n >= 0; n--) {
 		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-			return capitalFirst(Object.keys(SCALE_START)[n]) + (n==3?"-":" ");
+			return capitalFirst(Object.keys(SCALE_START)[n]) + (n%4==3?"-":" ");
 	}
 	return current;
 }
@@ -274,6 +320,8 @@ function getScalingStart(type, name) {
 	let c16 = tmp.c16active
 
 	let start = SCALE_START[SCALE_TYPE[type]][name]
+
+	if (tmp.c18active && C18_SCALING.includes(name)) return start
 
 	if (type==0) {
 		if (name=="rank") {
@@ -306,6 +354,15 @@ function getScalingStart(type, name) {
 		}
 		else if (name=="FSS") {
 			if (hasBeyondRank(3,2)) start = start.add(1)
+			if (hasBeyondRank(5,2)) start = start.add(beyondRankEffect(5,2,0))
+			if (hasElement(246)) start = start.add(elemEffect(246))
+		}
+		else if (name=="pe") {
+			if (hasElement(233)) start = start.add(25)
+			if (hasElement(255)) start = start.add(elemEffect(255))
+		}
+		else if (name=="massUpg4") {
+			if (hasAscension(1,3)) start = start.add(50)
 		}
 	}
 	else if (type==1) {
@@ -322,6 +379,9 @@ function getScalingStart(type, name) {
 		}
 		else if (name=="hex") {
 			if (hasPrestige(0,651)) start = start.mul(4/3)
+		}
+		else if (name=="massUpg4") {
+			if (hasAscension(1,3)) start = start.add(50)
 		}
 	}
 	else if (type==2) {
@@ -371,6 +431,11 @@ function getScalingStart(type, name) {
 		}
 		else if (name=="prestige0") {
 			start = start.mul(exoticAEff(0,1))
+			if (hasAscension(1,4)) start = start.mul(2)
+			if (hasBeyondRank(14,1)) start = start.mul(beyondRankEffect(14,1))
+		}
+		else if (name=="fTier") {
+			if (hasAscension(0,2)) start = start.pow(2)
 		}
 	} else if (type==4) {
 		if (name=="rank") {
@@ -387,6 +452,9 @@ function getScalingStart(type, name) {
 		if (name=="rank") {
 			if (tmp.chal && hasBeyondRank(2,20)) start = start.mul(tmp.chal.eff[1].scrank)
 		}
+		else if (name=="supernova") {
+			if (hasBeyondRank(4,1)) start = start.add(beyondRankEffect(4,1,0))
+		}
 	}
 	if (name=='supernova' && type < 4) {
 		start = start.add(tmp.prim.eff[7])
@@ -402,6 +470,8 @@ function getScalingStart(type, name) {
 }
 
 function getScalingPower(type, name) {
+	if (tmp.c18active && C18_SCALING.includes(name)) return E(1)
+
 	let power = E(1)
 	if (name == "supernova" && (hasCharger(3)?type<5:type<3)) {
 		power = power.mul(tmp.fermions.effs[1][4])
@@ -448,6 +518,15 @@ function getScalingPower(type, name) {
 		else if (name=="massUpg4") {
 			if (tmp.chal && hasBeyondRank(2,20)) power = power.mul(tmp.chal.eff[1].over)
 		}
+		else if (name=='FSS') {
+			if (hasBeyondRank(3,18)) power = power.mul(beyondRankEffect(3,18))
+		}
+		else if (name=='inf_theorem') {
+			if (hasAscension(1,2)) power = power.mul(0.9)
+		}
+		else if (name=="prestige3") {
+			if (hasPrestige(4,1)) power = power.mul(0.75)
+		}
 	}
 	else if (type==1) {
 		if (name=="rank") {
@@ -490,6 +569,9 @@ function getScalingPower(type, name) {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
 		}
+		if (name=="hex") {
+			if (tmp.chal && hasAscension(0,22)) power = power.mul(tmp.chal.eff[5])
+		}
 		else if (name=='tickspeed') {
 			if (hasElement(27)) power = power.mul(0.75)
 			if (hasElement(58)) power = power.mul(tmp.elements.effect[58])
@@ -502,7 +584,7 @@ function getScalingPower(type, name) {
 		}
 		else if (name=='prestige0') {
 			if (hasElement(197)) power = power.mul(0.9)
-			if (tmp.chal && hasCharger(3)) power = power.mul(tmp.chal.eff[5])
+			if (!hasAscension(0,22) && tmp.chal && hasCharger(3)) power = power.mul(tmp.chal.eff[5])
 		}
 	}
 	else if (type==3) {
@@ -513,13 +595,18 @@ function getScalingPower(type, name) {
 	else if (type==4) {
 		if (name=='rank') {
 			if (hasElement(197)) power = power.mul(0.9)
-			if (tmp.chal && hasCharger(3)) power = power.mul(tmp.chal.eff[5])
+			if (!hasAscension(0,22) && tmp.chal && hasCharger(3)) power = power.mul(tmp.chal.eff[5])
 		}
 		else if (name=="tier") {
-			if (tmp.chal && hasCharger(3)) power = power.mul(tmp.chal.eff[5])
+			if (!hasAscension(0,22) && tmp.chal && hasCharger(3)) power = power.mul(tmp.chal.eff[5])
 		}
 		else if (name=="supernova") {
 			if (hasElement(212)) power = power.mul(0.75)
+		}
+	}
+	else if (type==5) {
+		if (name=='rank') {
+			if (tmp.chal && hasAscension(0,22)) power = power.mul(tmp.chal.eff[5])
 		}
 	}
 	if (hasUpgrade("atom",15) && name == "gamma_ray") power = power.mul(0.8)
@@ -527,26 +614,47 @@ function getScalingPower(type, name) {
 
 	let rps = ['rank','tier','tetr','pent']
 	if (hasElement(207)) rps.push('hex')
-	if (hasPrestige(2,4) && rps.includes(name) && type<4) power = power.mul(tmp.qu.chroma_eff[1][1])
+	if (hasPrestige(2,4) && rps.includes(name) && (name=='hex'?type<2:player.chal.comps[18].gte(1)?type<5:type<4)) power = power.mul(tmp.qu.chroma_eff[1][1])
 
 	let qf = tmp.qu.qc_eff[7][1]
-	if (!tmp.c16active) if (player.dark.run.upg[4] && player.dark.run.active && ['rank','tier','tetr','pent','hex'].includes(name)) qf **= 0.75 
+	if (!tmp.c16active) if (player.dark.run.upg[4] && inDarkRun() && ['rank','tier','tetr','pent','hex'].includes(name)) qf **= 0.75 
 	if (QCs.active() && QCM8_SCALES.includes(name)) if (!tmp.scaling_qc8.includes(name)) power = power.mul(qf)
 	if (PreQ_SCALES.includes(name) && type<3) power = power.mul(getEnRewardEff(5))
-	if (hasPrestige(0,388) && ['prestige0','prestige1'].includes(name) && type<3) power = power.mul(prestigeEff(0,388,1))
+
+	let p = ['prestige0','prestige1']
+	if (hasPrestige(3,10)) p.push('prestige2')
+	if (hasPrestige(0,388) && p.includes(name) && type<3) power = power.mul(prestigeEff(0,388,1))
+
 	if (hasPrestige(1,66) && name=="fTier") power = power.mul(0.8)
+
 	return power.max(type==3?0.5:0)
 }
 
 function noScalings(type,name) {
-	if (name=="rank"||name=='tier') {
+	if (tmp.c18active && C18_SCALING.includes(name)) return false
+
+	if (name=="rank") {
 		if (type<4 && hasPrestige(1,127)) return true
+		else if (type == 4 && hasAscension(0,15)) return true
+	}
+	else if (name=="tier") {
+		if (type<4 && hasPrestige(1,127)) return true
+		else if (type == 4 && hasAscension(0,15)) return true
+	}
+	else if (name=="tetr") {
+		return hasCharger(8)
+	}
+	else if (name=="pent") {
+		return hasElement(243)
+	}
+	else if (name=="hex") {
+		if (type<2 && hasAscension(0,15)) return true
 	}
 	else if (name=="massUpg") {
 		if (hasBeyondRank(2,15)) return true
 	}
 	else if (name=="supernova") {
-		if (type<3 && hasCharger(3)) return true
+		return tmp.SN_passive || type<3 && hasCharger(3)
 	}
 	else if (name=="tickspeed") {
 		if (hasCharger(4)) return true
@@ -559,6 +667,12 @@ function noScalings(type,name) {
 	}
 	else if (name=="gamma_ray") {
 		if (hasCharger(7)) return true
+	}
+	else if (name=="prestige0") {
+		if (type < 3 && hasBeyondRank(5,7)) return true
+	}
+	else if (name=="prestige1" || name=="prestige2") {
+		if (type < 3 && hasBeyondRank(11,1)) return true
 	}
 
 	return false

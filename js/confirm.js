@@ -3,19 +3,27 @@ const CONFIRMS_FUNCTION = {
         player.rp.points = player.rp.points.add(tmp.rp.gain)
         player.rp.unl = true
         FORMS.rp.doReset()
+
+        addQuote(2)
     },
     bh() {
         player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain)
         player.bh.unl = true
         FORMS.bh.doReset()
+
+        addQuote(3)
     },
     atom() {
         player.atom.points = player.atom.points.add(tmp.atom.gain)
         player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain)
         player.atom.unl = true
         ATOM.doReset()
+
+        addQuote(4)
     },
     sn(force,chal,post,fermion) {
+        addQuote(5)
+
         if (tmp.supernova.reached || force || fermion) {
             tmp.el.supernova_scene.setDisplay(false)
             if (!force && !fermion) {
@@ -36,7 +44,7 @@ const CONFIRMS_FUNCTION = {
         }
     },
     qu(auto,force,rip,bd) {
-        if (QCs.active() && !rip && !bd && !player.qu.rip.active && !CHALS.inChal(14) && !CHALS.inChal(15) && !player.dark.run.active && !tmp.c16active) {
+        if (QCs.active() && !rip && !bd && !player.qu.rip.active && !CHALS.inChal(14) && !CHALS.inChal(15) && !inDarkRun() && !tmp.c16active) {
             player.qu.qc.shard = tmp.qu.qc_s+tmp.qu.qc_s_bouns
             player.qu.qc.active = false
         }
@@ -52,9 +60,13 @@ const CONFIRMS_FUNCTION = {
             if (rip) {
                 if (hasUpgrade('br',4)) for (let x = 0; x < 2; x++) for (let y = 0; y < 6; y++) player.supernova.fermions.tiers[x][y] = E(2)
             }
+
+            addQuote(7)
         } else {
             document.body.style.animation = "implode 2s 1"
             setTimeout(()=>{
+                addQuote(7)
+
                 if (player.qu.times.lte(0)) {
                     createPopup(POPUP_GROUPS.qus2.html(),'qus2');
                     createPopup(POPUP_GROUPS.qus1.html(),'qus1');
@@ -78,17 +90,63 @@ const CONFIRMS_FUNCTION = {
         QUANTUM.doReset(player.qu.qc.active)
     },
     bigRip() {
-        if (tmp.c16active || player.dark.run.active) return
+        if (tmp.c16active || inDarkRun()) return
         if (player.qu.rip.active) player.qu.rip.amt = player.qu.rip.amt.add(tmp.rip.gain)
         player.qu.qc.active = false
         player.qu.rip.first = true
         player.qu.rip.active = !player.qu.rip.active
         QUANTUM.enter(false,true,true)
+
+        addQuote(8)
     },
     dark() {
         player.dark.unl = true
         player.dark.rays = player.dark.rays.add(tmp.dark.gain)
 
         DARK.doReset()
+
+        addQuote(9)
+    },
+    inf(limit) {
+        if (limit || player.inf.pt_choosed >= 0) {
+            if (player.inf.theorem.eq(0)) addTheorem('mass',[0,1,1,1,1,1,1,1],E(1),E(1))
+            else {
+                let td = player.inf.pre_theorem[player.inf.pt_choosed==-1?Math.floor(Math.random()*4):player.inf.pt_choosed]
+
+                addTheorem(td.type,td.star_c,tmp.core_lvl.floor(),getPowerMult().mul(td.power_m).add(1))
+            }
+        } else if (hasElement(239) && player.inf.pt_choosed < 0) {
+            let fl = Decimal.floor(tmp.core_lvl), pm = getPowerMult()
+            for (let i in player.inf.pre_theorem) {
+                let t = player.inf.pre_theorem[i]
+                player.inf.fragment[t.type] = player.inf.fragment[t.type].add(calcFragmentBase(t,chanceToBool(t.star_c),pm.mul(t.power_m).mul(100).add(100).round().div(100),fl).div(4)) // Math.round(100+pm*t.power_m*100)/100
+            }
+        }
+
+
+        if (player.inf.theorem.eq(0)) {
+            player.inf.points = player.inf.points.add(2)
+            player.inf.total = player.inf.total.add(2)
+        }
+        else {
+            player.inf.points = player.inf.points.add(tmp.IP_gain)
+            player.inf.total = player.inf.total.add(tmp.IP_gain)
+        }
+
+        player.inf.best = player.inf.best.max(tmp.IP_gain)
+
+        if (tmp.inf_reached) player.inf.theorem = player.inf.theorem.add(1)
+
+        updateInfTemp()
+
+        INF.doReset()
+
+        updateTheoremCore()
+        updateTheoremInv()
+
+        addQuote(11)
+    },
+    t_switch() {
+        
     },
 }

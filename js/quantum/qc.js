@@ -1,6 +1,6 @@
 const QCs = {
-    active() { return player.qu.qc.active || player.qu.rip.active || CHALS.inChal(14) || CHALS.inChal(15) || tmp.c16active || player.dark.run.active },
-    getMod(x) { return CHALS.inChal(15) ? [10,5,10,10,10,10,10,10][x] : tmp.c16active || player.dark.run.active ? 8 : CHALS.inChal(14) ? 5 : player.qu.rip.active ? BIG_RIP_QC[x] : player.qu.qc.mods[x] },
+    active() { return player.qu.qc.active || player.qu.rip.active || CHALS.inChal(14) || CHALS.inChal(15) || tmp.c16active || inDarkRun() },
+    getMod(x) { return CHALS.inChal(15) ? [10,5,10,10,10,10,10,10][x] : tmp.c16active || inDarkRun() ? 8 : CHALS.inChal(14) ? 5 : player.qu.rip.active ? BIG_RIP_QC[x] : player.qu.qc.mods[x] },
     incMod(x,i) { if (!this.active()) player.qu.qc.mods[x] = Math.min(Math.max(player.qu.qc.mods[x]+i,0),10) },
     enter() {
         if (!player.qu.qc.active) {
@@ -20,7 +20,7 @@ const QCs = {
             eff(i) {
                 return [1-0.03*i,2/(i+2)]
             },
-            effDesc(x) { return `<b>^${format(x[0])}</b> to exponent from all star resources.<br><b>^${format(x[1])}</b> to strength of star generators.` },
+            effDesc(x) { return `<b>^${format(x[0])}</b> to exponent of all-star resources.<br><b>^${format(x[1])}</b> to strength of star generators.` },
         },{
             eff(i) {
                 let x = E(2).pow(i**2)
@@ -50,7 +50,7 @@ const QCs = {
                 let x = 1.2**i
                 return x
             },
-            effDesc(x) { return `<b>x${format(x)}</b> to requirements of any pre-Quantum Challenges.` },
+            effDesc(x) { return `<b>x${format(x)}</b> to requirements of any pre-Quantum Challenge.` },
         },{
             eff(i) {
                 if (hasElement(163)) i /= 2
@@ -171,6 +171,11 @@ function updateQCTemp() {
     if (hasTree("qc3")) tmp.qu.qc_s_b = tmp.qu.qc_s_b.add(treeEff('qc3',0))
     if (hasElement(146)) tmp.qu.qc_s_b = tmp.qu.qc_s_b.add(elemEffect(146,0))
 
+    if (hasElement(226)) tmp.qu.qc_s_b = tmp.qu.qc_s_b.pow(elemEffect(226))
+
+    let weak = 1
+    if (tmp.inf_unl) weak *= theoremEff('proto',3)
+
     tmp.qu.qc_s_eff = tmp.qu.qc_s_b.pow(player.qu.qc.shard)
 
     let s = 0
@@ -178,7 +183,7 @@ function updateQCTemp() {
     for (let x = 0; x < QCs_len; x++) {
         let m = QCs.getMod(x)
         s += m
-        tmp.qu.qc_eff[x] = QCs.ctn[x].eff(m)
+        tmp.qu.qc_eff[x] = QCs.ctn[x].eff(m*weak)
         if (hasTree('qc2') && m >= 10) bs++
     }
     tmp.qu.qc_s = s
@@ -194,7 +199,7 @@ function updateQCHTML() {
         tmp.el["qc_tab"+x].setDisplay(tmp.qc_tab == x)
     }
     if (tmp.qc_tab == 0) {
-        tmp.el.qc_btn.setDisplay(!(player.qu.rip.active || tmp.c16active || player.dark.run.active))
+        tmp.el.qc_btn.setDisplay(!(player.qu.rip.active || tmp.c16active || inDarkRun()))
         tmp.el.qc_btn.setTxt((QCs.active()?"Exit":"Enter") + " the Quantum Challenge")
         for (let x = 0; x < QCs_len; x++) {
             tmp.el["qcm_mod"+x].setTxt(QCs.getMod(x))

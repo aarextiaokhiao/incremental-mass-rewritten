@@ -16,7 +16,7 @@ const ATOM = {
         x = x.pow(glyphUpgEff(5))
         if (hasUpgrade('br',17)) x = x.pow(upgEffect(4,17))
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
 
         return x.floor()
     },
@@ -29,26 +29,35 @@ const ATOM = {
         if (player.ranks.rank.gte(300)) x = x.mul(RANKS.effect.rank[300]())
         if (hasElement(6)) x = x.mul(tmp.elements.effect[6])
         if (hasElement(42)) x = x.mul(tmp.elements.effect[42])
-        if (hasElement(67)) x = x.mul(tmp.elements.effect[67])
         if (player.md.upgs[6].gte(1)) x = x.mul(tmp.md.upgs[6].eff)
         x = x.mul(tmp.md.upgs[9].eff)
+
+        if (hasElement(67)) x = hasElement(236) ? x.pow(elemEffect(67)) : x.mul(tmp.elements.effect[67])
         if (hasElement(47)) x = x.pow(1.1)
         if (hasPrestige(1,7)) x = x.pow(prestigeEff(1,7))
 
         if (hasUpgrade('atom',17)) x = x.pow(upgEffect(3,17))
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
+        if (tmp.inf_unl) x = x.pow(theoremEff('atom',0))
+
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
 
         let o = x
-        let os = tmp.c16active ? E('ee6') : E('ee90').pow(tmp.dark.abEff.ApQ_Overflow||1).pow(treeEff('ct13')?tmp.chal.eff[15]:1)
+        let os = tmp.c16active ? E('ee6') : E('ee90').pow(treeEff('ct13')?tmp.chal.eff[15]:1), op = E(.5)
+
+        os = os.pow(tmp.dark.abEff.ApQ_Overflow||1)
 
         if (hasUpgrade('atom',16)) os = os.pow(10)
+        if (tmp.inf_unl) os = os.pow(theoremEff('atom',1))
 
-        x = overflow(x,os,0.5)
+        if (hasElement(45,1)) op = op.pow(0.75)
+
+        x = overflow(x,os,op)
 
         tmp.overflowBefore.quark = o
         tmp.overflow.quark = calcOverflow(o,x,os)
         tmp.overflow_start.quark = os
+        tmp.overflow_power.quark = op
 
         return x.floor()
     },
@@ -84,10 +93,16 @@ const ATOM = {
 
             if (hasGlyphUpg(12)) x = x.pow(greff.exp)
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
 
             let o = x
-            let os = tmp.c16active ? E('e500') : E('ee82').pow(tmp.dark.abEff.ApQ_Overflow||1).pow(treeEff('ct13')?tmp.chal.eff[15]:1)
+            let os = tmp.c16active ? E('e500') : E('ee82').pow(treeEff('ct13')?tmp.chal.eff[15]:1)
+
+            os = os.pow(tmp.dark.abEff.ApQ_Overflow||1)
+
+            if (tmp.inf_unl) os = os.pow(theoremEff('atom',1))
+
+            if (hasAscension(0,13)) os = EINF
 
             x = overflow(x,os,0.25)
 
@@ -97,9 +112,16 @@ const ATOM = {
             return x
         },
         effect() {
-            let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75).pow(getEnRewardEff(1))
+            let base = hasElement(23)?1.5:1.75
+            let x = player.atom.atomic.max(1).log(base).pow(getEnRewardEff(1))
             if (!hasElement(75)) x = x.softcap(5e4,0.75,0).softcap(4e6,0.25,0)
-            x = x.softcap(hasUpgrade("atom",13)?1e11:1e10,0.1,0).softcap(2.5e35,0.1,0)
+
+            let w = 0.1 ** exoticAEff(0,4)
+
+            x = x.softcap(hasUpgrade("atom",13)?1e11:1e10,w,0).softcap(2.5e35,w,0)
+
+            x = overflow(x,'e2000',0.5)
+
             return x.floor()
         },
     },
@@ -134,6 +156,11 @@ const ATOM = {
             if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
 
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
+
+            if (CHALS.inChal(17)) {
+                pow = E(1)
+                eff = E(1)
+            }
 
             let exp = E(1)
             if (hasGlyphUpg(12)) exp = Decimal.pow(1.1,eff.max(1).log10().add(1).log10())
@@ -180,16 +207,20 @@ const ATOM = {
             let x = tmp.atom.particles[i]?tmp.atom.particles[i].effect:E(0)
             if (player.mainUpg.atom.includes(7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
-            return x
+            if (hasUpgrade('atom',21)) x = expMult(x,5)
+            return x//.addTP(0.005)
         },
         powerEffect: [
             x=>{
-                let a = hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(3)
+                let a = hasPrestige(1,400) ? overflow(Decimal.pow(2,x.add(1).log10().add(1).log10().root(2)),10,0.5) : hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(3)
                 let b = hasElement(29) ? x.add(1).log2().pow(1.25).mul(0.01) : x.add(1).pow(2.5).log2().mul(0.01)
+
+                // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
+
                 return {eff1: a, eff2: b}
             },
             x=>{
-                let a = hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(2)
+                let a = hasPrestige(1,400) ? overflow(Decimal.pow(2,x.add(1).log10().add(1).log10().root(2)),10,0.5) : hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(2)
                 let b = hasUpgrade('atom',18)
                 ?Decimal.pow(1.1,
                     player.rp.points.add(1).log10().add(10).log10().mul(x.add(1).log10().add(10).log10()).root(3).sub(1)
@@ -198,26 +229,35 @@ const ATOM = {
                 :(hasElement(19)
                 ?player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(10).mul(x.max(1).log(10)).root(2.75))
                 :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))).min('ee200')
+
+                if (CHALS.inChal(17) && !hasUpgrade('atom',18)) b = E(1)
+
+                // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
+                if (hasUpgrade('atom',18)) b = overflow(b,1e120,0.5)
+
                 return {eff1: a, eff2: b}
             },
             x=>{
-                let a = hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1)
+                let a = hasPrestige(1,400) ? overflow(Decimal.pow(2,x.add(1).log10().add(1).log10().root(2)),10,0.5) : hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1)
                 let b = hasElement(30) ? x.add(1).log2().pow(1.2).mul(0.01) : x.add(1).pow(2).log2().mul(0.01)
+
+                // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
+
                 return {eff1: a, eff2: b}
             },
         ],
         desc: [
             x=>{ return `
-                Boosts Mass gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
-                Adds Tickspeed Power by ${format(x.eff2.mul(100))}%
+                Boost Mass gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
+                Increases Tickspeed Power by ${format(x.eff2.mul(100))}%
             ` },
             x=>{ return `
-                Boosts Rage Power gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
-                Makes Mass gain boosted by Rage Powers - ${hasUpgrade('atom',18)?"^"+format(x.eff2):format(x.eff2)+"x"}<br><br>
+                Boost Rage Power gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
+                Boost Mass gain based on Rage Powers - ${hasUpgrade('atom',18)?"^"+format(x.eff2):format(x.eff2)+"x"}<br><br>
             ` },
             x=>{ return `
-                Boosts Dark Matter gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
-                Adds BH Condenser Power by ${format(x.eff2)}
+                Boost Dark Matter gain by ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
+                Increases BH Condenser Power by ${format(x.eff2)}
             ` },
         ],
         colors: ['#0f0','#ff0','#f00'],
@@ -240,9 +280,13 @@ function updateAtomTemp() {
 
     let fp = tmp.fermions.effs[1][5]
 
-    tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.scaleEvery("gamma_ray",false,[1,1,1,fp])).floor()
+    let fp2 = E(1)
+
+    if (hasElement(248)) fp2 = fp2.mul(getEnRewardEff(0))
+
+    tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.div(fp2).scaleEvery("gamma_ray",false,[1,1,1,fp])).floor()
     tmp.atom.gamma_ray_bulk = E(0)
-    if (player.atom.points.gte(1)) tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).scaleEvery("gamma_ray",true,[1,1,1,fp]).add(1).floor()
+    if (player.atom.points.gte(1)) tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).scaleEvery("gamma_ray",true,[1,1,1,fp]).mul(fp2).add(1).floor()
     tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)
     tmp.atom.gamma_ray_bonus = ATOM.gamma_ray.bonus()
     tmp.atom.gamma_ray_eff = ATOM.gamma_ray.effect()
@@ -287,7 +331,7 @@ function updateAtomicHTML() {
 	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
 
     tmp.el.atomicOverflow.setDisplay(player.atom.atomic.gte(tmp.overflow_start.atomic))
-    tmp.el.atomicOverflow.setHTML(`Because of atomic power overflow at <b>${format(tmp.overflow_start.atomic)}</b>, your atomic power is ${overflowFormat(tmp.overflow.atomic||1)}!`)
+    tmp.el.atomicOverflow.setHTML(`Because of atomic power overflow at <b>${format(tmp.overflow_start.atomic)}</b>, your atomic power gain is ${overflowFormat(tmp.overflow.atomic||1)}!`)
 }
 
 function updateAtomHTML() {
@@ -301,5 +345,5 @@ function updateAtomHTML() {
     }
 
     tmp.el.quarkOverflow.setDisplay(player.atom.quarks.gte(tmp.overflow_start.quark))
-    tmp.el.quarkOverflow.setHTML(`Because of quark overflow at <b>${format(tmp.overflow_start.quark)}</b>, your quark is ${overflowFormat(tmp.overflow.quark||1)}!`)
+    tmp.el.quarkOverflow.setHTML(`Because of quark overflow at <b>${format(tmp.overflow_start.quark)}</b>, your quark gain is ${overflowFormat(tmp.overflow.quark||1)}!`)
 }

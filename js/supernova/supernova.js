@@ -7,7 +7,7 @@ const SUPERNOVA = {
         else CONFIRMS_FUNCTION.sn(force,chal,post,fermion)
     },
     doReset() {
-        let br = player.qu.rip.active || tmp.c16active || player.dark.run.active
+        let br = player.qu.rip.active || tmp.c16active || inDarkRun()
         tmp.supernova.time = 0
 
         player.atom.points = E(0)
@@ -72,7 +72,7 @@ const SUPERNOVA = {
     },
     req(x=player.supernova.times) {
         ff = tmp.dark.shadowEff.sn||1
-        if (tmp.c16active || player.dark.run.active) ff /= mgEff(4)[1]
+        if (tmp.c16active || inDarkRun()) ff /= mgEff(4)[1]
 
         ml_fp = E(1).mul(tmp.bosons.upgs.gluon[3].effect)
         maxlimit = E(1e20).pow(x.scaleEvery('supernova',false,[1,1,1,1,ff]).div(ml_fp).pow(1.25)).mul(1e90)
@@ -80,23 +80,33 @@ const SUPERNOVA = {
         if (player.stars.points.div(1e90).gte(1)) bulk = player.stars.points.div(1e90).max(1).log(1e20).max(0).root(1.25).mul(ml_fp).scaleEvery('supernova',true,[1,1,1,1,ff]).add(1).floor()
         return {maxlimit: maxlimit, bulk: bulk}
     },
+    passiveGain() {
+        let x = player.stars.points.add(1e10).log10().log10().pow(3).sub(1)
+
+        x = x.mul(tmp.cs_effect.sn_speed||1)
+
+        if (hasElement(46,1)) x = x.mul(muElemEff(46))
+        if (hasElement(49,1)) x = x.mul(muElemEff(49))
+
+        return x
+    },
 }
 
-function calcSupernova(dt, dt_offline) {
+function calcSupernova(dt) {
     let du_gs = tmp.preQUGlobalSpeed.mul(dt)
     let su = player.supernova
 
     if (player.tickspeed.gte(1)) su.chal.noTick = false
     if (player.bh.condenser.gte(1)) su.chal.noBHC = false
 
-    if (tmp.supernova.reached && (!tmp.offlineActive || su.times.gte(1)) && !su.post_10) {
+    if (tmp.supernova.reached && (tmp.start || su.times.gte(1)) && !su.post_10) {
         if (su.times.lte(0)) tmp.supernova.time += dt
         else {
             addNotify("You become Supernova!")
             SUPERNOVA.reset()
         }
     }
-    if (su.times.gte(1) || quUnl()) su.stars = su.stars.add(tmp.supernova.star_gain.mul(dt_offline).mul(tmp.preQUGlobalSpeed))
+    if (su.times.gte(1) || quUnl()) su.stars = su.stars.add(tmp.supernova.star_gain.mul(dt).mul(tmp.preQUGlobalSpeed))
 
     if (!su.post_10 && su.times.gte(10)) {
         su.post_10 = true
@@ -129,11 +139,21 @@ function calcSupernova(dt, dt_offline) {
 }
 
 function updateSupernovaTemp() {
-    let req_data = SUPERNOVA.req(), c16 = tmp.c16active
-    tmp.supernova.maxlimit = req_data.maxlimit
-    tmp.supernova.bulk = req_data.bulk
+    let c16 = tmp.c16active
 
-    tmp.supernova.reached = tmp.stars?player.stars.points.gte(tmp.supernova.maxlimit):false;
+    if (tmp.SN_passive) {
+        tmp.supernova.reached = false
+
+        tmp.supernova.passive = SUPERNOVA.passiveGain()
+    } else {
+        let req_data = SUPERNOVA.req()
+        tmp.supernova.maxlimit = req_data.maxlimit
+        tmp.supernova.bulk = req_data.bulk
+
+        tmp.supernova.reached = tmp.stars?player.stars.points.gte(tmp.supernova.maxlimit):false;
+    }
+
+    let no_req1 = hasInfUpgrade(0)
 
     for (let i = 0; i < TREE_TAB.length; i++) {
         tmp.supernova.tree_afford2[i] = []
@@ -142,10 +162,11 @@ function updateSupernovaTemp() {
             let t = TREE_UPGS.ids[id]
 
             let branch = t.branch||""
-            let unl = (t.unl?t.unl():true)
-            let req = t.req?t.req():true
+            let unl = !t.unl||t.unl()
+            let req = !t.req||t.req()
             let bought = player.supernova.tree.includes(id) || player.dark.c16.tree.includes(id)
             if (tmp.qu.mil_reached[1] && NO_REQ_QU.includes(id)) req = true
+            if (no_req1 && !CS_TREE.includes(id)) req = true
             let can = (t.qf?player.qu.points:t.cs?player.dark.c16.shard:player.supernova.stars).gte(t.cost) && !bought && req
             if (branch != "") for (let x = 0; x < branch.length; x++) if (!(player.supernova.tree.includes(branch[x]) || player.dark.c16.tree.includes(branch[x]))) {
                 unl = false
@@ -165,7 +186,7 @@ function updateSupernovaTemp() {
 }
 
 function updateSupernovaEndingHTML() {
-    if (tmp.supernova.reached && !tmp.offlineActive && player.supernova.times.lte(0) && !player.supernova.post_10) {
+    if (tmp.supernova.reached && tmp.start && player.supernova.times.lte(0) && !player.supernova.post_10) {
         tmp.tab = 5
         document.body.style.backgroundColor = `hsl(0, 0%, ${7-Math.min(tmp.supernova.time/4,1)*7}%)`
         tmp.el.supernova_scene.setDisplay(tmp.supernova.time>4)
@@ -176,16 +197,13 @@ function updateSupernovaEndingHTML() {
         tmp.el.sns5.setVisible(tmp.supernova.time>17)
         tmp.el.sns5.setOpacity(Math.max(Math.min(tmp.supernova.time-17,1),0))
     }
-    if ((player.supernova.times.lte(0)?!tmp.supernova.reached:true) || quUnl()) document.body.style.backgroundColor = tmp.tab == 5 ? "#000" : "#111"
-
-    tmp.el.app_supernova.setDisplay((player.supernova.times.lte(0) ? !tmp.supernova.reached || quUnl() : true) && tmp.tab == 5)
 
     if (tmp.tab == 2 && tmp.stab[2] == 1) updateTreeHTML()
     if (tmp.tab == 5) {
-        tmp.el.supernova_scale.setTxt(getScalingName('supernova'))
-        tmp.el.supernova_rank.setTxt(format(player.supernova.times,0))
-        tmp.el.supernova_next.setTxt(format(tmp.supernova.maxlimit,2))
-        if (tmp.stab[5] == 0) updateTreeHTML()
+        if (tmp.stab[5] == 0) {
+            tmp.el.neutronStar.setTxt(format(player.supernova.stars,2)+" "+formatGain(player.supernova.stars,tmp.supernova.star_gain.mul(tmp.preQUGlobalSpeed)))
+            updateTreeHTML()
+        }
         if (tmp.stab[5] == 1) updateBosonsHTML()
         if (tmp.stab[5] == 2) updateFermionsHTML()
         if (tmp.stab[5] == 3) updateRadiationHTML()

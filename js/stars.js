@@ -39,7 +39,7 @@ const STARS = {
             }
 
             if (hasPrestige(0,382)) {
-                x = Decimal.pow(1.1,pp.log10().add(1).mul(player.stars.points.add(1).log10().add(1).log10().add(1)).root(2).sub(1))
+                x = Decimal.add(1.1,exoticAEff(0,5,0)).pow(pp.log10().add(1).mul(player.stars.points.add(1).log10().add(1).log10().add(1)).root(2).sub(1))
             } else {
                 x = pp.log10().mul(player.stars.points.add(1).log10().add(1).log10().add(1)).add(1)
             
@@ -47,10 +47,12 @@ const STARS = {
 
                 x = x.add(1)
             }
+
+            x = x.overflow('e3000',0.5)
         } else {
             let [p, pp] = [E(1), E(1)]
             if (hasElement(48)) p = p.mul(1.1)
-            if (hasElement(76)) [p, pp] = player.qu.rip.active || tmp.c16active || player.dark.run.active?[p.mul(1.1), pp.mul(1.1)]:[p.mul(1.25), pp.mul(1.25)]
+            if (hasElement(76)) [p, pp] = player.qu.rip.active || tmp.c16active || inDarkRun()?[p.mul(1.1), pp.mul(1.1)]:[p.mul(1.25), pp.mul(1.25)]
             let [s,r,t1,t2,t3] = [player.stars.points.mul(p)
                 ,player.ranks.rank.softcap(2.5e6,0.25,0).mul(p)
                 ,player.ranks.tier.softcap(1.5e5,0.25,0).mul(p)
@@ -59,11 +61,11 @@ const STARS = {
             x =
             s.max(1).log10().add(1).pow(r.mul(t1.pow(2)).add(1).pow(t2.add(1).pow(5/9).mul(0.25).mul(t3.pow(0.85).mul(0.0125).add(1))))
             x = x.softcap("ee15",0.95,2).softcap("e5e22",0.95,2).softcap("e1e24",0.91,2)
-            if (player.qu.rip.active || tmp.c16active || player.dark.run.active) x = x.softcap('ee33',0.9,2)
+            if (player.qu.rip.active || tmp.c16active || inDarkRun()) x = x.softcap('ee33',0.9,2)
             x = x.softcap('ee70',0.91,2)//.min('ee70')
         }
 
-        if (tmp.c16active) x = overflow(x,10,0.5)
+        if (tmp.c16active) x = overflow(x,10,0.5).min('ee70')
 
         return x
     },
@@ -96,6 +98,7 @@ const STARS = {
             x = hasElement(213) ? x.pow(tmp.bosons.upgs.photon[3].effect) : x.mul(tmp.bosons.upgs.photon[3].effect)
             if (hasPrestige(1,1)) x = x.pow(2)
 
+            x = expMult(x,GPEffect(0))
             if (QCs.active()) x = expMult(x,tmp.qu.qc_eff[0][0])
             return x
         },
@@ -128,6 +131,8 @@ function updateStarsTemp() {
     if (hasUpgrade('br',5)) tmp.stars.generator_boost_base = tmp.stars.generator_boost_base.mul(upgEffect(4,5))
     tmp.stars.generator_boost_base = tmp.stars.generator_boost_base.softcap(1e13,0.5,0)//.softcap(3e15,0.1,0)
 
+    if (CHALS.inChal(17)) tmp.stars.generator_boost_base = E(1)
+
     tmp.stars.generator_boost_eff = tmp.stars.generator_boost_base.pow(player.stars.boost.mul(tmp.chal?tmp.chal.eff[11]:1)).softcap('e3e18',0.95,2)
     for (let x = 0; x < 5; x++) tmp.stars.generators_gain[x] = STARS.generators.gain(x)
     tmp.stars.softPower = STARS.softPower()
@@ -152,7 +157,7 @@ function setupStarsHTML() {
 }
 
 function updateStarsScreenHTML() {
-    let show = player.supernova.times.lt(1e5)
+    let show = !tmp.SN_passive && player.supernova.times.lt(1e5)
 
     tmp.el.star.setDisplay(show)
     if ((!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5 && show) {
@@ -179,8 +184,8 @@ function updateStarsScreenHTML() {
 function updateStarsHTML() {
     tmp.el.starSoft1.setDisplay(tmp.stars.gain.gte(tmp.stars.softGain))
 	tmp.el.starSoftStart1.setTxt(format(tmp.stars.softGain))
-    tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+" / "+format(tmp.supernova.maxlimit,2)+" "+formatGain(player.stars.points,tmp.stars.gain.mul(tmp.preQUGlobalSpeed)))
-    tmp.el.stars_Eff.setTxt((hasElement(162)?"^":"×")+format(tmp.stars.effect))
+    tmp.el.stars_Amt.setTxt(format(player.stars.points,2)+(tmp.SN_passive?"":" / "+format(tmp.supernova.maxlimit,2))+" "+formatGain(player.stars.points,tmp.stars.gain.mul(tmp.preQUGlobalSpeed)))
+    tmp.el.stars_Eff.setHTML((hasElement(162)?"^":"×")+`<h4>${format(tmp.stars.effect)}</h4>`+(tmp.SN_passive?`, +<h4>${tmp.supernova.passive.format(0)}</h4>/s to supernova gain`:''))
     tmp.el.stars_Eff.setClasses({corrupted_text2: tmp.c16active})
 
     tmp.el.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)

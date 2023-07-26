@@ -2,11 +2,18 @@ const DARK_RUN = {
     mass_glyph_name: ['Cyrillic Glyph', 'Deutsch Glyph', 'Swedish Glyph', 'Chinese Glyph', 'Spanish Glyph', 'Slovak Glyph'],
 
     mass_glyph_eff(i) {
-        let x, g = (tmp.c16active ? i == 5 ? 10 : 100 : player.dark.run.glyphs[i]) / tmp.dark.glyph_weak
+        let x, g = player.dark.run.glyphs[i]
 
-        if (i < 4) x = 1/(g**0.5/100+1)
-        else if (i == 4) x = [1/(g**0.5/100+1),1.1**(g**0.75)]
-        else x = 1.1**(g**0.75)
+        if (tmp.c16active) g = E(i == 5 ? 10 : 100)
+
+        g = g.div(tmp.dark.glyph_weak)
+
+        if (CHALS.inChal(17)) g = E(250)
+        else if (CHALS.inChal(18)) g = E(500)
+
+        if (i < 4) x = g.root(2).div(100).add(1).pow(-1) // 1/(g**0.5/100+1)
+        else if (i == 4) x = [g.root(2).div(100).add(1).pow(-1),Decimal.pow(1.1,g.pow(0.75))] // [1/(g**0.5/100+1),1.1**(g**0.75)]
+        else x = Decimal.pow(1.1,g.pow(0.75)) // 1.1**(g**0.75)
 
         return x
     },
@@ -17,16 +24,16 @@ const DARK_RUN = {
         x => `Reduce the exponent of atom, atomic power and quark multiplier by <b>^${format(x)}</b> in dark run.<br class='line'>Earn more glyphs based on quarks.`,
         x => `Reduce the exponent of relativistic particle’s multiplier, the exponent of dilated mass formula by <b>^${format(x)}</b> in dark run.<br class='line'>Earn more glyphs based on dilated mass.`,
         x => `Reduce the exponent of supernova resources’ multiplier by <b>^${format(x[0])}</b>, increase the supernova’s requirement by <b>x${format(x[1])}</b> in dark run.<br class='line'>Earn more glyphs based on collapsed stars.`,
-        x => `Reduce the prestige base’s exponent <b>/${format(x)}</b>, increase the every rank’s requirement by <b>x${format(x)}</b> in dark run.<br class='line'>Earn more glyphs based on prestige base.`,
+        x => `Reduce the prestige base’s exponent by <b>/${format(x)}</b>, increase every rank’s requirement by <b>x${format(x)}</b> in dark run.<br class='line'>Earn more glyphs based on prestige base.`,
     ],
 
     mass_glyph_gain: [
-        ()=>player.mass.gte('ee39')?player.mass.log10().div(1e39).log(1.1).add(1).softcap(50,0.5,0).mul(glyphUpgEff(7)).mul(tmp.dark.glyph_mult).floor().toNumber():0,
-        ()=>player.bh.mass.gte('e1.5e34')?player.bh.mass.log10().div(1.5e34).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor().toNumber():0,
-        ()=>player.atom.quarks.gte('e3e32')?player.atom.quarks.log10().div(3e32).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor().toNumber():0,
-        ()=>player.md.mass.gte('e1e21')?player.md.mass.log10().div(1e21).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor().toNumber():0,
-        ()=>player.stars.points.gte('e1.5e24')?player.stars.points.log10().div(1.5e24).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor().toNumber():0,
-        ()=>tmp.prestiges.base.gte(1e13)?tmp.prestiges.base.div(1e13).log(1.1).add(1).softcap(10,0.5,0).mul(tmp.dark.glyph_mult).floor().toNumber():0,
+        ()=>player.mass.gte('ee39')?player.mass.log10().div(1e39).log(1.1).add(1).softcap(50,0.5,0).mul(glyphUpgEff(7)).mul(tmp.dark.glyph_mult).floor():E(0),
+        ()=>player.bh.mass.gte('e1.5e34')?player.bh.mass.log10().div(1.5e34).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor():E(0),
+        ()=>player.atom.quarks.gte('e3e32')?player.atom.quarks.log10().div(3e32).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor():E(0),
+        ()=>player.md.mass.gte('e1e21')?player.md.mass.log10().div(1e21).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor():E(0),
+        ()=>player.stars.points.gte('e1.5e24')?player.stars.points.log10().div(1.5e24).log(1.1).add(1).softcap(50,0.5,0).mul(tmp.dark.glyph_mult).floor():E(0),
+        ()=>tmp.prestiges.base.gte(1e13)?tmp.prestiges.base.div(1e13).log(1.1).add(1).softcap(10,0.5,0).mul(tmp.dark.glyph_mult).floor():E(0),
     ],
 
     upg_unl_length() {
@@ -78,6 +85,7 @@ const DARK_RUN = {
             eff(i) { return 1.5**i },
             effDesc: x=>"^"+format(x,2),
         },{
+            max: 100,
             desc: `Triple dark ray gain for each level.`,
             cost(i) {
                 i *= Math.max(1,i-4)**0.5
@@ -122,7 +130,7 @@ const DARK_RUN = {
             effDesc: x=>"+"+format(x,1),
         },{
             max: 1,
-            desc: `Cosmic ray effect is now exponent at super reduced rate.`,
+            desc: `Cosmic ray effect is now an exponent at a super reduced rate.`,
             cost(i) { return {0: 487, 4: 271, 5: 121} },
         },{
             max: 1,
@@ -148,11 +156,15 @@ const GLYPH_UPG_LEN = DARK_RUN.upg.length
 function mgEff(i,def=1) { return tmp.dark.mass_glyph_eff[i]||def }
 
 function glyphButton(i) {
-    if (player.dark.run.gmode == 2) player.dark.run.glyphs[i] = 0
-    else if (player.dark.run.active && tmp.dark.mass_glyph_gain[i] > 0) {
-        player.dark.run.glyphs[i] += tmp.dark.mass_glyph_gain[i]
+    if (player.dark.run.gmode == 2) player.dark.run.glyphs[i] = E(0)
+    else if (player.dark.run.active && tmp.dark.mass_glyph_gain[i].gt(0)) {
+        player.dark.run.glyphs[i] = player.dark.run.glyphs[i].add(tmp.dark.mass_glyph_gain[i])
         darkRun()
     }
+}
+
+function inDarkRun() {
+    return player.dark.run.active || CHALS.inChal(17) || CHALS.inChal(18)
 }
 
 function darkRun() {
@@ -162,7 +174,7 @@ function darkRun() {
 }
 
 function isAffordGlyphCost(cost) {
-    for (let c in cost) if (Math.max(player.dark.run.glyphs[c],tmp.dark.mg_passive[c]) < cost[c]) return false
+    for (let c in cost) if (Decimal.max(player.dark.run.glyphs[c],tmp.dark.mg_passive[c]).lt(cost[c])) return false
 
     return true
 }
@@ -181,7 +193,7 @@ function buyGlyphUpgrade(i) {
     if (isAffordGlyphCost(cost) && ua < max) {
         upgs[i] = upgs[i] ? upgs[i] + 1 : 1
 
-        for (let c in cost) if (tmp.dark.mg_passive[c]<=0) player.dark.run.glyphs[c] -= cost[c]
+        for (let c in cost) if (tmp.dark.mg_passive[c]<=0) player.dark.run.glyphs[c] = player.dark.run.glyphs[c].sub(cost[c])
 
         if (i==12) updateAtomTemp()
         updateDarkRunTemp()
@@ -198,7 +210,7 @@ function updateDarkRunHTML() {
     tmp.el.mg_max_gain.setTxt(format(player.dark.run.gamount,0))
     for (let x = 0; x < MASS_GLYPHS_LEN; x++) {
         tmp.el["mass_glyph"+x].setHTML(
-            c16 ? x == 5 ? 10 : 100 : player.dark.run.glyphs[x]
+            format(c16 ? x == 5 ? 10 : 100 : player.dark.run.glyphs[x],0)
             + (dra ? " (+" + format(tmp.dark.mass_glyph_gain[x],0) + ")" : dtmp.mg_passive[x]>0 ? " ["+format(dtmp.mg_passive[x],0)+"]" : ""))
         tmp.el["mass_glyph_tooltip"+x].setTooltip("<h3>"+DARK_RUN.mass_glyph_name[x]+"</h3><br class='line'>"+DARK_RUN.mass_glyph_effDesc[x](tmp.dark.mass_glyph_eff[x]))
     }
@@ -246,7 +258,7 @@ function updateDarkRunHTML() {
 
     tmp.el.FSS_eff2.setHTML(
         player.dark.matters.final.gt(0)
-        ? `Thanks to FSS, they boost glyphic mass gain by x${format(tmp.matters.FSS_eff[1],2)}`
+        ? `Thanks to FSS, your glyphic mass gain is boosted by x${format(tmp.matters.FSS_eff[1],2)}`
         : ''
     )
 }
@@ -257,11 +269,14 @@ function updateDarkRunTemp() {
 
     dtmp.glyph_upg_unls = DARK_RUN.upg_unl_length()
 
-    dtmp.glyph_mult = dtmp.rayEff.glyph||1
-    if (hasPrestige(2,5)) dtmp.glyph_mult *= prestigeEff(2,5,1)
-    dtmp.glyph_mult *= tmp.matters.FSS_eff[1]
+    dtmp.glyph_mult = E(dtmp.rayEff.glyph||1)
+    if (hasPrestige(2,5)) dtmp.glyph_mult = dtmp.glyph_mult.mul(prestigeEff(2,5,1))
+    dtmp.glyph_mult = dtmp.glyph_mult.mul(tmp.matters.FSS_eff[1])
     
     let w = 1
+
+    if (tmp.inf_unl) w /= theoremEff('time',3)
+
     dtmp.glyph_weak = w
 
     let dp = 0
@@ -270,8 +285,8 @@ function updateDarkRunTemp() {
     for (let x = 0; x < MASS_GLYPHS_LEN; x++) {
         dtmp.mass_glyph_eff[x] = DARK_RUN.mass_glyph_eff(x)
         let gain = DARK_RUN.mass_glyph_gain[x]()
-        let mg = Math.max(0,(dra ? gain : 0)-player.dark.run.glyphs[x])
-        if (player.dark.run.gmode == 1) mg = Math.min(player.dark.run.gamount,mg)
+        let mg = Decimal.max(0,(dra ? gain : E(0)).sub(player.dark.run.glyphs[x]))
+        if (player.dark.run.gmode == 1) mg = Decimal.min(player.dark.run.gamount,mg)
         dtmp.mass_glyph_gain[x] = mg
 
         dtmp.mg_passive[x] = x < dp ? gain : 0

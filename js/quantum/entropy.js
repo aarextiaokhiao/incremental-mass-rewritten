@@ -23,7 +23,9 @@ const ENTROPY = {
 
         x = x.pow(exoticAEff(0,2))
 
-        x = overflow(x,tmp.en.cap.max(1),0.25)
+        if (tmp.inf_unl) x = x.pow(theoremEff('proto',4))
+
+        if (hasElement(185)) x = overflow(x,tmp.en.cap.max(10),0.25)
 
         return x
     },
@@ -31,6 +33,7 @@ const ENTROPY = {
         let x = tmp.en.eff.hr
         if (hasElement(177)) x = x.mul(elemEffect(177))
         if (hasElement(179)) x = x.mul(elemEffect(179))
+        if (tmp.inf_unl) x = x.pow(theoremEff('proto',4))
         return x
     },
     evaPow(i) {
@@ -88,7 +91,7 @@ const ENTROPY = {
                 let b = 3
                 if (hasElement(97)) b++
                 let x = Decimal.pow(b,i)
-                return x
+                return x.overflow('ee5',0.5)
             },
             desc(x) { return `Make evaporated resources gain <b>${x.format(1)}x</b> faster.` },
         },{
@@ -176,7 +179,7 @@ const ENTROPY = {
         let r = player.qu.en.rewards[i]
 
         if (rc.scale) {
-            let p = rc.scale.p
+            let p = rc.scale.p * (tmp.en.s_p||1)
             if ((i == 2 || i == 6) && hasElement(106)) p = p**0.85
             if ((i == 2 || i == 6) && hasElement(215)) p = p**0.85
             if ((i == 2) && hasElement(179)) p **= 0.75
@@ -193,7 +196,7 @@ const ENTROPY = {
         if (en.gte(rc.start)) {
             x = en.div(rc.start).max(1).log(rc.inc)
             if (rc.scale) {
-                let p = rc.scale.p
+                let p = rc.scale.p * (tmp.en.s_p||1)
                 if ((i == 2 || i == 6) && hasElement(106)) p = p**0.85
                 if ((i == 2 || i == 6) && hasElement(215)) p = p**0.85
                 if ((i == 2) && hasElement(179)) p **= 0.75
@@ -204,10 +207,10 @@ const ENTROPY = {
         return x
     },
     getRewardEffect(i) {
-        if ((player.qu.rip.active || tmp.c16active || player.dark.run.active) && !tmp.en.reward_br.includes(i)) return E(0)
+        if ((player.qu.rip.active || tmp.c16active || inDarkRun()) && !tmp.en.reward_br.includes(i)) return E(0)
         let x = player.qu.en.rewards[i]
 
-        if (hasElement(91) && (player.qu.rip.active || tmp.c16active || player.dark.run.active) && (i==1||i==4)) x = x.mul(0.1)
+        if (hasElement(91) && (player.qu.rip.active || tmp.c16active || inDarkRun()) && (i==1||i==4)) x = x.mul(0.1)
 
         return x
     },
@@ -215,23 +218,28 @@ const ENTROPY = {
 
 function getEnRewardEff(x,def=1) { return tmp.en.rewards_eff[x] ?? E(def) }
 
-function calcEntropy(dt, dt_offline) {
+function calcEntropy(dt) {
+    let inf_gs = tmp.preInfGlobalSpeed.mul(dt)
+
     if(player.md.break.upgs[10].gte(1) && player.qu.en.unl){
 		let s1 = Decimal.pow(4,player.supernova.radiation.hz.add(1).log10().add(1).log10().add(1).log10().add(1)).mul(2.25);
 		if (hasTree("en1")) s1 = s1.add(s1.pow(2)).add(s1.pow(3).div(3)); else s1 = s1.add(s1.pow(2).div(2));
 		s1 = s1.mul(getEnRewardEff(2));
+        if (isNaN(s1.mag)) s1=E(0)
 		if(player.qu.en.eth[2].lt(s1))player.qu.en.eth[2] = s1;
         
 		s1 = Decimal.pow(4,player.bh.mass.add(1).log10().add(1).log10().add(1).log10().add(1)).mul(2.25);
 		if (hasTree("en1")) s1 = s1.add(s1.pow(2)).add(s1.pow(3).div(3)); else s1 = s1.add(s1.pow(2).div(2));
 		s1 = s1.mul(getEnRewardEff(2));
         s1 = s1.mul(tmp.dark.abEff.hr||1)
+        if (isNaN(s1.mag)) s1=E(0)
 		if(player.qu.en.hr[2].lt(s1))player.qu.en.hr[2] = s1;
 	}
     if (player.qu.en.eth[0]) {
         player.qu.en.eth[3] += dt
         player.qu.en.eth[1] = player.qu.en.eth[1].add(tmp.en.gain.eth.mul(dt))
         let s = player.supernova.radiation.hz.div(player.supernova.radiation.hz.max(1).pow(dt).pow(player.qu.en.eth[3]**(2/3))).sub(1)
+        if (isNaN(s.mag)) s=E(1)
         if (s.lt(1)) ENTROPY.switch(0)
         else player.supernova.radiation.hz = s
     }
@@ -239,11 +247,12 @@ function calcEntropy(dt, dt_offline) {
         player.qu.en.hr[3] += dt
         player.qu.en.hr[1] = player.qu.en.hr[1].add(tmp.en.gain.hr.mul(dt))
         let s = player.bh.mass.div(player.bh.mass.max(1).pow(dt).pow(player.qu.en.hr[3]**(2/3))).sub(1)
+        if (isNaN(s.mag)) s=E(1)
         if (s.lt(1)) ENTROPY.switch(1)
         else player.bh.mass = s
     }
 
-    let a = player.qu.en.amt.add(tmp.en.gain.amt.mul(dt))
+    let a = player.qu.en.amt.add(tmp.en.gain.amt.mul(inf_gs))
     if (!hasElement(185)) a = a.min(tmp.en.cap)
     player.qu.en.amt = a
 
@@ -257,6 +266,9 @@ function updateEntropyTemp() {
     if (hasElement(109)) rbr.push(0)
     if (hasElement(130)) rbr.push(5,7)
     tmp.en.reward_br = rbr
+
+    tmp.en.s_p = 1
+    if (tmp.inf_unl) tmp.en.s_p *= theoremEff('proto',2)
 
     for (let x = 0; x < ENTROPY.rewards.length; x++) {
         let rc = ENTROPY.rewards[x]
@@ -273,6 +285,8 @@ function updateEntropyTemp() {
 }
 
 function updateEntropyHTML() {
+    let inf_gs = tmp.preInfGlobalSpeed
+
     tmp.el.enEva1.setTxt(player.supernova.radiation.hz.format())
     tmp.el.enEva2.setTxt(formatMass(player.bh.mass))
 
@@ -280,7 +294,7 @@ function updateEntropyHTML() {
     tmp.el.enAmt2.setTxt(player.qu.en.amt.format(1) + " / " + tmp.en.cap.format(1))
     tmp.el.enAmt3.setTxt(player.qu.en.hr[2].format())
 
-    tmp.el.enGain.setTxt(player.qu.en.amt.formatGain(tmp.en.gain.amt))
+    tmp.el.enGain.setTxt(player.qu.en.amt.formatGain(tmp.en.gain.amt.mul(inf_gs)))
 
     tmp.el.enEff1.setTxt(tmp.en.eff.eth.format(1))
     tmp.el.enEff2.setTxt(tmp.en.eff.hr.format(1))

@@ -9,7 +9,7 @@ const RADIATION = {
         
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
         if (hasTree('ct8')) x = x.mul(treeEff('ct8'))
 
@@ -32,7 +32,7 @@ const RADIATION = {
         x = x.mul(tmp.radiation.bs.eff[3*i])
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
         if (hasTree('ct8')) x = x.mul(treeEff('ct8'))
 
@@ -55,8 +55,13 @@ const RADIATION = {
 
         return [cost,bulk]
     },
+    getA23Bonus(i) {
+        let x = expMult(tmp.radiation.bs.bonus_lvl[i].add(1),0.75)
+        return x
+    },
     getLevelEffect(i) {
         let b = tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i])
+        if (hasAscension(0,23)) b = b.mul(this.getA23Bonus(i))
         if (FERMIONS.onActive("15") || Math.floor(i/3)>0&&player.supernova.radiation.hz.lt(RADIATION.unls[Math.floor(i/3)])) b = E(0)
         //b = b.mul(tmp.chal?tmp.chal.eff[12]:1)
         let x = this.boosts[i].eff(b)
@@ -213,7 +218,7 @@ const RADIATION = {
             title: `U-Lepton Boost`,
             eff(b) {
                 let x = b.add(1).root(4).softcap(5,0.5,0)
-                return x
+                return x.overflow(1e24,0.5,0)
             },
             desc(x) { return `U-Leptons are ${format(x)}x stronger` },
         },{
@@ -235,7 +240,7 @@ const RADIATION = {
             title: `U-Quark Boost`,
             eff(b) {
                 let x = b.add(1).root(5).softcap(3,0.5,0)
-                return x
+                return x.overflow(1e24,0.5,0)
             },
             desc(x) { return `U-Quarks are ${format(x)}x stronger` },
         },{
@@ -294,7 +299,7 @@ function setupRadiationHTML() {
         table += `
         <div id="${id}_div" class="table_center radiation">
             <div class="sub_rad" style="width: 450px">
-                Your distance of ${name}'s wave is <span id="${id}_distance">0</span> meter.<br>Which multiples ${x==0?"Frequency":"distance of "+RADIATION.names[x-1]} gain by <span id="${id}_disEff">1</span>x
+                Your distance of ${name}'s wave is <span id="${id}_distance">0</span> meters.<br>Which multiples ${x==0?"Frequency":"distance of "+RADIATION.names[x-1]} gain by <span id="${id}_disEff">1</span>x
             </div><div class="table_center sub_rad" style="align-items: center">
                 <button id="${b1}_btn" class="btn rad" onclick="RADIATION.buyBoost(${2*x})">
                     Aplitude: <span id="${b1}_lvl1">0</span><br>
@@ -331,6 +336,8 @@ function updateRadiationHTML() {
     tmp.el.next_radiation.setTxt(format(RADIATION.unls[rad_id]||1/0))
     tmp.el.unl_radiation.setTxt(RADIATION.names[rad_id])
 
+    const A23 = hasAscension(0,23)
+
     for (let x = 0; x < RAD_LEN; x++) {
         let unl = x==0||player.supernova.radiation.hz.gte(RADIATION.unls[x])
         let id = `rad_${x}`
@@ -351,7 +358,7 @@ function updateRadiationHTML() {
             for (let y = 0; y < 3; y++) {
                 let lvl = 3*x+y
                 let id2 = `rad_level_${lvl}`
-                tmp.el[id2].setTxt(format(tmp.radiation.bs.lvl[lvl],0)+(tmp.radiation.bs.bonus_lvl[lvl].gt(0)?" + "+format(tmp.radiation.bs.bonus_lvl[lvl]):""))
+                tmp.el[id2].setTxt(format(tmp.radiation.bs.lvl[lvl],0)+(tmp.radiation.bs.bonus_lvl[lvl].gt(0)?" + "+format(tmp.radiation.bs.bonus_lvl[lvl]):"")+(A23?", ×"+RADIATION.getA23Bonus(lvl).format():""))
                 tmp.el[id2+"_desc"].setTxt(RADIATION.boosts[lvl].desc(tmp.radiation.bs.eff[lvl]))
             }
         }

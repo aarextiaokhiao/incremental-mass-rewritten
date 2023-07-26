@@ -1,6 +1,7 @@
 function E(x){return new Decimal(x)};
 
 const EINF = Decimal.dInf
+const FPS = 20
 
 function uni(x) { return E(1.5e56).mul(x) }
 function mlt(x) { return uni("ee9").pow(x) }
@@ -28,20 +29,25 @@ Decimal.prototype.scale = function (s, p, mode, rev=false) {
     p = E(p)
     var x = this.clone()
     if (x.gte(s)) {
-        if ([0, "pow"].includes(mode)) x = rev ? x.mul(s.pow(p.sub(1))).root(p) : x.pow(p).div(s.pow(p.sub(1)))
+        if ([0, "pow"].includes(mode)) x = rev ? x.div(s).root(p).mul(s) : x.div(s).pow(p).mul(s)
         if ([1, "exp"].includes(mode)) x = rev ? x.div(s).max(1).log(p).add(s) : Decimal.pow(p,x.sub(s)).mul(s)
+        if ([2, "dil"].includes(mode)) {
+            let s10 = s.log10()
+            x = rev ? Decimal.pow(10,x.log10().div(s10).root(p).mul(s10)) : Decimal.pow(10,x.log10().div(s10).pow(p).mul(s10))
+        }
+        if ([3, "alt_exp"].includes(mode)) x = rev ? x.div(s).max(1).log(p).add(1).mul(s) : Decimal.pow(p,x.div(s).sub(1)).mul(s)
     }
     return x
 }
 
-Decimal.prototype.scaleName = function (type, id, rev=false) {
+Decimal.prototype.scaleName = function (type, id, rev=false, type_index) {
     var x = this.clone()
     if (SCALE_START[type][id] && SCALE_POWER[type][id]) {
         let s = tmp.scaling_start[type][id]
         let p = tmp.scaling_power[type][id]
         let e = Decimal.pow(SCALE_POWER[type][id],p)
         
-        x = x.scale(s,e,type=="meta"?1:0,rev)
+        x = x.scale(s,e,type_index%4==3?type_index>=7?3:1:type_index>=6?2:0,rev)
     }
     return x
 }
@@ -58,7 +64,7 @@ Decimal.prototype.scaleEvery = function (id, rev=false, fp=SCALE_FP[id]?SCALE_FP
 
         // if (tmp.no_scalings[sc].includes(id)) continue
 
-        x = tmp.no_scalings[sc].includes(id) ? rev?x.mul(f):x.div(f) : rev?x.mul(f).scaleName(sc,id,rev):x.scaleName(sc,id,rev).div(f)
+        x = tmp.no_scalings[sc].includes(id) ? rev?x.mul(f):x.div(f) : rev?x.mul(f).scaleName(sc,id,rev,s):x.scaleName(sc,id,rev,s).div(f)
     }
     return x
 }
@@ -71,15 +77,18 @@ function softcapHTML(x, start, invisible=false) { return !invisible&&E(x).gte(st
 
 Decimal.prototype.softcapHTML = function (start, invisible) { return softcapHTML(this.clone(), start, invisible) }
 
-function calcOverflow(x,y,s,inv=false) { return x.gte(s) ? x.max(1).log10().div(y.max(1).log10()).pow(inv?-1:1) : E(1) }
+function calcOverflow(x,y,s,height=1) { return x.gte(s) ? x.max(1).iteratedlog(10,height).div(y.max(1).iteratedlog(10,height)) : E(1) }
 
 String.prototype.corrupt = function (active=true) { return active ? this.strike() + ` <span class='corrupted_text'>[Corrupted]</span>` : this }
 
-function calc(dt, dt_offline) {
+function calc(dt) {
     let du_gs = tmp.preQUGlobalSpeed.mul(dt)
+    let inf_gs = tmp.preInfGlobalSpeed.mul(dt)
 
-    if (tmp.pass<=0) {
+    if (tmp.pass<=0 && tmp.inf_time == 0) {
         player.mass = player.mass.add(tmp.massGain.mul(du_gs))
+        if (!tmp.brokenInf) player.mass = player.mass.min(tmp.inf_limit)
+        
         if (player.mainUpg.rp.includes(3)) for (let x = 1; x <= UPGS.mass.cols; x++) if (player.autoMassUpg[x] && (player.ranks.rank.gte(x) || player.mainUpg.atom.includes(1))) UPGS.mass.buyMax(x)
         if (FORMS.tickspeed.autoUnl() && player.autoTickspeed) FORMS.tickspeed.buyMax()
         if (FORMS.accel.autoUnl() && player.autoAccel) FORMS.accel.buyMax()
@@ -89,10 +98,11 @@ function calc(dt, dt_offline) {
         if (player.mass.gte(1.5e136)) player.chal.unl = true
         for (let x = 0; x < RANKS.names.length; x++) {
             let rn = RANKS.names[x]
-            if (RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.bulk(rn)
+            if (tmp.brUnl && x < 4 || RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.bulk(rn)
         }
-        if (player.auto_ranks.beyond) BEYOND_RANKS.reset(true)
+        if (player.auto_ranks.beyond && (hasBeyondRank(2,1)||hasInfUpgrade(10))) BEYOND_RANKS.reset(true)
         for (let x = 0; x < PRES_LEN; x++) if (PRESTIGES.autoUnl[x]() && player.auto_pres[x]) PRESTIGES.reset(x,true)
+        for (let x = 0; x < ASCENSIONS.names.length; x++) if (ASCENSIONS.autoUnl[x]() && player.auto_asc[x]) ASCENSIONS.reset(x,true)
         for (let x = 1; x <= UPGS.main.cols; x++) {
             let id = UPGS.main.ids[x]
             let upg = UPGS.main[x]
@@ -120,13 +130,18 @@ function calc(dt, dt_offline) {
                 for (let y = 0; y < BOSONS.upgs[id].length; y++) BOSONS.upgs.buy(id,y)
             }
         }
+
+        for (let i = 0; i < GAL_PRESTIGE.res_length; i++) player.gp_resources[i] = player.gp_resources[i].add(tmp.gp.res_gain[i].mul(dt))
+
         RADIATION.autoBuyBoosts()
         calcStars(du_gs)
-        calcSupernova(dt, dt_offline)
-        calcQuantum(dt, dt_offline)
-        calcDark(dt, dt_offline)
+        calcSupernova(dt)
+        calcQuantum(dt)
+        calcDark(inf_gs)
+        calcInf(dt)
 
-        if (hasTree("qu_qol4")) SUPERNOVA.reset(false,false,true)
+        if (tmp.SN_passive) player.supernova.times = player.supernova.times.add(tmp.supernova.passive.mul(dt))
+        else if (hasTree("qu_qol4")) player.supernova.times = player.supernova.times.max(tmp.supernova.bulk)
 
         if (hasTree("qol6")) CHALS.exit(true)
 
@@ -135,15 +150,15 @@ function calc(dt, dt_offline) {
             if (hasTree("qu_qol5")) for (let x = 5; x <= 8; x++) player.chal.comps[x] = player.chal.comps[x].max(tmp.chal.bulk[x].min(tmp.chal.max[x]))
             if (hasElement(122)) for (let x = 9; x <= 11; x++) player.chal.comps[x] = player.chal.comps[x].max(tmp.chal.bulk[x].min(tmp.chal.max[x]))
             if (hasElement(131)) player.chal.comps[12] = player.chal.comps[12].max(tmp.chal.bulk[12].min(tmp.chal.max[12]))
+            if (hasInfUpgrade(12)) for (let x = 13; x <= 15; x++) player.chal.comps[x] = player.chal.comps[x].max(tmp.chal.bulk[x].min(tmp.chal.max[x]))
         }
     }
 
     tmp.pass = Math.max(0,tmp.pass-1)
 
-    player.offline.time = Math.max(player.offline.time-tmp.offlineMult*dt_offline,0)
     player.time += dt
 
-    tmp.tree_time = (tmp.tree_time+dt_offline) % 3
+    tmp.tree_time = (tmp.tree_time+dt) % 3
 
     if (player.chal.comps[10].gte(1) && !player.supernova.fermions.unl) {
         player.supernova.fermions.unl = true
@@ -168,6 +183,10 @@ function getPlayerData() {
         },
         auto_pres: [],
         prestiges: [],
+        auto_asc: [],
+        ascensions: new Array(ASCENSIONS.names.length).fill(E(0)),
+        gal_prestige: E(0),
+        gp_resources: new Array(GAL_PRESTIGE.res_length).fill(E(0)),
         auto_mainUpg: {
             
         },
@@ -180,6 +199,7 @@ function getPlayerData() {
         },
         ranks_reward: 0,
         pres_reward: 0,
+        asc_reward: 0,
         scaling_ch: 0,
         rp: {
             points: E(0),
@@ -280,6 +300,9 @@ function getPlayerData() {
             notation: 'sc',
             tree_animation: 0,
             massDis: 0,
+            res_hide: {},
+
+            nav_hide: [],
         },
         confirms: {},
         offline: {
@@ -287,6 +310,7 @@ function getPlayerData() {
             current: Date.now(),
             time: 0,
         },
+        quotes: [],
         time: 0,
     }
     for (let x = 0; x < PRES_LEN; x++) s.prestiges.push(E(0))
@@ -305,6 +329,7 @@ function getPlayerData() {
     }
     s.qu = getQUSave()
     s.dark = getDarkSave()
+    s.inf = getInfSave()
     return s
 }
 
@@ -333,14 +358,47 @@ function loadPlayer(load) {
         player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
     }
     if (typeof player.atom.elemTier == "number") player.atom.elemTier = [player.atom.elemTier,1]
-    let off_time = (Date.now() - player.offline.current)/1000
-    if (off_time >= 60 && player.offline.active) player.offline.time += off_time
+    if (player.inf.pre_theorem.length == 0) generatePreTheorems()
+
+    let tt = {}
+    for (let i = 0; i < player.inf.core.length; i++) {
+        if (!player.inf.core[i]) continue
+
+        let t = player.inf.core[i].type
+        if (!tt[t]) tt[t] = 1
+        else tt[t]++
+
+        if (tt[t]>1) {
+            for (let j = 0; j < MAX_INV_LENGTH; j++) if (!player.inf.inv[j]) {
+                player.inf.inv[j] = player.inf.core[i]
+                player.inf.core[i] = undefined
+                break
+            }
+
+            tt[t]--
+        }
+    }
+
 	updateAarex()
 }
 
+function clonePlayer(obj,data) {
+    let unique = {}
+
+    for (let k in obj) {
+        if (data[k] == null || data[k] == undefined) continue
+        unique[k] = Object.getPrototypeOf(data[k]).constructor.name == "Decimal"
+        ? E(obj[k])
+        : typeof obj[k] == 'object'
+        ? clonePlayer(obj[k],data[k])
+        : obj[k]
+    }
+
+    return unique
+}
+
 function deepNaN(obj, data) {
-    for (let x = 0; x < Object.keys(obj).length; x++) {
-        let k = Object.keys(obj)[x]
+    for (let k in obj) {
         if (typeof obj[k] == 'string') {
             if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) obj[k] = data[k]
         } else {
@@ -353,8 +411,7 @@ function deepNaN(obj, data) {
 
 function deepUndefinedAndDecimal(obj, data) {
     if (obj == null) return data
-    for (let x = 0; x < Object.keys(data).length; x++) {
-        let k = Object.keys(data)[x]
+    for (let k in data) {
         if (obj[k] === null) continue
         if (obj[k] === undefined) obj[k] = data[k]
         else {
@@ -371,9 +428,28 @@ function convertStringToDecimal() {
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = E(player.md.upgs[x]||0)
     for (let x = 0; x < MASS_DILATION.break.upgs.ids.length; x++) player.md.break.upgs[x] = E(player.md.break.upgs[x]||0)
     for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) player.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = E(player.supernova.b_upgs[BOSONS.upgs.ids[x]][y]||0)
+
+    for (let x in player.inf.core) {
+        let c = player.inf.core[x]
+        if (c) {
+            c.level = E(c.level)
+            c.power = E(c.power)
+        }
+    }
+    for (let x in player.inf.inv) {
+        let c = player.inf.inv[x]
+        if (c) {
+            c.level = E(c.level)
+            c.power = E(c.power)
+        }
+    }
+    for (let x = 0; x < 4; x++) {
+        let t = player.inf.pre_theorem[x]
+        if (t) t.power_m = E(t.power_m)
+    }
 }
 
-function cannotSave() { return tmp.supernova.reached && player.supernova.times.lt(1) && !quUnl() }
+function cannotSave() { return tmp.supernova.reached && player.supernova.times.lt(1) && !quUnl() || tmp.inf_reached && !hasInfUpgrade(16) }
 
 function save(){
     let str = btoa(JSON.stringify(player))
@@ -465,15 +541,21 @@ function loadGame(start=true, gotNaN=false) {
     if (!gotNaN) tmp.prevSave = localStorage.getItem("testSave")
     wipe()
     load(tmp.prevSave)
-    setupHTML()
-    setupTooltips()
-    updateQCModPresets()
     
     if (start) {
+        setupHTML()
+        setupTooltips()
+        updateQCModPresets()
+
         setInterval(save,60000)
         for (let x = 0; x < 5; x++) updateTemp()
-        updateTooltipResHTML(true)
+
         updateHTML()
+
+        let t = (Date.now() - player.offline.current)/1000
+        if (player.offline.active && t > 60) simulateTime(t)
+
+        updateTooltipResHTML(true)
         for (let x = 0; x < 3; x++) {
             let r = document.getElementById('ratio_d'+x)
             r.value = player.atom.dRatio[x]
@@ -496,53 +578,127 @@ function loadGame(start=true, gotNaN=false) {
             tmp.cx = e.clientX
             tmp.cy = e.clientY
         }
+        document.addEventListener('keydown', e => {keyEvent(e)})
+        updateTheoremInv()
+        updateTheoremCore()
+        updateNavigation()
         updateMuonSymbol(true)
-        setInterval(loop, 50)
-        setInterval(updateStarsScreenHTML, 50)
+        setInterval(loop, 1000/FPS)
+        setInterval(updateStarsScreenHTML, 1000/FPS)
         treeCanvas()
         setInterval(checkNaN,1000)
-        setInterval(moveTreeTab,1000)
-
-        if (tmp.april) createConfirm("Do you want to disable softcap everywhere?",'april',()=>{
-            createPopup(`You trolled! I can't disable softcap! April Fools! <br><br> <img src="https://media.tenor.com/GryShD35-psAAAAM/troll-face-creepy-smile.gif">`,'troll','Dammit!')
-            document.body.style.background = `url(https://usagif.com/wp-content/uploads/2021/4fh5wi/troll-face-26.gif)`
-            tmp.aprilEnabled = true
-        },()=>{
-            createPopup(`<img style="width: 200px; height: 200px" src="https://media.tenor.com/U1dgzSAQk8wAAAAd/kys.gif">`,'kys','die')
-        })
+        setInterval(updateOneSec,1000)
+		tmp.start = true
     }
 }
 
 function checkNaN() {
-    if (findNaN(player)) {
-        addNotify("Game Data got NaNed")
+    let naned = findNaN(player)
+
+    if (naned) {
+        console.log(naned)
+
+        addNotify("Game Data got NaNed because of "+naned.bold())
+
+        return
 
         resetTemp()
+        tmp.start = true
         loadGame(false, true)
+        for (let x = 0; x < 5; x++) updateTemp()
     }
 }
 
-function findNaN(obj, str=false, data=getPlayerData()) {
+function isNaNed(val) {
+    return typeof val == "number" ? isNaN(val) : Object.getPrototypeOf(val).constructor.name == "Decimal" ? isNaN(val.mag) : false
+}
+
+function findNaN(obj, str=false, data=getPlayerData(), node='player') {
     if (str ? typeof obj == "string" : false) obj = JSON.parse(atob(obj))
-    for (let x = 0; x < Object.keys(obj).length; x++) {
-        let k = Object.keys(obj)[x]
-        if (typeof obj[k] == "number") if (isNaN(obj[k])) return true
+    for (let k in obj) {
+        if (typeof obj[k] == "number") if (isNaNed(obj[k])) return node+'.'+k
         if (str) {
-            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return node+'.'+k
         } else {
-            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return node+'.'+k
         }
-        if (typeof obj[k] == "object") return findNaN(obj[k], str, data[k])
+        if (typeof obj[k] == "object") {
+            let node2 = findNaN(obj[k], str, data[k], (node?node+'.':'')+k)
+            if (node2) return node2
+        }
     }
     return false
 }
 
-function overflow(number, start, power){
+function overflow(number, start, power, meta=1){
 	if(isNaN(number.mag))return new Decimal(0);
-	start=E(start);
+	start=Decimal.iteratedexp(10,meta-1,1.0001).max(start);
 	if(number.gte(start)){
-		number=number.log10().div(start.log10()).pow(power).mul(start.log10());
-		number=Decimal.pow(10,number);
+        let s = start.iteratedlog(10,meta)
+		number=Decimal.iteratedexp(10,meta,number.iteratedlog(10,meta).div(s).pow(power).mul(s));
 	}
 	return number;
+}
+
+Decimal.prototype.overflow = function (start, power, meta) { return overflow(this.clone(), start, power, meta) }
+
+function tetraflow(number,start,power) { // EXPERIMENTAL FUNCTION - x => 10^^((slog10(x)-slog10(s))*p+slog10(s))
+    if(isNaN(number.mag))return new Decimal(0);
+	start=E(start);
+	if(number.gte(start)){
+        let s = start.slog(10)
+        // Fun Fact: if 0 < number.slog(10) - start.slog(10) < 1, such like overflow(number,start,power,start.slog(10).sub(1).floor())
+		number=Decimal.tetrate(10,number.slog(10).sub(s).mul(power).add(s))
+	}
+	return number;
+}
+
+Decimal.prototype.addTP = function (val) {
+    var e = this.clone()
+    return Decimal.tetrate(10, e.slog(10).add(val))
+}
+
+function simulateTime(sec) {
+    let ticks = sec * FPS
+    let bonusDiff = 0
+    let player_before = clonePlayer(player,getPlayerData());
+    if (ticks > 1000) {
+        bonusDiff = (ticks - 1000) / FPS / 1000
+        ticks = 1000
+    }
+    for (let i=0; i<ticks; i++) {
+        updateTemp()
+        calc(1/FPS+bonusDiff)
+        // console.log(player.bh.mass.div(player_before.bh.mass).log10().format())
+    }
+
+    let h = `You were gone offline for <b>${formatTime(sec)}</b>.<br>`
+
+    let s = {
+        mass: player.mass.max(1).div(player_before.mass.max(1)).log10(),
+        bh_mass: player.bh.mass.max(1).div(player_before.bh.mass.max(1)).log10(),
+        quarks: player.atom.quarks.max(1).div(player_before.atom.quarks.max(1)).log10(),
+        sn: player.supernova.times.sub(player_before.supernova.times),
+    }
+
+    let s2 = {
+        mass: player.mass.max(1).log10().max(1).div(player_before.mass.max(1).log10().max(1)).log10(),
+        bh_mass: player.bh.mass.max(1).log10().max(1).div(player_before.bh.mass.max(1).log10().max(1)).log10(),
+        quarks: player.atom.quarks.max(1).log10().max(1).div(player_before.atom.quarks.max(1).log10().max(1)).log10(),
+    }
+
+    // console.log(s2)
+
+    if (s2.mass.gte(10)) h += `<br>Your mass's exponent<sup>2</sup> is increased by <b>${s2.mass.format(2)}</b>.`
+    else if (s.mass.gte(10)) h += `<br>Your mass's exponent is increased by <b>${s.mass.format(2)}</b>.`
+
+    if (s2.bh_mass.gte(10)) h += `<br>Your exponent<sup>2</sup> of mass of black hole is increased by <b>${s2.bh_mass.format(2)}</b>.`
+    else if (s.bh_mass.gte(10)) h += `<br>Your exponent of mass of black hole is increased by <b>${s.bh_mass.format(2)}</b>.`
+
+    if (s2.quarks.gte(10)) h += `<br>Your quark's exponent<sup>2</sup> is increased by <b>${s2.quarks.format(2)}</b>.`
+    else if (s.quarks.gte(10)) h += `<br>Your quark's exponent is increased by <b>${s.quarks.format(2)}</b>.`
+
+    if (s.sn.gte(1e3)) h += `<br>You were becomed <b>${s.sn.format(0)}</b> more supernovas.`
+
+    createPopup(h,'offline')
 }
