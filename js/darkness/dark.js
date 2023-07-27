@@ -51,7 +51,7 @@ const DARK = {
         qu.points = E(0)
         qu.bp = E(0)
         qu.chroma = [E(0),E(0),E(0)]
-        qu.cosmic_str = E(0)
+        BUILDINGS.reset('cosmic_string')
 
         qu.prim.theorems = E(0)
         qu.prim.particles = [E(0),E(0),E(0),E(0),E(0),E(0),E(0),E(0)]
@@ -233,25 +233,6 @@ function updateDarkHTML() {
     let c16 = tmp.c16active
 
     let inf_gs = tmp.preInfGlobalSpeed
-
-    /*
-    let og = hasElement(118)
-    let unl = og || player.dark.unl
-
-	tmp.el.dark_div.setDisplay(unl)
-	if (unl) tmp.el.darkAmt.setHTML(player.dark.rays.format(0)+"<br>"+(og?dtmp.rayEff.passive?player.dark.rays.formatGain(dtmp.gain.mul(dtmp.rayEff.passive)):"(+"+dtmp.gain.format(0)+")":"(require Og-118)"))
-
-    unl = player.dark.matters.final.gt(0)
-	tmp.el.fss_div.setDisplay(unl)
-	if (unl) tmp.el.FSS2.setHTML(format(player.dark.matters.final,0)+"<br>(+"+(tmp.matters.FSS_base.gte(tmp.matters.FSS_req)?1:0)+")")
-
-	unl = player.dark.c16.first
-	tmp.el.corrupt_div.setDisplay(unl)
-	if (unl) tmp.el.corruptShard1.setHTML(format(player.dark.c16.shard,0)+"<br>(+"+tmp.c16.shardGain.format(0)+")")
-
-    unl = player.chal.comps[16].gte(1)
-	tmp.el.idk_div.setDisplay(unl)
-    */
 
     if (tmp.tab == 7) {
         if (tmp.stab[7] == 0) {

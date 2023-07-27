@@ -40,7 +40,7 @@ const RANKS = {
     doReset: {
         rank() {
             player.mass = E(0)
-            for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x]) player.massUpg[x] = E(0)
+            for (let x = 1; x <= UPGS.mass.cols; x++) BUILDINGS.reset("mass_"+x)
         },
         tier() {
             player.ranks.rank = E(0)
@@ -134,11 +134,11 @@ const RANKS = {
     effect: {
         rank: {
             '3'() {
-                let ret = E(player.massUpg[1]||0).div(20)
+                let ret = player.build.mass_1.amt.div(20)
                 return ret
             },
             '5'() {
-                let ret = E(player.massUpg[2]||0).div(40)
+                let ret = player.build.mass_2.amt.div(40)
                 return ret
             },
             '6'() {
@@ -191,7 +191,7 @@ const RANKS = {
         },
         tetr: {
             '2'() {
-                let ret = E(player.massUpg[3]||0).div(400)
+                let ret = player.build.mass_3.amt.div(400)
                 if (ret.gte(1) && hasPrestige(0,15)) ret = ret.pow(1.5)
                 return ret
             },
@@ -508,14 +508,6 @@ const PRESTIGES = {
                 let x = tmp.preQUGlobalSpeed.max(1).log10().add(1).log10().div(10)
                 return x
             },x=>"+"+format(x)],
-            /*
-            "1": [()=>{
-                let x = E(1)
-                return x
-            },x=>{
-                return x.format()+"x"
-            }],
-            */
         },
         {
             "3": [()=>{
@@ -569,7 +561,7 @@ const PRESTIGES = {
                 return x
             },x=>"x"+format(x)],
             45: [()=>{
-                let y = player.bh.unstable//.overflow(1e24,0.5,0)
+                let y = player.bh.unstable
                 let x = hasElement(224) ? Decimal.pow(1.1,y.root(4)) : y.add(1)
                 if (tmp.c16active) x = overflow(x.log10().add(1).root(2),10,0.5)
                 return overflow(x,1e100,0.5).min('e1750')
@@ -710,6 +702,12 @@ function updateRanksTemp() {
 
     tmp.beyond_ranks.tier_power = p
 
+    let rcs = E(1e14)
+
+    if (hasUpgrade('rp',22)) rcs = rcs.mul(upgEffect(1,22))
+
+    tmp.rank_collapse.start = rcs
+
     tmp.beyond_ranks.max_tier = BEYOND_RANKS.getTier()
     tmp.beyond_ranks.latestRank = BEYOND_RANKS.getRankFromTier(tmp.beyond_ranks.max_tier)
 
@@ -820,6 +818,9 @@ const BEYOND_RANKS = {
         },
         14: {
             1: `The formula of Dec 2's effect is better. Meta-Prestige Level starts later based on beyond-ranks' maximum tier, starting at Icos.`,
+        },
+        16: {
+            1: `Ascension Base's exponent is increased by beyond-ranks' maximum tier, starting at Icos.`,
         },
     },
 
@@ -959,6 +960,16 @@ const BEYOND_RANKS = {
                     return x
                 },
                 x=>formatMult(x)+" later",
+            ],
+        },
+        16: {
+            1: [
+                ()=>{
+                    let x = tmp.beyond_ranks.max_tier.sub(13).max(0).div(50)
+
+                    return x
+                },
+                x=>"+"+format(x),
             ],
         },
     },
@@ -1167,6 +1178,11 @@ const GAL_PRESTIGE = {
                     x = player.supernova.radiation.hz.add(1).log10().add(1).log10().add(1).pow(2).pow(gp.sub(5).root(1.5))
                 }
             break;
+            case 4:
+                if (gp.gte(9)) {
+                    x = player.inf.cs_amount.add(1).log10().add(1).pow(2).pow(gp.sub(8).root(1.5))
+                }
+            break;
         }
 
         if (hasElement(263)) x = x.mul(elemEffect(263))
@@ -1189,11 +1205,14 @@ const GAL_PRESTIGE = {
             case 3:
                 x = Decimal.pow(0.9,res.add(10).log10().log10().add(1).pow(2).sub(1))
             break;
+            case 4:
+                x = Decimal.pow(0.95,res.add(1).slog(10))
+            break;
         }
 
         return x
     },
-    res_length: 4,
+    res_length: 5,
 }
 
 function GPEffect(i,def=1) { return tmp.gp.res_effect[i]||def }
@@ -1217,8 +1236,9 @@ function updateGPHTML() {
 
         tmp.el.gal_prestige.setHTML(gp.format(0))
         tmp.el.gp_btn.setHTML(`
-        Reset Supernovas (force an Infinity reset), but Galactic Prestige up. Next Galactic Prestige reveals its treasure or happens nothing.<br><br>
-        Require: <b>${tmp.gp.req.format()}</b> Supernovas
+			<h4>Do a Infinity reset to Galactic Prestige up.</h4><br>
+			Next would unlock a treasure or not.<br>
+			Req: <b>${tmp.gp.req.format()}</b> Supernovae
         `)
         tmp.el.gp_btn.setClasses({btn: true, galactic: true, locked: player.supernova.times.lt(tmp.gp.req)})
 
@@ -1235,6 +1255,9 @@ function updateGPHTML() {
 
         if (gp.gte(6)) h += `You have <h4>${res[3].format(0)}</h4> ${res[3].formatGain(res_gain[3])} Redshift (based on frequency and galactic prestige), 
         which reduces Rank requirement by <h4>^${format(res_effect[3],5)}</h4>.<br>`
+
+        if (gp.gte(9)) h += `You have <h4>${res[4].format(0)}</h4> ${res[4].formatGain(res_gain[4])} Normal Energy (based on corrupted star and galactic prestige), 
+        which weaken corrupted star reduction by <h4>${formatReduction(res_effect[4])}</h4>.<br>`
 
         tmp.el.gp_rewards.setHTML(h)
     }

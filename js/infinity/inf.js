@@ -39,13 +39,13 @@ const INF = {
         RANKS.doReset[RANKS.names[RANKS.names.length-1]]()
 
         player.rp.points = E(0)
-        player.tickspeed = E(0)
-        player.accelerator = E(0)
+        BUILDINGS.reset('tickspeed')
+        BUILDINGS.reset('accelerator')
         player.bh.mass = E(0)
 
         player.atom.atomic = E(0)
         player.bh.dm = E(0)
-        player.bh.condenser = E(0)
+        BUILDINGS.reset('bhc')
 
         tmp.supernova.time = 0
 
@@ -54,7 +54,7 @@ const INF = {
         player.atom.particles = [E(0),E(0),E(0)]
         player.atom.powers = [E(0),E(0),E(0)]
         player.atom.atomic = E(0)
-        player.atom.gamma_ray = E(0)
+        BUILDINGS.reset('cosmic_ray')
 
         player.md.active = false
         player.md.particles = E(0)
@@ -62,9 +62,9 @@ const INF = {
         for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = E(0)
 
         player.stars.unls = 0
-        player.stars.generators = [E(0),E(0),E(0),E(0),E(0)]
+        player.stars.generators = [E(0),E(0),E(0),E(0),E(0),E(0)]
         player.stars.points = E(0)
-        player.stars.boost = E(0)
+        BUILDINGS.reset('star_booster')
 
         player.supernova.chal.noTick = true
         player.supernova.chal.noBHC = true
@@ -103,7 +103,8 @@ const INF = {
         qu.points = E(0)
         qu.bp = E(0)
         qu.chroma = [E(0),E(0),E(0)]
-        qu.cosmic_str = E(0)
+        
+        BUILDINGS.reset('cosmic_string')
 
         qu.prim.theorems = E(0)
         qu.prim.particles = [E(0),E(0),E(0),E(0),E(0),E(0),E(0),E(0)]
@@ -150,7 +151,7 @@ const INF = {
 
         dark.exotic_atom = darkSave.exotic_atom
 
-        if (!hasElement(242)) player.bh.fvm = E(0)
+        if (!hasElement(242)) BUILDINGS.reset('fvm')
         player.bh.unstable = E(0)
 
         // Other
@@ -244,19 +245,6 @@ const INF = {
                 desc: "Keep glyph upgrades on infinity (likewise, start with Unhexunium-161 unlocked).",
                 cost: E(1),
             },
-            /*
-            {
-                title: "Placeholder Title",
-                desc: "Placeholder Description.",
-                cost: E(1),
-                effect() {
-                    let x = E(1)
-
-                    return x
-                },
-                effectDesc: x => "Placeholder",
-            },
-            */
         ],[
             {
                 title: "Tree Automation",
@@ -350,7 +338,7 @@ const INF = {
         gain() {
             if (!hasInfUpgrade(9)) return E(0)
 
-            let x = tmp.peEffect.eff||E(1)
+            let x = BUILDINGS.eff('pe')
 
             if (hasElement(244)) x = x.mul(elemEffect(244))
 
@@ -360,37 +348,6 @@ const INF = {
             let x = player.inf.dim_mass.add(1).log10().pow(hasElement(244)?2.2:2).div(10)
 
             return x//.softcap(10,0.5,0)
-        },
-    },
-    pe: {
-        cost(i) { return Decimal.pow(1.2,i.scaleEvery('pe')).mul(1000).floor() },
-        can() { return player.inf.points.gte(tmp.peCost) },
-        buy() {
-            if (this.can()) {
-                player.inf.points = player.inf.points.sub(tmp.peCost).max(0)
-                player.inf.pe = player.inf.pe.add(1)
-            }
-        },
-        buyMax() { 
-            if (this.can()) {
-                player.inf.points = player.inf.points.sub(this.cost(tmp.peBulk.sub(1))).max(0)
-                player.inf.pe = tmp.peBulk
-            }
-        },
-        effect() {
-            let t = player.inf.pe
-
-            let bonus = E(0)
-
-            let step = E(2).add(exoticAEff(1,4,0))
-
-            if (hasElement(225)) step = step.add(elemEffect(225,0))
-            
-            let eff = step.pow(t.add(bonus))
-
-            let eff_bottom = eff
-
-            return {step: step, eff: eff, bonus: bonus, eff_bottom: eff_bottom}
         },
     },
 }
@@ -437,7 +394,6 @@ function getInfSave() {
         pt_choosed: -1,
 
         dim_mass: E(0),
-        pe: E(0),
 
         cs_amount: E(0),
         cs_double: [E(0),E(0)],
@@ -450,11 +406,6 @@ function infUpgEffect(i,def=1) { return tmp.iu_eff[i] || def }
 
 function updateInfTemp() {
     updateCSTemp()
-
-    tmp.peCost = INF.pe.cost(player.inf.pe)
-    tmp.peBulk = E(0)
-    if (player.inf.points.gte(100)) tmp.peBulk = player.inf.points.div(1000).log(1.2).scaleEvery('pe',true).add(1).floor()
-    tmp.peEffect = INF.pe.effect()
 
     tmp.dim_mass_gain = INF.dim_mass.gain()
     tmp.dim_mass_eff = INF.dim_mass.effect()
@@ -567,13 +518,7 @@ function updateInfHTML() {
         tmp.el.dim_mass.setTxt(formatMass(player.inf.dim_mass)+" "+player.inf.dim_mass.formatGain(tmp.dim_mass_gain,true))
         tmp.el.dim_mass_eff.setHTML("+"+tmp.dim_mass_eff.format())
 
-        let pe_eff = tmp.peEffect
-		tmp.el.pe_scale.setTxt(getScalingName('pe'))
-		tmp.el.pe_lvl.setTxt(format(player.inf.pe,0)+(pe_eff.bonus.gte(1)?" + "+format(pe_eff.bonus,0):""))
-		tmp.el.pe_btn.setClasses({btn: true, locked: !INF.pe.can()})
-		tmp.el.pe_cost.setTxt(format(tmp.peCost,0))
-		tmp.el.pe_step.setHTML(formatMult(pe_eff.step))
-		tmp.el.pe_eff.setTxt(formatMult(pe_eff.eff))
+        BUILDINGS.update('pe')
     }
     if (tmp.tab == 2 && tmp.stab[2] == 2) {
 		tmp.el.ip_amt.setHTML(player.inf.points.format(0) + (hasElement(235)?" "+player.inf.points.formatGain(player.inf.best.div(1e2).mul(tmp.cs_effect.inf_speed)):""))

@@ -103,7 +103,7 @@ const ENTROPY = {
             eff(i) {
                 if (tmp.c16active) return [E(0),E(1)]
                 let x = i.div(QCs.active()?100:5).softcap(2,0.5,0)
-                let y = tmp.tickspeedEffect?tmp.tickspeedEffect.step.pow(x):E(1)
+                let y = BUILDINGS.eff('tickspeed','power').pow(x)
                 return [x,y]
             },
             desc(x) { return `Tickspeed Power gives <b>^${x[0].format(2)}</b> boost to BHC & Cosmic Ray Powers.<br>Currently: <b>${x[1].format()}x</b>`.corrupt(tmp.c16active) },
@@ -158,21 +158,6 @@ const ENTROPY = {
             },
             desc(x) { return `Radiation effects are boosted by <b>^${x.format()}</b> based on Entropy.`.corrupt(tmp.c16active) },
         },
-
-        /*
-        {
-            title: "Entropic Placeholder",
-
-            start: E(100),
-            inc: E(10),
-
-            eff(i) {
-                let x = E(1)
-                return x
-            },
-            desc(x) { return `Placeholder.` },
-        },
-        */
     ],
     nextReward(i) {
         let rc = this.rewards[i]

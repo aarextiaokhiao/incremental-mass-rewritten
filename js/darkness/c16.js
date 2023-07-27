@@ -64,7 +64,7 @@ const CHARGERS = [
 
 const UNSTABLE_BH = {
     gain() {
-        let x = tmp.unstable_bh.fvm_eff.eff||E(1)
+        let x = BUILDINGS.eff('fvm')
 
         let ea=exoticAEff(1,0)
 
@@ -97,28 +97,6 @@ const UNSTABLE_BH = {
         if (hasCharger(2)) x = x.pow(1.5)
 
         return x
-    },
-    fvm: {
-        can() { return tmp.c16active && player.bh.dm.gte(tmp.unstable_bh.fvm_cost) },
-        buy() {
-            if (this.can()) player.bh.fvm = player.bh.fvm.add(1)
-        },
-        buyMax() {
-            if (this.can()) player.bh.fvm = player.bh.fvm.max(tmp.unstable_bh.fvm_bulk)
-        },
-        effect() {
-            let lvl = player.bh.fvm
-
-            let pow = E(2)
-
-            if (hasPrestige(2,28)) pow = pow.mul(prestigeEff(2,28))
-
-            if (tmp.inf_unl) pow = pow.mul(theoremEff('bh',3))
-
-            let eff = pow.pow(lvl)
-
-            return {pow: pow, eff: eff}
-        },
     },
 }
 
@@ -175,7 +153,7 @@ function corruptedShardGain() {
     if (hasElement(232)) bh = player.dark.c16.bestBH.max('e100')
     else if (!tmp.c16active || bh.lt('e100')) return E(0)
 
-    let x = Decimal.pow(10,overflow(bh.max(1).log10(),1e9,0.5).div(100).root(hasElement(223) ? 2.9 : 3).sub(1))
+    let x = Decimal.pow(10,bh.max(1).log10().overflow(1e70,1/3).overflow(1e9,0.5).div(100).root(hasElement(223) ? 2.9 : 3).sub(1))
 
     if (hasPrestige(3,4)) x = x.mul(prestigeEff(3,4))
 

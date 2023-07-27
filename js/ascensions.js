@@ -7,6 +7,8 @@ const ASCENSIONS = {
 
         if (hasElement(44,1)) x = x.add(muElemEff(44,0))
 
+        if (hasBeyondRank(16,1)) x = x.add(beyondRankEffect(16,1,0))
+
         x = x.add(1)
 
         return x
@@ -130,7 +132,8 @@ function setupAscensionsHTML() {
 			<button id="asc_auto_${x}" class="btn" style="width: 80px;" onclick="ASCENSIONS.autoSwitch(${x})">OFF</button><br>
 			<span id="asc_scale_${x}""></span>${ASCENSIONS.fullNames[x]} <h4 id="asc_amt_${x}"></h4><br><br>
 			<button onclick="ASCENSIONS.reset(${x})" class="btn reset" id="asc_${x}">
-				${ASCENSIONS.resetName[x]} (force an Infinity reset), but ${ASCENSIONS.fullNames[x]} up.<span id="asc_desc_${x}"></span><br>
+				<b id="asc_reset_${x}" style='font-size: 16px'></b>
+				<span id="asc_desc_${x}"></span><br>
 				Req: <span id="asc_req_${x}">X</span>
 			</button>
 		</div>`
@@ -169,6 +172,7 @@ function updateAscensionsHTML() {
             tmp.el["asc_scale_"+x].setTxt(getScalingName("ascension"+x))
 			tmp.el["asc_amt_"+x].setTxt(`[${format(p,0)}]`)
             tmp.el["asc_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.ascensions.base.lt(tmp.ascensions.req[x]):player.ascensions[x-1].lt(tmp.ascensions.req[x])})
+			tmp.el["asc_reset_"+x].setTxt(!ASCENSIONS.noReset[x]() ? `${x == 0 ? "Force a Infinity" : "Reset your " + ASCENSIONS.fullNames[x-1]} to ${ASCENSIONS.fullNames[x]} up.` : ASCENSIONS.fullNames[x] + " up.")
             tmp.el["asc_desc_"+x].setTxt(desc)
             tmp.el["asc_req_"+x].setTxt(x==0?format(tmp.ascensions.req[x],0)+" of Ascension Base":ASCENSIONS.fullNames[x-1]+" "+format(tmp.ascensions.req[x],0))
             tmp.el["asc_auto_"+x].setVisible(ASCENSIONS.autoUnl[x]())

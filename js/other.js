@@ -58,7 +58,6 @@ const POPUP_GROUPS = {
         `,
     },
     fonts: {
-        // <button class="btn" style="font-family: Comic Sans MS;" onclick="player.options.font = 'Comic Sans MS'">Comic Sans MS</button>
         html: `
             <button class="btn" style="font-family: 'Andy Bold';" onclick="player.options.font = 'Andy Bold'">Andy Bold</button>
             <button class="btn" style="font-family: Arial, Helvetica, sans-ser;" onclick="player.options.font = 'Arial, Helvetica, sans-ser'">Arial</button>
@@ -69,6 +68,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: Inconsolata;" onclick="player.options.font = 'Inconsolata'">Inconsolata</button>
             <button class="btn" style="font-family: 'Lato';" onclick="player.options.font = 'Lato'">Lato</button>
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
+            <button class="btn" style="font-family: 'Lunasima';" onclick="player.options.font = 'Lunasima'">Lunasima</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="player.options.font = 'Monospace-Typewritter'">Monospace Typewritter</button>
             <button class="btn" style="font-family: 'MS Sans Serif';" onclick="player.options.font = 'MS Sans Serif'">MS Sans Serif</button>
             <button class="btn" style="font-family: 'Noto Sans JP';" onclick="player.options.font = 'Noto Sans JP'">Noto Sans JP</button>
@@ -419,6 +419,7 @@ function setupStatsHTML() {
     for (let i in RANKS.names) {
         h += `<div id="stats_${RANKS.names[i]}_btn" style="width: 145px"><button class="btn_tab" onclick="player.ranks_reward = ${i}">${RANKS.fullNames[i]}</button></div>`
     }
+    h += `<div id="stats_beyond_btn" style="width: 145px"><button class="btn_tab" onclick="player.ranks_reward = 'beyond'">Beyond</button></div>`
 
     new Element("ranks_reward_btn").setHTML(h)
 
@@ -446,12 +447,6 @@ function setupStatsHTML() {
 
     new Element("asc_reward_btn").setHTML(h)
 }
-
-/*
-ranks_reward: 0,
-pres_reward: 0,
-scaling_ch: 0,
-*/
 
 function updateStatsHTML() {
     if (tmp.stab[1] == 0) for (let i in RANKS.names) {

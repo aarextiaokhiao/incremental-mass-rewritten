@@ -344,7 +344,7 @@ const CHALS = {
             let ret = x.mul(0.075).add(1).softcap(1.3,sp,0).sub(1)
             return ret
         },
-        effDesc(x) { return "+"+format(x.mul(100))+"%"+(x.gte(0.3)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "+"+format(x.mul(100))+"%"+(x.gte(0.3)?" <span class='soft1'>(softcapped)</span>":"") },
     },
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
@@ -360,7 +360,7 @@ const CHALS = {
             let ret = hasElement(133) ? x.root(4/3).mul(0.01).add(1) : x.root(1.5).mul(0.01).add(1)
             return overflow(ret.softcap(3,0.25,0),1e12,0.5)
         },
-        effDesc(x) { return "^"+format(x)+(x.gte(3)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "^"+format(x)+(x.gte(3)?" <span class='soft1'>(softcapped)</span>":"") },
     },
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
@@ -376,7 +376,7 @@ const CHALS = {
             let ret = hasElement(133) ? x.root(4/3).mul(0.01).add(1) : x.root(1.5).mul(0.01).add(1)
             return overflow(ret.softcap(3,0.25,0),1e12,0.5)
         },
-        effDesc(x) { return "^"+format(x)+(x.gte(3)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "^"+format(x)+(x.gte(3)?" <span class='soft1'>(softcapped)</span>":"") },
     },
     5: {
         unl() { return player.atom.unl },
@@ -394,7 +394,7 @@ const CHALS = {
             if (hasAscension(0,22)) ret = ret.root(2)
             return ret
         },
-        effDesc(x) { return hasCharger(3)?formatReduction(x)+" weaker":format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.97).gte(5)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return hasCharger(3)?formatReduction(x)+" weaker":format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.97).gte(5)?" <span class='soft1'>(softcapped)</span>":"") },
     },
     6: {
         unl() { return player.chal.comps[5].gte(1) || player.supernova.times.gte(1) || quUnl() },
@@ -409,7 +409,7 @@ const CHALS = {
             let ret = x.mul(0.1).add(1).softcap(1.5,hasElement(39)?1:0.5,0).sub(1)
             return ret
         },
-        effDesc(x) { return "+"+format(x)+"x"+(x.gte(0.5)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "+"+format(x)+"x"+(x.gte(0.5)?" <span class='soft1'>(softcapped)</span>":"") },
     },
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) || quUnl() },
@@ -442,7 +442,7 @@ const CHALS = {
             let ret = hasElement(133) ? x.root(1.5).mul(0.025).add(1) : x.root(1.75).mul(0.02).add(1)
             return overflow(ret.softcap(2.3,0.25,0),1e10,0.5)
         },
-        effDesc(x) { return "^"+format(x)+(x.gte(2.3)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "^"+format(x)+(x.gte(2.3)?" <span class='soft1'>(softcapped)</span>":"") },
     },
     9: {
         unl() { return hasTree("chal4") },

@@ -116,7 +116,7 @@ body.ngm {
 	background: linear-gradient(#84e6007f, #84e600bf);
 	color: #84e600;
 }
-#ranks_amt_1 {
+#ranks_amt_1, #asc_amt_0 {
 	background: linear-gradient(transparent, #e6c9003f);
 	border-radius: 2px;
 	padding-left: 2px;
@@ -128,7 +128,7 @@ body.ngm {
 	background: linear-gradient(#e6c9007f, #e6c900bf);
 	color: #e6c900;
 }
-#ranks_amt_2 {
+#ranks_amt_2, #asc_amt_1 {
 	background: linear-gradient(transparent, #e66d003f);
 	border-radius: 2px;
 	padding-left: 2px;
@@ -380,7 +380,7 @@ body.ngm {
 #tab_frame6 {
 	color: #7f7
 }
-#stab_frame0_3 .btn {
+#pres_table .btn {
 	background: radial-gradient(ellipse at top, #0b07, #7b03);
 	color: #7f7
 }
@@ -431,6 +431,10 @@ body.ngm {
 .btn_tab.inf {
 	background: linear-gradient(45deg, #f703, #ff07) !important;
 	color: gold !important
+}
+#asc_table .btn {
+	background: linear-gradient(45deg, #f703, #ff07);
+	color: gold
 }
 .elements.bought.inf {
 	background: linear-gradient(45deg, #f703, #ff07) !important;

@@ -155,7 +155,7 @@ const BOSONS = {
                     ? Decimal.pow(1.1,player.stars.points.add(10).log10().log10().add(1).mul(x.add(10).log10()).root(2).sub(1))
                     : player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0)
                 },
-                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x"+(x.gte(1e15)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x"+(x.gte(1e15)?" <span class='soft1'>(softcapped)</span>":"") },
             },{
                 desc: "All-Star resources gain is boosted by Photon.",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
@@ -206,7 +206,7 @@ const BOSONS = {
                     ? Decimal.pow(1.1,player.atom.quarks.add(10).log10().log10().add(1).mul(x.add(10).log10()).root(2).sub(1))
                     : player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0)
                 },
-                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x"+(x.gte(1e15)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x"+(x.gte(1e15)?" <span class='soft1'>(softcapped)</span>":"") },
             },{
                 desc: "Supernova requirement is decreased based on Gluon.",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
@@ -216,7 +216,7 @@ const BOSONS = {
                     if (!hasPrestige(0,28)) y = y.softcap(5.5,0.25,0).softcap(10,0.25,0)
                     return y
                 },
-                effDesc(x) { return "/"+format(x)+(x.gte(5.5)&&!hasPrestige(0,28)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return "/"+format(x)+(x.gte(5.5)&&!hasPrestige(0,28)?" <span class='soft1'>(softcapped)</span>":"") },
             },
         ],
     },

@@ -80,42 +80,13 @@ const QUANTUM = {
         if (tmp.qu.mil_reached[5]) x = x.mul(tmp.preQUGlobalSpeed.max(1).root(2).softcap(1e50,0.95,2))
         if (hasTree('qu5')) x = x.mul(tmp.supernova.tree_eff.qu5)
         if (hasElement(138)) x = x.mul(elemEffect(138,1))
-        x = x.mul(tmp.qu.cosmic_str_eff.eff)
+        x = x.mul(BUILDINGS.eff('cosmic_string'))
         x = x.mul(tmp.dark.shadowEff.bp||1)
         return x
     },
     bpEff() {
         let x = hasElement(101) ? player.qu.bp.add(1).log10().add(1).tetrate(hasUpgrade("br",15) ? 1.35 : 1.25) : player.qu.bp.add(1).log10().add(1).pow(1.5)
         return x
-    },
-    cosmic_str: {
-        buy() {
-            if (tmp.qu.cosmic_str_can) {
-                player.qu.points = player.qu.points.sub(tmp.qu.cosmic_str_cost).max(0)
-                player.qu.cosmic_str = player.qu.cosmic_str.add(1)
-            }
-        },
-        buyMax() {
-            if (tmp.qu.cosmic_str_can) {
-                player.qu.cosmic_str = tmp.qu.cosmic_str_bulk
-                player.qu.points = player.qu.points.sub(tmp.qu.cosmic_str_cost).max(0)
-            }
-        },
-        eff() {
-            let pow = E(2)
-            if (hasTree('qu6')) pow = pow.mul(treeEff('qu6'))
-            pow = pow.mul(tmp.dark.abEff.csp||1)
-            pow = pow.pow(exoticAEff(1,3))
-
-            if (CHALS.inChal(17)) pow = E(1)
-
-            let b = E(0)
-
-            if (hasElement(19,1)) b = b.add(muElemEff(19,0))
-
-            let x = pow.pow(player.qu.cosmic_str.add(b))
-            return {pow: pow, eff: x, bonus: b}
-        },
     },
     mils: [
         [E(1), `You start with qol1-6, bosons, and fermions unlocked.`],
@@ -159,7 +130,6 @@ function getQUSave() {
         points: E(0),
         times: E(0),
         bp: E(0),
-        cosmic_str: E(0),
 
         chr_get: [],
         chroma: [E(0),E(0),E(0)],
@@ -257,16 +227,6 @@ function updateQuantumTemp() {
     tmp.qu.theories = player.qu.times.sub(player.qu.chr_get.length).max(0).min(3).toNumber()
     tmp.qu.pick_chr = tmp.qu.theories > 0
 
-    let fp = E(1)
-
-    if (tmp.inf_unl) fp = fp.mul(theoremEff('proto',0))
-
-    tmp.qu.cosmic_str_cost = E(2).pow(player.qu.cosmic_str.div(fp).scaleEvery("cosmic_str").add(1)).floor()
-    tmp.qu.cosmic_str_bulk = player.qu.points.max(1).log(2).scaleEvery("cosmic_str",true).mul(fp).add(scalingActive('cosmic_str',player.qu.cosmic_str.max(tmp.qu.cosmic_str_bulk),'super')?1:0).floor()
-
-    tmp.qu.cosmic_str_can = player.qu.points.gte(tmp.qu.cosmic_str_cost)
-    tmp.qu.cosmic_str_eff = QUANTUM.cosmic_str.eff()
-
     tmp.qu.bpGain = QUANTUM.bpGain()
     tmp.qu.bpEff = QUANTUM.bpEff()
 
@@ -284,15 +244,7 @@ function updateQuantumHTML() {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain.mul(inf_gs)))
         tmp.el.bpEff.setTxt(format(tmp.qu.bpEff))
 
-        tmp.el.cosmic_str_lvl.setTxt(format(player.qu.cosmic_str,0)+(tmp.qu.cosmic_str_eff.bonus.gte(1)?" + "+format(tmp.qu.cosmic_str_eff.bonus,0):""))
-        tmp.el.cosmic_str_btn.setClasses({btn: true, locked: !tmp.qu.cosmic_str_can})
-        tmp.el.cosmic_str_scale.setTxt(getScalingName('cosmic_str'))
-        tmp.el.cosmic_str_cost.setTxt(format(tmp.qu.cosmic_str_cost,0))
-        tmp.el.cosmic_str_pow.setTxt(format(tmp.qu.cosmic_str_eff.pow))
-        tmp.el.cosmic_str_eff.setHTML(format(tmp.qu.cosmic_str_eff.eff))
-
-        tmp.el.cosmic_str_auto.setDisplay(hasElement(147))
-        tmp.el.cosmic_str_auto.setHTML(player.qu.auto_cr?"ON":"OFF")
+        BUILDINGS.update('cosmic_string')
     }
 
     if (tmp.tab == 6) {

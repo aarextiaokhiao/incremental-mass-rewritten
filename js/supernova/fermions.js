@@ -106,7 +106,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `x${format(x)} to Relativistic Particles gain`+(x.gte('ee3')?" <span class='soft'>(softcapped)</span>":"")
+                    return `x${format(x)} to Relativistic Particles gain`+(x.gte('ee3')?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 inc: "Relativistic Particle",
                 cons: "The exponent of the RP formula is divided by 10",
@@ -126,7 +126,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+(x.gte(5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+(x.gte(5)?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 inc: "Mass",
                 cons: "You are trapped in Mass Dilation, and it is twice as strong",
@@ -155,7 +155,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `4th Photon & Gluon upgrades are ${format(x)}x stronger`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `4th Photon & Gluon upgrades are ${format(x)}x stronger`+(x.gte(1.5)?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 inc: "Rage Power",
                 cons: "You are trapped in Mass Dilation and Challenges 3-5",
@@ -181,7 +181,7 @@ const FERMIONS = {
                     return x.softcap(1.15,0.5,0).softcap(1.8,1/3,0).min(2)//.softcap(2,0.1,0)
                 },
                 desc(x) {
-                    return `Radiation Boosters are ${format(x)}x cheaper`+(x.gte(1.15)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Radiation Boosters are ${format(x)}x cheaper`+(x.gte(1.15)?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 inc: "Dilated Mass",
                 cons: "U-Quarks, Photons & Gluons do nothing",
@@ -198,7 +198,7 @@ const FERMIONS = {
                     return E('e5e8').pow(t.pow(2)).mul('e6e9')
                 },
                 calcTier() {
-                    let res = tmp.tickspeedEffect && !tmp.pass?tmp.tickspeedEffect.eff_bottom:E(1)
+                    let res = !tmp.pass?BUILDINGS.eff('tickspeed','eff_bottom'):E(1)
                     if (res.lt('e6e9')) return E(0)
                     let x = res.div('e6e9').max(1).log('e5e8').max(0).root(2)
                     return FERMIONS.getTierScaling(x, true)
@@ -262,7 +262,7 @@ const FERMIONS = {
                     return x//.softcap(1e18,0.1,0)
                 },
                 desc(x) {
-                    return `Collapsed Stars gain softcap starts ^${format(x)} later`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Collapsed Stars gain softcap starts ^${format(x)} later`+(x.gte(1.5)?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 inc: "Quark",
                 cons: "^0.625 to the exponent of Atoms gain",
@@ -283,7 +283,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `x${format(x)} to Higgs Bosons & Gravitons gain`+(x.gte(1e6)?" <span class='soft'>(softcapped)</span>":"")
+                    return `x${format(x)} to Higgs Bosons & Gravitons gain`+(x.gte(1e6)?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 isMass: true,
                 inc: "Mass of Black Hole",
@@ -332,7 +332,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Tier requirement is ${format(x)}x cheaper`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Tier requirement is ${format(x)}x cheaper`+(x.gte(1.5)?" <span class='soft1'>(softcapped)</span>":"")
                 },
                 inc: "Collapsed Star",
                 cons: "Star generators are decreased to ^0.5",
@@ -372,7 +372,7 @@ const FERMIONS = {
                     return E('10').pow(t.pow(1.5)).mul('e80')
                 },
                 calcTier() {
-                    let res = tmp.tickspeedEffect && !tmp.pass?tmp.tickspeedEffect.step:E(1)
+                    let res = !tmp.pass?BUILDINGS.eff('tickspeed','power'):E(1)
                     if (res.lt('e80')) return E(0)
                     let x = res.div('e80').max(1).log('10').max(0).root(1.5)
                     return FERMIONS.getTierScaling(x, true)
@@ -487,8 +487,8 @@ function updateFermionsTemp() {
 
 function updateFermionsHTML() {
     let r = [
-        [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, tmp.tickspeedEffect.eff_bottom, tmp.fermions.prod[0]],
-        [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, tmp.tickspeedEffect.step, tmp.fermions.prod[1]]
+        [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, BUILDINGS.eff('tickspeed','eff_bottom'), tmp.fermions.prod[0]],
+        [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, BUILDINGS.eff('tickspeed','power'), tmp.fermions.prod[1]]
     ]
     for (i = 0; i < 2; i++) {
         tmp.el["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i].mul(tmp.preQUGlobalSpeed)))

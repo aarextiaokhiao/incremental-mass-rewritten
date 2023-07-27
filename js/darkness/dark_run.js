@@ -11,9 +11,9 @@ const DARK_RUN = {
         if (CHALS.inChal(17)) g = E(250)
         else if (CHALS.inChal(18)) g = E(500)
 
-        if (i < 4) x = g.root(2).div(100).add(1).pow(-1) // 1/(g**0.5/100+1)
-        else if (i == 4) x = [g.root(2).div(100).add(1).pow(-1),Decimal.pow(1.1,g.pow(0.75))] // [1/(g**0.5/100+1),1.1**(g**0.75)]
-        else x = Decimal.pow(1.1,g.pow(0.75)) // 1.1**(g**0.75)
+        if (i < 4) x = g.root(2).div(100).add(1).pow(-1)
+        else if (i == 4) x = [g.root(2).div(100).add(1).pow(-1),Decimal.pow(1.1,g.pow(0.75))]
+        else x = Decimal.pow(1.1,g.pow(0.75))
 
         return x
     },

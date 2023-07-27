@@ -71,7 +71,7 @@ const ATOM = {
     doReset(chal_reset=true) {
         player.atom.atomic = E(0)
         player.bh.dm = E(0)
-        player.bh.condenser = E(0)
+        BUILDINGS.reset('bhc')
         let keep = []
         for (let x = 0; x < player.mainUpg.bh.length; x++) if ([5].includes(player.mainUpg.bh[x])) keep.push(player.mainUpg.bh[x])
         player.mainUpg.bh = keep
@@ -80,7 +80,7 @@ const ATOM = {
     },
     atomic: {
         gain() {
-            let greff = tmp.atom.gamma_ray_eff||{eff: E(1),exp: E(1)}
+            let greff = {eff: BUILDINGS.eff('cosmic_ray'),exp: BUILDINGS.eff('cosmic_ray', 'exp')}
 
             let x = greff.eff
             if (hasElement(3)) x = x.mul(tmp.elements.effect[3])
@@ -92,6 +92,8 @@ const ATOM = {
             if (tmp.c16active || player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) x = expMult(x,tmp.md.pen)
 
             if (hasGlyphUpg(12)) x = x.pow(greff.exp)
+
+            if (hasUpgrade('bh',22)) x = x.pow(upgEffect(2,22))
 
             if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
 
@@ -123,56 +125,6 @@ const ATOM = {
             x = overflow(x,'e2000',0.5)
 
             return x.floor()
-        },
-    },
-    gamma_ray: {
-        buy() {
-            if (tmp.atom.gamma_ray_can) {
-                player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
-                player.atom.gamma_ray = player.atom.gamma_ray.add(1)
-            }
-        },
-        buyMax() {
-            if (tmp.atom.gamma_ray_can) {
-                player.atom.gamma_ray = tmp.atom.gamma_ray_bulk
-                player.atom.points = player.atom.points.sub(tmp.atom.gamma_ray_cost).max(0)
-            }
-        },
-        effect() {
-            let t = player.atom.gamma_ray
-            t = t.mul(tmp.radiation.bs.eff[10])
-            let pow = E(2)
-            if (player.mainUpg.atom.includes(4)) pow = pow.add(tmp.upgs.main?tmp.upgs.main[3][4].effect:E(0))
-            if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
-            if (hasTree("gr1")) pow = pow.mul(tmp.supernova.tree_eff.gr1)
-            pow = pow.mul(tmp.bosons.upgs.gluon[1].effect)
-            pow = pow.mul(tmp.prim.eff[3][1])
-            pow = pow.mul(getEnRewardEff(3)[1])
-            if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
-            if (hasTree("gr2")) pow = pow.pow(1.25)
-            if (hasElement(129)) pow = pow.pow(elemEffect(18))
-            pow = pow//.softcap('e3e12',0.9,2)
-
-            if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
-
-            let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
-
-            if (CHALS.inChal(17)) {
-                pow = E(1)
-                eff = E(1)
-            }
-
-            let exp = E(1)
-            if (hasGlyphUpg(12)) exp = Decimal.pow(1.1,eff.max(1).log10().add(1).log10())
-
-            //exp = overflow(exp,1000,0.5)
-
-            return {pow: pow, eff: eff, exp: exp}
-        },
-        bonus() {
-            let x = tmp.fermions.effs[0][0]||E(0)
-            x = x.mul(getEnRewardEff(4))
-            return x
         },
     },
     particles: {
@@ -208,14 +160,12 @@ const ATOM = {
             if (player.mainUpg.atom.includes(7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
             if (hasUpgrade('atom',21)) x = expMult(x,5)
-            return x//.addTP(0.005)
+            return x
         },
         powerEffect: [
             x=>{
                 let a = hasPrestige(1,400) ? overflow(Decimal.pow(2,x.add(1).log10().add(1).log10().root(2)),10,0.5) : hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(3)
                 let b = hasElement(29) ? x.add(1).log2().pow(1.25).mul(0.01) : x.add(1).pow(2.5).log2().mul(0.01)
-
-                // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
 
                 return {eff1: a, eff2: b}
             },
@@ -232,7 +182,6 @@ const ATOM = {
 
                 if (CHALS.inChal(17) && !hasUpgrade('atom',18)) b = E(1)
 
-                // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
                 if (hasUpgrade('atom',18)) b = overflow(b,1e120,0.5)
 
                 return {eff1: a, eff2: b}
@@ -240,8 +189,6 @@ const ATOM = {
             x=>{
                 let a = hasPrestige(1,400) ? overflow(Decimal.pow(2,x.add(1).log10().add(1).log10().root(2)),10,0.5) : hasElement(198) ? x.add(1).log10().add(1).log10().div(10).add(1).pow(2) : hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1)
                 let b = hasElement(30) ? x.add(1).log2().pow(1.2).mul(0.01) : x.add(1).pow(2).log2().mul(0.01)
-
-                // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
 
                 return {eff1: a, eff2: b}
             },
@@ -278,19 +225,6 @@ function updateAtomTemp() {
     tmp.atom.atomicGain = ATOM.atomic.gain()
     tmp.atom.atomicEff = ATOM.atomic.effect()
 
-    let fp = tmp.fermions.effs[1][5]
-
-    let fp2 = E(1)
-
-    if (hasElement(248)) fp2 = fp2.mul(getEnRewardEff(0))
-
-    tmp.atom.gamma_ray_cost = E(2).pow(player.atom.gamma_ray.div(fp2).scaleEvery("gamma_ray",false,[1,1,1,fp])).floor()
-    tmp.atom.gamma_ray_bulk = E(0)
-    if (player.atom.points.gte(1)) tmp.atom.gamma_ray_bulk = player.atom.points.max(1).log(2).scaleEvery("gamma_ray",true,[1,1,1,fp]).mul(fp2).add(1).floor()
-    tmp.atom.gamma_ray_can = player.atom.points.gte(tmp.atom.gamma_ray_cost)
-    tmp.atom.gamma_ray_bonus = ATOM.gamma_ray.bonus()
-    tmp.atom.gamma_ray_eff = ATOM.gamma_ray.effect()
-
     for (let x = 0; x < ATOM.particles.names.length; x++) {
         tmp.atom.particles[x] = {
             effect: ATOM.particles.effect(x),
@@ -319,16 +253,9 @@ function setupAtomHTML() {
 
 function updateAtomicHTML() {
     tmp.el.atomicAmt.setHTML(format(player.atom.atomic)+" "+formatGain(player.atom.atomic, tmp.atom.atomicGain.mul(tmp.preQUGlobalSpeed)))
-	tmp.el.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+(tmp.atom.atomicEff.gte(5e4)?" <span class='soft'>(softcapped)</span>":""))
+	tmp.el.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+(tmp.atom.atomicEff.gte(5e4)?" <span class='soft1'>(softcapped)</span>":""))
 
-	tmp.el.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):""))
-	tmp.el.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})
-	tmp.el.gamma_ray_scale.setTxt(getScalingName('gamma_ray'))
-	tmp.el.gamma_ray_cost.setTxt(format(tmp.atom.gamma_ray_cost,0))
-	tmp.el.gamma_ray_pow.setTxt(format(tmp.atom.gamma_ray_eff.pow))
-	tmp.el.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff)+"x"+(hasGlyphUpg(12)?", ^"+format(tmp.atom.gamma_ray_eff.exp):""))
-    tmp.el.gamma_ray_auto.setDisplay(hasElement(18))
-	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
+    BUILDINGS.update('cosmic_ray')
 
     tmp.el.atomicOverflow.setDisplay(player.atom.atomic.gte(tmp.overflow_start.atomic))
     tmp.el.atomicOverflow.setHTML(`Because of atomic power overflow at <b>${format(tmp.overflow_start.atomic)}</b>, your atomic power gain is ${overflowFormat(tmp.overflow.atomic||1)}!`)

@@ -100,7 +100,7 @@ const MASS_DILATION = {
                     if (hasElement(25)) b++
                     return E(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2).overflow('ee11000',0.5,2)
                 },
-                effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?` <span class='soft'>(softcapped)</span>`:"")},
+                effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?` <span class='soft1'>(softcapped)</span>`:"")},
             },{
                 desc: `Make dilated mass effect stronger.`,
                 cost(x) { return tmp.md.bd3 ? E(10).pow(E(1.25).pow(x)).mul(100) : E(10).pow(x).mul(100) },
@@ -116,7 +116,7 @@ const MASS_DILATION = {
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(E(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():E(0) },
                 effect(x) { return E(2).pow(x.softcap(2.5e26,0.1,0).mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0) },
-                effDesc(x) { return format(x,0)+"x"+(x.gte(1e25)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return format(x,0)+"x"+(x.gte(1e25)?" <span class='soft1'>(softcapped)</span>":"") },
             },{
                 desc: `Dilated mass also boost Stronger's power.`,
                 maxLvl: 1,
@@ -139,9 +139,9 @@ const MASS_DILATION = {
                     let s = E(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
                     if (hasElement(53)) x = x.mul(1.75)
-                    return x.softcap(1e3,0.6,0)//.overflow('e4000',0.5)
+                    return x.softcap(1e3,0.6,0)
                 },
-                effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?" <span class='soft1'>(softcapped)</span>":"") },
             },{
                 desc: `Dilated mass boosts quark gain.`,
                 maxLvl: 1,
@@ -160,7 +160,7 @@ const MASS_DILATION = {
                 maxLvl: 1,
                 cost(x) { return E(1.5e296) },
                 bulk() { return player.md.mass.gte(1.5e296)?E(1):E(0) },
-                effect(x) { return player.tickspeed.add(1).pow(2/3) },
+                effect(x) { return player.build.tickspeed.amt.add(1).pow(2/3) },
                 effDesc(x) { return format(x)+"x" },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
@@ -168,9 +168,9 @@ const MASS_DILATION = {
                 cost(x) { return E(5).pow(x).mul('1.50001e536') },
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():E(0) },
                 effect(x) {
-                    return E(2).pow(x).softcap(1e25,2/3,0)//.softcap("ee12",0.8,2)
+                    return E(2).pow(x).softcap(1e25,2/3,0)
                 },
-                effDesc(x) { return format(x)+"x"+(x.gte(1e25)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return format(x)+"x"+(x.gte(1e25)?" <span class='soft1'>(softcapped)</span>":"") },
             },{
                 unl() { return player.supernova.times.gte(1) },
                 desc: `Add 0.015 to mass dilation upgrade 6's base.`,
@@ -181,14 +181,14 @@ const MASS_DILATION = {
                     let x = i.mul(0.015).add(1).softcap(1.2,0.75,0).sub(1)
                     return x
                 },
-                effDesc(x) { return "+"+format(x)+(x.gte(0.2)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return "+"+format(x)+(x.gte(0.2)?" <span class='soft1'>(softcapped)</span>":"") },
             },{
                 unl() { return player.supernova.post_10 },
                 desc: `First 3 Mass Dilation upgrades are stronger.`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {
-                    return x.pow(0.5).softcap(3.5,0.5,0).div(100).add(1)//.overflow('ee3',0.5)
+                    return x.pow(0.5).softcap(3.5,0.5,0).div(100).add(1)
                 },
                 effDesc(x) { return "+"+format(x.sub(1).mul(100))+"% stronger" },
             },
@@ -372,20 +372,6 @@ const MASS_DILATION = {
         }
     },
 }
-
-/*
-{
-    desc: `Placeholder.`,
-    cost(x) { return E(10).pow(x.pow(1.1)).mul(1e5) },
-    bulk() { return player.md.break.mass.gte(1e5)?player.md.break.mass.div(1e5).max(1).log10().root(1.1).add(1).floor():E(0) },
-    effect(y) {
-        let x = E(1)
-
-        return x
-    },
-    effDesc(x) { return format(x,0)+"x"},
-},
-*/
 
 function setupMDHTML() {
     let md_upg_table = new Element("md_upg_table")

@@ -7,14 +7,6 @@ const TOOLTIP_RES = {
             if (tmp.overflowBefore.mass.gte(tmp.overflow_start.mass[0]))
             h += `<br>(<b>+${formatMass(tmp.overflowBefore.mass)}</b> gained before <b>overflow</b>)`;
 
-            /*
-            if (quUnl())
-            h += `
-            <br class='line'>You have <b class='red'>${player.rp.points.format(0)} ${player.rp.points.formatGain(tmp.rp.gain.mul(tmp.preQUGlobalSpeed))}</b> Rage Power. (after Quantum)
-            <br class='line'>You have <b class='yellow'>${player.bh.dm.format(0)} ${player.bh.dm.formatGain(tmp.bh.dm_gain.mul(tmp.preQUGlobalSpeed))}</b> Dark Matter. (after Quantum)
-            `;
-            */
-
             return h
         },
     },
@@ -50,13 +42,6 @@ const TOOLTIP_RES = {
             h += `
             <br class='line'>You have <b class='corrupted_text'>${formatMass(player.bh.unstable)} ${formatGain(player.bh.unstable,UNSTABLE_BH.calcProduction(),true)}</b> of Unstable Black Hole.
             `;
-
-            /*
-            if (quUnl())
-            h += `
-            <br class='line'>You have <b class='cyan'>${player.atom.points.format(0)} ${player.atom.points.formatGain(tmp.atom.gain.mul(tmp.preQUGlobalSpeed))}</b> Atom. (after Quantum)
-            `;
-            */
 
             return h
         },
@@ -235,14 +220,6 @@ const TOOLTIP_RES = {
             return h
         },
     },
-
-    /**
-     * desc() {
-            let h = ``
-
-            return h
-        },
-    */
 }
 
 function updateTooltipResHTML(start=false) {

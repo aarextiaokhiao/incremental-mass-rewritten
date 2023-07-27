@@ -46,7 +46,7 @@ const FORMS = {
     },
     massGain() {
         let x = E(1)
-        x = x.add(tmp.upgs.mass[1]?tmp.upgs.mass[1].eff.eff:1)
+        x = x.add(BUILDINGS.eff('mass_1'))
         if (player.ranks.rank.gte(6)) x = x.mul(RANKS.effect.rank[6]())
         if (player.ranks.rank.gte(13)) x = x.mul(3)
         if (player.mainUpg.bh.includes(10)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][10].effect:E(1))
@@ -63,8 +63,8 @@ const FORMS = {
         if (!hasElement(105)) x = x.mul(tmp.atom.particles[0].powerEffect.eff1)
         else x = x.pow(tmp.atom.particles[0].powerEffect.eff1)
 
-        if (!hasElement(199) || CHALS.inChal(15)) x = x.mul(tmp.tickspeedEffect.eff||E(1))
-        else x = x.pow(tmp.tickspeedEffect.eff||E(1))
+        if (!hasElement(199) || CHALS.inChal(15)) x = x.mul(BUILDINGS.eff('tickspeed'))
+        else x = x.pow(BUILDINGS.eff('tickspeed'))
 
         if (player.ranks.tier.gte(2)) x = x.pow(1.15)
         if (player.ranks.rank.gte(180)) x = x.pow(1.025)
@@ -453,8 +453,7 @@ const FORMS = {
             return x
         },
         massGain() {
-            let x = tmp.bh.f
-            .mul(this.condenser.effect().eff)
+            let x = tmp.bh.f.mul(BUILDINGS.eff('bhc'))
             if (player.mainUpg.rp.includes(11)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][11].effect:E(1))
             if (player.mainUpg.bh.includes(14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:E(1))
             if (hasElement(46) && !hasElement(162)) x = x.mul(tmp.elements.effect[46])
@@ -499,6 +498,7 @@ const FORMS = {
 
             if (hasPrestige(2,45)) os2 = os2.pow(prestigeEff(2,45))
             if (hasElement(269)) os2 = os2.pow(elemEffect(269))
+            if (hasElement(51,1)) os2 = os2.pow(muElemEff(51))
 
             if (hasElement(252)) os2 = expMult(os2,1.5)
 
@@ -552,8 +552,8 @@ const FORMS = {
             for (let x = 0; x < player.mainUpg.rp.length; x++) if ([3,5,6].includes(player.mainUpg.rp[x])) keep.push(player.mainUpg.rp[x])
             player.mainUpg.rp = keep
             player.rp.points = E(0)
-            player.tickspeed = E(0)
-            player.accelerator = E(0)
+            BUILDINGS.reset('tickspeed')
+            BUILDINGS.reset('accelerator')
             player.bh.mass = E(0)
             FORMS.rp.doReset()
         },
@@ -562,95 +562,14 @@ const FORMS = {
 
             let x = (player.mainUpg.atom.includes(12)?player.bh.mass.add(1).pow(1.25):player.bh.mass.add(1).root(4))
             if (hasElement(89)) x = x.pow(tmp.elements.effect[89])
-
             if (hasElement(201)) x = Decimal.add(1.1,exoticAEff(0,5,0)).pow(x.max(1).log10().add(1).log10().pow(.8))
 
             if (hasUpgrade('bh',18)) x = x.pow(2.5)
-
             if (hasElement(201)) x = x.overflow('e1000',0.5)
-
             if (hasElement(48,1)) x = x.pow(theoremEff('bh',4))
 
-            return x//.softcap("ee14",0.95,2)
+            return x
         },
-        condenser: {
-            autoSwitch() { player.bh.autoCondenser = !player.bh.autoCondenser },
-            autoUnl() { return player.mainUpg.atom.includes(2) },
-            can() { return player.bh.dm.gte(tmp.bh.condenser_cost) && !CHALS.inChal(6) && !CHALS.inChal(10) },
-            buy() {
-                if (this.can()) {
-                    player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
-                    player.bh.condenser = player.bh.condenser.add(1)
-                }
-            },
-            buyMax() {
-                if (this.can()) {
-                    player.bh.condenser = tmp.bh.condenser_bulk
-                    player.bh.dm = player.bh.dm.sub(tmp.bh.condenser_cost).max(0)
-                }
-            },
-            effect() {
-                let t = player.bh.condenser
-                t = t.mul(tmp.radiation.bs.eff[5])
-                let pow = E(2)
-                    pow = pow.add(tmp.chal.eff[6])
-                    if (player.mainUpg.bh.includes(2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:E(1))
-                    pow = pow.add(tmp.atom.particles[2].powerEffect.eff2)
-                    if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
-                    pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
-                    pow = pow.mul(tmp.prim.eff[2][1])
-                    pow = pow.mul(getEnRewardEff(3)[1])
-                    if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
-                    if (hasTree("bh2")) pow = pow.pow(1.15)
-                if (hasElement(129)) pow = pow.pow(elemEffect(18))
-                if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
-                
-                if (CHALS.inChal(17)) pow = E(1)
-                
-                let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
-
-                let os = tmp.c16active ? E('ee150') : E('ee10000'), op = E(0.5)
-
-                if (hasUpgrade('bh',21)) os = expMult(os, 2)
-
-                let o = eff
-
-                eff = overflow(eff,os,op,2)
-
-                tmp.overflow.BHCEffect = calcOverflow(o,eff,os,2)
-                tmp.overflow_start.BHCEffect = [os]
-
-                return {pow: pow, eff: eff}
-            },
-            bonus() {
-                let x = E(0)
-                if (player.mainUpg.bh.includes(15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:E(0))
-                x = x.mul(getEnRewardEff(4))
-                return x
-            },
-        },
-    },
-    reset_msg: {
-        msgs: {
-            rp: "Reach over 1e9 tonne of mass to reset previous features for gain Rage Powers",
-            dm: "Reach over 1e20 Rage Power to reset all previous features for gain Dark Matters",
-            atom: "Reach over 1e100 uni of black hole to reset all previous features for gain Atoms & Quarks",
-            md: "Dilate mass, then cancel",
-            br: "Big Rip the Dimension, then go back",
-            dark: "Require Oganesson-118 to go Dark",
-        },
-        set(id) {
-            if (id=="sn") {
-                player.reset_msg = "Reach over "+format(tmp.supernova.maxlimit)+" collapsed stars to go Supernova"
-                return
-            }
-            if (id=="qu") {
-                player.reset_msg = "Reach over "+formatMass(mlt(1e4))+" of mass to "+(QCs.active()?"complete Quantum Challenge":"go Quantum")
-                return
-            }
-            player.reset_msg = this.msgs[id]
-        },
-        reset() { player.reset_msg = "" },
     },
 }
 
