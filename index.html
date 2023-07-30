@@ -178,7 +178,7 @@
 								<div id="ranks_table" class="table_center"></div>
 								<div style="width: 400px; display: none;" id="beyond_ranks">
 									<button id="br_auto" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('beyond')">OFF</button><br><br>
-									<div id="br_amt"></div><br>
+									<div id="br_amt"></div>
 									<button onclick="BEYOND_RANKS.reset()" class="btn reset" style="max-width: 380px;" id="br_desc"></button>
 								</div>
 							</div>
@@ -251,17 +251,15 @@
 							<div id="pres_table" class="table_center" style="min-height: 180px;"></div>
 							<br><br>
 							<div id="galactic_prestige_div">
-								<div>
+								<div id="galactic_prestige_div">
+									<span id="gal_prestige_scale"></span>
 									Galactic Prestige <h4 id="gal_prestige">0</h4><br>
-									<button id="gp_btn" class="btn galactic" onclick="GAL_PRESTIGE.reset()">Reset Supernova for that what do you mean?</button>
-								</div>
-								<br>
-								<div id="gp_rewards">
-									
-								</div>
+									<button id="gp_btn" class="btn galactic" onclick="GAL_PRESTIGE.reset()"></button>
+								</div><br>
+								<div id="gp_rewards"></div>
 							</div>
 						</div><div id="stab_frame0_4">
-							Your Ascension base is <span id="asc_base"></span> (based on product of ln[Prestige tiers+1]+1)<br><br>
+							Your Ascension base is <span id="asc_base"></span> (based on product of ln[Prestige tiers+1]<sup id="asc_texp"></sup>+1)<br><br>
 							<div id="asc_table" class="table_center" style="min-height: 180px;"></div>
 						</div>
 					</div><div id="tab_frame1">
@@ -373,6 +371,7 @@
 							<div id="stars_table" class="table_center"></div><br><br>
                             <div id="building_star_booster"></div><br>
 							<span id="starSoft1" class="red">After <b id="starSoftStart1">X</b> Collapsed stars gain, Collapsed stars gain will be softcap!</span><br>
+							<div id="starSiltation" style="color: rgb(194, 177, 255)"></div>
 						</div>
 					</div><div id="tab_frame6">
 						<div id="stab_frame6_0">
@@ -542,7 +541,7 @@
 							<h2>Confirmations</h2><br>
 							<div id="confirm_table" class="table_center"></div>
 							<br><br>
-							Incremental Mass Rewritten v0.7.1.5 - made by MrRedShark77<br>
+							Incremental Mass Rewritten v0.7.1.6 - made by MrRedShark77<br>
 							The game is inspired by Distance Incremental & Synergism<br>
 							Contributors: <span style="cursor: pointer;" onclick='addNotify(`where lemon<br><img src="https://i.imgflip.com/57cc98.jpg" style="width:100%">`)'>Bézier</span>, 16777216 & Aarex (Artists)
 						</div><div id="stab_frame9_1">

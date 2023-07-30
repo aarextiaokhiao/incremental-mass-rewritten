@@ -440,7 +440,7 @@ body.ngm {
 	background: linear-gradient(45deg, #f703, #ff07) !important;
 	color: gold !important
 }
-.elements.bought.c16, .elements.bought.cs {
+.elements.bought.c16, .elements.bought.cs:not(.final) {
 	background: linear-gradient(45deg, #0007, #0003) !important;
 	color: #333 !important;
 	animation: none !important
