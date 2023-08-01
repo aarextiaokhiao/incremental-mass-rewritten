@@ -852,7 +852,7 @@ const BUILDINGS = {
 			let el = new Element("building_"+i)
 
 			if (el.el) el.setHTML(`<div class="table_center upgrade" style="width: 100%; margin-bottom: 5px;">
-				<div style="width: 300px">
+				<div style="width: 250px">
 					<div class="resources">
 						<img src="images/buildings/${b.icon}.png">
 						<span style="margin-left: 5px; text-align: left;"><span id="building_scale_${i}"></span>${b.name} [<span id="building_lvl_${i}"></span>]</span>
@@ -860,7 +860,7 @@ const BUILDINGS = {
 				</div>
 				<div style="text-align: left; width: 200px; font-size: 10px">
 					<b id="building_eff_${i}"></b><br>
-					(Power: <span id="building_pow_${i}"></span>)
+					(Per-level power: <span id="building_pow_${i}"></span>)
 				</div>
 				<button class="btn" id="building_btn_${i}" onclick="BUILDINGS.buy('${i}')" style="width: 200px"><span id="building_cost_${i}"></span></button>
 				<button class="btn" id="building_auto_${i}" onclick="player.build.${i}.auto = !player.build.${i}.auto" style="width: 80px"></button>

@@ -94,16 +94,8 @@
 	<div id='app' style='display: none;'>
 		<div id="star"></div>
 		<div class="table_center" style="height: 100%; width: 100%;">
-			<div id="tabs"></div>
-			<div id="main_app" style="width: calc(100% - 450px); height: 100%; overflow-y: auto; overflow-x: hidden; position: relative;">
-				<div id="nav_btns">
-					<button id="nav_left_hider" onclick="hideNavigation(0)"><iconify-icon icon="ic:round-arrow-back-ios" width="35"></iconify-icon></button>
-					<button id="nav_right_hider" onclick="hideNavigation(1)"><iconify-icon icon="ic:round-arrow-forward-ios" width="35"></iconify-icon></button>
-				</div>
-				<div style="min-height: 60px">
-					<div id="chal_upper"></div>
-				</div>
-				<div class="main-line"></div>
+			<div id="main_app" style="width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; position: relative;">
+				<br>
 				<div id="stabs_div" style="min-height: 30px;">
 					<div id="stabs"></div>
 				</div><br>
@@ -201,21 +193,10 @@
 								<div id="rankCollapse"></div>
 							</div>
 						</div><div id="stab_frame0_1">
-							<div class="table_center">
-								<div style="width: 50%; min-width: 600px;">
-									You have <h4 id="bhMass2">X</h4> of Black Hole<br>
-									<span class="green">Which boosts mass gain by <h4 id="bhEffect">X</h4></span><br><br>
-									Black Hole mass's gain formula - (x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span>
-								</div><div style="width: 50%; min-width: 600px;" id="unstable_bhUnl">
-									You have <h4 id="bhUnstable" class="corrupted_text">X</h4> of Unstable Black Hole<br>
-									<span class="green">Which boosts mass of black hole gain by <h4 id="bhUnstableEffect">X</h4></span><br><br>
-									Unstable BH's production is decreased based on its mass
-								</div>
-							</div>
-							<br>
+							You have <h4 id="bhMass2">X</h4> of Black Hole<br>
+							<span class="green">Which boosts mass gain by <h4 id="bhEffect">X</h4></span><br><br>
+							Black Hole mass's gain formula - (x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
 							<div id="building_bhc"></div>
-                            <div id="building_fvm"></div>
-							<br>
 							<div>
 								<span id="massSoft2" class="red">After <b id="massSoftStart2">X</b> of mass gain from black hole, its mass gain will be softcapped!</span><br>
 								<span id="bhFSoft1" class="red">
@@ -224,6 +205,14 @@
 								<span id="bhOverflow"></span>
 								<div id="bhOverflow2" style="color: rgb(255, 197, 215)"></div>
 								<br><div id="bhcEffectOverflow" style="color: rgb(194, 177, 255)"></div>
+							</div>
+
+							<div id="unstable_bhUnl">
+								<hr>
+								You have <h4 id="bhUnstable" class="corrupted_text">X</h4> of Unstable Black Hole<br>
+								<span class="green">Which boosts mass of black hole gain by <h4 id="bhUnstableEffect">X</h4></span><br><br>
+								Unstable BH's production is decreased based on its mass<br><br>
+								<div id="building_fvm"></div>
 							</div>
 						</div><div id="stab_frame0_2">
 							You have <h4 id="atomicAmt">X</h4> Atomic Power<br>
@@ -550,8 +539,14 @@
 					</div>
 				</div>
 			</div>
-			<div id="resources_table"></div>
 		</div>
+		<div id="nav_btns">
+			<button id="nav_left_hider" onclick="hideNavigation(0)"><iconify-icon icon="ic:round-arrow-back-ios" width="35"></iconify-icon></button>
+			<button id="nav_right_hider" onclick="hideNavigation(1)"><iconify-icon icon="ic:round-arrow-forward-ios" width="35"></iconify-icon></button>
+		</div>
+		<div id="tabs"></div>
+		<div id="resources_table"></div>
+		<div id="chal_upper"></div>
 	</div>
 </body>
 </html>

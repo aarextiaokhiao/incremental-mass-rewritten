@@ -1264,7 +1264,7 @@ function updateGPHTML() {
     if (unl) {
         let gp = player.gal_prestige
 
-        tmp.el.gal_prestige.setHTML(gp.format(0))
+        tmp.el.gal_prestige.setHTML(`[${gp.format(0)}]`)
         tmp.el.gal_prestige_scale.setHTML(getScalingName('gal_prestige'))
         tmp.el.gp_btn.setHTML(`
 			<h4>Do a Infinity reset to Galactic Prestige up.</h4><br>

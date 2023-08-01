@@ -397,20 +397,12 @@ function hideNavigation(i) { player.options.nav_hide[i] = !player.options.nav_hi
 
 function updateNavigation() {
     let ids = [["nav_left_hider","tabs"],["nav_right_hider","resources_table"]]
-    let w = 450
-
-    for (i in player.options.nav_hide) {
+    for (let i in player.options.nav_hide) {
         let h = player.options.nav_hide[i]
 
         tmp.el[ids[i][0]].setClasses({toggled: h})
         tmp.el[ids[i][1]].setDisplay(!h)
-        if (h) w -= i == 0 ? 198 : 248
     }
-
-    let p = `calc(100% - ${w}px)`
-
-    tmp.el.main_app.changeStyle('width',p)
-    tmp.el.nav_btns.changeStyle('width',p)
 }
 
 function setupStatsHTML() {

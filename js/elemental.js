@@ -1886,12 +1886,10 @@ function updateElementsHTML() {
                         let final = ([[54, 77, 118, 218, 290], [11, 66]][elayer]).includes(x)
 						upg.setClasses(c16 && isElemCorrupted(x,elayer) ? {
 							elements: true,
-							locked: true,
 							corrupted: true
-						} : {
+						} : hasElement(x, elayer) ? {
 							elements: true, 
-							locked: !ELEMENTS.canBuy(x),
-							bought: hasElement(x),
+							bought: true,
 
 							muon: elayer == 1 && !final, 
 							star: elayer == 0 && x > 36 && x < 54,
@@ -1903,6 +1901,9 @@ function updateElementsHTML() {
 							inf: eu.inf,
 							c16: eu.c16,
 							cs: eu.cs,
+						} : {
+							elements: true, 
+							locked: !ELEMENTS.canBuy(x),
 						})
                     }
                 }
