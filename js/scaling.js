@@ -259,6 +259,7 @@ function updateScalingHTML() {
 	for (let x = 0; x < SCALE_TYPE.length; x++) {
 		let type = SCALE_TYPE[x]
 		tmp.el["scaling_div_"+x].setDisplay(player.scaling_ch == x)
+        tmp.el[`stats_${type}_btn`].setDisplay(tmp.scaling[type].length>0)
 		if (player.scaling_ch == x) {
 			for (let key in SCALE_START[type]) {
 				let have = tmp.scaling[type].includes(key)

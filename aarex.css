@@ -83,6 +83,8 @@ body.ngm {
 	border-bottom: 2px solid #00f7
 }
 .btn_tab.choosed {
+	border-left: none;
+	border-right: none;
 	border-bottom: 4px solid #0bf;
 	background: radial-gradient(ellipse at top, #03fb, #03f7) !important;
 	box-shadow: inset 0 0 3px #0000ff, 0 3px 6px rgba(0, 0, 191, 0.5);

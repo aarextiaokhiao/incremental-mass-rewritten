@@ -212,6 +212,7 @@ function updateAscensionsRewardHTML() {
 	let c16 = tmp.c16active
 	for (let x = 0; x < ASCENSIONS.names.length; x++) {
 		tmp.el["asc_reward_div_"+x].setDisplay(player.asc_reward == x)
+        tmp.el[`stats_${ASCENSIONS.names[x]}_btn`].setDisplay(player.ascensions[x].gt(0))
 		if (player.asc_reward == x) {
 			let keys = Object.keys(ASCENSIONS.rewards[x])
 			for (let y = 0; y < keys.length; y++) {

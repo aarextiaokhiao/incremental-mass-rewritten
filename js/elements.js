@@ -175,7 +175,13 @@ function updateTabsHTML() {
 
 function updateUpperHTML() {
 	let chal_unl = player.chal.active > 0
-	tmp.el.chal_upper.setVisible(chal_unl)
+	tmp.el.mass_div.setDisplay(!chal_unl)
+	if (!chal_unl) {
+		tmp.el.mass_amt.setHTML(`<h4>${formatMass(player.mass)}</h4><br>
+		${formatGain(player.mass, tmp.massGain, true)}`)
+	}
+
+	tmp.el.chal_upper.setDisplay(chal_unl)
 	if (chal_unl) {
 		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
 		tmp.el.chal_upper.setHTML(`You are now in [${CHALS[player.chal.active].title}] Challenge! Go over ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} to complete.
@@ -196,6 +202,7 @@ function updateRanksRewardHTML() {
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
 		tmp.el["ranks_reward_div_"+x].setDisplay(player.ranks_reward == x)
+        tmp.el[`stats_${rn}_btn`].setDisplay(player.ranks[rn].gt(0))
 		if (player.ranks_reward == x) {
 			let keys = Object.keys(RANKS.desc[rn])
 			for (let y = 0; y < keys.length; y++) {
@@ -215,6 +222,7 @@ function updatePrestigesRewardHTML() {
 	let c16 = tmp.c16active
 	for (let x = 0; x < PRES_LEN; x++) {
 		tmp.el["pres_reward_div_"+x].setDisplay(player.pres_reward == x)
+        tmp.el[`stats_${PRESTIGES.names[x]}_btn`].setDisplay(player.prestiges[x].gt(0))
 		if (player.pres_reward == x) {
 			let keys = Object.keys(PRESTIGES.rewards[x])
 			for (let y = 0; y < keys.length; y++) {
@@ -334,7 +342,7 @@ function updateOptionsHTML() {
 		tmp.el.offline_active.setTxt(player.offline.active?"ON":"OFF")
 		tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
 		tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
-		tmp.el.mass_dis.setTxt(["Default",'Always show g','Always show mlt','Important units only'][player.options.massDis])
+		tmp.el.mass_dis.setTxt(["Default",'Always show g','Important units only'][player.options.massDis])
 	} else if (tmp.stab[9] == 1) {
 		updateResourcesHiderHTML()
 	}
@@ -394,8 +402,6 @@ function updateHTML() {
 			}
 		} else if (tmp.tab == 1) {
 			tmp.el.total_time.setTxt(formatTime(player.time))
-			updateStatsHTML()
-
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
 			else if (tmp.stab[1] == 1) updatePrestigesRewardHTML()
 			else if (tmp.stab[1] == 2) updateAscensionsRewardHTML()

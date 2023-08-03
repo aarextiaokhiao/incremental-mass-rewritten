@@ -2,18 +2,6 @@ var diff = 0;
 var date = Date.now();
 var player
 
-const ST_NAMES = [
-	null, [
-		["","U","D","T","Qa","Qt","Sx","Sp","Oc","No"],
-		["","Dc","Vg","Tg","Qag","Qtg","Sxg","Spg","Ocg","Nog"],
-		["","Ce","De","Te","Qae","Qte","Sxe","Spe","Oce","Noe"],
-	],[
-		["","Mi","Mc","Na","Pc","Fm","At","Zp","Yc","Xn"],
-		["","Me","Du","Tr","Te","Pe","He","Hp","Ot","En"],
-		["","c","Ic","TCn","TeC","PCn","HCn","HpC","OCn","ECn"],
-		["","Hc","DHe","THt","TeH","PHc","HHe","HpH","OHt","EHc"]
-	]
-]
 const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'qu', 'br', 'dark', 'inf']
 
 const FORMS = {
@@ -616,37 +604,6 @@ function format(ex, acc=4, max=12, type=player.options.notation) {
                 let be = e.log10().gte(9)
                 return neg+(be?'':m.toFixed(4))+'e'+format(e, 0, max, "sc")
             }
-        case "st":
-            let e3 = ex.log(1e3).floor()
-			if (e3.lt(1)) {
-				return neg+ex.toFixed(Math.max(Math.min(acc-e.toNumber(), acc), 0))
-			} else {
-				let e3_mul = e3.mul(3)
-				let ee = e3.log10().floor()
-				if (ee.gte(3000)) return "e"+format(e, acc, max, "st")
-
-				let final = ""
-				if (e3.lt(4)) final = ["", "K", "M", "B"][Math.round(e3.toNumber())]
-				else {
-					let ee3 = Math.floor(e3.log(1e3).toNumber())
-					if (ee3 < 100) ee3 = Math.max(ee3 - 1, 0)
-					e3 = e3.sub(1).div(E(10).pow(ee3*3))
-					while (e3.gt(0)) {
-						let div1000 = e3.div(1e3).floor()
-						let mod1000 = e3.sub(div1000.mul(1e3)).floor().toNumber()
-						if (mod1000 > 0) {
-							if (mod1000 == 1 && !ee3) final = "U"
-							if (ee3) final = FORMATS.standard.tier2(ee3) + (final ? "-" + final : "")
-							if (mod1000 > 1) final = FORMATS.standard.tier1(mod1000) + final
-						}
-						e3 = div1000
-						ee3++
-					}
-				}
-
-				let m = ex.div(E(10).pow(e3_mul))
-				return neg+(ee.gte(10)?'':(m.toFixed(E(3).sub(e.sub(e3_mul)).add(acc==0?0:1).toNumber()))+' ')+final
-			}
         default:
             return neg+FORMATS[type].format(ex, acc, max)
     }
@@ -660,10 +617,7 @@ function formatMass(ex) {
     let md = player.options.massDis
     ex = E(ex)
     if (md == 1) return format(ex) + ' g'
-    else if (md == 2) return format(ex.div(1.5e56).max(1).log10().div(1e9)) + ' mlt'
-    else if (md == 3) {
-        return  ex.gte('ee14979') ? formatARV(ex) : ex.gte('1.5e1000000056') ? format(ex.div(1.5e56).max(1).log10().div(1e9)) + ' mlt' : format(ex) + ' g'
-    }
+    else if (md == 2) return ex.gte('ee14979') ? formatARV(ex) : ex.gte('1.5e1000000056') ? format(ex.div(1.5e56).max(1).log10().div(1e9)) + ' mlt' : format(ex) + ' g'
 
     if (ex.gte(E(1.5e56).mul('ee9'))) return formatARV(ex)
     if (ex.gte(1.5e56)) return format(ex.div(1.5e56)) + ' uni'

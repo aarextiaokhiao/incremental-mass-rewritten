@@ -155,7 +155,7 @@ function setupResourcesHTML() {
         `
     }
 
-    new Element("resources_table").setHTML(h1)
+    new Element("resources_table_div").setHTML(h1)
     new Element("res_hider_table").setHTML(h2)
 }
 
@@ -180,12 +180,9 @@ function updateResourcesHTML() {
 function updateResourcesHiderHTML() {
     for (i in RESOURCES_DIS) {
         let rd = RESOURCES_DIS[i]
-        let unl = i != "idk" && rd.unl()
+        let unl = rd.unl()
 
         tmp.el[i+"_res_hide_div"].setDisplay(unl)
-
-        if (unl) {
-            tmp.el[i+"_res_hide_btn"].setTxt(player.options.res_hide[i] ? "ON" : "OFF")
-        }
+        if (unl) tmp.el[i+"_res_hide_btn"].setTxt(player.options.res_hide[i] ? "ON" : "OFF")
     }
 }

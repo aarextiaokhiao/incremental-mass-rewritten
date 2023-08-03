@@ -91,7 +91,6 @@ const POPUP_GROUPS = {
             <button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>
             <button class="btn" onclick="player.options.notation = 'sc'">Scientific</button>
             <button class="btn" onclick="player.options.notation = 'st'">Standard</button>
-            <button class="btn" onclick="player.options.notation = 'old_sc'">Old Scientific</button>
             <button class="btn" onclick="player.options.notation = 'omega'">Omega</button>
             <button class="btn" onclick="player.options.notation = 'omega_short'">Omega Short</button>
         `,
@@ -438,21 +437,6 @@ function setupStatsHTML() {
     }
 
     new Element("asc_reward_btn").setHTML(h)
-}
-
-function updateStatsHTML() {
-    if (tmp.stab[1] == 0) for (let i in RANKS.names) {
-        tmp.el[`stats_${RANKS.names[i]}_btn`].setDisplay(player.ranks[RANKS.names[i]].gt(0))
-    }
-    else if (tmp.stab[1] == 1) for (let i in SCALE_TYPE) {
-        tmp.el[`stats_${SCALE_TYPE[i]}_btn`].setDisplay(tmp.scaling[SCALE_TYPE[i]].length>0)
-    }
-    else if (tmp.stab[1] == 2) for (let i in PRESTIGES.names) {
-        tmp.el[`stats_${PRESTIGES.names[i]}_btn`].setDisplay(player.prestiges[i].gt(0))
-    }
-    else if (tmp.stab[1] == 4) for (let i in ASCENSIONS.names) {
-        tmp.el[`stats_${ASCENSIONS.names[i]}_btn`].setDisplay(player.ascensions[i].gt(0))
-    }
 }
 
 //Aarex's Theme
